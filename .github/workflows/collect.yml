@@ -1,0 +1,25 @@
+name: collect
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # UTC; GitHub may delay runs
+  workflow_dispatch:          # manual "Run workflow" button
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests pyarrow duckdb
+      - run: python collector.py
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
