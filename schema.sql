@@ -32,6 +32,45 @@ CREATE TABLE IF NOT EXISTS security_prices (
   ticker VARCHAR, date DATE, close DOUBLE, adj_close DOUBLE, volume DOUBLE, currency VARCHAR,
   source VARCHAR, fetched_at TIMESTAMPTZ, run_id VARCHAR);
 
+-- Wikipedia / Wikidata lookups (entities.py), fetched once per key. Latest row per (kind, key) wins.
+--   kind = title (phrase -> article), df (word -> share of articles containing it),
+--          entity (Wikidata item), mentions (article title -> # articles mentioning it),
+--          comentions ("A|B" -> # articles mentioning both), meta
+CREATE TABLE IF NOT EXISTS wiki_cache (
+  kind VARCHAR, key VARCHAR, value JSON, fetched_at TIMESTAMPTZ);
+
+-- Knowledge graph (graph_build.py). Bitemporal and append-only: each row asserts (op='assert') or
+-- retracts (op='retract') a node/edge. recorded_at = when the graph learned it (transaction time);
+-- valid_from/valid_to = when it is true in the world (valid time).
+CREATE TABLE IF NOT EXISTS graph_nodes (
+  node_id VARCHAR, node_type VARCHAR,   -- market | proposition | entity | security
+  name VARCHAR, attrs JSON, attrs_hash VARCHAR, op VARCHAR,
+  valid_from TIMESTAMPTZ, valid_to TIMESTAMPTZ, recorded_at TIMESTAMPTZ, run_id VARCHAR);
+
+CREATE TABLE IF NOT EXISTS graph_edges (
+  edge_id VARCHAR, src_id VARCHAR, dst_id VARCHAR,
+  edge_type VARCHAR,   -- same_as | near_equivalent | mutex | implies | involves | <entity link> | exposure
+  sign DOUBLE, weight DOUBLE, confidence DOUBLE, provenance VARCHAR, note VARCHAR,
+  attrs JSON, attrs_hash VARCHAR, op VARCHAR,
+  valid_from TIMESTAMPTZ, valid_to TIMESTAMPTZ, recorded_at TIMESTAMPTZ, run_id VARCHAR);
+
+-- The graph as recorded by `known_at`, restricted to what was true at `valid_at`.
+CREATE OR REPLACE MACRO nodes_asof(valid_at, known_at) AS TABLE
+SELECT * EXCLUDE (op, attrs_hash) FROM (
+  SELECT * FROM graph_nodes WHERE recorded_at <= known_at
+  QUALIFY row_number() OVER (PARTITION BY node_id ORDER BY recorded_at DESC) = 1)
+WHERE op = 'assert' AND (valid_from IS NULL OR valid_from <= valid_at)
+  AND (valid_to IS NULL OR valid_to > valid_at);
+
+CREATE OR REPLACE MACRO edges_asof(valid_at, known_at) AS TABLE
+SELECT * EXCLUDE (op, attrs_hash) FROM (
+  SELECT * FROM graph_edges WHERE recorded_at <= known_at
+  QUALIFY row_number() OVER (PARTITION BY edge_id ORDER BY recorded_at DESC) = 1)
+WHERE op = 'assert' AND (valid_from IS NULL OR valid_from <= valid_at)
+  AND (valid_to IS NULL OR valid_to > valid_at)
+  AND src_id IN (SELECT node_id FROM nodes_asof(valid_at, known_at))
+  AND dst_id IN (SELECT node_id FROM nodes_asof(valid_at, known_at));
+
 -- Cleaned probability: bid/ask mid if spread <= 0.10, else last trade / price.
 CREATE OR REPLACE VIEW v_market_prob AS
 SELECT source, ts, venue, market_id,

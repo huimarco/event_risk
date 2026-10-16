@@ -1,0 +1,98 @@
+qid,entity,ticker,weight,rationale
+"# Analyst priors (0-1 share of exposure), NOT sourced figures. The only hand-written input to the graph; keyed by Wikidata id."
+Q865,Taiwan,EWT,1.0,country ETF
+Q865,Taiwan,TWD=X,1.0,currency
+Q865,Taiwan,TSM,0.9,domicile; nearly all fab capacity in Taiwan
+Q865,Taiwan,2330.TW,0.9,domicile; nearly all fab capacity in Taiwan
+Q865,Taiwan,2454.TW,0.8,domicile
+Q865,Taiwan,2317.TW,0.6,domicile; large manufacturing in mainland China
+Q865,Taiwan,UMC,0.9,domicile
+Q865,Taiwan,ASX,0.8,domicile
+Q865,Taiwan,NVDA,0.5,leading-edge wafers sourced from TSMC Taiwan
+Q865,Taiwan,AMD,0.5,leading-edge wafers sourced from TSMC Taiwan
+Q865,Taiwan,AVGO,0.4,TSMC-dependent
+Q865,Taiwan,QCOM,0.4,TSMC-dependent
+Q865,Taiwan,AAPL,0.4,TSMC-dependent SoCs
+Q865,Taiwan,SMH,0.5,TSMC weight + fabless dependence
+Q865,Taiwan,SOXX,0.5,TSMC weight + fabless dependence
+Q148,China,FXI,1.0,country ETF
+Q148,China,MCHI,1.0,country ETF
+Q148,China,KWEB,1.0,country ETF
+Q148,China,CNY=X,1.0,currency
+Q148,China,BABA,0.95,domicile
+Q148,China,9988.HK,0.95,domicile
+Q148,China,0700.HK,0.95,domicile
+Q148,China,1810.HK,0.9,domicile
+Q148,China,JD,0.95,domicile
+Q148,China,BIDU,0.95,domicile
+Q148,China,NIO,0.95,domicile
+Q148,China,0981.HK,0.95,domicile
+Q148,China,PDD,0.6,domicile; large US revenue via Temu
+Q148,China,AAPL,0.35,China revenue + assembly
+Q148,China,TSLA,0.3,Shanghai plant + China sales
+Q148,China,NKE,0.25,China revenue + sourcing
+Q148,China,SBUX,0.2,China revenue
+Q148,China,QCOM,0.45,China handset revenue
+Q148,China,NVDA,0.2,China data-center revenue
+Q148,China,AMAT,0.3,China tool revenue
+Q148,China,LRCX,0.35,China tool revenue
+Q148,China,KLAC,0.35,China tool revenue
+Q148,China,ASML,0.25,China tool revenue
+Q148,China,MU,0.2,China revenue
+Q148,China,CAT,0.1,China revenue
+Q148,China,BA,0.2,China aircraft orders
+Q17,Japan,EWJ,1.0,country ETF
+Q17,Japan,JPY=X,1.0,currency
+Q17,Japan,8035.T,0.6,domicile
+Q884,South Korea,EWY,1.0,country ETF
+Q884,South Korea,KRW=X,1.0,currency
+Q884,South Korea,005930.KS,0.8,domicile
+Q884,South Korea,000660.KS,0.8,domicile
+Q8646,Hong Kong,9988.HK,0.5,HK listing
+Q8646,Hong Kong,0700.HK,0.5,HK listing
+Q713418,TSMC,TSM,1.0,issuer
+Q713418,TSMC,2330.TW,1.0,issuer
+Q182477,Nvidia,NVDA,1.0,issuer
+Q648533,Semiconductor Manufacturing International Corporation,0981.HK,1.0,issuer
+Q297879,ASML,ASML,1.0,issuer
+Q1636958,Xiaomi,1810.HK,1.0,issuer
+Q20718,Samsung Electronics,005930.KS,1.0,issuer
+Q66,Boeing,BA,1.0,issuer
+Q2986369,Semiconductor industry,SMH,1.0,sector ETF
+Q2986369,Semiconductor industry,SOXX,1.0,sector ETF
+Q2986369,Semiconductor industry,TSM,1.0,sector member
+Q2986369,Semiconductor industry,NVDA,1.0,sector member
+Q2986369,Semiconductor industry,AMD,1.0,sector member
+Q2986369,Semiconductor industry,AVGO,1.0,sector member
+Q2986369,Semiconductor industry,QCOM,1.0,sector member
+Q2986369,Semiconductor industry,INTC,1.0,sector member
+Q2986369,Semiconductor industry,MU,1.0,sector member
+Q2986369,Semiconductor industry,TXN,1.0,sector member
+Q2986369,Semiconductor industry,ADI,1.0,sector member
+Q2986369,Semiconductor industry,MRVL,1.0,sector member
+Q2986369,Semiconductor industry,NXPI,1.0,sector member
+Q2986369,Semiconductor industry,AMAT,1.0,sector member
+Q2986369,Semiconductor industry,LRCX,1.0,sector member
+Q2986369,Semiconductor industry,KLAC,1.0,sector member
+Q2986369,Semiconductor industry,ASML,1.0,sector member
+Q2986369,Semiconductor industry,8035.T,1.0,sector member
+Q2986369,Semiconductor industry,000660.KS,1.0,sector member
+Q392933,Arms industry,ITA,1.0,sector ETF
+Q392933,Arms industry,LMT,1.0,sector member
+Q392933,Arms industry,RTX,1.0,sector member
+Q392933,Arms industry,NOC,1.0,sector member
+Q392933,Arms industry,GD,1.0,sector member
+Q190444,Rare-earth element,MP,0.9,US rare-earth producer
+Q190444,Rare-earth element,REMX,1.0,rare-earth / strategic metals ETF
+Q51557538,China–United States trade war,AAPL,0.4,tariffs on China-assembled hardware
+Q51557538,China–United States trade war,NKE,0.4,tariffs on Asia-sourced goods
+Q51557538,China–United States trade war,BA,0.4,Chinese aircraft orders
+Q51557538,China–United States trade war,CAT,0.3,
+Q51557538,China–United States trade war,NVDA,0.4,China export licensing
+Q51557538,China–United States trade war,AMD,0.3,China export licensing
+Q51557538,China–United States trade war,AMAT,0.4,tool export controls
+Q51557538,China–United States trade war,LRCX,0.4,tool export controls
+Q51557538,China–United States trade war,KLAC,0.4,tool export controls
+Q51557538,China–United States trade war,QCOM,0.4,China handset revenue
+Q51557538,China–United States trade war,FXI,0.5,
+Q51557538,China–United States trade war,CNY=X,0.5,

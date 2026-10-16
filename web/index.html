@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Risk Graph</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+  /* Roles, not raw hex. Node colours = categorical slots 1-3 (validated all-pairs, both modes);
+     shapes and visible labels carry identity too, so colour is never alone. */
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --hairline: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10); --hover: rgba(11,11,11,0.04);
+    --proposition: #2a78d6; --entity: #eb6834; --security: #1baf7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+      --hairline: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10); --hover: rgba(255,255,255,0.05);
+      --proposition: #3987e5; --entity: #d95926; --security: #199e70;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: grid; grid-template-rows: auto 1fr; background: var(--page);
+         color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--hairline); }
+  header h1 { font-size: 15px; font-weight: 600; margin: 0 auto 0 0; }
+  header label { color: var(--ink-2); font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  input, select, button { font: inherit; color: var(--ink); background: var(--surface);
+         border: 1px solid var(--axis); border-radius: 6px; padding: 4px 8px; }
+  main { display: grid; grid-template-columns: 300px 1fr 360px; min-height: 0; }
+  aside, section { min-height: 0; overflow: auto; }
+  aside { border-right: 1px solid var(--hairline); display: flex; flex-direction: column; }
+  .tabs { display: flex; gap: 4px; padding: 10px 12px 0; }
+  .tabs button { border: 0; background: none; color: var(--ink-2); padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; background: var(--hover); }
+  #search { margin: 10px 12px; }
+  #list { list-style: none; margin: 0; padding: 0 0 12px; overflow: auto; }
+  #list li { padding: 8px 12px; cursor: pointer; display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: baseline; }
+  #list li:hover, #list li[aria-current="true"] { background: var(--hover); }
+  #list .name { overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  #list .num { color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; font-size: 13px; }
+  .swatch { width: 10px; height: 10px; display: inline-block; align-self: center; }
+  .swatch.proposition { background: var(--proposition); border-radius: 50%; }
+  .swatch.entity { background: var(--entity); transform: rotate(45deg) scale(.85); }
+  .swatch.security { background: var(--security); border-radius: 2px; }
+  #canvas-wrap { position: relative; background: var(--surface); }
+  #graph { position: absolute; inset: 0; }
+  .legend { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 14px; padding: 6px 10px;
+            background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; color: var(--ink-2); font-size: 12px; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend .dash { width: 18px; border-top: 2px dashed var(--muted); }
+  .empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); pointer-events: none; }
+  .empty[hidden] { display: none; }
+  #detail { border-left: 1px solid var(--hairline); padding: 16px; }
+  #detail h2 { font-size: 16px; margin: 0 0 4px; line-height: 1.35; }
+  #detail .kind { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .hero { display: flex; align-items: baseline; gap: 10px; margin: 12px 0; }
+  .hero b { font-size: 32px; font-weight: 600; }
+  .hero span { color: var(--ink-2); }
+  #detail h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 18px 0 6px; font-weight: 600; }
+  .row { padding: 8px 0; border-top: 1px solid var(--hairline); }
+  .row .meta { color: var(--ink-2); font-size: 13px; }
+  .row a { color: inherit; }
+  .link { cursor: pointer; text-decoration: underline; text-decoration-color: var(--axis); text-underline-offset: 2px; }
+  details summary { cursor: pointer; color: var(--ink-2); font-size: 13px; }
+  details p { color: var(--ink-2); font-size: 13px; white-space: pre-wrap; }
+  .note { color: var(--muted); font-size: 12px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Event Risk Graph</h1>
+  <label>As of <input id="asof" type="datetime-local"></label>
+  <label>Depth <select id="depth"><option>1</option><option selected>2</option></select></label>
+</header>
+<main>
+  <aside>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="propositions" aria-selected="true">Propositions</button>
+      <button role="tab" data-tab="entities">Entities</button>
+      <button role="tab" data-tab="securities">Securities</button>
+    </div>
+    <input id="search" type="search" placeholder="Search">
+    <ul id="list"></ul>
+  </aside>
+  <section id="canvas-wrap">
+    <div id="graph"></div>
+    <div class="empty" id="empty">Pick something on the left to see its connections</div>
+    <div class="legend">
+      <span><i class="swatch proposition"></i>Proposition</span>
+      <span><i class="swatch entity"></i>Entity</span>
+      <span><i class="swatch security"></i>Security</span>
+      <span><i class="dash"></i>Logical link</span>
+    </div>
+  </section>
+  <section id="detail"><p class="note">Details appear here.</p></section>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const pct = p => p == null ? "–" : `${(p * 100).toFixed(1)}%`;
+const move = d => d == null ? "" : `${d > 0 ? "▲" : d < 0 ? "▼" : "•"} ${Math.abs(d * 100).toFixed(1)} pts`;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const typeOf = id => id.startsWith("prop:") ? "proposition" : id.startsWith("sec:") ? "security" : "entity";
+const LOGICAL = new Set(["implies", "mutex", "near_equivalent"]);
+const state = { tab: "propositions", items: [], selected: null };
+
+async function api(path, params = {}) {
+  const asof = $("#asof").value;
+  const q = new URLSearchParams(Object.fromEntries(Object.entries({ ...params,
+    ...(asof ? { as_of: new Date(asof).toISOString(), known_as_of: new Date(asof).toISOString() } : {}) })
+    .filter(([, v]) => v != null)));
+  const key = localStorage.getItem("apiKey");
+  const r = await fetch(`${path}?${q}`, { headers: key ? { "X-API-Key": key } : {} });
+  if (r.status === 401) {
+    const k = prompt("API key"); if (k) { localStorage.setItem("apiKey", k); return api(path, params); }
+  }
+  if (!r.ok) throw new Error(`${r.status} ${(await r.text()).slice(0, 200)}`);
+  return r.json();
+}
+
+// ── list ─────────────────────────────────────────────────────────────────────
+async function loadList() {
+  const t = state.tab;
+  const data = t === "propositions" ? (await api("/propositions", { limit: 500 })).propositions
+             : t === "entities" ? (await api("/entities")).sort((a, b) => b.n_propositions - a.n_propositions)
+             : (await api("/securities")).sort((a, b) => b.n_exposures - a.n_exposures);
+  state.items = data;
+  renderList();
+}
+function renderList() {
+  const q = $("#search").value.toLowerCase();
+  const kind = state.tab.slice(0, -1).replace("entitie", "entity");
+  $("#list").innerHTML = state.items.filter(x => x.name.toLowerCase().includes(q) || (x.ticker || "").toLowerCase().includes(q))
+    .slice(0, 300).map(x => `<li data-id="${esc(x.id)}" ${x.id === state.selected ? 'aria-current="true"' : ""}>
+      <i class="swatch ${kind}"></i><span class="name">${esc(x.ticker ? `${x.ticker} · ${x.name}` : x.name)}</span>
+      <span class="num">${kind === "proposition" ? `${pct(x.prob)}<br>${move(x.change_24h)}`
+                        : kind === "entity" ? `${x.n_propositions} props` : `${x.n_exposures} links`}</span></li>`).join("");
+}
+
+// ── graph ────────────────────────────────────────────────────────────────────
+const network = new vis.Network($("#graph"), { nodes: [], edges: [] }, {
+  physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -80, springLength: 150, avoidOverlap: 0.6 },
+             stabilization: { iterations: 250 } },
+  interaction: { hover: true, tooltipDelay: 120 },
+  nodes: { font: { size: 13, face: "system-ui" }, borderWidth: 2 },
+  edges: { smooth: { type: "continuous" }, selectionWidth: 1 },
+});
+network.on("stabilizationIterationsDone", () => network.setOptions({ physics: false }));
+network.on("click", e => { if (e.nodes.length) select(e.nodes[0]); });
+
+async function drawGraph(id) {
+  const g = await api(`/graph/${encodeURIComponent(id)}`, { depth: $("#depth").value, fanout: 15 });
+  const surface = css("--surface"), ink = css("--ink"), muted = css("--muted");
+  const shape = { proposition: "dot", entity: "diamond", security: "square" };
+  const nodes = g.nodes.map(n => {
+    const t = n.type, color = css(`--${t}`), root = n.id === g.root;
+    // label the selected node and its direct neighbours; farther nodes show their name on hover
+    const label = n.depth > 1 ? undefined : n.name.length > 42 ? n.name.slice(0, 40) + "…" : n.name;
+    return { id: n.id, label, shape: shape[t], size: root ? 18 : n.depth > 1 ? 6 : t === "proposition" ? 9 : 11,
+      color: { background: color, border: root ? ink : surface, highlight: { background: color, border: ink },
+               hover: { background: color, border: ink } },
+      font: { color: ink, strokeWidth: 3, strokeColor: surface, bold: root },
+      title: `${n.name}\n${t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
+  });
+  const edges = g.edges.map(e => ({ from: e.src, to: e.dst, width: 1 + 2 * Math.min(e.weight ?? 0.3, 1),
+    dashes: LOGICAL.has(e.type), arrows: e.type === "implies" ? { to: { enabled: true, scaleFactor: .5 } } : undefined,
+    color: { color: css("--axis"), highlight: muted, hover: muted },
+    title: `${e.type}${e.weight != null ? ` · ${e.weight.toFixed(2)}` : ""}${e.note ? `\n${e.note}` : ""}\n${e.provenance}` }));
+  network.setOptions({ physics: true });
+  network.setData({ nodes, edges });
+  $("#empty").hidden = true;
+}
+
+// ── detail ───────────────────────────────────────────────────────────────────
+const go = (id, text) => `<span class="link" data-go="${esc(id)}">${esc(text)}</span>`;
+async function drawDetail(id) {
+  const t = typeOf(id), el = $("#detail");
+  if (t === "proposition") {
+    const p = await api(`/propositions/${encodeURIComponent(id)}`);
+    el.innerHTML = `<div class="kind">Proposition · ${esc((p.venues || []).join(", "))}</div><h2>${esc(p.name)}</h2>
+      <div class="hero"><b>${pct(p.prob)}</b>${p.change_24h != null ? `<span>${move(p.change_24h)} in 24h</span>` : ""}</div>
+      <h3>Markets</h3>${p.markets.map(m => `<div class="row">${esc(m.venue)} · ${pct(m.prob)}
+        <div class="meta">${esc(m.name)}</div>${m.note ? `<div class="meta">${esc(m.note)}</div>` : ""}
+        ${m.rules ? `<details><summary>Rules</summary><p>${esc(m.rules)}</p></details>` : ""}</div>`).join("")}
+      <h3>Involves</h3>${p.entities.map(e => `<div class="row">${go(e.id, e.name)}</div>`).join("") || '<p class="note">None</p>'}
+      ${p.logical.length ? `<h3>Logical links</h3>${p.logical.map(l => `<div class="row">${esc(l.relation)} ${l.direction === "out" ? "→" : "←"}
+        ${go(l.proposition.id, l.proposition.name)}${l.note ? `<div class="meta">${esc(l.note)}</div>` : ""}</div>`).join("")}` : ""}`;
+  } else if (t === "entity") {
+    const e = await api(`/entities/${encodeURIComponent(id)}`);
+    el.innerHTML = `<div class="kind">Entity · ${esc(e.entity_type)}</div><h2>${esc(e.name)}</h2>
+      <p class="meta">${esc(e.description || "")}</p>
+      ${e.wikipedia ? `<p><a href="https://en.wikipedia.org/wiki/${encodeURIComponent(e.wikipedia)}" target="_blank" rel="noopener">Wikipedia</a> · ${esc(e.qid)}</p>` : ""}
+      <h3>Propositions (${e.propositions.length})</h3>${e.propositions.slice(0, 25).map(p => `<div class="row">${go(p.id, p.name)}
+        <div class="meta">${pct(p.prob)} ${move(p.change_24h)}</div></div>`).join("") || '<p class="note">None</p>'}
+      <h3>Linked entities</h3>${e.links.slice(0, 15).map(l => `<div class="row">${go(l.entity.id, l.entity.name)}
+        <div class="meta">${esc(l.relation)} · ${l.weight != null ? l.weight.toFixed(2) : "–"}</div></div>`).join("") || '<p class="note">None</p>'}
+      ${e.exposures.length ? `<h3>Exposed securities</h3>${e.exposures.map(x => `<div class="row">${go(x.security.id, x.security.name)}
+        <div class="meta">${x.weight.toFixed(2)} · ${esc(x.rationale || "")}</div></div>`).join("")}` : ""}`;
+  } else {
+    const ticker = id.slice(4), x = await api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 25 });
+    el.innerHTML = `<div class="kind">Security · ${esc(ticker)}</div><h2>${esc(x.security.name)}</h2>
+      <h3>Most exposed propositions</h3>${x.exposures.map(r => `<div class="row">${go(r.id, r.name)}
+        <div class="meta">score ${r.score.toFixed(2)} · ${pct(r.prob)} · via ${esc(r.path.slice(1, -1).map(p => p.name).join(" → "))}</div></div>`).join("")
+        || '<p class="note">No live propositions linked.</p>'}
+      <p class="note">Scores rank relevance through the graph; they are not betas.</p>`;
+  }
+}
+
+async function select(id) {
+  state.selected = id;
+  renderList();
+  try { await Promise.all([drawGraph(id), drawDetail(id)]); }
+  catch (err) { $("#detail").innerHTML = `<p class="note">${esc(err.message)}</p>`; }
+}
+
+// ── wiring ───────────────────────────────────────────────────────────────────
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
+  state.tab = b.dataset.tab; $("#search").value = ""; loadList();
+});
+$("#search").oninput = renderList;
+$("#list").onclick = e => { const li = e.target.closest("li"); if (li) select(li.dataset.id); };
+$("#detail").onclick = e => { const a = e.target.closest("[data-go]"); if (a) select(a.dataset.go); };
+$("#depth").onchange = () => state.selected && drawGraph(state.selected);
+$("#asof").onchange = () => { loadList(); if (state.selected) select(state.selected); };
+loadList().catch(err => $("#list").innerHTML = `<li>${esc(err.message)}</li>`);
+</script>
+</body>
+</html>

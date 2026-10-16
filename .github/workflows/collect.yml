@@ -12,7 +12,7 @@ concurrency:
 jobs:
   snapshot:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45   # first graph build fetches Wikipedia data once (~10 min); later runs ~1 min
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,6 +20,11 @@ jobs:
           python-version: "3.12"
       - run: pip install requests pyarrow duckdb
       - run: python collector.py
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      - run: python graph_build.py   # diff-only; records nothing when the graph is unchanged
+        if: ${{ !cancelled() }}
         env:
           DB: md:geo_odds
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

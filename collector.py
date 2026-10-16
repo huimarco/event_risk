@@ -8,8 +8,8 @@ knowledge graph and event betas need (see schema.sql):
 
 backfill.py adds older hourly history (source='backfill'); prices.py loads security prices.
 
-DB: md:geo_odds   -> MotherDuck cloud database (needs MOTHERDUCK_TOKEN env var)
-    geo_odds.duckdb -> local file (default, for testing)
+DB: md:geo_odds (default) -> MotherDuck cloud database (needs MOTHERDUCK_TOKEN env var).
+    All data lives in MotherDuck; a local file path works only for throwaway tests.
 """
 import hashlib, json, logging, os, re, sys, uuid
 from datetime import datetime, timezone
@@ -19,7 +19,7 @@ import duckdb, pyarrow as pa, requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-DB = os.getenv("DB", "geo_odds.duckdb")
+DB = os.getenv("DB", "md:geo_odds")
 KALSHI_CATEGORIES = set(os.getenv("KALSHI_CATEGORIES", "World,Politics").split(","))
 POLY_TAGS = os.getenv("POLY_TAGS", "geopolitics").split(",")
 THEME_REGEX = re.compile(os.getenv("THEME_REGEX",  # MVP theme: US-China / Taiwan / semis
@@ -178,10 +178,11 @@ VERSION_COLS = ["event_id", "series_id", "event_title", "title", "subtitle", "ru
 JSON_COLS = {"resolution_sources", "outcomes", "clob_token_ids", "tags"}
 TIME_COLS = {"open_time", "close_time", "expiration_time"}
 FLOAT_COLS = {"yes_bid", "yes_ask", "last", "volume_24h", "open_interest", "floor_strike",
-              "cap_strike", "close", "adj_close", "volume"}
+              "cap_strike", "close", "adj_close", "volume", "sign", "weight", "confidence"}
 
 def pa_type(col):
-    if col in ("ts", "first_seen_at", "fetched_at", "started_at", "finished_at") or col in TIME_COLS:
+    if col in ("ts", "first_seen_at", "fetched_at", "started_at", "finished_at", "valid_from",
+               "valid_to", "recorded_at") or col in TIME_COLS:
         return TS
     if col in FLOAT_COLS: return pa.float64()
     if col in ("can_close_early", "neg_risk"): return pa.bool_()
