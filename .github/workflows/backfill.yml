@@ -1,0 +1,23 @@
+name: backfill
+
+on:
+  workflow_dispatch:          # one-time / manual; re-runs skip markets already backfilled
+
+concurrency:
+  group: backfill
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests pyarrow duckdb
+      - run: python backfill.py
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

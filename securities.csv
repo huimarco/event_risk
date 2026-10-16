@@ -1,0 +1,64 @@
+ticker,name,asset_class,country,role
+SPY,SPDR S&P 500 ETF,etf,US,benchmark
+QQQ,Invesco QQQ (Nasdaq-100),etf,US,benchmark
+ACWI,iShares MSCI ACWI,etf,Global,benchmark
+EEM,iShares MSCI Emerging Markets,etf,Global,benchmark
+SMH,VanEck Semiconductor ETF,etf,US,sector
+SOXX,iShares Semiconductor ETF,etf,US,sector
+EWT,iShares MSCI Taiwan,etf,TW,country
+FXI,iShares China Large-Cap,etf,CN,country
+MCHI,iShares MSCI China,etf,CN,country
+KWEB,KraneShares China Internet,etf,CN,country
+EWY,iShares MSCI South Korea,etf,KR,country
+EWJ,iShares MSCI Japan,etf,JP,country
+TSM,Taiwan Semiconductor (ADR),equity,TW,exposure
+2330.TW,Taiwan Semiconductor,equity,TW,exposure
+2454.TW,MediaTek,equity,TW,exposure
+2317.TW,Hon Hai Precision (Foxconn),equity,TW,exposure
+UMC,United Microelectronics (ADR),equity,TW,exposure
+ASX,ASE Technology (ADR),equity,TW,exposure
+NVDA,NVIDIA,equity,US,exposure
+AMD,Advanced Micro Devices,equity,US,exposure
+AVGO,Broadcom,equity,US,exposure
+QCOM,Qualcomm,equity,US,exposure
+INTC,Intel,equity,US,exposure
+MU,Micron Technology,equity,US,exposure
+TXN,Texas Instruments,equity,US,exposure
+ADI,Analog Devices,equity,US,exposure
+MRVL,Marvell Technology,equity,US,exposure
+NXPI,NXP Semiconductors,equity,NL,exposure
+AMAT,Applied Materials,equity,US,exposure
+LRCX,Lam Research,equity,US,exposure
+KLAC,KLA,equity,US,exposure
+ASML,ASML Holding,equity,NL,exposure
+8035.T,Tokyo Electron,equity,JP,exposure
+005930.KS,Samsung Electronics,equity,KR,exposure
+000660.KS,SK hynix,equity,KR,exposure
+0981.HK,SMIC,equity,CN,exposure
+BABA,Alibaba (ADR),equity,CN,exposure
+9988.HK,Alibaba,equity,CN,exposure
+0700.HK,Tencent,equity,CN,exposure
+1810.HK,Xiaomi,equity,CN,exposure
+PDD,PDD Holdings,equity,CN,exposure
+JD,JD.com (ADR),equity,CN,exposure
+BIDU,Baidu (ADR),equity,CN,exposure
+NIO,NIO (ADR),equity,CN,exposure
+AAPL,Apple,equity,US,exposure
+TSLA,Tesla,equity,US,exposure
+NKE,Nike,equity,US,exposure
+SBUX,Starbucks,equity,US,exposure
+CAT,Caterpillar,equity,US,exposure
+BA,Boeing,equity,US,exposure
+LMT,Lockheed Martin,equity,US,exposure
+RTX,RTX,equity,US,exposure
+NOC,Northrop Grumman,equity,US,exposure
+GD,General Dynamics,equity,US,exposure
+ITA,iShares US Aerospace & Defense,etf,US,sector
+MP,MP Materials,equity,US,exposure
+REMX,VanEck Rare Earth & Strategic Metals,etf,Global,sector
+GLD,SPDR Gold Shares,etf,Global,safe_haven
+TLT,iShares 20+ Year Treasury,etf,US,safe_haven
+CNY=X,USD/CNY,fx,CN,exposure
+TWD=X,USD/TWD,fx,TW,exposure
+KRW=X,USD/KRW,fx,KR,exposure
+JPY=X,USD/JPY,fx,JP,exposure

@@ -1,0 +1,25 @@
+name: prices
+
+on:
+  schedule:
+    - cron: "30 22 * * 1-5"   # UTC, after the US close; Asian closes from the same day are final by then
+  workflow_dispatch:
+
+concurrency:
+  group: prices
+  cancel-in-progress: false
+
+jobs:
+  prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests pyarrow duckdb
+      - run: python prices.py
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
