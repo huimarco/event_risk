@@ -95,6 +95,13 @@
   .flow .arrow { color: var(--muted); }
   .formula { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: var(--ink); background: var(--surface);
              border: 1px solid var(--ring); border-radius: 8px; padding: 12px 14px; margin: 8px 0; overflow-x: auto; }
+  .doc pre { font: 12px/1.5 ui-monospace, Menlo, monospace; color: var(--ink); background: var(--surface);
+             border: 1px solid var(--ring); border-radius: 8px; padding: 12px 14px; overflow-x: auto; margin: 8px 0 4px; }
+  .doc .endpoint { margin: 22px 0 6px; font: 600 13px ui-monospace, Menlo, monospace; color: var(--ink); }
+  .doc .endpoint span { color: var(--proposition); margin-right: 8px; }
+  body.api main, body.api .explore-only, body.api #about { display: none; }
+  #api { display: none; overflow: auto; }
+  body.api #api { display: block; }
   .tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--axis); color: var(--ink-2); }
 </style>
 </head>
@@ -104,6 +111,7 @@
   <nav role="tablist">
     <button role="tab" data-view="explore" aria-selected="true">Explore</button>
     <button role="tab" data-view="about">How it works</button>
+    <button role="tab" data-view="api">API</button>
   </nav>
   <label class="explore-only">As of <input id="asof" type="datetime-local"></label>
   <label class="explore-only">Depth <select id="depth"><option>1</option><option selected>2</option></select></label>
@@ -216,6 +224,84 @@
     <li>Exposure scores have no direction or size yet; measured "event betas" (how prices actually moved when odds jumped) are the next step.</li>
     <li>Securities and their exposure weights still cover one theme (US–China, Taiwan, semiconductors), so many propositions have no linked securities yet.</li>
   </ul>
+</article></section>
+<section id="api"><article class="doc">
+  <h2>Using the API</h2>
+  <p class="lede">Everything in the explorer is available as JSON over HTTP. Base URL: <code class="base">BASE</code>.
+    Interactive reference with a "try it" button for every endpoint: <a class="base-link" href="/docs">/docs</a>.</p>
+
+  <h3>Basics</h3>
+  <table>
+    <tr><td>Authentication</td><td>If the server has API keys configured, send yours in the <code>X-API-Key</code> header. A missing or wrong key returns <code>401</code>.</td></tr>
+    <tr><td>Time travel</td><td>Every read accepts <code>as_of</code> (the world at that moment) and <code>known_as_of</code> (only what the graph had recorded by then), as ISO 8601 timestamps, e.g. <code>2026-06-01T00:00:00Z</code>. Both default to now. Set both to the same time for a point-in-time, backtest-safe view.</td></tr>
+    <tr><td>IDs</td><td>Propositions <code>prop:polymarket:665270</code> · entities <code>wd:Q865</code> (Wikidata id; Taiwan) · securities <code>sec:TSM</code> · markets <code>mkt:kalshi:KXTAIWANLVL4-29JAN01</code>. Get them from the list endpoints.</td></tr>
+    <tr><td>Probabilities</td><td>0–1. <code>prob</code> is the blended price of a proposition's markets; <code>change_24h</code> is in probability units (0.05 = 5 points).</td></tr>
+    <tr><td>Live only</td><td>List endpoints return propositions priced in the last 7 days unless <code>include_closed=true</code>.</td></tr>
+    <tr><td>Errors</td><td><code>401</code> bad key · <code>404</code> id not found at that <code>as_of</code> / <code>known_as_of</code> · <code>422</code> invalid parameter.</td></tr>
+  </table>
+
+  <h3>Quick start</h3>
+<pre>curl -H "X-API-Key: $KEY" "BASE/propositions?q=taiwan&amp;sort=move&amp;limit=5"</pre>
+<pre>import requests
+api = requests.Session(); api.headers["X-API-Key"] = KEY      # omit if the server has no keys
+top = api.get("BASE/propositions", params={"sort": "move", "limit": 10}).json()
+for p in top["propositions"]:
+    print(f'{p["prob"]:.1%}  {p["change_24h"] or 0:+.1%}  {p["name"]}')</pre>
+
+  <h3>Propositions</h3>
+  <div class="endpoint"><span>GET</span>/propositions</div>
+  <p>List propositions with probability and 24h change. Params: <code>q</code> (name search), <code>entity</code> (only those involving this entity id),
+    <code>sort</code> = <code>move</code> (largest |24h change|, default) · <code>prob</code> · <code>name</code>, <code>limit</code> (≤ 500), <code>include_closed</code>.</p>
+<pre>{ "count": 151, "propositions": [
+    { "id": "prop:polymarket:567621", "name": "Will China invade Taiwan by end of 2026?",
+      "prob": 0.0215, "prob_24h_ago": 0.0205, "change_24h": 0.001,
+      "close_time": "2027-01-01 04:59:00+00:00", "venues": ["polymarket"] } ] }</pre>
+
+  <div class="endpoint"><span>GET</span>/propositions/{id}</div>
+  <p>One proposition: its venue markets (price, rules text), the entities it involves, and logical links
+    (<code>implies</code>, <code>mutex</code>, <code>near_equivalent</code>) to other propositions, with the reason for each.</p>
+
+  <div class="endpoint"><span>GET</span>/propositions/{id}/history</div>
+  <p>Blended probability over time. Params: <code>start</code>, <code>end</code> (default: last 30 days), <code>interval</code> = <code>1h</code> · <code>1d</code>.
+    Each point: <code>{"t", "prob", "n_markets"}</code>.</p>
+
+  <h3>Graph</h3>
+  <div class="endpoint"><span>GET</span>/graph/{node_id}</div>
+  <p>The neighbourhood of any proposition, entity or security, for visualisation: <code>nodes</code> (id, type, name, depth, prob) and
+    <code>edges</code> (src, dst, type, weight, provenance, note). Params: <code>depth</code> (1–3), <code>fanout</code> (strongest links kept per node).</p>
+
+  <div class="endpoint"><span>GET</span>/entities</div>
+  <p>All entities, optionally <code>type</code> = <code>person</code> · <code>country</code> · <code>organisation_or_place</code> · <code>concept</code>, with how many propositions involve each.</p>
+
+  <div class="endpoint"><span>GET</span>/entities/{id}</div>
+  <p>One entity: Wikidata description and Wikipedia link, propositions involving it, linked entities (with relation and strength), and securities exposed to it.</p>
+
+  <h3>Securities and portfolios</h3>
+  <div class="endpoint"><span>GET</span>/securities</div>
+  <p>All securities (ticker, name, asset class, country, sector, index) and how many exposure links each has.</p>
+
+  <div class="endpoint"><span>GET</span>/securities/{ticker}/exposures</div>
+  <p>Propositions a security is exposed to, strongest first, each with the path through the graph. Params: <code>min_score</code> (default 0.1), <code>limit</code>, <code>include_closed</code>.</p>
+<pre>{ "security": { "id": "sec:TSM", "name": "Taiwan Semiconductor (ADR)" },
+  "exposures": [ { "id": "prop:kalshi:KXTAIWANLVL4-29JAN01", "name": "…Level 4 warning for Taiwan…",
+                   "prob": 0.29, "score": 0.9,
+                   "path": [ {"id": "prop:kalshi:KXTAIWANLVL4-29JAN01"}, {"id": "wd:Q865", "name": "Taiwan"}, {"id": "sec:TSM"} ] } ] }</pre>
+
+  <div class="endpoint"><span>POST</span>/portfolio/scan</div>
+  <p>Send holdings, get back the geopolitical propositions the portfolio is most exposed to: exposure = Σ weight × exposure score.
+    <code>moved</code> flags propositions whose probability moved at least <code>move_threshold</code> in 24h.</p>
+<pre>curl -X POST "BASE/portfolio/scan" -H "Content-Type: application/json" -H "X-API-Key: $KEY" \
+  -d '{"holdings": [{"ticker": "TSM", "weight": 0.10}, {"ticker": "NVDA", "weight": 0.08}],
+       "move_threshold": 0.05, "limit": 10}'</pre>
+<pre>{ "unknown_tickers": [], "count": 150, "propositions": [
+    { "id": "prop:polymarket:567621", "name": "Will China invade Taiwan by end of 2026?", "prob": 0.0215,
+      "change_24h": 0.001, "exposure": 0.177, "moved": false,
+      "holdings": [ { "ticker": "TSM", "weight": 0.1, "score": 0.9, "via": ["Taiwan"] } ] } ] }</pre>
+
+  <h3>Other</h3>
+  <div class="endpoint"><span>GET</span>/health</div>
+  <p>Service status and when data was last collected successfully.</p>
+  <p class="note">Exposure scores rank relevance through the graph; they are not betas and carry no direction. Security prices come from Yahoo Finance for research use.</p>
 </article></section>
 <script>
 const $ = s => document.querySelector(s);
@@ -341,6 +427,7 @@ async function select(id) {
 document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
   document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
   document.body.classList.toggle("about", b.dataset.view === "about");
+  document.body.classList.toggle("api", b.dataset.view === "api");
   if (b.dataset.view === "explore") network.redraw();
 });
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
@@ -356,6 +443,8 @@ $("#list").onclick = e => { const li = e.target.closest("li"); if (li) select(li
 $("#detail").onclick = e => { const a = e.target.closest("[data-go]"); if (a) select(a.dataset.go); };
 $("#depth").onchange = () => state.selected && drawGraph(state.selected);
 $("#asof").onchange = () => { loadList(); if (state.selected) select(state.selected); };
+document.querySelectorAll("#api .base, #api pre").forEach(el => el.innerHTML = el.innerHTML.replaceAll("BASE", location.origin));
+document.querySelector("#api .base-link").href = `${location.origin}/docs`;
 loadList().catch(err => $("#list").innerHTML = `<li>${esc(err.message)}</li>`);
 </script>
 </body>

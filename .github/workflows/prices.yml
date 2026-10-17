@@ -12,7 +12,7 @@ concurrency:
 jobs:
   prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45   # ~550 tickers; the first run loads history since 2020
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

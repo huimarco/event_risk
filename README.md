@@ -11,6 +11,7 @@ a point-in-time knowledge graph linking markets → propositions → entities �
 | `graph_build.py` | after each collect | `graph_nodes`, `graph_edges` (diff only) |
 | `prices.py` | weekdays 22:30 UTC | `security_prices` (Yahoo, research use only) |
 | `backfill.py` | manual, one-time | `market_snapshots` (source=`backfill`) |
+| `securities.py` | manual, after index rebalances | `securities.csv` (S&P 500 from Wikipedia; review and commit) |
 
 All data lives in MotherDuck: put `MOTHERDUCK_TOKEN` in `.env` (copy `.env.example`; git-ignored) or the environment. `DB` defaults to `md:geo_odds`.
 
@@ -33,6 +34,8 @@ The same server hosts an interactive explorer at `/` (`web/index.html`): browse 
 (sorted by 24h move), entities and securities; click anything to see its neighbourhood as a
 network and its details (prices, markets and rules, Wikipedia description, exposures); set
 "As of" to view the graph and prices at any past moment.
+
+The explorer's **API** tab documents every endpoint with examples; `/docs` is the interactive reference.
 
 Every read accepts `as_of` (state of the world at T) and `known_as_of` (what the graph knew at T);
 set both to T for a point-in-time, backtest-safe view. Set `API_KEYS` to require `X-API-Key`.

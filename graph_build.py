@@ -268,7 +268,8 @@ def build(markets, prices, ents):
     with open(ROOT / "securities.csv") as f:
         for s in csv.DictReader(f):
             add_n(node(f"sec:{s['ticker']}", "security", s["name"], REFERENCE_VALID_FROM, ticker=s["ticker"],
-                       asset_class=s["asset_class"], country=s["country"], role=s["role"]))
+                       **{k: s.get(k) or None for k in ("asset_class", "country", "role", "sector",
+                                                       "sub_industry", "issuer_qid", "index")}))
     for a, b, kind, w in ents.links:
         add_e(edge(a, b, kind, REFERENCE_VALID_FROM, weight=w or 0.0, confidence=0.9 if kind != "related" else 0.6,
                    provenance="wikidata" if kind != "related" else "wikipedia_cooccurrence"))

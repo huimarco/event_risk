@@ -1,64 +1,544 @@
-ticker,name,asset_class,country,role
-SPY,SPDR S&P 500 ETF,etf,US,benchmark
-QQQ,Invesco QQQ (Nasdaq-100),etf,US,benchmark
-ACWI,iShares MSCI ACWI,etf,Global,benchmark
-EEM,iShares MSCI Emerging Markets,etf,Global,benchmark
-SMH,VanEck Semiconductor ETF,etf,US,sector
-SOXX,iShares Semiconductor ETF,etf,US,sector
-EWT,iShares MSCI Taiwan,etf,TW,country
-FXI,iShares China Large-Cap,etf,CN,country
-MCHI,iShares MSCI China,etf,CN,country
-KWEB,KraneShares China Internet,etf,CN,country
-EWY,iShares MSCI South Korea,etf,KR,country
-EWJ,iShares MSCI Japan,etf,JP,country
-TSM,Taiwan Semiconductor (ADR),equity,TW,exposure
-2330.TW,Taiwan Semiconductor,equity,TW,exposure
-2454.TW,MediaTek,equity,TW,exposure
-2317.TW,Hon Hai Precision (Foxconn),equity,TW,exposure
-UMC,United Microelectronics (ADR),equity,TW,exposure
-ASX,ASE Technology (ADR),equity,TW,exposure
-NVDA,NVIDIA,equity,US,exposure
-AMD,Advanced Micro Devices,equity,US,exposure
-AVGO,Broadcom,equity,US,exposure
-QCOM,Qualcomm,equity,US,exposure
-INTC,Intel,equity,US,exposure
-MU,Micron Technology,equity,US,exposure
-TXN,Texas Instruments,equity,US,exposure
-ADI,Analog Devices,equity,US,exposure
-MRVL,Marvell Technology,equity,US,exposure
-NXPI,NXP Semiconductors,equity,NL,exposure
-AMAT,Applied Materials,equity,US,exposure
-LRCX,Lam Research,equity,US,exposure
-KLAC,KLA,equity,US,exposure
-ASML,ASML Holding,equity,NL,exposure
-8035.T,Tokyo Electron,equity,JP,exposure
-005930.KS,Samsung Electronics,equity,KR,exposure
-000660.KS,SK hynix,equity,KR,exposure
-0981.HK,SMIC,equity,CN,exposure
-BABA,Alibaba (ADR),equity,CN,exposure
-9988.HK,Alibaba,equity,CN,exposure
-0700.HK,Tencent,equity,CN,exposure
-1810.HK,Xiaomi,equity,CN,exposure
-PDD,PDD Holdings,equity,CN,exposure
-JD,JD.com (ADR),equity,CN,exposure
-BIDU,Baidu (ADR),equity,CN,exposure
-NIO,NIO (ADR),equity,CN,exposure
-AAPL,Apple,equity,US,exposure
-TSLA,Tesla,equity,US,exposure
-NKE,Nike,equity,US,exposure
-SBUX,Starbucks,equity,US,exposure
-CAT,Caterpillar,equity,US,exposure
-BA,Boeing,equity,US,exposure
-LMT,Lockheed Martin,equity,US,exposure
-RTX,RTX,equity,US,exposure
-NOC,Northrop Grumman,equity,US,exposure
-GD,General Dynamics,equity,US,exposure
-ITA,iShares US Aerospace & Defense,etf,US,sector
-MP,MP Materials,equity,US,exposure
-REMX,VanEck Rare Earth & Strategic Metals,etf,Global,sector
-GLD,SPDR Gold Shares,etf,Global,safe_haven
-TLT,iShares 20+ Year Treasury,etf,US,safe_haven
-CNY=X,USD/CNY,fx,CN,exposure
-TWD=X,USD/TWD,fx,TW,exposure
-KRW=X,USD/KRW,fx,KR,exposure
-JPY=X,USD/JPY,fx,JP,exposure
+ticker,name,asset_class,country,role,sector,sub_industry,headquarters,issuer_qid,index
+000660.KS,SK hynix,equity,KR,exposure,,,,,
+005930.KS,Samsung Electronics,equity,KR,exposure,,,,,
+0700.HK,Tencent,equity,CN,exposure,,,,,
+0981.HK,SMIC,equity,CN,exposure,,,,,
+1810.HK,Xiaomi,equity,CN,exposure,,,,,
+2317.TW,Hon Hai Precision (Foxconn),equity,TW,exposure,,,,,
+2330.TW,Taiwan Semiconductor,equity,TW,exposure,,,,,
+2454.TW,MediaTek,equity,TW,exposure,,,,,
+8035.T,Tokyo Electron,equity,JP,exposure,,,,,
+9988.HK,Alibaba,equity,CN,exposure,,,,,
+AAPL,Apple,equity,US,exposure,Information Technology,"Technology Hardware, Storage & Peripherals","Cupertino, California",Q312,sp500
+ACWI,iShares MSCI ACWI,etf,Global,benchmark,,,,,
+ADI,Analog Devices,equity,US,exposure,Information Technology,Semiconductors,"Wilmington, Massachusetts",Q484930,sp500
+AMAT,Applied Materials,equity,US,exposure,Information Technology,Semiconductor Materials & Equipment,"Santa Clara, California",Q621610,sp500
+AMD,Advanced Micro Devices,equity,US,exposure,Information Technology,Semiconductors,"Santa Clara, California",Q128896,sp500
+ASML,ASML Holding,equity,NL,exposure,,,,,
+ASX,ASE Technology (ADR),equity,TW,exposure,,,,,
+AVGO,Broadcom,equity,US,exposure,Information Technology,Semiconductors,"Palo Alto, California",Q790060,sp500
+BA,Boeing,equity,US,exposure,Industrials,Aerospace & Defense,"Arlington, Virginia",Q66,sp500
+BABA,Alibaba (ADR),equity,CN,exposure,,,,,
+BIDU,Baidu (ADR),equity,CN,exposure,,,,,
+CAT,Caterpillar,equity,US,exposure,Industrials,Construction Machinery & Heavy Transportation Equipment,"Irving, Texas",Q459965,sp500
+CNY=X,USD/CNY,fx,CN,exposure,,,,,
+EEM,iShares MSCI Emerging Markets,etf,Global,benchmark,,,,,
+EWJ,iShares MSCI Japan,etf,JP,country,,,,,
+EWT,iShares MSCI Taiwan,etf,TW,country,,,,,
+EWY,iShares MSCI South Korea,etf,KR,country,,,,,
+FXI,iShares China Large-Cap,etf,CN,country,,,,,
+GD,General Dynamics,equity,US,exposure,Industrials,Aerospace & Defense,"Reston, Virginia",Q502940,sp500
+GLD,SPDR Gold Shares,etf,Global,safe_haven,,,,,
+INTC,Intel,equity,US,exposure,Information Technology,Semiconductors,"Santa Clara, California",Q248,sp500
+ITA,iShares US Aerospace & Defense,etf,US,sector,,,,,
+JD,JD.com (ADR),equity,CN,exposure,,,,,
+JPY=X,USD/JPY,fx,JP,exposure,,,,,
+KLAC,KLA,equity,US,exposure,Information Technology,Semiconductor Materials & Equipment,"Milpitas, California",Q624649,sp500
+KRW=X,USD/KRW,fx,KR,exposure,,,,,
+KWEB,KraneShares China Internet,etf,CN,country,,,,,
+LMT,Lockheed Martin,equity,US,exposure,Industrials,Aerospace & Defense,"Bethesda, Maryland",Q7240,sp500
+LRCX,Lam Research,equity,US,exposure,Information Technology,Semiconductor Materials & Equipment,"Fremont, California",Q1342041,sp500
+MCHI,iShares MSCI China,etf,CN,country,,,,,
+MP,MP Materials,equity,US,exposure,,,,,
+MRVL,Marvell Technology,equity,US,exposure,Information Technology,Semiconductors,"Santa Clara, California",Q1347782,sp500
+MU,Micron Technology,equity,US,exposure,Information Technology,Semiconductors,"Boise, Idaho",Q1197548,sp500
+NIO,NIO (ADR),equity,CN,exposure,,,,,
+NKE,Nike,equity,US,exposure,Consumer Discretionary,"Apparel, Accessories & Luxury Goods","Washington County, Oregon",Q483915,sp500
+NOC,Northrop Grumman,equity,US,exposure,Industrials,Aerospace & Defense,"West Falls Church, Virginia[1]",Q329953,sp500
+NVDA,NVIDIA,equity,US,exposure,Information Technology,Semiconductors,"Santa Clara, California",Q182477,sp500
+NXPI,NXP Semiconductors,equity,NL,exposure,Information Technology,Semiconductors,"Eindhoven, Netherlands",Q1155668,sp500
+PDD,PDD Holdings,equity,CN,exposure,,,,,
+QCOM,Qualcomm,equity,US,exposure,Information Technology,Semiconductors,"San Diego, California",Q544847,sp500
+QQQ,Invesco QQQ (Nasdaq-100),etf,US,benchmark,,,,,
+REMX,VanEck Rare Earth & Strategic Metals,etf,Global,sector,,,,,
+RTX,RTX,equity,US,exposure,Industrials,Aerospace & Defense,"Waltham, Massachusetts",Q89368734,sp500
+SBUX,Starbucks,equity,US,exposure,Consumer Discretionary,Restaurants,"Seattle, Washington",Q37158,sp500
+SMH,VanEck Semiconductor ETF,etf,US,sector,,,,,
+SOXX,iShares Semiconductor ETF,etf,US,sector,,,,,
+SPY,SPDR S&P 500 ETF,etf,US,benchmark,,,,,
+TLT,iShares 20+ Year Treasury,etf,US,safe_haven,,,,,
+TSLA,Tesla,equity,US,exposure,Consumer Discretionary,Automobile Manufacturers,"Austin, Texas",Q478214,sp500
+TSM,Taiwan Semiconductor (ADR),equity,TW,exposure,,,,,
+TWD=X,USD/TWD,fx,TW,exposure,,,,,
+TXN,Texas Instruments,equity,US,exposure,Information Technology,Semiconductors,"Dallas, Texas",Q193412,sp500
+UMC,United Microelectronics (ADR),equity,TW,exposure,,,,,
+A,Agilent Technologies,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Santa Clara, California",Q393762,sp500
+ABBV,AbbVie,equity,US,index_member,Health Care,Biotechnology,"North Chicago, Illinois",Q14662364,sp500
+ABNB,Airbnb,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","San Francisco, California",Q63327,sp500
+ABT,Abbott Laboratories,equity,US,index_member,Health Care,Health Care Equipment,"North Chicago, Illinois",Q306764,sp500
+ACGL,Arch Capital Group,equity,Bermuda,index_member,Financials,Property & Casualty Insurance,"Hamilton, Bermuda",Q28155430,sp500
+ACN,Accenture,equity,Ireland,index_member,Information Technology,IT Consulting & Other Services,"Dublin, Ireland",Q338825,sp500
+ADBE,Adobe Inc.,equity,US,index_member,Information Technology,Application Software,"San Jose, California",Q11463,sp500
+ADM,Archer Daniels Midland,equity,US,index_member,Consumer Staples,Agricultural Products & Services,"Chicago, Illinois",Q632694,sp500
+ADP,Automatic Data Processing,equity,US,index_member,Industrials,Human Resource & Employment Services,"Roseland, New Jersey",Q489080,sp500
+ADSK,Autodesk,equity,US,index_member,Information Technology,Application Software,"San Francisco, California",Q628051,sp500
+AEE,Ameren,equity,US,index_member,Utilities,Multi-Utilities,"St. Louis, Missouri",Q462984,sp500
+AEP,American Electric Power,equity,US,index_member,Utilities,Electric Utilities,"Columbus, Ohio",Q464092,sp500
+AES,AES Corporation,equity,US,index_member,Utilities,Independent Power Producers & Energy Traders,"Arlington, Virginia",Q291508,sp500
+AFL,Aflac,equity,US,index_member,Financials,Life & Health Insurance,"Columbus, Georgia",Q26311,sp500
+AIG,American International Group,equity,US,index_member,Financials,Multi-line Insurance,"New York City, New York",Q212235,sp500
+AIZ,Assurant,equity,US,index_member,Financials,Multi-line Insurance,"Atlanta, Georgia",Q4810399,sp500
+AJG,Arthur J. Gallagher & Co.,equity,US,index_member,Financials,Insurance Brokers,"Rolling Meadows, Illinois",Q4799191,sp500
+AKAM,Akamai Technologies,equity,US,index_member,Information Technology,Internet Services & Infrastructure,"Cambridge, Massachusetts",Q415598,sp500
+ALB,Albemarle Corporation,equity,US,index_member,Materials,Specialty Chemicals,"Charlotte, North Carolina",Q127074,sp500
+ALGN,Align Technology,equity,US,index_member,Health Care,Health Care Supplies,"Tempe, Arizona",Q30272258,sp500
+ALL,Allstate,equity,US,index_member,Financials,Property & Casualty Insurance,"Northbrook, Illinois",Q2645636,sp500
+ALLE,Allegion,equity,Ireland,index_member,Industrials,Building Products,"Dublin, Ireland",Q16738121,sp500
+AMCR,Amcor,equity,United Kingdom,index_member,Materials,Paper & Plastic Packaging Products & Materials,"Warmley, Bristol, United Kingdom",Q460307,sp500
+AME,Ametek,equity,US,index_member,Industrials,Electrical Components & Equipment,"Berwyn, Pennsylvania",Q470317,sp500
+AMGN,Amgen,equity,US,index_member,Health Care,Biotechnology,"Thousand Oaks, California",Q470517,sp500
+AMP,Ameriprise Financial,equity,US,index_member,Financials,Asset Management & Custody Banks,"Minneapolis, Minnesota",Q2843129,sp500
+AMT,American Tower,equity,US,index_member,Real Estate,Telecom Tower REITs,"Boston, Massachusetts",Q4745263,sp500
+AMZN,Amazon,equity,US,index_member,Consumer Discretionary,Broadline Retail,"Seattle, Washington",Q3884,sp500
+ANET,Arista Networks,equity,US,index_member,Information Technology,Communications Equipment,"Santa Clara, California",Q2861324,sp500
+AON,Aon plc,equity,United Kingdom,index_member,Financials,Insurance Brokers,"London, United Kingdom",Q739518,sp500
+AOS,A. O. Smith,equity,US,index_member,Industrials,Building Products,"Milwaukee, Wisconsin",Q4648219,sp500
+APA,APA Corporation,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Houston, Texas",Q119991,sp500
+APD,Air Products,equity,US,index_member,Materials,Industrial Gases,"Upper Macungie Township, Pennsylvania",Q407744,sp500
+APH,Amphenol,equity,US,index_member,Information Technology,Electronic Components,"Wallingford, Connecticut",Q474621,sp500
+APO,Apollo Global Management,equity,US,index_member,Financials,Asset Management & Custody Banks,"New York City, New York",Q619121,sp500
+APP,AppLovin,equity,US,index_member,Communication Services,Advertising,"Palo Alto, California",Q27150212,sp500
+APTV,Aptiv,equity,Switzerland,index_member,Consumer Discretionary,Automotive Parts & Equipment,"Schaffhausen, Switzerland",Q643626,sp500
+ARE,Alexandria Real Estate Equities,equity,US,index_member,Real Estate,Office REITs,"Pasadena, California",Q48739877,sp500
+ARES,Ares Management,equity,US,index_member,Financials,Asset Management & Custody Banks,"Los Angeles, California",Q4789079,sp500
+ATO,Atmos Energy,equity,US,index_member,Utilities,Gas Utilities,"Dallas, Texas",Q4817084,sp500
+AVY,Avery Dennison,equity,US,index_member,Materials,Paper & Plastic Packaging Products & Materials,"Mentor, Ohio",Q790650,sp500
+AWK,American Water Works,equity,US,index_member,Utilities,Water Utilities,"Camden, New Jersey",Q467238,sp500
+AXON,Axon Enterprise,equity,US,index_member,Industrials,Aerospace & Defense,"Scottsdale, Arizona",Q690604,sp500
+AXP,American Express,equity,US,index_member,Financials,Consumer Finance,"New York City, New York",Q194360,sp500
+AZO,AutoZone,equity,US,index_member,Consumer Discretionary,Automotive Retail,"Memphis, Tennessee",Q4826087,sp500
+BAC,Bank of America,equity,US,index_member,Financials,Diversified Banks,"Charlotte, North Carolina",Q487907,sp500
+BALL,Ball Corporation,equity,US,index_member,Materials,"Metal, Glass & Plastic Containers","Broomfield, Colorado",Q4034815,sp500
+BAX,Baxter International,equity,US,index_member,Health Care,Health Care Equipment,"Deerfield, Illinois",Q761965,sp500
+BBY,Best Buy,equity,US,index_member,Consumer Discretionary,Computer & Electronics Retail,"Richfield, Minnesota",Q533415,sp500
+BDX,Becton Dickinson,equity,US,index_member,Health Care,Health Care Equipment,"Franklin Lakes, New Jersey",Q813780,sp500
+BE,Bloom Energy,equity,US,index_member,Industrials,Electrical Components & Equipment,"San Jose, California",Q29526078,sp500
+BEN,Franklin Resources,equity,US,index_member,Financials,Asset Management & Custody Banks,"San Mateo, California",Q744683,sp500
+BF-B,Brown–Forman,equity,US,index_member,Consumer Staples,Distillers & Vintners,"Louisville, Kentucky",Q392221,sp500
+BG,Bunge Global,equity,US,index_member,Consumer Staples,Agricultural Products & Services,"Chesterfield, Missouri",Q1009458,sp500
+BIIB,Biogen,equity,US,index_member,Health Care,Biotechnology,"Cambridge, Massachusetts",Q864338,sp500
+BKNG,Booking Holdings,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Norwalk, Connecticut",Q18674747,sp500
+BKR,Baker Hughes,equity,US,index_member,Energy,Oil & Gas Equipment & Services,"Houston, Texas",Q804353,sp500
+BLK,BlackRock,equity,US,index_member,Financials,Asset Management & Custody Banks,"New York City, New York",Q219635,sp500
+BMY,Bristol Myers Squibb,equity,US,index_member,Health Care,Pharmaceuticals,"New York City, New York",Q266423,sp500
+BNY,BNY Mellon,equity,US,index_member,Financials,Asset Management & Custody Banks,"New York City, New York",Q589288,sp500
+BR,Broadridge Financial Solutions,equity,US,index_member,Industrials,Data Processing & Outsourced Services,"Lake Success, New York",Q4972280,sp500
+BRK-B,Berkshire Hathaway,equity,US,index_member,Financials,Multi-Sector Holdings,"Omaha, Nebraska",Q217583,sp500
+BRO,Brown & Brown,equity,US,index_member,Financials,Insurance Brokers,"Daytona Beach, Florida",Q4976010,sp500
+BSX,Boston Scientific,equity,US,index_member,Health Care,Health Care Equipment,"Marlborough, Massachusetts",Q894585,sp500
+BX,Blackstone Inc.,equity,US,index_member,Financials,Asset Management & Custody Banks,"New York City, New York",Q880942,sp500
+BXP,"BXP, Inc.",equity,US,index_member,Real Estate,Office REITs,"Boston, Massachusetts",Q4844439,sp500
+C,Citigroup,equity,US,index_member,Financials,Diversified Banks,"New York City, New York",Q219508,sp500
+CAH,Cardinal Health,equity,US,index_member,Health Care,Health Care Distributors,"Dublin, Ohio",Q902397,sp500
+CARR,Carrier Global,equity,US,index_member,Industrials,Building Products,"Palm Beach Gardens, Florida",Q731912,sp500
+CASY,Casey's,equity,US,index_member,Consumer Staples,Food Retail,"Ankeny, Iowa",Q2940968,sp500
+CB,Chubb Limited,equity,Switzerland,index_member,Financials,Property & Casualty Insurance,"Zurich, Switzerland",Q1089060,sp500
+CBOE,Cboe Global Markets,equity,US,index_member,Financials,Financial Exchanges & Data,"Chicago, Illinois",Q30635731,sp500
+CBRE,CBRE Group,equity,US,index_member,Real Estate,Real Estate Services,"Dallas, Texas",Q1023013,sp500
+CCI,Crown Castle,equity,US,index_member,Real Estate,Telecom Tower REITs,"Houston, Texas",Q5189320,sp500
+CCL,Carnival Corporation,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Miami, Florida",Q1044059,sp500
+CDNS,Cadence Design Systems,equity,US,index_member,Information Technology,Application Software,"San Jose, California",Q608776,sp500
+CDW,CDW Corporation,equity,US,index_member,Information Technology,Technology Distributors,"Vernon Hills, Illinois",Q1023155,sp500
+CEG,Constellation Energy,equity,US,index_member,Utilities,Electric Utilities,"Baltimore, Maryland",Q259195,sp500
+CF,CF Industries,equity,US,index_member,Materials,Fertilizers & Agricultural Chemicals,"Deerfield, Illinois",Q905806,sp500
+CFG,Citizens Financial Group,equity,US,index_member,Financials,Regional Banks,"Providence, Rhode Island",Q5122694,sp500
+CHD,Church & Dwight,equity,US,index_member,Consumer Staples,Household Products,"Ewing, New Jersey",Q5116536,sp500
+CHRW,C.H. Robinson,equity,US,index_member,Industrials,Air Freight & Logistics,"Eden Prairie, Minnesota",Q931200,sp500
+CHTR,Charter Communications,equity,US,index_member,Communication Services,Cable & Satellite,"Stamford, Connecticut",Q2961234,sp500
+CI,Cigna,equity,US,index_member,Health Care,Health Care Services,"Bloomfield, Connecticut",Q642271,sp500
+CIEN,Ciena,equity,US,index_member,Information Technology,Communications Equipment,"Hanover, Maryland",Q1091783,sp500
+CINF,Cincinnati Financial,equity,US,index_member,Financials,Property & Casualty Insurance,"Fairfield, Ohio",Q5120253,sp500
+CL,Colgate-Palmolive,equity,US,index_member,Consumer Staples,Household Products,"New York City, New York",Q609466,sp500
+CLX,Clorox,equity,US,index_member,Consumer Staples,Household Products,"Oakland, California",Q910368,sp500
+CMCSA,Comcast,equity,US,index_member,Communication Services,Cable & Satellite,"Philadelphia, Pennsylvania",Q1113804,sp500
+CME,CME Group,equity,US,index_member,Financials,Financial Exchanges & Data,"Chicago, Illinois",Q1023876,sp500
+CMG,Chipotle Mexican Grill,equity,US,index_member,Consumer Discretionary,Restaurants,"Newport Beach, California",Q465751,sp500
+CMI,Cummins,equity,US,index_member,Industrials,Construction Machinery & Heavy Transportation Equipment,"Columbus, Indiana",Q173476,sp500
+CMS,CMS Energy,equity,US,index_member,Utilities,Multi-Utilities,"Jackson, Michigan",Q5013012,sp500
+CNC,Centene Corporation,equity,US,index_member,Health Care,Managed Health Care,"St. Louis, Missouri",Q5059102,sp500
+CNP,CenterPoint Energy,equity,US,index_member,Utilities,Multi-Utilities,"Houston, Texas",Q1053560,sp500
+COF,Capital One,equity,US,index_member,Financials,Consumer Finance,"Tysons Corner, Virginia",Q1034654,sp500
+COHR,Coherent Corp.,equity,US,index_member,Information Technology,Electronic Components,"Saxonburg, Pennsylvania",Q15109887,sp500
+COIN,Coinbase,equity,US,index_member,Financials,Financial Exchanges & Data,"New York City, New York",Q16972754,sp500
+COO,Cooper Companies (The),equity,US,index_member,Health Care,Health Care Supplies,"San Ramon, California",Q1129792,sp500
+COP,ConocoPhillips,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Houston, Texas",Q214763,sp500
+COR,Cencora,equity,US,index_member,Health Care,Health Care Distributors,"Conshohocken, Pennsylvania",Q470156,sp500
+COST,Costco,equity,US,index_member,Consumer Staples,Consumer Staples Merchandise Retail,"Issaquah, Washington",Q715583,sp500
+CPAY,Corpay,equity,US,index_member,Financials,Transaction & Payment Processing Services,"Atlanta, Georgia",Q16838618,sp500
+CPRT,Copart,equity,US,index_member,Industrials,Diversified Support Services,"Dallas, Texas",Q16951448,sp500
+CPT,Camden Property Trust,equity,US,index_member,Real Estate,Multi-Family Residential REITs,"Houston, Texas",Q5025803,sp500
+CRH,CRH plc,equity,Ireland,index_member,Materials,Construction Materials,"Dublin, Ireland",Q1053299,sp500
+CRL,Charles River Laboratories,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Wilmington, Massachusetts",Q5082076,sp500
+CRM,Salesforce,equity,US,index_member,Information Technology,Application Software,"San Francisco, California",Q941127,sp500
+CRWD,CrowdStrike,equity,US,index_member,Information Technology,Systems Software,"Austin, Texas",Q24890758,sp500
+CSCO,Cisco,equity,US,index_member,Information Technology,Communications Equipment,"San Jose, California",Q173395,sp500
+CSGP,CoStar Group,equity,US,index_member,Real Estate,Real Estate Services,"Washington, D.C.",Q16988748,sp500
+CSX,CSX Corporation,equity,US,index_member,Industrials,Rail Transportation,"Jacksonville, Florida",Q1024454,sp500
+CTAS,Cintas,equity,US,index_member,Industrials,Diversified Support Services,"Mason, Ohio",Q1092571,sp500
+CTSH,Cognizant,equity,US,index_member,Information Technology,IT Consulting & Other Services,"Teaneck, New Jersey",Q1107035,sp500
+CVNA,Carvana,equity,US,index_member,Consumer Discretionary,Automotive Retail,"Tempe, Arizona",Q16247191,sp500
+CVS,CVS Health,equity,US,index_member,Health Care,Health Care Services,"Woonsocket, Rhode Island",Q624375,sp500
+CVX,Chevron Corporation,equity,US,index_member,Energy,Integrated Oil & Gas,"Houston, Texas",Q319642,sp500
+D,Dominion Energy,equity,US,index_member,Utilities,Multi-Utilities,"Richmond, Virginia",Q677464,sp500
+DAL,Delta Air Lines,equity,US,index_member,Industrials,Passenger Airlines,"Atlanta, Georgia",Q188920,sp500
+DASH,DoorDash,equity,US,index_member,Consumer Discretionary,Specialized Consumer Services,"San Francisco, California",Q20714323,sp500
+DD,DuPont,equity,US,index_member,Industrials,Industrial Conglomerates,"Wilmington, Delaware",Q221062,sp500
+DDOG,Datadog,equity,US,index_member,Information Technology,Application Software,"New York City, New York",Q16248637,sp500
+DE,Deere & Company,equity,US,index_member,Industrials,Agricultural & Farm Machinery,"Moline, Illinois",Q496302,sp500
+DECK,Deckers Brands,equity,US,index_member,Consumer Discretionary,Footwear,"Goleta, California",Q1181953,sp500
+DELL,Dell Technologies,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","Round Rock, Texas",Q27500963,sp500
+DG,Dollar General,equity,US,index_member,Consumer Staples,Consumer Staples Merchandise Retail,"Goodlettsville, Tennessee",Q145168,sp500
+DGX,Quest Diagnostics,equity,US,index_member,Health Care,Health Care Services,"Secaucus, New Jersey",Q7271456,sp500
+DHI,D. R. Horton,equity,US,index_member,Consumer Discretionary,Homebuilding,"Arlington, Texas",Q5203782,sp500
+DHR,Danaher Corporation,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Washington, D.C.",Q1159256,sp500
+DIS,Walt Disney Company (The),equity,US,index_member,Communication Services,Movies & Entertainment,"Burbank, California",Q7414,sp500
+DLR,Digital Realty,equity,US,index_member,Real Estate,Data Center REITs,"Austin, Texas",Q5275969,sp500
+DLTR,Dollar Tree,equity,US,index_member,Consumer Staples,Consumer Staples Merchandise Retail,"Chesapeake, Virginia",Q5289230,sp500
+DOC,Healthpeak Properties,equity,US,index_member,Real Estate,Health Care REITs,"Denver, Colorado",Q16975567,sp500
+DOV,Dover Corporation,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Downers Grove, Illinois",Q16974527,sp500
+DOW,Dow Inc.,equity,US,index_member,Materials,Commodity Chemicals,"Midland, Michigan",Q855639,sp500
+DPZ,Domino's,equity,US,index_member,Consumer Discretionary,Restaurants,"Ann Arbor, Michigan",Q839466,sp500
+DRI,Darden Restaurants,equity,US,index_member,Consumer Discretionary,Restaurants,"Orlando, Florida",Q742196,sp500
+DTE,DTE Energy,equity,US,index_member,Utilities,Multi-Utilities,"Detroit, Michigan",Q5206232,sp500
+DUK,Duke Energy,equity,US,index_member,Utilities,Electric Utilities,"Charlotte, North Carolina",Q1264404,sp500
+DVA,DaVita,equity,US,index_member,Health Care,Health Care Services,"Denver, Colorado",Q5207184,sp500
+DVN,Devon Energy,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Oklahoma City, Oklahoma",Q1206980,sp500
+DXCM,Dexcom,equity,US,index_member,Health Care,Health Care Equipment,"San Diego, California",Q15109865,sp500
+EBAY,eBay Inc.,equity,US,index_member,Consumer Discretionary,Broadline Retail,"San Jose, California",Q58024,sp500
+ECHO,EchoStar,equity,US,index_member,Communication Services,Wireless Telecommunication Services,"Englewood, Colorado",Q1280748,sp500
+ECL,Ecolab,equity,US,index_member,Materials,Specialty Chemicals,"Saint Paul, Minnesota",Q1282031,sp500
+ED,Consolidated Edison,equity,US,index_member,Utilities,Multi-Utilities,"New York City, New York",Q1127536,sp500
+EFX,Equifax,equity,US,index_member,Industrials,Research & Consulting Services,"Atlanta, Georgia",Q5384453,sp500
+EG,Everest Group,equity,Bermuda,index_member,Financials,Reinsurance,"Hamilton, Bermuda",Q1381973,sp500
+EIX,Edison International,equity,US,index_member,Utilities,Electric Utilities,"Rosemead, California",Q662095,sp500
+EL,Estée Lauder Companies (The),equity,US,index_member,Consumer Staples,Personal Care Products,"New York City, New York",Q1260606,sp500
+ELV,Elevance Health,equity,US,index_member,Health Care,Managed Health Care,"Indianapolis, Indiana",Q677488,sp500
+EME,Emcor,equity,US,index_member,Industrials,Construction & Engineering,"Norwalk, Connecticut",Q5370289,sp500
+EMR,Emerson Electric,equity,US,index_member,Industrials,Electrical Components & Equipment,"Ferguson, Missouri",Q1335585,sp500
+EOG,EOG Resources,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Houston, Texas",Q1275577,sp500
+EQIX,Equinix,equity,US,index_member,Real Estate,Data Center REITs,"Redwood City, California",Q851641,sp500
+EQT,EQT Corporation,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Pittsburgh, Pennsylvania",Q5323987,sp500
+ERIE,Erie Indemnity,equity,US,index_member,Financials,Insurance Brokers,"Erie, Pennsylvania",Q5388314,sp500
+ES,Eversource Energy,equity,US,index_member,Utilities,Electric Utilities,"Hartford, Connecticut",Q3344199,sp500
+ESS,Essex Property Trust,equity,US,index_member,Real Estate,Multi-Family Residential REITs,"San Mateo, California",Q27964091,sp500
+ETN,Eaton Corporation,equity,Ireland,index_member,Industrials,Electrical Components & Equipment,"Dublin, Ireland",Q48872,sp500
+ETR,Entergy,equity,US,index_member,Utilities,Electric Utilities,"New Orleans, Louisiana",Q1344587,sp500
+EVRG,Evergy,equity,US,index_member,Utilities,Electric Utilities,"Kansas City, Missouri",Q7987107,sp500
+EW,Edwards Lifesciences,equity,US,index_member,Health Care,Health Care Equipment,"Irvine, California",Q16966841,sp500
+EXC,Exelon,equity,US,index_member,Utilities,Electric Utilities,"Chicago, Illinois",Q1383669,sp500
+EXE,Expand Energy,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Oklahoma City, Oklahoma",Q2962826,sp500
+EXPD,Expeditors International,equity,US,index_member,Industrials,Air Freight & Logistics,"Seattle, Washington",Q1384324,sp500
+EXPE,Expedia Group,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Seattle, Washington",Q8085893,sp500
+EXR,Extra Space Storage,equity,US,index_member,Real Estate,Self-Storage REITs,"Salt Lake City, Utah",Q5422162,sp500
+F,Ford Motor Company,equity,US,index_member,Consumer Discretionary,Automobile Manufacturers,"Dearborn, Michigan",Q44294,sp500
+FANG,Diamondback Energy,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Midland, Texas",Q65091423,sp500
+FAST,Fastenal,equity,US,index_member,Industrials,Trading Companies & Distributors,"Winona, Minnesota",Q3067119,sp500
+FCX,Freeport-McMoRan,equity,US,index_member,Materials,Copper,"Phoenix, Arizona",Q1453620,sp500
+FDS,FactSet,equity,US,index_member,Financials,Financial Exchanges & Data,"Norwalk, Connecticut",Q1885491,sp500
+FDX,FedEx,equity,US,index_member,Industrials,Air Freight & Logistics,"Memphis, Tennessee",Q459477,sp500
+FDXF,FedEx Freight,equity,US,index_member,Industrials,Cargo Ground Transportation,"Memphis, Tennessee",Q459477,sp500
+FE,FirstEnergy,equity,US,index_member,Utilities,Electric Utilities,"Akron, Ohio",Q1419248,sp500
+FERG,Ferguson Enterprises,equity,US,index_member,Industrials,Trading Companies & Distributors,"Newport News, Virginia",Q5444235,sp500
+FFIV,"F5, Inc.",equity,US,index_member,Information Technology,Communications Equipment,"Seattle, Washington",Q3029296,sp500
+FICO,Fair Isaac,equity,US,index_member,Information Technology,Application Software,"Bozeman, Montana",Q1392999,sp500
+FIS,Fidelity National Information Services,equity,US,index_member,Financials,Transaction & Payment Processing Services,"Jacksonville, Florida",Q1411295,sp500
+FISV,Fiserv,equity,US,index_member,Financials,Transaction & Payment Processing Services,"Brookfield, Wisconsin",Q1420513,sp500
+FITB,Fifth Third Bancorp,equity,US,index_member,Financials,Regional Banks,"Cincinnati, Ohio",Q1411810,sp500
+FIX,Comfort Systems USA,equity,US,index_member,Industrials,Construction & Engineering,"Houston, Texas",Q5151691,sp500
+FLEX,Flex Ltd.,equity,US,index_member,Information Technology,Electronic Manufacturing Services,"Austin, Texas",Q1140680,sp500
+FOX,Fox Corporation (Class B),equity,US,index_member,Communication Services,Broadcasting,"New York City, New York",Q60238941,sp500
+FOXA,Fox Corporation (Class A),equity,US,index_member,Communication Services,Broadcasting,"New York City, New York",Q60238941,sp500
+FRT,Federal Realty Investment Trust,equity,US,index_member,Real Estate,Retail REITs,"Rockville, Maryland",Q27988152,sp500
+FSLR,First Solar,equity,US,index_member,Information Technology,Semiconductors,"Tempe, Arizona",Q1138888,sp500
+FTNT,Fortinet,equity,US,index_member,Information Technology,Systems Software,"Sunnyvale, California",Q2749364,sp500
+FTV,Fortive,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Everett, Washington",Q27919383,sp500
+GDDY,GoDaddy,equity,US,index_member,Information Technology,Internet Services & Infrastructure,"Tempe, Arizona",Q1416215,sp500
+GE,GE Aerospace,equity,US,index_member,Industrials,Aerospace & Defense,"Evendale, Ohio",Q1485061,sp500
+GEHC,GE HealthCare,equity,US,index_member,Health Care,Health Care Equipment,"Chicago, Illinois",Q1152374,sp500
+GEN,Gen Digital,equity,US,index_member,Information Technology,Systems Software,"Tempe, Arizona",Q677085,sp500
+GEV,GE Vernova,equity,US,index_member,Industrials,Heavy Electrical Equipment,"Cambridge, Massachusetts",Q118957699,sp500
+GILD,Gilead Sciences,equity,US,index_member,Health Care,Biotechnology,"Foster City, California",Q663596,sp500
+GIS,General Mills,equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Golden Valley, Minnesota",Q629998,sp500
+GL,Globe Life,equity,US,index_member,Financials,Life & Health Insurance,"McKinney, Texas",Q7825574,sp500
+GLW,Corning Inc.,equity,US,index_member,Information Technology,Electronic Components,"Corning, New York",Q5842736,sp500
+GM,General Motors,equity,US,index_member,Consumer Discretionary,Automobile Manufacturers,"Detroit, Michigan",Q81965,sp500
+GNRC,Generac,equity,US,index_member,Industrials,Heavy Electrical Equipment,"Waukesha, Wisconsin",Q5531627,sp500
+GOOG,Alphabet Inc. (Class C),equity,US,index_member,Communication Services,Interactive Media & Services,"Mountain View, California",Q20800404,sp500
+GOOGL,Alphabet Inc. (Class A),equity,US,index_member,Communication Services,Interactive Media & Services,"Mountain View, California",Q20800404,sp500
+GPC,Genuine Parts Company,equity,US,index_member,Consumer Discretionary,Distributors,"Atlanta, Georgia",Q5533818,sp500
+GPN,Global Payments,equity,US,index_member,Financials,Transaction & Payment Processing Services,"Atlanta, Georgia",Q5570544,sp500
+GRMN,Garmin,equity,Switzerland,index_member,Consumer Discretionary,Consumer Electronics,"Schaffhausen, Switzerland",Q658789,sp500
+GS,Goldman Sachs,equity,US,index_member,Financials,Investment Banking & Brokerage,"New York City, New York",Q193326,sp500
+GWW,W. W. Grainger,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Lake Forest, Illinois",Q1627894,sp500
+HAL,Halliburton,equity,US,index_member,Energy,Oil & Gas Equipment & Services,"Houston, Texas",Q656165,sp500
+HAS,Hasbro,equity,US,index_member,Consumer Discretionary,Leisure Products,"Pawtucket, Rhode Island",Q501476,sp500
+HBAN,Huntington Bancshares,equity,US,index_member,Financials,Regional Banks,"Columbus, Ohio; Detroit, Michigan",Q798819,sp500
+HCA,HCA Healthcare,equity,US,index_member,Health Care,Health Care Facilities,"Nashville, Tennessee",Q1630431,sp500
+HD,Home Depot (The),equity,US,index_member,Consumer Discretionary,Home Improvement Retail,"Atlanta, Georgia",Q864407,sp500
+HIG,Hartford (The),equity,US,index_member,Financials,Property & Casualty Insurance,"Hartford, Connecticut",Q444110,sp500
+HII,Huntington Ingalls Industries,equity,US,index_member,Industrials,Aerospace & Defense,"Newport News, Virginia",Q7257522,sp500
+HLT,Hilton Worldwide,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Tysons Corner, Virginia",Q1057464,sp500
+HON,Honeywell Technologies,equity,US,index_member,Industrials,Industrial Conglomerates,"Charlotte, North Carolina",Q898208,sp500
+HONA,Honeywell Aerospace,equity,US,index_member,Industrials,Aerospace & Defense,"Phoenix, Arizona",Q5893992,sp500
+HOOD,Robinhood Markets,equity,US,index_member,Financials,Investment Banking & Brokerage,"Menlo Park, California",Q18155123,sp500
+HPE,Hewlett Packard Enterprise,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","Houston, Texas",Q19923099,sp500
+HPQ,HP Inc.,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","Palo Alto, California",Q21404084,sp500
+HRL,Hormel Foods,equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Austin, Minnesota",Q1454852,sp500
+HSIC,Henry Schein,equity,US,index_member,Health Care,Health Care Distributors,"Melville, New York",Q905086,sp500
+HST,Host Hotels & Resorts,equity,US,index_member,Real Estate,Hotel & Resort REITs,"Bethesda, Maryland",Q1630559,sp500
+HSY,Hershey Company (The),equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Hershey, Pennsylvania",Q1056637,sp500
+HUBB,Hubbell Incorporated,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Shelton, Connecticut",Q21036456,sp500
+HUM,Humana,equity,US,index_member,Health Care,Managed Health Care,"Louisville, Kentucky",Q910866,sp500
+HWM,Howmet Aerospace,equity,US,index_member,Industrials,Aerospace & Defense,"Pittsburgh, Pennsylvania",Q25104597,sp500
+IBKR,Interactive Brokers,equity,US,index_member,Financials,Investment Banking & Brokerage,"Greenwich, Connecticut",Q20011294,sp500
+IBM,IBM,equity,US,index_member,Information Technology,IT Consulting & Other Services,"Armonk, New York",Q37156,sp500
+ICE,Intercontinental Exchange,equity,US,index_member,Financials,Financial Exchanges & Data,"Atlanta, Georgia",Q841458,sp500
+IDXX,Idexx Laboratories,equity,US,index_member,Health Care,Health Care Equipment,"Westbrook, Maine",Q1758392,sp500
+IEX,IDEX Corporation,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Northbrook, Illinois",Q5970002,sp500
+IFF,International Flavors & Fragrances,equity,US,index_member,Materials,Specialty Chemicals,"New York City, New York",Q1666568,sp500
+ILMN,"Illumina, Inc.",equity,US,index_member,Health Care,Life Sciences Tools & Services,"San Diego, California",Q2068984,sp500
+INCY,Incyte,equity,US,index_member,Health Care,Biotechnology,"Wilmington, Delaware",Q6015591,sp500
+INTU,Intuit,equity,US,index_member,Information Technology,Application Software,"Mountain View, California",Q1318848,sp500
+INVH,Invitation Homes,equity,US,index_member,Real Estate,Single-Family Residential REITs,"Dallas, Texas",Q85769855,sp500
+IP,International Paper,equity,US,index_member,Materials,Paper & Plastic Packaging Products & Materials,"Memphis, Tennessee",Q202972,sp500
+IQV,IQVIA,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Durham, North Carolina",Q305473,sp500
+IR,Ingersoll Rand,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Davidson, North Carolina",Q55453962,sp500
+IRM,Iron Mountain,equity,US,index_member,Real Estate,Other Specialized REITs,"Portsmouth, New Hampshire",Q1673079,sp500
+ISRG,Intuitive Surgical,equity,US,index_member,Health Care,Health Care Equipment,"Sunnyvale, California",Q2743863,sp500
+IT,Gartner,equity,US,index_member,Information Technology,IT Consulting & Other Services,"Stamford, Connecticut",Q174198,sp500
+ITW,Illinois Tool Works,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Glenview, Illinois",Q1510378,sp500
+IVZ,Invesco,equity,US,index_member,Financials,Asset Management & Custody Banks,"Atlanta, Georgia",Q522617,sp500
+J,Jacobs Solutions,equity,US,index_member,Industrials,Construction & Engineering,"Dallas, Texas",Q3157622,sp500
+JBHT,J.B. Hunt,equity,US,index_member,Industrials,Cargo Ground Transportation,"Lowell, Arkansas",Q4041705,sp500
+JBL,Jabil,equity,US,index_member,Information Technology,Electronic Manufacturing Services,"St. Petersburg, Florida",Q2171646,sp500
+JCI,Johnson Controls,equity,Ireland,index_member,Industrials,Building Products,"Cork, Ireland",Q667865,sp500
+JKHY,Jack Henry & Associates,equity,US,index_member,Financials,Transaction & Payment Processing Services,"Monett, Missouri",Q6113060,sp500
+JNJ,Johnson & Johnson,equity,US,index_member,Health Care,Pharmaceuticals,"New Brunswick, New Jersey",Q333718,sp500
+JPM,JPMorgan Chase,equity,US,index_member,Financials,Diversified Banks,"New York City, New York",Q192314,sp500
+KDP,Keurig Dr Pepper,equity,US,index_member,Consumer Staples,Soft Drinks & Non-alcoholic Beverages,"Burlington, Massachusetts",Q3116111,sp500
+KEY,KeyCorp,equity,US,index_member,Financials,Regional Banks,"Cleveland, Ohio",Q1740314,sp500
+KEYS,Keysight Technologies,equity,US,index_member,Information Technology,Electronic Equipment & Instruments,"Santa Rosa, California",Q17551096,sp500
+KHC,Kraft Heinz,equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Chicago, Illinois; Pittsburgh, Pennsylvania",Q19681433,sp500
+KIM,Kimco Realty,equity,US,index_member,Real Estate,Retail REITs,"Jericho, New York",Q6410043,sp500
+KKR,KKR & Co.,equity,US,index_member,Financials,Asset Management & Custody Banks,"New York City, New York",Q1570773,sp500
+KMB,Kimberly-Clark,equity,US,index_member,Consumer Staples,Household Products,"Irving, Texas",Q1741634,sp500
+KMI,Kinder Morgan,equity,US,index_member,Energy,Oil & Gas Storage & Transportation,"Houston, Texas",Q931032,sp500
+KO,Coca-Cola Company (The),equity,US,index_member,Consumer Staples,Soft Drinks & Non-alcoholic Beverages,"Atlanta, Georgia",Q3295867,sp500
+KR,Kroger,equity,US,index_member,Consumer Staples,Food Retail,"Cincinnati, Ohio",Q153417,sp500
+KVUE,Kenvue,equity,US,index_member,Consumer Staples,Personal Care Products,"Skillman, New Jersey",Q118905792,sp500
+L,Loews Corporation,equity,US,index_member,Financials,Multi-line Insurance,"New York City, New York",Q826526,sp500
+LDOS,Leidos,equity,US,index_member,Industrials,Diversified Support Services,"Reston, Virginia",Q502132,sp500
+LEN,Lennar,equity,US,index_member,Consumer Discretionary,Homebuilding,"Miami, Florida",Q16981175,sp500
+LH,Labcorp,equity,US,index_member,Health Care,Health Care Services,"Burlington, North Carolina",Q6466630,sp500
+LHX,L3Harris,equity,US,index_member,Industrials,Aerospace & Defense,"Melbourne, Florida",Q30291091,sp500
+LII,Lennox International,equity,US,index_member,Industrials,Building Products,"Richardson, Texas",Q224751,sp500
+LIN,Linde plc,equity,United Kingdom,index_member,Materials,Industrial Gases,"Guildford, United Kingdom",Q682759,sp500
+LITE,Lumentum,equity,US,index_member,Information Technology,Communications Equipment,"San Jose, California",Q138786899,sp500
+LLY,Lilly (Eli),equity,US,index_member,Health Care,Pharmaceuticals,"Indianapolis, Indiana",Q632240,sp500
+LNT,Alliant Energy,equity,US,index_member,Utilities,Electric Utilities,"Madison, Wisconsin",Q4732492,sp500
+LOW,Lowe's,equity,US,index_member,Consumer Discretionary,Home Improvement Retail,"Mooresville, North Carolina",Q1373493,sp500
+LULU,Lululemon Athletica,equity,Canada,index_member,Consumer Discretionary,"Apparel, Accessories & Luxury Goods","Vancouver, Canada",Q6702957,sp500
+LUV,Southwest Airlines,equity,US,index_member,Industrials,Passenger Airlines,"Dallas, Texas",Q503308,sp500
+LVS,Las Vegas Sands,equity,US,index_member,Consumer Discretionary,Casinos & Gaming,"Las Vegas, Nevada",Q1506045,sp500
+LYB,LyondellBasell,equity,Netherlands,index_member,Materials,Specialty Chemicals,"Rotterdam, Netherlands",Q899255,sp500
+LYV,Live Nation Entertainment,equity,US,index_member,Communication Services,Movies & Entertainment,"Beverly Hills, California",Q1061903,sp500
+MA,Mastercard,equity,US,index_member,Financials,Transaction & Payment Processing Services,"Harrison, New York",Q489921,sp500
+MAA,Mid-America Apartment Communities,equity,US,index_member,Real Estate,Multi-Family Residential REITs,"Memphis, Tennessee",Q27988239,sp500
+MAR,Marriott International,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Bethesda, Maryland",Q1141173,sp500
+MAS,Masco,equity,US,index_member,Industrials,Building Products,"Livonia, Michigan",Q6782872,sp500
+MCD,McDonald's,equity,US,index_member,Consumer Discretionary,Restaurants,"Chicago, Illinois",Q38076,sp500
+MCHP,Microchip Technology,equity,US,index_member,Information Technology,Semiconductors,"Chandler, Arizona",Q1545076,sp500
+MCK,McKesson,equity,US,index_member,Health Care,Health Care Distributors,"Irving, Texas",Q570473,sp500
+MCO,Moody's Corporation,equity,US,index_member,Financials,Financial Exchanges & Data,"New York City, New York",Q675585,sp500
+MDLZ,Mondelez International,equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Chicago, Illinois",Q12857502,sp500
+MDT,Medtronic,equity,Ireland,index_member,Health Care,Health Care Equipment,"Galway, Ireland",Q642189,sp500
+MET,MetLife,equity,US,index_member,Financials,Life & Health Insurance,"New York City, New York",Q607131,sp500
+META,Meta Platforms,equity,US,index_member,Communication Services,Interactive Media & Services,"Menlo Park, California",Q380,sp500
+MGM,MGM Resorts,equity,US,index_member,Consumer Discretionary,Casinos & Gaming,"Paradise, Nevada",Q568532,sp500
+MKC,McCormick & Company,equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Hunt Valley, Maryland",Q1915049,sp500
+MLM,Martin Marietta Materials,equity,US,index_member,Materials,Construction Materials,"Raleigh, North Carolina",Q6776123,sp500
+MMM,3M,equity,US,index_member,Industrials,Industrial Conglomerates,"Saint Paul, Minnesota",Q159433,sp500
+MNST,Monster Beverage,equity,US,index_member,Consumer Staples,Soft Drinks & Non-alcoholic Beverages,"Corona, California",Q1945295,sp500
+MO,Altria,equity,US,index_member,Consumer Staples,Tobacco,"Richmond, Virginia",Q445007,sp500
+MOS,Mosaic Company (The),equity,US,index_member,Materials,Fertilizers & Agricultural Chemicals,"Tampa, Florida",Q7752327,sp500
+MPC,Marathon Petroleum,equity,US,index_member,Energy,Oil & Gas Refining & Marketing,"Findlay, Ohio",Q458363,sp500
+MPWR,Monolithic Power Systems,equity,US,index_member,Information Technology,Semiconductors,"Kirkland, Washington",Q22058448,sp500
+MRK,Merck & Co.,equity,US,index_member,Health Care,Pharmaceuticals,"Kenilworth, New Jersey",Q247489,sp500
+MRNA,Moderna,equity,US,index_member,Health Care,Biotechnology,"Cambridge, Massachusetts",Q17081612,sp500
+MRSH,Marsh McLennan,equity,US,index_member,Financials,Insurance Brokers,"New York City, New York",Q1786345,sp500
+MS,Morgan Stanley,equity,US,index_member,Financials,Investment Banking & Brokerage,"New York City, New York",Q334204,sp500
+MSCI,MSCI,equity,US,index_member,Financials,Financial Exchanges & Data,"New York City, New York",Q768773,sp500
+MSFT,Microsoft,equity,US,index_member,Information Technology,Systems Software,"Redmond, Washington",Q2283,sp500
+MSI,Motorola Solutions,equity,US,index_member,Information Technology,Communications Equipment,"Chicago, Illinois",Q634815,sp500
+MTB,M&T Bank,equity,US,index_member,Financials,Regional Banks,"Buffalo, New York",Q3272257,sp500
+MTD,Mettler Toledo,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Columbus, Ohio",Q680186,sp500
+NCLH,Norwegian Cruise Line Holdings,equity,Florida[2],index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Miami-Dade County, Florida[2]",Q60767471,sp500
+NDAQ,"Nasdaq, Inc.",equity,US,index_member,Financials,Financial Exchanges & Data,"New York City, New York",Q1472929,sp500
+NDSN,Nordson Corporation,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Westlake, Ohio",Q1998662,sp500
+NEE,NextEra Energy,equity,US,index_member,Utilities,Multi-Utilities,"Juno Beach, Florida",Q967868,sp500
+NEM,Newmont,equity,US,index_member,Materials,Gold,"Denver, Colorado",Q1785405,sp500
+NFLX,Netflix,equity,US,index_member,Communication Services,Movies & Entertainment,"Los Gatos, California",Q116452644,sp500
+NI,NiSource,equity,US,index_member,Utilities,Multi-Utilities,"Merrillville, Indiana",Q1984481,sp500
+NOW,ServiceNow,equity,US,index_member,Information Technology,Systems Software,"Santa Clara, California",Q7455653,sp500
+NRG,NRG Energy,equity,US,index_member,Utilities,Independent Power Producers & Energy Traders,"Houston, Texas",Q6955139,sp500
+NSC,Norfolk Southern,equity,US,index_member,Industrials,Rail Transportation,"Atlanta, Georgia",Q1321054,sp500
+NTAP,NetApp,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","San Jose, California",Q727883,sp500
+NTRS,Northern Trust,equity,US,index_member,Financials,Asset Management & Custody Banks,"Chicago, Illinois",Q970695,sp500
+NUE,Nucor,equity,US,index_member,Materials,Steel,"Charlotte, North Carolina",Q1645081,sp500
+NVR,"NVR, Inc.",equity,US,index_member,Consumer Discretionary,Homebuilding,"Reston, Virginia",Q6955706,sp500
+NWS,News Corp (Class B),equity,US,index_member,Communication Services,Publishing,"New York City, New York",Q14289857,sp500
+NWSA,News Corp (Class A),equity,US,index_member,Communication Services,Publishing,"New York City, New York",Q14289857,sp500
+O,Realty Income,equity,US,index_member,Real Estate,Retail REITs,"San Diego, California",Q7301386,sp500
+ODFL,Old Dominion,equity,US,index_member,Industrials,Cargo Ground Transportation,"Thomasville, North Carolina",Q7083862,sp500
+OKE,Oneok,equity,US,index_member,Energy,Oil & Gas Storage & Transportation,"Tulsa, Oklahoma",Q11074156,sp500
+OMC,Omnicom Group,equity,US,index_member,Communication Services,Advertising,"New York City, New York",Q1519267,sp500
+ON,ON Semiconductor,equity,US,index_member,Information Technology,Semiconductors,"Phoenix, Arizona",Q1671509,sp500
+ORCL,Oracle Corporation,equity,US,index_member,Information Technology,Application Software,"Austin, Texas",Q19900,sp500
+ORLY,O'Reilly Automotive,equity,US,index_member,Consumer Discretionary,Automotive Retail,"Springfield, Missouri",Q7071951,sp500
+OTIS,Otis Worldwide,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Farmington, Connecticut",Q1134069,sp500
+OXY,Occidental Petroleum,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Houston, Texas",Q2013357,sp500
+P,Everpure,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","Santa Clara, California",Q7261135,sp500
+PANW,Palo Alto Networks,equity,US,index_member,Information Technology,Systems Software,"Santa Clara, California",Q7128508,sp500
+PAYX,Paychex,equity,US,index_member,Industrials,Human Resource & Employment Services,"Penfield, New York",Q946080,sp500
+PCAR,Paccar,equity,US,index_member,Industrials,Construction Machinery & Heavy Transportation Equipment,"Bellevue, Washington",Q1477661,sp500
+PCG,PG&E Corporation,equity,US,index_member,Utilities,Multi-Utilities,"Oakland, California",Q1815011,sp500
+PEG,Public Service Enterprise Group,equity,US,index_member,Utilities,Electric Utilities,"Newark, New Jersey",Q930919,sp500
+PEP,PepsiCo,equity,US,index_member,Consumer Staples,Soft Drinks & Non-alcoholic Beverages,"Purchase, New York",Q334800,sp500
+PFE,Pfizer,equity,US,index_member,Health Care,Pharmaceuticals,"New York City, New York",Q206921,sp500
+PFG,Principal Financial Group,equity,US,index_member,Financials,Life & Health Insurance,"Des Moines, Iowa",Q3403513,sp500
+PG,Procter & Gamble,equity,US,index_member,Consumer Staples,Personal Care Products,"Cincinnati, Ohio",Q212405,sp500
+PGR,Progressive Corporation,equity,US,index_member,Financials,Property & Casualty Insurance,"Mayfield Village, Ohio",Q7248721,sp500
+PH,Parker Hannifin,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Cleveland, Ohio",Q1470619,sp500
+PHM,PulteGroup,equity,US,index_member,Consumer Discretionary,Homebuilding,"Atlanta, Georgia",Q7259716,sp500
+PKG,Packaging Corporation of America,equity,US,index_member,Materials,Paper & Plastic Packaging Products & Materials,"Lake Forest, Illinois",Q16983334,sp500
+PLD,Prologis,equity,US,index_member,Real Estate,Industrial REITs,"San Francisco, California",Q16983765,sp500
+PLTR,Palantir Technologies,equity,US,index_member,Information Technology,Application Software,"Aventura, Florida",Q2047336,sp500
+PM,Philip Morris International,equity,US,index_member,Consumer Staples,Tobacco,"New York City, New York",Q1852556,sp500
+PNC,PNC Financial Services,equity,US,index_member,Financials,Diversified Banks,"Pittsburgh, Pennsylvania",Q38928,sp500
+PNR,Pentair,equity,United Kingdom,index_member,Industrials,Industrial Machinery & Supplies & Components,"Worsley, United Kingdom",Q7165001,sp500
+PNW,Pinnacle West Capital,equity,US,index_member,Utilities,Multi-Utilities,"Phoenix, Arizona",Q26110522,sp500
+PODD,Insulet Corporation,equity,US,index_member,Health Care,Health Care Equipment,"Acton, Massachusetts",,sp500
+PPG,PPG Industries,equity,US,index_member,Materials,Specialty Chemicals,"Pittsburgh, Pennsylvania",Q48754,sp500
+PPL,PPL Corporation,equity,US,index_member,Utilities,Electric Utilities,"Allentown, Pennsylvania",Q2044512,sp500
+PRU,Prudential Financial,equity,US,index_member,Financials,Life & Health Insurance,"Newark, New Jersey",Q2114414,sp500
+PSA,Public Storage,equity,US,index_member,Real Estate,Self-Storage REITs,"Glendale, California",Q1156045,sp500
+PSX,Phillips 66,equity,US,index_member,Energy,Oil & Gas Refining & Marketing,"Houston, Texas",Q1656230,sp500
+PTC,PTC Inc.,equity,US,index_member,Information Technology,Application Software,"Boston, Massachusetts",Q1760641,sp500
+PWR,Quanta Services,equity,US,index_member,Industrials,Construction & Engineering,"Houston, Texas",Q7268886,sp500
+PYPL,PayPal,equity,US,index_member,Financials,Transaction & Payment Processing Services,"San Jose, California",Q483959,sp500
+Q,Qnity Electronics,equity,US,index_member,Information Technology,Semiconductor Materials & Equipment,"Wilmington, Delaware",Q138685636,sp500
+RCL,Royal Caribbean Group,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Miami, Florida",Q427881,sp500
+RDDT,Reddit,equity,US,index_member,Communication Services,Interactive Media & Services,"San Francisco, California",Q1136,sp500
+REG,Regency Centers,equity,US,index_member,Real Estate,Retail REITs,"Jacksonville, Florida",Q7308000,sp500
+REGN,Regeneron Pharmaceuticals,equity,US,index_member,Health Care,Biotechnology,"Tarrytown, New York",Q7308054,sp500
+RF,Regions Financial Corporation,equity,US,index_member,Financials,Regional Banks,"Birmingham, Alabama",Q917131,sp500
+RJF,Raymond James Financial,equity,US,index_member,Financials,Investment Banking & Brokerage,"St. Petersburg, Florida",Q7298901,sp500
+RL,Ralph Lauren Corporation,equity,US,index_member,Consumer Discretionary,"Apparel, Accessories & Luxury Goods","New York City, New York",Q1641437,sp500
+RMD,ResMed|,equity,US,index_member,Health Care,Health Care Equipment,"San Diego, California",Q7314903,sp500
+ROK,Rockwell Automation,equity,US,index_member,Industrials,Electrical Components & Equipment,"Milwaukee, Wisconsin",Q1529234,sp500
+ROL,"Rollins, Inc.",equity,US,index_member,Industrials,Environmental & Facilities Services,"Atlanta, Georgia",Q7361273,sp500
+ROP,Roper Technologies,equity,US,index_member,Information Technology,Electronic Equipment & Instruments,"Sarasota, Florida",Q16932392,sp500
+ROST,Ross Stores,equity,US,index_member,Consumer Discretionary,Apparel Retail,"Dublin, California",Q3442791,sp500
+RSG,Republic Services,equity,US,index_member,Industrials,Environmental & Facilities Services,"Phoenix, Arizona",Q7314415,sp500
+RVTY,Revvity,equity,US,index_member,Health Care,Health Care Equipment,"Waltham, Massachusetts",Q120467527,sp500
+SBAC,SBA Communications,equity,US,index_member,Real Estate,Telecom Tower REITs,"Boca Raton, Florida",Q7388926,sp500
+SCHW,Charles Schwab Corporation,equity,US,index_member,Financials,Investment Banking & Brokerage,"Westlake, Texas",Q1066028,sp500
+SHW,Sherwin-Williams,equity,US,index_member,Materials,Specialty Chemicals,"Cleveland, Ohio",Q48881,sp500
+SJM,J.M. Smucker Company (The),equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Orrville, Ohio",Q7742790,sp500
+SKYD,Skydance Corporation,equity,US,index_member,Communication Services,Movies & Entertainment,"New York City, New York",Q135485147,sp500
+SLB,Schlumberger,equity,US,index_member,Energy,Oil & Gas Equipment & Services,"Houston, Texas",Q1425316,sp500
+SMCI,Supermicro,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","San Jose, California",Q1817174,sp500
+SNA,Snap-on,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Kenosha, Wisconsin",Q1631922,sp500
+SNDK,Sandisk,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","Milpitas, California",Q260833,sp500
+SNPS,Synopsys,equity,US,index_member,Information Technology,Application Software,"Sunnyvale, California",Q2303478,sp500
+SO,Southern Company,equity,US,index_member,Utilities,Electric Utilities,"Atlanta, Georgia",Q2304693,sp500
+SOLV,Solventum,equity,US,index_member,Health Care,Health Care Technology,"Saint Paul, Minnesota",Q124795355,sp500
+SPG,Simon Property Group,equity,US,index_member,Real Estate,Retail REITs,"Indianapolis, Indiana",Q2287759,sp500
+SPGI,S&P Global,equity,US,index_member,Financials,Financial Exchanges & Data,"New York City, New York",Q868587,sp500
+SRE,Sempra,equity,US,index_member,Utilities,Multi-Utilities,"San Diego, California",Q7449804,sp500
+STE,Steris,equity,Ireland,index_member,Health Care,Health Care Equipment,"Dublin, Ireland",Q80947821,sp500
+STLD,Steel Dynamics,equity,US,index_member,Materials,Steel,"Fort Wayne, Indiana",Q7605667,sp500
+STT,State Street Corporation,equity,US,index_member,Financials,Asset Management & Custody Banks,"Boston, Massachusetts",Q2037125,sp500
+STX,Seagate Technology,equity,Ireland,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","Dublin, Ireland",Q705392,sp500
+STZ,Constellation Brands,equity,US,index_member,Consumer Staples,Distillers & Vintners,"Rochester, New York",Q1128160,sp500
+SW,Smurfit Westrock,equity,Ireland,index_member,Materials,Paper & Plastic Packaging Products & Materials,"Dublin, Ireland",Q1536176,sp500
+SWK,Stanley Black & Decker,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"New Britain, Connecticut",Q706094,sp500
+SWKS,Skyworks Solutions,equity,US,index_member,Information Technology,Semiconductors,"Irvine, California",Q7538146,sp500
+SYF,Synchrony Financial,equity,US,index_member,Financials,Consumer Finance,"Stamford, Connecticut",Q18387139,sp500
+SYK,Stryker Corporation,equity,US,index_member,Health Care,Health Care Equipment,"Kalamazoo, Michigan",Q2357515,sp500
+SYY,Sysco,equity,US,index_member,Consumer Staples,Food Distributors,"Houston, Texas",Q2376711,sp500
+T,AT&T,equity,US,index_member,Communication Services,Integrated Telecommunication Services,"Dallas, Texas",Q35476,sp500
+TDG,TransDigm Group,equity,US,index_member,Industrials,Aerospace & Defense,"Cleveland, Ohio",Q7833612,sp500
+TDY,Teledyne Technologies,equity,US,index_member,Information Technology,Electronic Equipment & Instruments,"Thousand Oaks, California",Q7696127,sp500
+TECH,Bio-Techne,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Minneapolis, Minnesota",Q19873469,sp500
+TEL,TE Connectivity,equity,Ireland,index_member,Information Technology,Electronic Manufacturing Services,"Galway, Ireland",Q663452,sp500
+TER,Teradyne,equity,US,index_member,Information Technology,Semiconductor Materials & Equipment,"North Reading, Massachusetts",Q2404292,sp500
+TFC,Truist Financial,equity,US,index_member,Financials,Diversified Banks,"Charlotte, North Carolina",Q795486,sp500
+TGT,Target Corporation,equity,US,index_member,Consumer Staples,Consumer Staples Merchandise Retail,"Minneapolis, Minnesota",Q1046951,sp500
+TJX,TJX Companies,equity,US,index_member,Consumer Discretionary,Apparel Retail,"Framingham, Massachusetts",Q1285819,sp500
+TKO,TKO Group Holdings,equity,US,index_member,Communication Services,Movies & Entertainment,"New York City, New York",Q120435068,sp500
+TMO,Thermo Fisher Scientific,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Waltham, Massachusetts",Q643674,sp500
+TMUS,T-Mobile US,equity,US,index_member,Communication Services,Wireless Telecommunication Services,"Bellevue, Washington",Q3511885,sp500
+TPL,Texas Pacific Land Corporation,equity,US,index_member,Energy,Oil & Gas Exploration & Production,"Dallas, Texas",Q7707900,sp500
+TPR,"Tapestry, Inc.",equity,US,index_member,Consumer Discretionary,"Apparel, Accessories & Luxury Goods","New York City, New York",Q56273715,sp500
+TRGP,Targa Resources,equity,US,index_member,Energy,Oil & Gas Storage & Transportation,"Houston, Texas",Q7685824,sp500
+TRMB,Trimble Inc.,equity,US,index_member,Information Technology,Application Software,"Westminster, Colorado",Q2297063,sp500
+TROW,T. Rowe Price,equity,US,index_member,Financials,Asset Management & Custody Banks,"Baltimore, Maryland",Q3511946,sp500
+TRV,Travelers Companies (The),equity,US,index_member,Financials,Property & Casualty Insurance,"New York City, New York",Q942471,sp500
+TSCO,Tractor Supply,equity,US,index_member,Consumer Discretionary,Other Specialty Retail,"Brentwood, Tennessee",Q15109925,sp500
+TSN,Tyson Foods,equity,US,index_member,Consumer Staples,Packaged Foods & Meats,"Springdale, Arkansas",Q1325987,sp500
+TT,Trane Technologies,equity,Ireland,index_member,Industrials,Building Products,"Dublin, Ireland",Q131744111,sp500
+TTWO,Take-Two Interactive,equity,US,index_member,Communication Services,Interactive Home Entertainment,"New York City, New York",Q94933,sp500
+TWLO,Twilio,equity,US,index_member,Information Technology,Systems Software,"San Francisco, California",Q7858039,sp500
+TXT,Textron,equity,US,index_member,Industrials,Aerospace & Defense,"Providence, Rhode Island",Q2140315,sp500
+TYL,Tyler Technologies,equity,US,index_member,Information Technology,Application Software,"Plano, Texas",Q48802335,sp500
+UAL,United Airlines Holdings,equity,US,index_member,Industrials,Passenger Airlines,"Chicago, Illinois",Q174769,sp500
+UBER,Uber,equity,US,index_member,Industrials,Passenger Ground Transportation,"San Francisco, California",Q780442,sp500
+UDR,"UDR, Inc.",equity,US,index_member,Real Estate,Multi-Family Residential REITs,"Highlands Ranch, Colorado",Q27988153,sp500
+UHS,Universal Health Services,equity,US,index_member,Health Care,Health Care Facilities,"King of Prussia, Pennsylvania",Q7893967,sp500
+ULTA,Ulta Beauty,equity,US,index_member,Consumer Discretionary,Other Specialty Retail,"Bolingbrook, Illinois",Q7880076,sp500
+UNH,UnitedHealth Group,equity,US,index_member,Health Care,Managed Health Care,"Eden Prairie, Minnesota",Q2103926,sp500
+UNP,Union Pacific Corporation,equity,US,index_member,Industrials,Rail Transportation,"Omaha, Nebraska",Q20183163,sp500
+UPS,United Parcel Service,equity,US,index_member,Industrials,Air Freight & Logistics,"Sandy Springs, Georgia",Q155026,sp500
+URI,United Rentals,equity,US,index_member,Industrials,Trading Companies & Distributors,"Stamford, Connecticut",Q7889101,sp500
+USB,U.S. Bancorp,equity,US,index_member,Financials,Diversified Banks,"Minneapolis, Minnesota",Q739084,sp500
+V,Visa Inc.,equity,US,index_member,Financials,Transaction & Payment Processing Services,"San Francisco, California",Q328840,sp500
+VEEV,Veeva Systems,equity,US,index_member,Health Care,Health Care Technology,"Pleasanton, California",Q24204493,sp500
+VICI,Vici Properties,equity,US,index_member,Real Estate,Hotel & Resort REITs,"New York City, New York",Q54263910,sp500
+VLO,Valero Energy,equity,US,index_member,Energy,Oil & Gas Refining & Marketing,"San Antonio, Texas",Q1283291,sp500
+VLTO,Veralto,equity,US,index_member,Industrials,Environmental & Facilities Services,"Waltham, Massachusetts",Q124721239,sp500
+VMC,Vulcan Materials Company,equity,US,index_member,Materials,Construction Materials,"Birmingham, Alabama",Q1685287,sp500
+VMRK,Vivmark Residential,equity,US,index_member,Real Estate,Multi-Family Residential REITs,"Chicago, Illinois",Q187740,sp500
+VRSK,Verisk Analytics,equity,US,index_member,Industrials,Research & Consulting Services,"Jersey City, New Jersey",Q7921370,sp500
+VRSN,Verisign,equity,US,index_member,Information Technology,Internet Services & Infrastructure,"Reston, Virginia",Q734338,sp500
+VRT,Vertiv,equity,US,index_member,Industrials,Electrical Components & Equipment,"Westerville, Ohio",Q5370909,sp500
+VRTX,Vertex Pharmaceuticals,equity,US,index_member,Health Care,Biotechnology,"Boston, Massachusetts",Q2744099,sp500
+VST,Vistra Corp.,equity,US,index_member,Utilities,Electric Utilities,"Irving, Texas",Q104158381,sp500
+VTR,Ventas,equity,US,index_member,Real Estate,Health Care REITs,"Chicago, Illinois",Q19865761,sp500
+VTRS,Viatris,equity,US,index_member,Health Care,Pharmaceuticals,"Pittsburgh, Pennsylvania",Q101983981,sp500
+VYLR,Vylor,equity,US,index_member,Consumer Staples,Agricultural Products & Services,"Johnston, Iowa",Q63197674,sp500
+VZ,Verizon,equity,US,index_member,Communication Services,Integrated Telecommunication Services,"New York City, New York",Q467752,sp500
+WAB,Wabtec,equity,US,index_member,Industrials,Construction Machinery & Heavy Transportation Equipment,"Pittsburgh, Pennsylvania",Q741707,sp500
+WAT,Waters Corporation,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Milford, Massachusetts",Q1322011,sp500
+WDAY,"Workday, Inc.",equity,US,index_member,Information Technology,Application Software,"Pleasanton, California",Q8034666,sp500
+WDC,Western Digital,equity,US,index_member,Information Technology,"Technology Hardware, Storage & Peripherals","San Jose, California",Q738770,sp500
+WEC,WEC Energy Group,equity,US,index_member,Utilities,Electric Utilities,"Milwaukee, Wisconsin",Q8027166,sp500
+WELL,Welltower,equity,US,index_member,Real Estate,Health Care REITs,"Toledo, Ohio",Q20486917,sp500
+WFC,Wells Fargo,equity,US,index_member,Financials,Diversified Banks,"San Francisco, California",Q744149,sp500
+WM,Waste Management,equity,US,index_member,Industrials,Environmental & Facilities Services,"Houston, Texas",Q2552219,sp500
+WMB,Williams Companies,equity,US,index_member,Energy,Oil & Gas Storage & Transportation,"Tulsa, Oklahoma",Q930639,sp500
+WMT,Walmart,equity,US,index_member,Consumer Staples,Consumer Staples Merchandise Retail,"Bentonville, Arkansas",Q483551,sp500
+WRB,W. R. Berkley Corporation,equity,US,index_member,Financials,Property & Casualty Insurance,"Greenwich, Connecticut",Q1369955,sp500
+WSM,"Williams-Sonoma, Inc.",equity,US,index_member,Consumer Discretionary,Homefurnishing Retail,"San Francisco, California",Q2581220,sp500
+WST,West Pharmaceutical Services,equity,US,index_member,Health Care,Health Care Supplies,"Exton, Pennsylvania",Q30338243,sp500
+WTW,Willis Towers Watson,equity,United Kingdom,index_member,Financials,Insurance Brokers,"London, United Kingdom",Q21189883,sp500
+WY,Weyerhaeuser,equity,US,index_member,Real Estate,Timber REITs,"Seattle, Washington",Q1780382,sp500
+WYNN,Wynn Resorts,equity,US,index_member,Consumer Discretionary,Casinos & Gaming,"Paradise, Nevada",Q2274089,sp500
+XEL,Xcel Energy,equity,US,index_member,Utilities,Multi-Utilities,"Minneapolis, Minnesota",Q1486956,sp500
+XOM,ExxonMobil,equity,US,index_member,Energy,Integrated Oil & Gas,"Irving, Texas",Q156238,sp500
+XYL,Xylem Inc.,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"White Plains, New York",Q3146975,sp500
+XYZ,"Block, Inc.",equity,none,index_member,Financials,Transaction & Payment Processing Services,none,Q110778747,sp500
+YUM,Yum! Brands,equity,US,index_member,Consumer Discretionary,Restaurants,"Louisville, Kentucky",Q668737,sp500
+ZBH,Zimmer Biomet,equity,US,index_member,Health Care,Health Care Equipment,"Warsaw, Indiana",Q203552,sp500
+ZBRA,Zebra Technologies,equity,US,index_member,Information Technology,Electronic Equipment & Instruments,"Lincolnshire, Illinois",Q2443609,sp500
+ZTS,Zoetis,equity,US,index_member,Health Care,Pharmaceuticals,"Parsippany, New Jersey",Q8073337,sp500

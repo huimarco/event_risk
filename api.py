@@ -278,7 +278,7 @@ def proposition_graph(proposition_id: str, depth: int = Query(2, ge=1, le=3), fa
 def list_securities(as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     at, known = times(as_of, known_as_of)
     g = Graph(cur, at, known)
-    return [dict(**g.ref(i), **{k: n["attrs"].get(k) for k in ("ticker", "asset_class", "country", "role")},
+    return [dict(**g.ref(i), **{k: n["attrs"].get(k) for k in ("ticker", "asset_class", "country", "sector", "index")},
                  n_exposures=sum(1 for e in g.inc[i] if e["type"] == "exposure"))
             for i, n in g.nodes.items() if n["type"] == "security"]
 
