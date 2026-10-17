@@ -11,7 +11,7 @@ rows (ETFs, FX, non-US listings) are kept as they are. Tickers are Yahoo symbols
 Each company's Wikipedia article is resolved to its Wikidata id (issuer_qid), so securities can
 be tied to issuer entities in the graph.
 """
-import csv
+import csv, re
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -54,9 +54,11 @@ def constituents():
     t = Table(); t.feed(html)
     out = []
     for (sym, _), (name, article), (sector, _), (sub, _), (hq, _), *_ in t.rows:
+        hq = re.sub(r"\[\w+\]", "", hq).strip()          # drop footnote markers: "Florida[2]"
+        hq = "" if hq.lower() in ("none", "n/a") else hq  # remote-first companies list no HQ
         state = hq.rsplit(",", 1)[-1].strip()
         out.append(dict(ticker=sym.replace(".", "-"), name=name, asset_class="equity",
-                        country="US" if state in US_STATES or hq in US_STATES else state,
+                        country="US" if state in US_STATES or hq in US_STATES else state if hq else "",
                         role="index_member", sector=sector, sub_industry=sub, headquarters=hq,
                         article=article, index=INDEX))
     return out
@@ -73,9 +75,9 @@ def main():
     for m in members:
         new = {c: m.get(c, "") for c in COLUMNS} | {"issuer_qid": qids.get(m["article"], "")}
         old = rows.get(m["ticker"])
-        # hand-written rows keep their name/class/role; index facts are always refreshed
-        rows[m["ticker"]] = new if not old else old | {c: new[c] for c in
-                                                       ("sector", "sub_industry", "headquarters", "issuer_qid", "index")}
+        # rows this script made are replaced; hand-written rows keep name/class/country/role
+        rows[m["ticker"]] = new if not old or old["role"] == "index_member" else old | {
+            c: new[c] for c in ("sector", "sub_industry", "headquarters", "issuer_qid", "index")}
     left = [t for t, r in rows.items() if r["index"] == INDEX and t not in current]
     for t in left:
         rows[t]["index"] = ""

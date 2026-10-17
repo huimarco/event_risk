@@ -44,7 +44,7 @@ MRVL,Marvell Technology,equity,US,exposure,Information Technology,Semiconductors
 MU,Micron Technology,equity,US,exposure,Information Technology,Semiconductors,"Boise, Idaho",Q1197548,sp500
 NIO,NIO (ADR),equity,CN,exposure,,,,,
 NKE,Nike,equity,US,exposure,Consumer Discretionary,"Apparel, Accessories & Luxury Goods","Washington County, Oregon",Q483915,sp500
-NOC,Northrop Grumman,equity,US,exposure,Industrials,Aerospace & Defense,"West Falls Church, Virginia[1]",Q329953,sp500
+NOC,Northrop Grumman,equity,US,exposure,Industrials,Aerospace & Defense,"West Falls Church, Virginia",Q329953,sp500
 NVDA,NVIDIA,equity,US,exposure,Information Technology,Semiconductors,"Santa Clara, California",Q182477,sp500
 NXPI,NXP Semiconductors,equity,NL,exposure,Information Technology,Semiconductors,"Eindhoven, Netherlands",Q1155668,sp500
 PDD,PDD Holdings,equity,CN,exposure,,,,,
@@ -372,7 +372,7 @@ MSFT,Microsoft,equity,US,index_member,Information Technology,Systems Software,"R
 MSI,Motorola Solutions,equity,US,index_member,Information Technology,Communications Equipment,"Chicago, Illinois",Q634815,sp500
 MTB,M&T Bank,equity,US,index_member,Financials,Regional Banks,"Buffalo, New York",Q3272257,sp500
 MTD,Mettler Toledo,equity,US,index_member,Health Care,Life Sciences Tools & Services,"Columbus, Ohio",Q680186,sp500
-NCLH,Norwegian Cruise Line Holdings,equity,Florida[2],index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Miami-Dade County, Florida[2]",Q60767471,sp500
+NCLH,Norwegian Cruise Line Holdings,equity,US,index_member,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Miami-Dade County, Florida",Q60767471,sp500
 NDAQ,"Nasdaq, Inc.",equity,US,index_member,Financials,Financial Exchanges & Data,"New York City, New York",Q1472929,sp500
 NDSN,Nordson Corporation,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"Westlake, Ohio",Q1998662,sp500
 NEE,NextEra Energy,equity,US,index_member,Utilities,Multi-Utilities,"Juno Beach, Florida",Q967868,sp500
@@ -537,7 +537,7 @@ WYNN,Wynn Resorts,equity,US,index_member,Consumer Discretionary,Casinos & Gaming
 XEL,Xcel Energy,equity,US,index_member,Utilities,Multi-Utilities,"Minneapolis, Minnesota",Q1486956,sp500
 XOM,ExxonMobil,equity,US,index_member,Energy,Integrated Oil & Gas,"Irving, Texas",Q156238,sp500
 XYL,Xylem Inc.,equity,US,index_member,Industrials,Industrial Machinery & Supplies & Components,"White Plains, New York",Q3146975,sp500
-XYZ,"Block, Inc.",equity,none,index_member,Financials,Transaction & Payment Processing Services,none,Q110778747,sp500
+XYZ,"Block, Inc.",equity,,index_member,Financials,Transaction & Payment Processing Services,,Q110778747,sp500
 YUM,Yum! Brands,equity,US,index_member,Consumer Discretionary,Restaurants,"Louisville, Kentucky",Q668737,sp500
 ZBH,Zimmer Biomet,equity,US,index_member,Health Care,Health Care Equipment,"Warsaw, Indiana",Q203552,sp500
 ZBRA,Zebra Technologies,equity,US,index_member,Information Technology,Electronic Equipment & Instruments,"Lincolnshire, Illinois",Q2443609,sp500
