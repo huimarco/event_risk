@@ -1,25 +1,23 @@
-name: prices
+name: backfill_market_history
 
 on:
-  schedule:
-    - cron: "30 22 * * 1-5"   # UTC, after the US close; Asian closes from the same day are final by then
-  workflow_dispatch:
+  workflow_dispatch:          # one-time / manual; re-runs skip markets already backfilled
 
 concurrency:
-  group: prices
+  group: backfill_market_history
   cancel-in-progress: false
 
 jobs:
-  prices:
+  backfill:
     runs-on: ubuntu-latest
-    timeout-minutes: 45   # ~550 tickers; the first run loads history since 2020
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install requests pyarrow duckdb
-      - run: python prices.py
+      - run: python backfill.py
         env:
           DB: md:geo_odds
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

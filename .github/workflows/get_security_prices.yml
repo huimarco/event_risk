@@ -1,23 +1,25 @@
-name: backfill
+name: get_security_prices
 
 on:
-  workflow_dispatch:          # one-time / manual; re-runs skip markets already backfilled
+  schedule:
+    - cron: "30 22 * * 1-5"   # UTC, after the US close; Asian closes from the same day are final by then
+  workflow_dispatch:
 
 concurrency:
-  group: backfill
+  group: get_security_prices
   cancel-in-progress: false
 
 jobs:
-  backfill:
+  prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 45   # ~550 tickers; the first run loads history since 2020
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install requests pyarrow duckdb
-      - run: python backfill.py
+      - run: python prices.py
         env:
           DB: md:geo_odds
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

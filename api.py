@@ -21,7 +21,7 @@ and Wikipedia co-occurrence. Exposure scores are path products: involves x [enti
 exposure weight. Exposure weights are analyst priors (seeds/exposures.csv) until empirical event
 betas exist; scores rank relevance, they are not betas.
 """
-import json, os
+import json, os, time
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 
@@ -36,6 +36,7 @@ from collector import DB
 
 LOOKBACK = timedelta(days=7)
 MUTEX_SHOWN = 3  # per node in /graph neighbourhoods
+GRAPH_TTL = 300  # seconds the current graph is reused; it only changes when graph_build runs
 BLENDED, LOGICAL = {"same_as"}, {"mutex", "implies", "near_equivalent"}
 API_KEYS = {k for k in os.getenv("API_KEYS", "").split(",") if k}
 ISO = "strftime({} AT TIME ZONE 'UTC', '%Y-%m-%dT%H:%M:%SZ')"
@@ -121,6 +122,19 @@ class Graph:
                         best[x["dst"]][pid] = (score, path + [x["dst"]])
         return best
 
+_current = {}  # "graph": (loaded_at, Graph) for requests about now
+
+def graph(cur, as_of, known_as_of):
+    """The graph for a request. Requests about now share one copy for GRAPH_TTL seconds;
+    time-travel requests (explicit as_of / known_as_of) load their own."""
+    if as_of or known_as_of:
+        return Graph(cur, *times(as_of, known_as_of))
+    loaded_at, g = _current.get("graph", (0, None))
+    if time.monotonic() - loaded_at > GRAPH_TTL:
+        g = Graph(cur, *times(None, None))
+        _current["graph"] = (time.monotonic(), g)
+    return g
+
 def market_probs(cur, market_ids, at):
     if not market_ids: return {}
     rows = cur.execute(f"""
@@ -171,7 +185,7 @@ def list_propositions(q: str | None = Query(None, description="Substring of the 
                       cur=Depends(db)):
     """Propositions with blended probability and 24h change. sort=move ranks by |24h change|."""
     at, known = times(as_of, known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, as_of, known_as_of)
     pids = [i for i, n in g.nodes.items() if n["type"] == "proposition"
             and (not q or q.lower() in n["name"].lower())
             and (not entity or any(e["dst"] == entity for e in g.out[i] if e["type"] == "involves"))]
@@ -186,7 +200,7 @@ def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
                     known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     """Proposition with its markets, entities and logical relations."""
     at, known = times(as_of, known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, as_of, known_as_of)
     n = g.get(proposition_id, "proposition")
     mkts = g.markets(proposition_id)
     mprobs = market_probs(cur, [m for m, _, _ in mkts], at)
@@ -253,7 +267,7 @@ def node_graph(node_id: str, depth: int = Query(1, ge=1, le=3), fanout: int = Qu
                as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     """Neighbourhood of any proposition, entity or security, for visualisation."""
     at, known = times(as_of, known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, as_of, known_as_of)
     if node_id not in g.nodes: raise HTTPException(404, f"{node_id} not found at this as_of / known_as_of")
     seen, edges = neighbourhood(g, node_id, depth, fanout)
     probs = prop_probs(cur, g, [i for i in seen if g.nodes[i]["type"] == "proposition"], at)
@@ -270,14 +284,13 @@ def proposition_graph(proposition_id: str, depth: int = Query(2, ge=1, le=3), fa
                       as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                       cur=Depends(db)):
     """Neighbourhood of a proposition up to `depth` hops (edges followed in both directions)."""
-    at, known = times(as_of, known_as_of)
-    Graph(cur, at, known).get(proposition_id, "proposition")
-    return node_graph(proposition_id, depth, fanout, at, known, cur)
+    graph(cur, as_of, known_as_of).get(proposition_id, "proposition")
+    return node_graph(proposition_id, depth, fanout, as_of, known_as_of, cur)
 
 @app.get("/securities")
 def list_securities(as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     at, known = times(as_of, known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, as_of, known_as_of)
     return [dict(**g.ref(i), **{k: n["attrs"].get(k) for k in ("ticker", "asset_class", "country", "sector", "index")},
                  n_exposures=sum(1 for e in g.inc[i] if e["type"] == "exposure"))
             for i, n in g.nodes.items() if n["type"] == "security"]
@@ -286,7 +299,7 @@ def list_securities(as_of: datetime | None = AsOf, known_as_of: datetime | None 
 def list_entities(type: str | None = Query(None, description="person | country | organisation_or_place | concept"),
                   as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     at, known = times(as_of, known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, as_of, known_as_of)
     return [dict(**g.ref(i), entity_type=n["attrs"].get("entity_type"), description=n["attrs"].get("description"),
                  n_propositions=sum(1 for e in g.inc[i] if e["type"] == "involves"))
             for i, n in g.nodes.items() if n["type"] == "entity" and (not type or n["attrs"].get("entity_type") == type)]
@@ -296,7 +309,7 @@ def get_entity(entity_id: str, as_of: datetime | None = AsOf, known_as_of: datet
                cur=Depends(db)):
     """Entity with the propositions that involve it, its links, and securities exposed to it."""
     at, known = times(as_of, known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, as_of, known_as_of)
     n = g.get(entity_id, "entity")
     pids = [e["src"] for e in g.inc[entity_id] if e["type"] == "involves"]
     probs = prop_probs(cur, g, pids, at)
@@ -316,7 +329,7 @@ def security_exposures(ticker: str, min_score: float = Query(0.1, ge=0, le=1),
                        cur=Depends(db)):
     """Propositions this security is exposed to, via proposition -> entity [-> entity] -> security."""
     at, known = times(as_of, known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, as_of, known_as_of)
     sid = f"sec:{ticker}"
     g.get(sid, "security")
     hits = {p: v for p, v in g.exposures().get(sid, {}).items() if v[0] >= min_score}
@@ -344,7 +357,7 @@ def portfolio_scan(req: ScanRequest, cur=Depends(db)):
     """Rank propositions by portfolio exposure = sum over holdings of weight x exposure score.
     `moved` flags propositions whose blended probability moved >= move_threshold in 24h."""
     at, known = times(req.as_of, req.known_as_of)
-    g = Graph(cur, at, known)
+    g = graph(cur, req.as_of, req.known_as_of)
     expo = g.exposures()
     agg, contrib, unknown = defaultdict(float), defaultdict(list), []
     for h in req.holdings:

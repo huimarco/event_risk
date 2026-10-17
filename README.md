@@ -5,13 +5,13 @@ a point-in-time knowledge graph linking markets → propositions → entities �
 
 ## Pipeline
 
-| Script | Schedule | Writes |
-|---|---|---|
-| `collector.py` | every 15 min (Actions) | `market_snapshots` (source=`realtime`), `market_versions` |
-| `graph_build.py` | after each collect | `graph_nodes`, `graph_edges` (diff only) |
-| `prices.py` | weekdays 22:30 UTC | `security_prices` (Yahoo, research use only) |
-| `backfill.py` | manual, one-time | `market_snapshots` (source=`backfill`) |
-| `securities.py` | manual, after index rebalances | `securities.csv` (S&P 500 from Wikipedia; review and commit) |
+| Script | Workflow (GitHub Actions) | Schedule | Writes |
+|---|---|---|---|
+| `collector.py` + `graph_build.py` | `collect_markets_and_update_graph` | every 15 min | `market_snapshots` (source=`realtime`), `market_versions`; graph only when markets change |
+| `prices.py` | `get_security_prices` | weekdays 22:30 UTC | `security_prices` (Yahoo, research use only) |
+| `backfill.py` | `backfill_market_history` | manual, one-time | `market_snapshots` (source=`backfill`) |
+| `graph_build.py --refresh …` | `refresh_wikipedia_facts` | manual | re-fetched Wikipedia/Wikidata facts, then graph |
+| `securities.py` | — (run locally) | after index rebalances | `securities.csv` (S&P 500 from Wikipedia; review and commit) |
 
 All data lives in MotherDuck: put `MOTHERDUCK_TOKEN` in `.env` (copy `.env.example`; git-ignored) or the environment. `DB` defaults to `md:geo_odds`.
 
@@ -40,6 +40,19 @@ The explorer's **API** tab documents every endpoint with examples; `/docs` is th
 Every read accepts `as_of` (state of the world at T) and `known_as_of` (what the graph knew at T);
 set both to T for a point-in-time, backtest-safe view. Set `API_KEYS` to require `X-API-Key`.
 
+## Deploying (Railway)
+
+The API and explorer are one web service; GitHub Actions keeps collecting data into MotherDuck.
+`railway.json` (start command + health check), `Procfile` (same command, for other hosts),
+`.python-version` and the pinned `requirements.txt` are all Railway needs.
+
+1. railway.com → sign in with GitHub → **New Project → Deploy from GitHub repo** → this repo.
+2. Service → **Variables**: `MOTHERDUCK_TOKEN` (a read-only token is safest for a public
+   service); optionally `API_KEYS=key1,key2` to require `X-API-Key` on data calls.
+3. Service → **Settings → Networking → Generate Domain**. The explorer is at `/`, docs at `/docs`.
+
+Every push to `main` redeploys.
+
 ## Scope
 
 Every geopolitical market: Polymarket's `geopolitics` tag, plus Kalshi World/Politics markets that
@@ -59,7 +72,7 @@ state* or *citizen of* (e.g. a new leader). Takes a few minutes.
 python graph_build.py --refresh wikidata
 ```
 
-or GitHub: **Actions → refresh → Run workflow → wikidata**.
+or GitHub: **Actions → refresh_wikipedia_facts → Run workflow → wikidata**.
 
 **Relatedness refresh — yearly.** Wikipedia co-occurrence counts behind entity ↔ entity link
 strengths. Slow (around an hour at full scope).
@@ -68,7 +81,7 @@ strengths. Slow (around an hour at full scope).
 python graph_build.py --refresh relatedness
 ```
 
-or GitHub: **Actions → refresh → Run workflow → relatedness**.
+or GitHub: **Actions → refresh_wikipedia_facts → Run workflow → relatedness**.
 
 The terminal commands need `MOTHERDUCK_TOKEN` in `.env`; the workflow uses the repository secret.
 

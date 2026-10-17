@@ -1,4 +1,4 @@
-name: refresh
+name: refresh_wikipedia_facts
 
 on:
   workflow_dispatch:          # manual only
@@ -10,7 +10,7 @@ on:
         default: wikidata
 
 concurrency:
-  group: collect               # never overlaps a collect / graph build
+  group: graph                 # same queue as collect_markets_and_update_graph: never overlaps it
   cancel-in-progress: false
 
 jobs:

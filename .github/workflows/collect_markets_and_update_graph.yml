@@ -1,4 +1,4 @@
-name: collect
+name: collect_markets_and_update_graph
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:          # manual "Run workflow" button
 
 concurrency:
-  group: collect
+  group: graph
   cancel-in-progress: false
 
 jobs:
