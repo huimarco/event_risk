@@ -114,7 +114,7 @@
     <button role="tab" data-view="api">API</button>
   </nav>
   <label class="explore-only">As of <input id="asof" type="datetime-local"></label>
-  <label class="explore-only">Depth <select id="depth"><option>1</option><option selected>2</option></select></label>
+  <label class="explore-only">Depth <select id="depth"><option selected>1</option><option>2</option></select></label>
 </header>
 <main>
   <aside>
@@ -359,7 +359,7 @@ network.on("stabilizationIterationsDone", () => network.setOptions({ physics: fa
 network.on("click", e => { if (e.nodes.length) select(e.nodes[0]); });
 
 async function drawGraph(id) {
-  const g = await api(`/graph/${encodeURIComponent(id)}`, { depth: $("#depth").value, fanout: 15 });
+  const g = await api(`/graph/${encodeURIComponent(id)}`, { depth: $("#depth").value, fanout: 10 });
   const surface = css("--surface"), ink = css("--ink"), muted = css("--muted");
   const shape = { proposition: "dot", entity: "diamond", security: "square" };
   const nodes = g.nodes.map(n => {
@@ -372,9 +372,10 @@ async function drawGraph(id) {
       font: { color: ink, strokeWidth: 3, strokeColor: surface, bold: root },
       title: `${n.name}\n${t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
   });
-  const edges = g.edges.map(e => ({ from: e.src, to: e.dst, width: 1 + 2 * Math.min(e.weight ?? 0.3, 1),
-    dashes: LOGICAL.has(e.type), arrows: e.type === "implies" ? { to: { enabled: true, scaleFactor: .5 } } : undefined,
-    color: { color: css("--axis"), highlight: muted, hover: muted },
+  // hairline links: thin, light and translucent so dense hubs stay legible; hover highlights
+  const edges = g.edges.map(e => ({ from: e.src, to: e.dst, width: 0.5 + Math.min(e.weight ?? 0.3, 1),
+    dashes: LOGICAL.has(e.type), arrows: e.type === "implies" ? { to: { enabled: true, scaleFactor: .4 } } : undefined,
+    color: { color: css("--axis"), highlight: css("--ink-2"), hover: css("--ink-2"), opacity: 0.5 },
     title: `${e.type}${e.weight != null ? ` · ${e.weight.toFixed(2)}` : ""}${e.note ? `\n${e.note}` : ""}\n${e.provenance}` }));
   network.setOptions({ physics: true });
   network.setData({ nodes, edges });

@@ -21,7 +21,8 @@ and Wikipedia co-occurrence. Exposure scores are path products: involves x [enti
 exposure weight. Exposure weights are analyst priors (seeds/exposures.csv) until empirical event
 betas exist; scores rank relevance, they are not betas.
 """
-import json, os, time
+import json, os, threading, time
+from contextlib import asynccontextmanager
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 
@@ -47,16 +48,27 @@ def require_key(request: Request, x_api_key: str | None = Header(None)):
     if API_KEYS and x_api_key not in API_KEYS:
         raise HTTPException(401, "missing or invalid X-API-Key")
 
-app = FastAPI(title="Event Risk Knowledge Graph", version="0.1.0",
+@asynccontextmanager
+async def lifespan(app):
+    # load the current graph while the server starts, so the first visitor doesn't wait
+    threading.Thread(target=lambda: _current["graph"] is None and _load_current(), daemon=True).start()
+    yield
+
+app = FastAPI(title="Event Risk Knowledge Graph", version="0.1.0", lifespan=lifespan,
               description=__doc__, dependencies=[Depends(require_key)])
 
-_con = None  # opened on first request, then shared
+_con, _con_lock = None, threading.Lock()
+
+def connection():
+    """One shared DuckDB/MotherDuck connection, opened on first use."""
+    global _con
+    with _con_lock:
+        if _con is None:
+            _con = duckdb.connect(DB) if DB.startswith("md:") else duckdb.connect(DB, read_only=True)
+    return _con
 
 def db():
-    global _con
-    if _con is None:
-        _con = duckdb.connect(DB) if DB.startswith("md:") else duckdb.connect(DB, read_only=True)
-    cur = _con.cursor()  # one cursor per request
+    cur = connection().cursor()  # one cursor per request
     cur.execute("SET TimeZone = 'UTC'")
     try: yield cur
     finally: cur.close()
@@ -82,6 +94,7 @@ class Graph:
                       for r in cur.execute("""
             SELECT src_id, dst_id, edge_type, weight, confidence, provenance, note, attrs::VARCHAR
             FROM edges_asof(?, ?)""", [as_of, known]).fetchall()]
+        self.latest = None  # on the shared "now" graph: every market's price now and 24h ago
         self.out, self.inc = defaultdict(list), defaultdict(list)
         for e in self.edges:
             self.out[e["src"]].append(e); self.inc[e["dst"]].append(e)
@@ -105,37 +118,62 @@ class Graph:
     def markets(self, pid):
         return [(e["src"], e["type"], e["note"]) for e in self.inc[pid] if self.nodes[e["src"]]["type"] == "market"]
 
-    def exposures(self):
-        """{security_id: {proposition_id: (score, path)}}, best path per pair."""
-        best = defaultdict(dict)
-        for inv in self.edges:
-            if inv["type"] != "involves": continue
-            pid, ent = inv["src"], inv["dst"]
-            hops = [(ent, inv["weight"], [pid, ent])]
-            hops += [(other, inv["weight"] * (l["weight"] or 0), [pid, ent, other])
-                     for l, other in self.linked(ent)]
-            for e, w, path in hops:
-                for x in self.out[e]:
-                    if x["type"] != "exposure": continue
-                    score = round(w * x["weight"], 4)
-                    if score > best[x["dst"]].get(pid, (0,))[0]:
-                        best[x["dst"]][pid] = (score, path + [x["dst"]])
+    def exposures_of(self, sec):
+        """{proposition_id: (score, path)} for one security, walking back from it:
+        security <- exposure - entity [<- link -> entity] <- involves - proposition."""
+        best = {}
+        for x in self.inc[sec]:
+            if x["type"] != "exposure": continue
+            held = x["src"]
+            hops = [(held, x["weight"], [held])]
+            hops += [(other, x["weight"] * (l["weight"] or 0), [other, held]) for l, other in self.linked(held)]
+            for ent, w, via in hops:
+                for inv in self.inc[ent]:
+                    if inv["type"] != "involves": continue
+                    score = round(inv["weight"] * w, 4)
+                    if score > best.get(inv["src"], (0,))[0]:
+                        best[inv["src"]] = (score, [inv["src"], *via, sec])
         return best
 
-_current = {}  # "graph": (loaded_at, Graph) for requests about now
+_current = {"graph": None, "loaded": 0.0}   # the graph "as of now", shared by requests
+_reloading = threading.Lock()
+
+def _load_current():
+    cur = connection().cursor()
+    cur.execute("SET TimeZone = 'UTC'")
+    now, known = times(None, None)
+    g = Graph(cur, now, known)
+    g.latest = dict(at=now, now=all_market_probs(cur, now), ago=all_market_probs(cur, now - timedelta(hours=24)))
+    _current.update(graph=g, loaded=time.monotonic())
+
+def _reload_in_background():
+    try: _load_current()
+    finally: _reloading.release()
 
 def graph(cur, as_of, known_as_of):
-    """The graph for a request. Requests about now share one copy for GRAPH_TTL seconds;
-    time-travel requests (explicit as_of / known_as_of) load their own."""
+    """The graph for a request. Requests about now share one copy, refreshed in the background
+    every GRAPH_TTL seconds (callers never wait for a reload); time-travel requests (explicit
+    as_of / known_as_of) load their own."""
     if as_of or known_as_of:
         return Graph(cur, *times(as_of, known_as_of))
-    loaded_at, g = _current.get("graph", (0, None))
-    if time.monotonic() - loaded_at > GRAPH_TTL:
-        g = Graph(cur, *times(None, None))
-        _current["graph"] = (time.monotonic(), g)
-    return g
+    if _current["graph"] is None:
+        _load_current()
+    elif time.monotonic() - _current["loaded"] > GRAPH_TTL and _reloading.acquire(blocking=False):
+        threading.Thread(target=_reload_in_background, daemon=True).start()
+    return _current["graph"]
 
-def market_probs(cur, market_ids, at):
+def all_market_probs(cur, at):
+    """Latest price of every market at `at` (within 7 days), in one query."""
+    return {m: dict(prob=p, open_interest=oi, observed_at=ts) for m, p, oi, ts in cur.execute(f"""
+        SELECT 'mkt:' || venue || ':' || market_id, arg_max(prob, ts), arg_max(open_interest, ts),
+               {ISO.format('max(ts)')}
+        FROM v_market_prob WHERE ts <= ? AND ts > ? AND prob IS NOT NULL GROUP BY 1""",
+        [at, at - LOOKBACK]).fetchall()}
+
+def market_probs(cur, market_ids, at, g=None):
+    if g is not None and g.latest:  # shared "now" graph: answer from memory
+        snap = g.latest["now"] if at > g.latest["at"] - timedelta(hours=12) else g.latest["ago"]
+        return {m: snap[m] for m in market_ids if m in snap}
     if not market_ids: return {}
     rows = cur.execute(f"""
         SELECT 'mkt:' || venue || ':' || market_id, arg_max(prob, ts), arg_max(open_interest, ts),
@@ -157,7 +195,7 @@ def prop_probs(cur, g, pids, at):
     """{pid: {prob, prob_24h_ago, change_24h}} from blended same_as markets."""
     members = {p: [m for m, rel, _ in g.markets(p) if rel in BLENDED] for p in pids}
     ids = {m for ms in members.values() for m in ms}
-    now_, ago = market_probs(cur, ids, at), market_probs(cur, ids, at - timedelta(hours=24))
+    now_, ago = market_probs(cur, ids, at, g), market_probs(cur, ids, at - timedelta(hours=24), g)
     out = {}
     for p, ms in members.items():
         a, b = blend([now_.get(m) for m in ms]), blend([ago.get(m) for m in ms])
@@ -203,7 +241,7 @@ def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
     g = graph(cur, as_of, known_as_of)
     n = g.get(proposition_id, "proposition")
     mkts = g.markets(proposition_id)
-    mprobs = market_probs(cur, [m for m, _, _ in mkts], at)
+    mprobs = market_probs(cur, [m for m, _, _ in mkts], at, g)
     logical = [dict(relation=e["type"], direction="out", proposition=g.ref(e["dst"]), note=e["note"],
                     provenance=e["provenance"], **(e["attrs"] or {}))
                for e in g.out[proposition_id] if e["type"] in LOGICAL]
@@ -246,20 +284,25 @@ def proposition_history(proposition_id: str, start: datetime | None = None, end:
                 points=[dict(t=t, prob=blend(v), n_markets=len(v)) for t, v in sorted(buckets.items())])
 
 def neighbourhood(g, root, depth, fanout):
-    """Nodes within `depth` hops of `root` (edges in both directions, markets left out), keeping
-    each node's `fanout` strongest edges (at most MUTEX_SHOWN mutex) so hubs stay readable."""
+    """Nodes within `depth` hops of `root` (edges in both directions, markets left out). Each node
+    keeps its `fanout` strongest links *per kind of neighbour* (propositions, entities,
+    securities; at most MUTEX_SHOWN mutex), so a hub's 60 propositions don't crowd out its
+    links to other entities."""
     seen, frontier, edges = {root: 0}, deque([root]), {}
     while frontier:
         n = frontier.popleft()
         if seen[n] == depth: continue
-        es = [e for e in g.out[n] + g.inc[n] if "market" not in (g.nodes[e["src"]]["type"], g.nodes[e["dst"]]["type"])]
-        es = sorted(es, key=lambda e: -(e["weight"] or 0))
-        mutex = [e for e in es if e["type"] == "mutex"][:MUTEX_SHOWN]  # mutually exclusive sets are cliques
-        for e in [e for e in es if e["type"] != "mutex" or e in mutex][:fanout]:
-            edges[(e["src"], e["type"], e["dst"])] = e
+        by_kind = defaultdict(list)
+        for e in sorted(g.out[n] + g.inc[n], key=lambda e: -(e["weight"] or 0)):
             other = e["dst"] if e["src"] == n else e["src"]
-            if other not in seen:
-                seen[other] = seen[n] + 1; frontier.append(other)
+            if g.nodes[other]["type"] != "market":
+                by_kind[g.nodes[other]["type"]].append((e, other))
+        for links in by_kind.values():
+            mutex = [e for e, _ in links if e["type"] == "mutex"][:MUTEX_SHOWN]  # mutex sets are cliques
+            for e, other in [(e, o) for e, o in links if e["type"] != "mutex" or e in mutex][:fanout]:
+                edges[(e["src"], e["type"], e["dst"])] = e
+                if other not in seen:
+                    seen[other] = seen[n] + 1; frontier.append(other)
     return seen, [e for e in edges.values() if e["src"] in seen and e["dst"] in seen]
 
 @app.get("/graph/{node_id}")
@@ -332,7 +375,7 @@ def security_exposures(ticker: str, min_score: float = Query(0.1, ge=0, le=1),
     g = graph(cur, as_of, known_as_of)
     sid = f"sec:{ticker}"
     g.get(sid, "security")
-    hits = {p: v for p, v in g.exposures().get(sid, {}).items() if v[0] >= min_score}
+    hits = {p: v for p, v in g.exposures_of(sid).items() if v[0] >= min_score}
     probs = prop_probs(cur, g, list(hits), at)
     rows = [dict(proposition_summary(g, p, probs), score=s, path=[g.ref(x) for x in path])
             for p, (s, path) in hits.items() if include_closed or probs[p]["prob"] is not None]
@@ -358,13 +401,12 @@ def portfolio_scan(req: ScanRequest, cur=Depends(db)):
     `moved` flags propositions whose blended probability moved >= move_threshold in 24h."""
     at, known = times(req.as_of, req.known_as_of)
     g = graph(cur, req.as_of, req.known_as_of)
-    expo = g.exposures()
     agg, contrib, unknown = defaultdict(float), defaultdict(list), []
     for h in req.holdings:
         sid = f"sec:{h.ticker}"
         if sid not in g.nodes:
             unknown.append(h.ticker); continue
-        for p, (s, path) in expo.get(sid, {}).items():
+        for p, (s, path) in g.exposures_of(sid).items():
             if s >= req.min_score:
                 agg[p] += h.weight * s
                 contrib[p].append(dict(ticker=h.ticker, weight=h.weight, score=s,
