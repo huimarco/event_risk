@@ -23,6 +23,11 @@ Human overrides of market matches (seeds/match_overrides.csv) always win over th
 
 Scope: markets matching THEME_REGEX, minus EXCLUDE_REGEX noise.
 
+Runs after every collect, but only does work when its inputs changed: a new market, new contract
+terms, an edited seed file, or new graph code. Otherwise it exits without touching the graph.
+When it does run, decisions are point-in-time (matching.py) and Wikipedia lookups are cached
+(entities.py), so existing connections stay as they were; only the new market's are added.
+
   python graph_build.py           build / update the graph
   python graph_build.py --review  CSV of matches, rejected candidates (with reasons) and
                                   unparsed markets, for writing overrides
@@ -31,6 +36,8 @@ import csv, hashlib, itertools, json, re, sys
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+import pyarrow as pa
 
 import entities, matching
 from collector import THEME_REGEX, connect, insert, log, run_job
@@ -65,18 +72,25 @@ def market_id(m):
     return f"mkt:{m['venue']}:{m['market_id']}"
 
 def load_markets(con):
-    """Latest terms of in-scope markets. Timestamps come back naive UTC."""
+    """Latest terms of in-scope markets, when each was first listed, and when it first had a price.
+    Timestamps naive UTC."""
     cur = con.execute("""
         SELECT venue, market_id, event_id, series_id, event_title, title, subtitle, rules_primary,
                neg_risk, strike_type, floor_strike, cap_strike, tags::VARCHAR AS tags,
                open_time AT TIME ZONE 'UTC' AS open_time, close_time AT TIME ZONE 'UTC' AS close_time,
-               first_seen_at AT TIME ZONE 'UTC' AS first_seen_at
-        FROM v_market_latest""")
+               first_seen_at AT TIME ZONE 'UTC' AS first_seen_at, listed_at AT TIME ZONE 'UTC' AS listed_at,
+               priced_at AT TIME ZONE 'UTC' AS priced_at
+        FROM v_market_latest
+        JOIN (SELECT venue, market_id, min(first_seen_at) AS listed_at FROM market_versions GROUP BY ALL)
+          USING (venue, market_id)
+        LEFT JOIN (SELECT venue, market_id, min(ts) AS priced_at FROM v_market_prob WHERE prob IS NOT NULL GROUP BY ALL)
+          USING (venue, market_id)
+        ORDER BY venue, market_id""")  # fixed order, so every derived note and choice is reproducible
     cols = [d[0] for d in cur.description]
     out = []
     for row in cur.fetchall():
         m = dict(zip(cols, row))
-        for k in ("open_time", "close_time", "first_seen_at"):
+        for k in ("open_time", "close_time", "first_seen_at", "listed_at", "priced_at"):
             m[k] = utc(m[k])
         m["text"] = " ".join(str(m[k]) for k in ("series_id", "event_title", "title", "subtitle", "tags") if m[k])
         if THEME_REGEX.search(m["text"]) and not EXCLUDE_REGEX.search(m["text"]):
@@ -88,11 +102,32 @@ def market_name(m):
     return f"{title} — {sub}" if sub and sub.lower() not in title.lower() else title
 
 # ── market matching ───────────────────────────────────────────────────────────
-def latest_prices(con):
-    """{(venue, market_id): latest cleaned probability in the last 7 days}, for matching's price check."""
-    return {(v, m): p for v, m, p in con.execute("""
-        SELECT venue, market_id, arg_max(prob, ts) FROM v_market_prob
-        WHERE ts > now() - INTERVAL 7 DAY AND prob IS NOT NULL GROUP BY ALL""").fetchall()}
+def prices_at(con):
+    """For matching's price check: a function {(market key, t)} -> {(market key, t): probability},
+    the latest cleaned price at or before t (within 7 days)."""
+    def lookup(requests):
+        reqs = sorted(requests)
+        if not reqs: return {}
+        con.register("req", pa.table({"i": list(range(len(reqs))), "venue": [k[0] for k, _ in reqs],
+                                       "market_id": [k[1] for k, _ in reqs],
+                                       "t": pa.array([t for _, t in reqs], pa.timestamp("ms", tz="UTC"))}))
+        rows = con.execute("""
+            SELECT r.i, p.prob FROM req r
+            ASOF JOIN (SELECT venue, market_id, ts, prob FROM v_market_prob WHERE prob IS NOT NULL) p
+              ON r.venue = p.venue AND r.market_id = p.market_id AND r.t >= p.ts
+            WHERE p.ts > r.t - INTERVAL 7 DAY""").fetchall()
+        con.unregister("req")
+        return {reqs[i]: prob for i, prob in rows}
+    return lookup
+
+def fingerprint(con):
+    """Everything the graph is built from: market terms, seed files and the graph code."""
+    n, last = con.execute("SELECT count(*), max(first_seen_at)::VARCHAR FROM market_versions").fetchone()
+    h = hashlib.sha256()
+    for f in sorted([*SEEDS.glob("*.csv"), ROOT / "securities.csv",
+                     *(ROOT / m for m in ("graph_build.py", "matching.py", "entities.py"))]):
+        h.update(f.name.encode() + f.read_bytes())
+    return f"{n}|{last}|{h.hexdigest()[:16]}"
 
 def discover(con, markets):
     """Entities for these markets (plus those carrying exposures), from Wikipedia / Wikidata."""
@@ -191,16 +226,19 @@ def build(markets, prices, ents):
             for a, b in itertools.combinations(sorted(pids), 2):
                 add_e(edge(a, b, "mutex", start(a, b), event_id=event_id))
             continue
-        # strike ladders: higher floor implies lower floor; lower cap implies higher cap
+        # Ladders link every pair of rungs, not just neighbours, so a new rung only adds links
+        # (a chain would retract "by 2027 => by 2028" when "by mid-2027" is listed).
+        # strike: a higher floor implies a lower floor; a lower cap implies a higher cap
         for kinds, key, desc in ((GREATER, "floor_strike", True), (LESS, "cap_strike", False)):
             lad = sorted(((m[key], p) for p, m in pids.items()
                           if m["strike_type"] in kinds and m[key] is not None), reverse=desc)
-            for (_, a), (_, b) in zip(lad, lad[1:]):
-                add_e(edge(a, b, "implies", start(a, b), ladder="strike", event_id=event_id))
-        # date ladders: an earlier deadline implies the later one
+            for (va, a), (vb, b) in itertools.combinations(lad, 2):
+                if va != vb:
+                    add_e(edge(a, b, "implies", start(a, b), ladder="strike", event_id=event_id))
+        # date: an earlier deadline implies a later one
         if all(m["subtitle"] and DATE_SUBTITLE.search(m["subtitle"]) for m in pids.values()):
             lad = sorted((m["close_time"], p) for p, m in pids.items() if m["close_time"])
-            for (ta, a), (tb, b) in zip(lad, lad[1:]):
+            for (ta, a), (tb, b) in itertools.combinations(lad, 2):
                 if ta < tb:
                     add_e(edge(a, b, "implies", start(a, b), ladder="date", event_id=event_id))
 
@@ -261,8 +299,14 @@ def sync(con, table, key, desired, run_id, t):
     return [dict.fromkeys(cols) | r for r in rows]
 
 def graph(con, run_id, errors, stats):
+    inputs = fingerprint(con)
+    last = con.execute("""SELECT stats->>'inputs' FROM collection_runs WHERE job = 'graph' AND status = 'ok'
+                          ORDER BY started_at DESC LIMIT 1""").fetchone()
+    if last and last[0] == inputs:
+        stats |= {"inputs": inputs, "skipped": "no new markets, terms, seeds or code since last build"}
+        return True
     markets = load_markets(con)
-    nodes, edges = build(markets, latest_prices(con), discover(con, markets))
+    nodes, edges = build(markets, prices_at(con), discover(con, markets))
     t = datetime.now(timezone.utc)
     node_rows = sync(con, "graph_nodes", "node_id", nodes, run_id, t)
     edge_rows = sync(con, "graph_edges", "edge_id", edges, run_id, t)
@@ -270,7 +314,7 @@ def graph(con, run_id, errors, stats):
     insert(con, "graph_nodes", node_rows)
     insert(con, "graph_edges", edge_rows)
     con.commit()
-    stats |= {"nodes": Counter(n["node_type"] for n in nodes.values()),
+    stats |= {"inputs": inputs, "nodes": Counter(n["node_type"] for n in nodes.values()),
               "edges": Counter(e["edge_type"] for e in edges.values()),
               "node_changes": len(node_rows), "edge_changes": len(edge_rows)}
     return True
@@ -280,7 +324,7 @@ def review():
     """CSV for human review: algorithmic matches, rejected candidates with the reason, and
     markets the parser couldn't read. Copy a row into seeds/match_overrides.csv to override."""
     con = connect()
-    markets, prices = load_markets(con), latest_prices(con)
+    markets, prices = load_markets(con), prices_at(con)
     sigs, matches, rejected = match(markets, prices, discover(con, markets))
     con.close()
     name = {(m["venue"], m["market_id"]): market_name(m) for m in markets}

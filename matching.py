@@ -24,6 +24,10 @@ tell; prices can. So the final check is the market's own: a same_as pair whose l
 by more than PRICE_TOLERANCE is downgraded to near_equivalent, and an elapsed-time-only pair is
 same_as only when prices confirm it.
 
+Each pair is judged once, at a fixed moment: when both markets are listed and both have a price
+(that date, and both prices then). A decision therefore never changes later: the graph only moves
+when markets are added or their terms change.
+
 Unparsed markets never match; they are listed for review. Human overrides win (graph_build.py).
 """
 import re
@@ -126,7 +130,7 @@ def _et_date(dt):
 
 def parse_window(text, open_d, close_d):
     """(start, end) inclusive dates from templated rules/question text, or None."""
-    t, y = text.lower(), (close_d or open_d or date.today()).year
+    t, y = text.lower(), (close_d or open_d or date(2000, 1, 1)).year
     d = lambda g, i: _date(g[i], g[i + 1], g[i + 2], y)
     if m := re.search(rf"between (?:(?:this |the )?market(?:'s)? creation|{DATE}) and {DATE}", t):
         g = m.groups()
@@ -242,8 +246,8 @@ def _label(ids):
     return ", ".join(sorted(i.split(":", 1)[1] for i in ids)) or "-"
 
 def compare(a, b, parents, today, prices=None):
-    """Match between two signatures, or a string saying why they don't match.
-    `prices` = {market key: latest probability}, for the price check."""
+    """Match between two signatures as of `today`, or a string saying why they don't match.
+    `prices` = {market key: probability on that day}, for the price check."""
     if not (a.parsed and b.parsed): return "unparsed"
     if a.family != b.family: return f"action: {a.action} vs {b.action}"
     if "race" in (a.kind, b.kind) and a.event != b.event: return "race outcome depends on the field of rivals"
@@ -308,20 +312,27 @@ def compare(a, b, parents, today, prices=None):
         return Match(a.key, b.key, "near_equivalent", base - 0.2, tuple(near + notes))
     return Match(a.key, b.key, "same_as", base, tuple(notes))
 
-def match_markets(markets, mentions, parents, prices=None, today=None):
+def match_markets(markets, mentions, parents, prices_at=None):
     """Signatures, matches and rejected candidates (with reasons) between markets in different
     events. Candidates share an action family and the same top-level entities; same-event
-    structure is handled by the ladder/mutex rules in graph_build."""
-    today = today or datetime.now(timezone.utc).date()
+    structure is handled by the ladder/mutex rules in graph_build.
+
+    Each pair is evaluated at the first moment both markets are listed and priced (`listed_at`,
+    `priced_at`), with prices from `prices_at({(key, when)}) -> {(key, when): probability}` —
+    deterministic on re-runs. A market never priced is judged at its listing (price check skipped)."""
+    ready = {(m["venue"], m["market_id"]): max(filter(None, (m.get("listed_at"), m.get("priced_at"))),
+                                                default=datetime.now(timezone.utc)) for m in markets}
     sigs = {s.key: s for s in (parse(m, mentions.get((m["venue"], m["market_id"]), [])) for m in markets)}
     blocks = {}
     for s in sigs.values():
         if s.parsed:
             blocks.setdefault((s.family, _roots(s.actors | s.targets, parents)), []).append(s)
+    pairs = {(a, b): max(ready[a.key], ready[b.key]) for block in blocks.values()
+             for a, b in (sorted(p, key=lambda x: x.key) for p in combinations(block, 2))  # fixed order: stable notes
+             if a.event != b.event}
+    px = prices_at({(x.key, t) for (a, b), t in pairs.items() for x in (a, b)}) if prices_at else {}
     matches, rejected = [], []
-    for block in blocks.values():
-        for a, b in combinations(block, 2):
-            if a.event != b.event:
-                r = compare(a, b, parents, today, prices)
-                (matches.append(r) if isinstance(r, Match) else rejected.append((a.key, b.key, r)))
+    for (a, b), t in pairs.items():
+        r = compare(a, b, parents, t.date(), {x.key: px.get((x.key, t)) for x in (a, b)})
+        (matches.append(r) if isinstance(r, Match) else rejected.append((a.key, b.key, r)))
     return sigs, matches, rejected

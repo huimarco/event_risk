@@ -30,7 +30,8 @@
   header label { color: var(--ink-2); font-size: 13px; display: flex; align-items: center; gap: 6px; }
   input, select, button { font: inherit; color: var(--ink); background: var(--surface);
          border: 1px solid var(--axis); border-radius: 6px; padding: 4px 8px; }
-  main { display: grid; grid-template-columns: 300px 1fr 360px; min-height: 0; }
+  main, #about { min-height: 0; }
+  main { display: grid; grid-template-columns: 300px 1fr 360px; }
   aside, section { min-height: 0; overflow: auto; }
   aside { border-right: 1px solid var(--hairline); display: flex; flex-direction: column; }
   .tabs { display: flex; gap: 4px; padding: 10px 12px 0; }
@@ -68,13 +69,44 @@
   details summary { cursor: pointer; color: var(--ink-2); font-size: 13px; }
   details p { color: var(--ink-2); font-size: 13px; white-space: pre-wrap; }
   .note { color: var(--muted); font-size: 12px; margin-top: 16px; }
+  nav { display: flex; gap: 4px; margin-right: auto; }
+  nav button { border: 0; background: none; color: var(--ink-2); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+  nav button[aria-selected="true"] { color: var(--ink); font-weight: 600; background: var(--hover); }
+  header h1 { margin: 0 12px 0 0; }
+  body.about main, body.about .explore-only { display: none; }
+  #about { display: none; overflow: auto; }
+  body.about #about { display: block; }
+  .doc { max-width: 820px; margin: 0 auto; padding: 32px 24px 64px; }
+  .doc h2 { font-size: 22px; margin: 0 0 8px; }
+  .doc h3 { font-size: 16px; margin: 36px 0 8px; }
+  .doc p, .doc li { color: var(--ink-2); }
+  .doc strong { color: var(--ink); font-weight: 600; }
+  .doc .lede { font-size: 16px; color: var(--ink); }
+  .doc table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+  .doc th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .doc th, .doc td { padding: 8px 10px 8px 0; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  .doc td:first-child { color: var(--ink); white-space: nowrap; }
+  .doc code { font-size: 12px; background: var(--hover); padding: 1px 5px; border-radius: 4px; }
+  .flow { display: flex; align-items: center; gap: 8px; margin: 20px 0 8px; padding: 16px;
+          border: 1px solid var(--ring); border-radius: 10px; background: var(--surface); }
+  .flow .step { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .flow .step b { display: flex; align-items: center; gap: 6px; color: var(--ink); }
+  .flow .step span { color: var(--muted); font-size: 12px; }
+  .flow .arrow { color: var(--muted); }
+  .formula { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: var(--ink); background: var(--surface);
+             border: 1px solid var(--ring); border-radius: 8px; padding: 12px 14px; margin: 8px 0; overflow-x: auto; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--axis); color: var(--ink-2); }
 </style>
 </head>
 <body>
 <header>
   <h1>Event Risk Graph</h1>
-  <label>As of <input id="asof" type="datetime-local"></label>
-  <label>Depth <select id="depth"><option>1</option><option selected>2</option></select></label>
+  <nav role="tablist">
+    <button role="tab" data-view="explore" aria-selected="true">Explore</button>
+    <button role="tab" data-view="about">How it works</button>
+  </nav>
+  <label class="explore-only">As of <input id="asof" type="datetime-local"></label>
+  <label class="explore-only">Depth <select id="depth"><option>1</option><option selected>2</option></select></label>
 </header>
 <main>
   <aside>
@@ -98,6 +130,90 @@
   </section>
   <section id="detail"><p class="note">Details appear here.</p></section>
 </main>
+<section id="about"><article class="doc">
+  <h2>What this is</h2>
+  <p class="lede">A map from <strong>geopolitical questions people bet on</strong> to <strong>the investments those questions affect</strong>.
+    Prediction markets put a live probability on events like <em>"Will China blockade Taiwan in 2026?"</em>.
+    This graph connects each question to the countries, people, companies and topics it involves, and from there to stocks, ETFs and currencies —
+    so a risk desk can see which geopolitical events its portfolio is exposed to, and how their odds are moving.</p>
+
+  <div class="flow">
+    <div class="step"><b>Market</b><span>one bet on Kalshi or Polymarket</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch proposition"></i>Proposition</b><span>the real-world question, across venues</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch entity"></i>Entity</b><span>country, person, organisation, concept</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch security"></i>Security</b><span>stock, ETF, currency</span></div>
+  </div>
+  <p>In the explorer, pick anything on the left; the network shows what it is connected to, and the panel on the right explains each connection.</p>
+
+  <h3>How every connection is made</h3>
+  <p>Everything is produced by algorithms from public data — no AI models, no hand-picked lists — except one input, marked below.</p>
+  <table>
+    <tr><th>Connection</th><th>Example</th><th>How it is made</th></tr>
+    <tr><td>Market → Proposition</td><td>Kalshi and Polymarket "Trump visits Taiwan in 2026" are one question</td>
+        <td>Contract terms compared field by field, then confirmed by prices (below)</td></tr>
+    <tr><td>Proposition ↔ Proposition</td><td>"Invasion by June 2027" implies "by Dec 2027"</td>
+        <td>Logic from the contracts: <span class="tag">implies</span> nested deadlines or thresholds, <span class="tag">mutex</span> can't both happen (venue flags), <span class="tag">near_equivalent</span> same event, materially different terms</td></tr>
+    <tr><td>Proposition → Entity</td><td>"…China invade Taiwan…" involves China, Taiwan, invasion</td>
+        <td>Phrases in the question linked to Wikipedia articles</td></tr>
+    <tr><td>Entity ↔ Entity</td><td>Xi Jinping — citizen of — China</td>
+        <td>Facts from Wikidata, strength from Wikipedia co-occurrence (below)</td></tr>
+    <tr><td>Entity → Security</td><td>Taiwan → TSM</td>
+        <td><strong>Hand-written analyst estimates</strong> — the only manual input, to be replaced by company revenue data and measured price reactions</td></tr>
+  </table>
+
+  <h3>Markets → propositions: comparing contracts, not wording</h3>
+  <p>Questions that read alike are often different bets ("visits China <em>before</em> May 14" vs "<em>on</em> May 14"), so text similarity is not used.
+    Each market is parsed into a <strong>contract signature</strong> from the venue's data and its templated rules text:</p>
+  <table>
+    <tr><th>Field</th><th>Example: "Will Trump visit Taiwan before Jan 1, 2027?"</th></tr>
+    <tr><td>Action</td><td>visit — from a fixed vocabulary of event types</td></tr>
+    <tr><td>Actor → target</td><td>Donald Trump → Taiwan (which side of the verb matters)</td></tr>
+    <tr><td>Time window</td><td>Dec 2, 2025 – Dec 31, 2026, read exactly from the rules</td></tr>
+    <tr><td>Threshold</td><td>— (used for "tariff ≥ 20%"-style questions)</td></tr>
+    <tr><td>Conditions</td><td>physically present (others: in person, incl. phone calls, photographed, becomes law…)</td></tr>
+  </table>
+  <p>Two markets are the <strong>same question</strong> only if every field matches. Then comes a final check with real money:
+    if their prices differ by more than 10 points, the market is saying they are different bets, so they are linked but not merged. Each pair is judged once, using prices at the moment the newer market was listed, so the decision never flips later.
+    Example: "Trump, Xi and Putin <em>meet</em>" (Kalshi, 34.5%) vs "are <em>seen together</em>" (Polymarket, 84.5%) — linked as near-equivalent, never blended.</p>
+
+  <h3>Entities: discovered from the markets, connected through Wikipedia</h3>
+  <p>There is no fixed entity list; it is regenerated from the markets on every update.</p>
+  <ul>
+    <li><strong>Discovery.</strong> Phrases in each question are looked up as Wikipedia titles ("People's Republic of China" → China, "household registration system" → Hukou).</li>
+    <li><strong>Type and parent.</strong> Wikidata says what each entity is (person, country, organisation, concept) and which country it belongs to (Trump → United States), so "Trump makes a deal" and "the U.S. makes a deal" are recognised as the same side.</li>
+    <li><strong>Concepts are kept only if specific and relevant</strong> — mentioned in under 1% of Wikipedia articles and related to the question's actors ("tariff" yes, "company" no).</li>
+    <li><strong>Strength of connection</strong> — how often Wikipedia articles mention both, relative to how often each is mentioned (the Normalized Google Distance formula, computed on Wikipedia):</li>
+  </ul>
+  <div class="formula">relatedness(A, B) = 1 − [ log max(|A|,|B|) − log |A∩B| ] / [ log W − log min(|A|,|B|) ]<br>
+    |A|, |B| = articles mentioning each · |A∩B| = articles mentioning both · W = all articles (~7.3M)</div>
+  <p>Example: Putin–Xi Jinping 0.66, China–Taiwan 0.56. Links need at least 10 articles mentioning both, and a score of 0.25 or more.</p>
+
+  <h3>Numbers you will see</h3>
+  <table>
+    <tr><td>Probability</td><td>The latest market price of each venue's contract, averaged (weighted by open interest when available). Only same-question markets are averaged.</td></tr>
+    <tr><td>24h change</td><td>Probability now minus 24 hours earlier.</td></tr>
+    <tr><td>Exposure score</td><td>How strongly a security is connected to a question through the graph (product of link strengths along the path). It ranks <strong>relevance, not impact</strong>: it does not say whether an event helps or hurts, or by how much.</td></tr>
+  </table>
+
+  <h3>Time travel</h3>
+  <p><strong>As of</strong> shows the graph and probabilities as they were at any past moment. Nothing is overwritten: every change is stored with when it became true
+    and when the system learned it, so a past view uses only what was known then — safe for backtesting.</p>
+
+  <h3>Data and updates</h3>
+  <table>
+    <tr><td>Markets</td><td>Kalshi and Polymarket public APIs — a snapshot every 15 minutes (in practice every few hours on the free scheduler), plus hourly history back to 2021</td></tr>
+    <tr><td>Graph</td><td>Updated only when new markets are listed (or a contract's terms change); price updates never alter it. Each new market adds its own connections; existing ones stay as they were</td></tr>
+    <tr><td>Entities</td><td>Wikipedia and Wikidata, cached after the first lookup</td></tr>
+    <tr><td>Security prices</td><td>Daily closes from Yahoo Finance (research use only)</td></tr>
+  </table>
+
+  <h3>Current limits</h3>
+  <ul>
+    <li>Entity → security weights are analyst estimates, not sourced figures.</li>
+    <li>Exposure scores have no direction or size yet; measured "event betas" (how prices actually moved when odds jumped) are the next step.</li>
+    <li>Scope is one theme for now: US–China, Taiwan and semiconductors.</li>
+  </ul>
+</article></section>
 <script>
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -218,6 +334,11 @@ async function select(id) {
 }
 
 // ── wiring ───────────────────────────────────────────────────────────────────
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
+  document.body.classList.toggle("about", b.dataset.view === "about");
+  if (b.dataset.view === "explore") network.redraw();
+});
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
   state.tab = b.dataset.tab; $("#search").value = ""; loadList();

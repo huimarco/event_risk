@@ -12,13 +12,13 @@ a point-in-time knowledge graph linking markets → propositions → entities �
 | `prices.py` | weekdays 22:30 UTC | `security_prices` (Yahoo, research use only) |
 | `backfill.py` | manual, one-time | `market_snapshots` (source=`backfill`) |
 
-All data lives in MotherDuck: set `MOTHERDUCK_TOKEN` (`DB` defaults to `md:geo_odds`).
+All data lives in MotherDuck: put `MOTHERDUCK_TOKEN` in `.env` (copy `.env.example`; git-ignored) or the environment. `DB` defaults to `md:geo_odds`.
 
 ## API
 
 ```
 pip install -r requirements.txt
-DB=md:geo_odds MOTHERDUCK_TOKEN=... uvicorn api:app      # interactive docs: http://localhost:8000/docs
+uvicorn api:app      # reads .env; explorer at http://localhost:8000, docs at /docs
 ```
 
 ```

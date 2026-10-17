@@ -19,6 +19,16 @@ import duckdb, pyarrow as pa, requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+def load_env(path=Path(__file__).parent / ".env"):
+    """KEY=value lines from a local .env (git-ignored) into the environment; real env vars win."""
+    if path.exists():
+        for line in path.read_text().splitlines():
+            key, sep, value = line.partition("=")
+            key, value = key.strip(), value.split(" #")[0].strip().strip("\"'")
+            if sep and key and value and not key.startswith("#"):  # blank placeholders are skipped
+                os.environ.setdefault(key, value)
+
+load_env()
 DB = os.getenv("DB", "md:geo_odds")
 KALSHI_CATEGORIES = set(os.getenv("KALSHI_CATEGORIES", "World,Politics").split(","))
 POLY_TAGS = os.getenv("POLY_TAGS", "geopolitics").split(",")
