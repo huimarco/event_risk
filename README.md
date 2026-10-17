@@ -45,9 +45,29 @@ one, per Wikidata ("Will Trump visit China?" in, "Will the Senate confirm…?" o
 
 ## Refreshing cached facts
 
-Wikipedia/Wikidata lookups are cached. To pick up real-world changes (new leaders, ownership):
-`python graph_build.py --refresh wikidata` (monthly), or `--refresh relatedness` for co-occurrence
-scores (yearly, slow) — or Actions → **refresh** → Run workflow.
+Wikipedia/Wikidata lookups are fetched once and cached, so the routine refresh never repeats them.
+Refresh them manually to pick up real-world changes. A refresh re-fetches, appends the new values
+(old ones stay as history), and rebuilds the graph — only facts that actually changed are rewritten.
+
+**Wikidata refresh — monthly.** Entity facts: type, parent country, statements such as *head of
+state* or *citizen of* (e.g. a new leader). Takes a few minutes.
+
+```bash
+python graph_build.py --refresh wikidata
+```
+
+or GitHub: **Actions → refresh → Run workflow → wikidata**.
+
+**Relatedness refresh — yearly.** Wikipedia co-occurrence counts behind entity ↔ entity link
+strengths. Slow (around an hour at full scope).
+
+```bash
+python graph_build.py --refresh relatedness
+```
+
+or GitHub: **Actions → refresh → Run workflow → relatedness**.
+
+The terminal commands need `MOTHERDUCK_TOKEN` in `.env`; the workflow uses the repository secret.
 
 ## How markets become propositions
 
