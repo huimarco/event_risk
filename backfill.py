@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-One-time backfill of hourly price history for theme markets (THEME_REGEX), open and settled,
-into market_snapshots with source='backfill'. Also records their terms in market_versions.
-Re-runnable: markets that already have backfill rows are skipped.
+One-time backfill of hourly price history for geopolitical markets (same scope as the graph:
+graph_build.geopolitical), open and settled, into market_snapshots with source='backfill'. Also
+records their terms in market_versions. Re-runnable: markets already backfilled are skipped.
 
   Kalshi:     every series in KALSHI_CATEGORIES -> events (all statuses) -> hourly candlesticks
               (markets settled before Kalshi's historical cutoff come from /historical/...)
@@ -16,9 +16,11 @@ from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
-from collector import (CLOB, KALSHI, KALSHI_CATEGORIES, POLY_TAGS, THEME_REGEX, get, insert,
-                       kalshi_record, load_versions, log, now, num, poly_events, poly_record,
-                       run_job, version_rows, when)
+import entities, matching
+from collector import (CLOB, KALSHI, KALSHI_CATEGORIES, POLY_TAGS, get, insert, kalshi_record,
+                       load_versions, log, now, num, poly_events, poly_record, run_job,
+                       version_rows, when)
+from graph_build import EXCLUDE_REGEX, geopolitical
 
 MIN_VOLUME = float(os.getenv("BACKFILL_MIN_VOLUME", "1000"))
 HOUR = 3600
@@ -33,24 +35,25 @@ def paged(url, key, **params):
         if not (cursor := d.get("cursor")): return out
 
 # ── Kalshi ────────────────────────────────────────────────────────────────────
-def kalshi_markets():
+def kalshi_markets(con):
     """(record, is_historical) for every market in KALSHI_CATEGORIES series, any status."""
     series = [s["ticker"] for c in KALSHI_CATEGORIES
               for s in get(f"{KALSHI}/series", dict(category=c)).get("series") or []]
-
-    def markets(t):
-        ts, out = now(), []
-        for e in paged(f"{KALSHI}/events", "events", series_ticker=t, with_nested_markets="true"):
-            ms, hist = e.get("markets") or [], False
-            # Old settled markets are only served by /historical; only fetch those for theme events.
-            if not ms and THEME_REGEX.search(" ".join(filter(None, (t, e.get("title"), e.get("sub_title"))))):
-                ms, hist = paged(f"{KALSHI}/historical/markets", "markets", event_ticker=e["event_ticker"]), True
-            out += [(kalshi_record(e, m, ts), hist) for m in ms]
-        return out
-
     with ThreadPoolExecutor(8) as ex:
-        for rs in ex.map(markets, series):
-            yield from rs
+        events = [(e, now()) for es in ex.map(lambda t: paged(f"{KALSHI}/events", "events", series_ticker=t,
+                                                               with_nested_markets="true"), series) for e in es]
+    yield from ((kalshi_record(e, m, ts), False) for e, ts in events for m in e.get("markets") or [])
+
+    # Old settled markets are only served by /historical, one request per event: fetch them only
+    # for geopolitical events (judged on the event title, before any market is fetched).
+    empty = {("kalshi", e["event_ticker"]): (e, ts) for e, ts in events if not e.get("markets")}
+    titles = {k: " ".join(filter(None, (e.get("title"), e.get("sub_title")))) for k, (e, _) in empty.items()}
+    keep, _ = entities.discover(con, titles, in_scope=geopolitical)
+    with ThreadPoolExecutor(8) as ex:
+        hist = ex.map(lambda k: paged(f"{KALSHI}/historical/markets", "markets", event_ticker=k[1]), keep)
+        for k, ms in zip(keep, hist):
+            e, ts = empty[k]
+            yield from ((kalshi_record(e, m, ts), True) for m in ms)
 
 def dollars(d, k):  # live candles use "<k>_dollars", historical ones plain "<k>"
     d = d or {}
@@ -87,7 +90,7 @@ def kalshi_history(rec, hist):
     return rows
 
 # ── Polymarket ────────────────────────────────────────────────────────────────
-def poly_markets():
+def poly_markets(con):
     seen = set()
     for tag in POLY_TAGS:
         for closed in ("false", "true"):
@@ -122,17 +125,19 @@ def backfill(con, run_id, errors, stats):
                            "WHERE source = 'backfill'").fetchall())
     versions, todo = load_versions(con), []
     for venue, discover, history in VENUES:
-        try:
-            theme = [(r, h) for r, h in discover() if THEME_REGEX.search(r["text"])]
+        try:  # liquid, not yet backfilled, then geopolitical (entity lookups only for these)
+            cands = [(r, h) for r, h in discover(con) if (r["volume"] or 0) >= MIN_VOLUME
+                     and (venue, r["market_id"]) not in done and not EXCLUDE_REGEX.search(r["text"])]
+            questions = {(r["venue"], r["market_id"]): matching.question_text(r["contract"]) for r, _ in cands}
+            keep, _ = entities.discover(con, questions, in_scope=geopolitical)
+            scoped = [(r, h) for r, h in cands if (r["venue"], r["market_id"]) in keep]
         except Exception as err:
             log.exception("%s discovery failed", venue); errors.append(f"{venue} discovery: {err!r}")
             continue
-        vers = version_rows([r for r, _ in theme], versions, run_id)
+        vers = version_rows([r for r, _ in scoped], versions, run_id)
         con.begin(); insert(con, "market_versions", vers); con.commit()
-        todo += [(r, h, history) for r, h in theme
-                 if (r["volume"] or 0) >= MIN_VOLUME and (venue, r["market_id"]) not in done]
-        stats[venue] = dict(theme_markets=len(theme), new_versions=len(vers),
-                            to_backfill=sum(1 for t in todo if t[0]["venue"] == venue))
+        todo += [(r, h, history) for r, h in scoped]
+        stats[venue] = dict(candidates=len(cands), geopolitical=len(scoped), new_versions=len(vers))
         log.info("%s: %s", venue, stats[venue])
 
     def one(item):

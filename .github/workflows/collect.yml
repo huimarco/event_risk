@@ -12,7 +12,7 @@ concurrency:
 jobs:
   snapshot:
     runs-on: ubuntu-latest
-    timeout-minutes: 45   # first graph build fetches Wikipedia data once (~10 min); later runs ~1 min
+    timeout-minutes: 120   # first graph build fetches Wikipedia data once (can take ~1 h; progress is saved); later runs ~1 min
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

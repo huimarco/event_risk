@@ -21,7 +21,10 @@ Edges:
                                                 input (analyst priors until event betas)
 Human overrides of market matches (seeds/match_overrides.csv) always win over the algorithm.
 
-Scope: markets matching THEME_REGEX, minus EXCLUDE_REGEX noise.
+Scope: geopolitical markets (minus EXCLUDE_REGEX noise). Polymarket's geopolitics tag is the
+venue's own classification; a Kalshi World/Politics market is geopolitical when it involves a
+foreign state actor — a country other than the US, or a person/organisation belonging to one
+(Wikidata parents) — so "Trump visits China" is in and "Senate confirms X" is out.
 
 Runs after every collect, but only does work when its inputs changed: a new market, new contract
 terms, an edited seed file, or new graph code. Otherwise it exits without touching the graph.
@@ -31,6 +34,8 @@ When it does run, decisions are point-in-time (matching.py) and Wikipedia lookup
   python graph_build.py           build / update the graph
   python graph_build.py --review  CSV of matches, rejected candidates (with reasons) and
                                   unparsed markets, for writing overrides
+  python graph_build.py --refresh wikidata      re-fetch entity facts (type, parent, statements)
+  python graph_build.py --refresh relatedness   re-fetch Wikipedia co-occurrence counts
 """
 import csv, hashlib, itertools, json, re, sys
 from collections import Counter, defaultdict
@@ -40,7 +45,7 @@ from pathlib import Path
 import pyarrow as pa
 
 import entities, matching
-from collector import THEME_REGEX, connect, insert, log, run_job
+from collector import connect, insert, log, run_job
 
 ROOT = Path(__file__).parent
 SEEDS = ROOT / "seeds"
@@ -50,6 +55,8 @@ EXCLUDE_REGEX = re.compile(r"what will .* say|shake hands|nobel|pope|covid|birth
 # Subtitles that make an event a date ladder: "Before 2027", "Before Jan 1, 2028", "June 30".
 DATE_SUBTITLE = re.compile(r"^(before|by)\b|^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.? \d", re.I)
 GREATER, LESS = {"greater", "greater_or_equal"}, {"less", "less_or_equal"}
+HOME = "Q30"  # United States: involving only the US is domestic politics
+REFRESH_KINDS = {"wikidata": {"entity"}, "relatedness": {"mentions", "comentions", "df"}}  # wiki_cache kinds
 
 def seed(name):
     with open(SEEDS / name) as f:
@@ -72,8 +79,8 @@ def market_id(m):
     return f"mkt:{m['venue']}:{m['market_id']}"
 
 def load_markets(con):
-    """Latest terms of in-scope markets, when each was first listed, and when it first had a price.
-    Timestamps naive UTC."""
+    """Latest terms of candidate markets (geopolitical scope is decided after entity discovery),
+    when each was first listed, and when it first had a price. Timestamps naive UTC."""
     cur = con.execute("""
         SELECT venue, market_id, event_id, series_id, event_title, title, subtitle, rules_primary,
                neg_risk, strike_type, floor_strike, cap_strike, tags::VARCHAR AS tags,
@@ -93,7 +100,7 @@ def load_markets(con):
         for k in ("open_time", "close_time", "first_seen_at", "listed_at", "priced_at"):
             m[k] = utc(m[k])
         m["text"] = " ".join(str(m[k]) for k in ("series_id", "event_title", "title", "subtitle", "tags") if m[k])
-        if THEME_REGEX.search(m["text"]) and not EXCLUDE_REGEX.search(m["text"]):
+        if not EXCLUDE_REGEX.search(m["text"]):
             out.append(m)
     return out
 
@@ -129,10 +136,21 @@ def fingerprint(con):
         h.update(f.name.encode() + f.read_bytes())
     return f"{n}|{last}|{h.hexdigest()[:16]}"
 
+def geopolitical(key, actors, ents):
+    """Polymarket markets come from its geopolitics tag; others need a foreign state actor: one
+    with a country, none of which is the US (so dual-citizen Musk is domestic)."""
+    return key[0] == "polymarket" or any(
+        (cs := entities.countries_of(a[3:], ents)) and HOME not in cs for a in actors)
+
 def discover(con, markets):
-    """Entities for these markets (plus those carrying exposures), from Wikipedia / Wikidata."""
+    """Entities for the geopolitical markets among these (plus entities carrying exposures),
+    from Wikipedia / Wikidata. ents.mentions has exactly the in-scope markets."""
     questions = {(m["venue"], m["market_id"]): matching.question_text(m) for m in markets}
-    return entities.build(con, questions, extra_qids={r["qid"] for r in seed("exposures.csv")})
+    return entities.build(con, questions, extra_qids={r["qid"] for r in seed("exposures.csv")},
+                          in_scope=geopolitical)
+
+def in_scope(markets, ents):
+    return [m for m in markets if (m["venue"], m["market_id"]) in ents.mentions]
 
 def match(markets, prices, ents):
     """Signatures, matches and rejections for in-scope markets (see matching.py)."""
@@ -300,13 +318,18 @@ def sync(con, table, key, desired, run_id, t):
 
 def graph(con, run_id, errors, stats):
     inputs = fingerprint(con)
-    last = con.execute("""SELECT stats->>'inputs' FROM collection_runs WHERE job = 'graph' AND status = 'ok'
-                          ORDER BY started_at DESC LIMIT 1""").fetchone()
+    if entities.REFRESH:  # a refresh always rebuilds, so changed facts reach the graph
+        stats["refreshed"] = sorted(entities.REFRESH)
+        last = None
+    else:
+        last = con.execute("""SELECT stats->>'inputs' FROM collection_runs WHERE job = 'graph' AND status = 'ok'
+                              ORDER BY started_at DESC LIMIT 1""").fetchone()
     if last and last[0] == inputs:
         stats |= {"inputs": inputs, "skipped": "no new markets, terms, seeds or code since last build"}
         return True
     markets = load_markets(con)
-    nodes, edges = build(markets, prices_at(con), discover(con, markets))
+    ents = discover(con, markets)
+    nodes, edges = build(in_scope(markets, ents), prices_at(con), ents)
     t = datetime.now(timezone.utc)
     node_rows = sync(con, "graph_nodes", "node_id", nodes, run_id, t)
     edge_rows = sync(con, "graph_edges", "edge_id", edges, run_id, t)
@@ -325,7 +348,9 @@ def review():
     markets the parser couldn't read. Copy a row into seeds/match_overrides.csv to override."""
     con = connect()
     markets, prices = load_markets(con), prices_at(con)
-    sigs, matches, rejected = match(markets, prices, discover(con, markets))
+    ents = discover(con, markets)
+    markets = in_scope(markets, ents)
+    sigs, matches, rejected = match(markets, prices, ents)
     con.close()
     name = {(m["venue"], m["market_id"]): market_name(m) for m in markets}
     w = csv.writer(sys.stdout)
@@ -341,5 +366,11 @@ def review():
 if __name__ == "__main__":
     if "--review" in sys.argv:
         review()
+    elif "--refresh" in sys.argv:
+        what = sys.argv[sys.argv.index("--refresh") + 1:][:1]
+        if not what or what[0] not in REFRESH_KINDS:
+            sys.exit(f"usage: graph_build.py --refresh {{{'|'.join(REFRESH_KINDS)}}}")
+        entities.REFRESH |= REFRESH_KINDS[what[0]]
+        sys.exit(run_job("graph", graph))
     else:
         sys.exit(run_job("graph", graph))

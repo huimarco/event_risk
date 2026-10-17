@@ -32,9 +32,6 @@ load_env()
 DB = os.getenv("DB", "md:geo_odds")
 KALSHI_CATEGORIES = set(os.getenv("KALSHI_CATEGORIES", "World,Politics").split(","))
 POLY_TAGS = os.getenv("POLY_TAGS", "geopolitics").split(",")
-THEME_REGEX = re.compile(os.getenv("THEME_REGEX",  # MVP theme: US-China / Taiwan / semis
-    r"china|chinese|taiwan|beijing|\bxi\b|jinping|\bprc\b|\bccp\b|\bpla\b|hong kong|south china sea"
-    r"|tsmc|semiconductor|\bchips?\b|nvidia|export control|rare earth"), re.I)
 FINAL = {"finalized", "settled", "resolved", "archived"}  # statuses after which prices stop moving
 
 KALSHI = "https://api.elections.kalshi.com/trade-api/v2"

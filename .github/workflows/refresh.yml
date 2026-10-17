@@ -1,0 +1,29 @@
+name: refresh
+
+on:
+  workflow_dispatch:          # manual only
+    inputs:
+      what:
+        description: "wikidata = entity facts (monthly); relatedness = Wikipedia co-occurrence (yearly, slow)"
+        type: choice
+        options: [wikidata, relatedness]
+        default: wikidata
+
+concurrency:
+  group: collect               # never overlaps a collect / graph build
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests pyarrow duckdb
+      - run: python graph_build.py --refresh ${{ inputs.what }}
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

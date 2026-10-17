@@ -37,6 +37,18 @@ network and its details (prices, markets and rules, Wikipedia description, expos
 Every read accepts `as_of` (state of the world at T) and `known_as_of` (what the graph knew at T);
 set both to T for a point-in-time, backtest-safe view. Set `API_KEYS` to require `X-API-Key`.
 
+## Scope
+
+Every geopolitical market: Polymarket's `geopolitics` tag, plus Kalshi World/Politics markets that
+involve a foreign state actor — a country other than the US, or a person/organisation belonging to
+one, per Wikidata ("Will Trump visit China?" in, "Will the Senate confirm…?" out).
+
+## Refreshing cached facts
+
+Wikipedia/Wikidata lookups are cached. To pick up real-world changes (new leaders, ownership):
+`python graph_build.py --refresh wikidata` (monthly), or `--refresh relatedness` for co-occurrence
+scores (yearly, slow) — or Actions → **refresh** → Run workflow.
+
 ## How markets become propositions
 
 `matching.py` parses every market into a contract signature — action, actors/targets, time window,

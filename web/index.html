@@ -136,6 +136,9 @@
     Prediction markets put a live probability on events like <em>"Will China blockade Taiwan in 2026?"</em>.
     This graph connects each question to the countries, people, companies and topics it involves, and from there to stocks, ETFs and currencies —
     so a risk desk can see which geopolitical events its portfolio is exposed to, and how their odds are moving.</p>
+  <p><strong>Scope: every geopolitical market.</strong> Polymarket's geopolitics section is taken as the venue classifies it.
+    A Kalshi world or politics market counts as geopolitical when it involves a foreign state actor — a country other than the US,
+    or a person or organisation belonging to one (via Wikidata): "Will Trump visit China?" is in, "Will the Senate confirm…?" is out.</p>
 
   <div class="flow">
     <div class="step"><b>Market</b><span>one bet on Kalshi or Polymarket</span></div><span class="arrow">→</span>
@@ -211,7 +214,7 @@
   <ul>
     <li>Entity → security weights are analyst estimates, not sourced figures.</li>
     <li>Exposure scores have no direction or size yet; measured "event betas" (how prices actually moved when odds jumped) are the next step.</li>
-    <li>Scope is one theme for now: US–China, Taiwan and semiconductors.</li>
+    <li>Securities and their exposure weights still cover one theme (US–China, Taiwan, semiconductors), so many propositions have no linked securities yet.</li>
   </ul>
 </article></section>
 <script>
@@ -241,7 +244,8 @@ async function api(path, params = {}) {
 // ── list ─────────────────────────────────────────────────────────────────────
 async function loadList() {
   const t = state.tab;
-  const data = t === "propositions" ? (await api("/propositions", { limit: 500 })).propositions
+  const q = $("#search").value.trim() || undefined;  // propositions are searched on the server
+  const data = t === "propositions" ? (await api("/propositions", { limit: 300, q })).propositions
              : t === "entities" ? (await api("/entities")).sort((a, b) => b.n_propositions - a.n_propositions)
              : (await api("/securities")).sort((a, b) => b.n_exposures - a.n_exposures);
   state.items = data;
@@ -343,7 +347,11 @@ document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
   state.tab = b.dataset.tab; $("#search").value = ""; loadList();
 });
-$("#search").oninput = renderList;
+let searchTimer;
+$("#search").oninput = () => {
+  if (state.tab !== "propositions") return renderList();
+  clearTimeout(searchTimer); searchTimer = setTimeout(loadList, 250);
+};
 $("#list").onclick = e => { const li = e.target.closest("li"); if (li) select(li.dataset.id); };
 $("#detail").onclick = e => { const a = e.target.closest("[data-go]"); if (a) select(a.dataset.go); };
 $("#depth").onchange = () => state.selected && drawGraph(state.selected);
