@@ -13,6 +13,9 @@
     --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
     --hairline: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10); --hover: rgba(11,11,11,0.04);
     --proposition: #2a78d6; --entity: #eb6834; --security: #1baf7a;
+    /* Markets are the raw inputs behind propositions, not a peer category: no fourth hue passes
+       all-pairs against slots 1-3, so they are neutral grey + triangle + venue label. */
+    --market: #898781;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -47,6 +50,7 @@
   .swatch.proposition { background: var(--proposition); border-radius: 50%; }
   .swatch.entity { background: var(--entity); transform: rotate(45deg) scale(.85); }
   .swatch.security { background: var(--security); border-radius: 2px; }
+  .swatch.market { background: var(--market); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   #canvas-wrap { position: relative; background: var(--surface); }
   #graph { position: absolute; inset: 0; }
   .legend { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 14px; padding: 6px 10px;
@@ -144,6 +148,7 @@
       <span><i class="swatch proposition"></i>Proposition</span>
       <span><i class="swatch entity"></i>Entity</span>
       <span><i class="swatch security"></i>Security</span>
+      <span><i class="swatch market"></i>Market</span>
       <span><i class="dash"></i>Logical link</span>
     </div>
   </section>
@@ -151,109 +156,153 @@
 </main>
 <section id="about"><article class="doc">
   <h2>What this is</h2>
-  <p class="lede">A map from <strong>geopolitical questions people bet on</strong> to <strong>the investments those questions affect</strong>.
-    Prediction markets put a live probability on events like <em>"Will China blockade Taiwan in 2026?"</em>.
-    This graph connects each question to the countries, people, companies and topics it involves, and from there to stocks, ETFs and currencies —
-    so a risk desk can see which geopolitical events its portfolio is exposed to, and how their odds are moving.</p>
-  <p><strong>Scope: every geopolitical market.</strong> Polymarket's geopolitics section is taken as the venue classifies it.
-    A Kalshi world or politics market counts as geopolitical when it involves a foreign state actor — a country other than the US,
-    or a person or organisation belonging to one (via Wikidata): "Will Trump visit China?" is in, "Will the Senate confirm…?" is out.</p>
+  <p class="lede">A live map from <strong>geopolitical questions people bet money on</strong> to <strong>the investments those questions affect</strong> —
+    so a risk desk can see which world events its portfolio is exposed to, which way each would push it, and how the odds are moving.</p>
+  <p>Prediction markets such as Kalshi and Polymarket put a price on questions like <em>"Will China invade Taiwan by the end of 2027?"</em>.
+    A price of 9¢ for a contract that pays $1 if the answer is yes means traders collectively put the odds at about 9%.
+    This project collects those odds for every geopolitical market, works out which markets are really the same question,
+    connects each question to the countries, people and organisations it involves, and from there to stocks, ETFs and currencies.</p>
 
+  <h3>Why it matters</h3>
+  <ul>
+    <li><strong>Geopolitical risk is usually described, not measured.</strong> Research notes say a conflict is "a risk"; they rarely say how likely it is today,
+      whether that changed this week, or which holdings it touches. Prediction markets supply the missing number — a probability, updated continuously, with money behind it.</li>
+    <li><strong>The odds are scattered and hard to use.</strong> The same question is listed on several venues in different wording; thousands of contracts
+      expire, get renamed or vanish. Nobody links them to securities. This project does the cleaning, matching and linking.</li>
+    <li><strong>The history can't be rebuilt later.</strong> Venues keep only part of their past prices and none of their past contract terms. Everything here is
+      stored as it was known at each moment, so any past day can be replayed exactly — essential for testing whether the signal would have helped.</li>
+  </ul>
+  <p>It is built as <strong>risk-measurement infrastructure</strong>, not a trading signal: the consensus probability is the point — a shared, auditable number
+    a risk committee can watch — and raw history is available to quants who want to build their own models.</p>
+
+  <h3>How it is used</h3>
+  <table>
+    <tr><th>Who</th><th>Question</th><th>Where</th></tr>
+    <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Propositions list (sorted by 24h move) · <code>POST /portfolio/scan</code></td></tr>
+    <tr><td>Portfolio manager</td><td>"Which events matter for TSMC, and would they push it up or down?"</td><td>Securities tab · <code>/securities/TSM/exposures</code></td></tr>
+    <tr><td>Analyst</td><td>"Everything that involves Iran, and how the odds connect"</td><td>Entities tab · the network view</td></tr>
+    <tr><td>Quant</td><td>"Probability history, exactly as it was known each day"</td><td><code>/propositions/{id}/history</code> with <code>as_of</code> / <code>known_as_of</code></td></tr>
+  </table>
+  <p>A worked example: selecting <strong>TSM</strong> shows <em>"Will China invade Taiwan by December 31, 2027?"</em> near the top —
+    ▼ impact −1.46, odds 9.5%. The path reads: the question <em>involves</em> Taiwan as the <em>target</em> of an invasion (adverse for Taiwan) → TSM is
+    exposed to Taiwan (its fabs are there) → so a YES pushes TSM down. A ceasefire question would show the opposite sign for a defense contractor like Lockheed Martin.</p>
+
+  <h3>The pipeline at a glance</h3>
   <div class="flow">
-    <div class="step"><b>Market</b><span>one bet on Kalshi or Polymarket</span></div><span class="arrow">→</span>
-    <div class="step"><b><i class="swatch proposition"></i>Proposition</b><span>the real-world question, across venues</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch market"></i>Market</b><span>one contract on Kalshi or Polymarket</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch proposition"></i>Proposition</b><span>the real-world question, merged across venues</span></div><span class="arrow">→</span>
     <div class="step"><b><i class="swatch entity"></i>Entity</b><span>country, person, organisation, concept</span></div><span class="arrow">→</span>
     <div class="step"><b><i class="swatch security"></i>Security</b><span>stock, ETF, currency</span></div>
   </div>
-  <p>In the explorer, pick anything on the left; the network shows what it is connected to, and the panel on the right explains each connection.</p>
+  <p>Scale today: about 10,900 geopolitical markets, 10,700 propositions, 1,450 entities, 543 securities (the S&amp;P 500 plus Asian chipmakers, country ETFs and currencies),
+    and about 97,000 connections. Everything is produced by algorithms from public data — no AI models — except the analyst estimates marked below.</p>
 
-  <h3>How every connection is made</h3>
-  <p>Everything is produced by algorithms from public data — no AI models, no hand-picked lists — except the analyst estimates marked below.</p>
-  <table>
-    <tr><th>Connection</th><th>Example</th><th>How it is made</th></tr>
-    <tr><td>Market → Proposition</td><td>Kalshi and Polymarket "Trump visits Taiwan in 2026" are one question</td>
-        <td>Contract terms compared field by field, then confirmed by prices (below)</td></tr>
-    <tr><td>Proposition ↔ Proposition</td><td>"Invasion by June 2027" implies "by Dec 2027"</td>
-        <td>Logic from the contracts: <span class="tag">implies</span> nested deadlines or thresholds, <span class="tag">mutex</span> can't both happen (venue flags), <span class="tag">near_equivalent</span> same event, materially different terms</td></tr>
-    <tr><td>Proposition → Entity</td><td>"…China invade Taiwan…" involves China (actor), Taiwan (target), invasion</td>
-        <td>Phrases in the question linked to Wikipedia articles; each link carries the entity's role and what a YES means for it (below)</td></tr>
-    <tr><td>Entity ↔ Entity</td><td>Xi Jinping — citizen of — China</td>
-        <td>Facts from Wikidata, strength from Wikipedia co-occurrence (below)</td></tr>
-    <tr><td>Entity → Security</td><td>Taiwan → TSM</td>
-        <td><strong>Hand-written analyst estimates</strong> — the only manual input, to be replaced by company revenue data and measured price reactions —
-          plus which industries <em>gain</em> from escalation (defense, oil producers)</td></tr>
-  </table>
+  <h3>Step 1 · Collect the markets</h3>
+  <p>Every 15 minutes the collector reads Kalshi's world and politics markets and Polymarket's geopolitics section: prices (bid, ask, last trade), open interest,
+    and the full contract terms. Hourly history back to 2021 was backfilled once. A market is in scope if Polymarket files it under geopolitics, or — for Kalshi —
+    if it involves a foreign state actor: a country other than the US, or a person or organisation belonging to one. "Will Trump visit China?" is in; "Will the Senate confirm…?" is out.</p>
 
-  <h3>Markets → propositions: comparing contracts, not wording</h3>
-  <p>Questions that read alike are often different bets ("visits China <em>before</em> May 14" vs "<em>on</em> May 14"), so text similarity is not used.
-    Each market is parsed into a <strong>contract signature</strong> from the venue's data and its templated rules text:</p>
+  <h3>Step 2 · Markets → propositions: is it the same bet?</h3>
+  <p>Questions that read alike are often different bets ("visits China <em>before</em> May 14" vs "<em>on</em> May 14"), so wording similarity is not used.
+    Each market is parsed into a <strong>contract signature</strong>:</p>
   <table>
     <tr><th>Field</th><th>Example: "Will Trump visit Taiwan before Jan 1, 2027?"</th></tr>
-    <tr><td>Action</td><td>visit — from a fixed vocabulary of event types</td></tr>
+    <tr><td>Action</td><td>visit — one of ~50 event types (invade, strike, blockade, sanction, ceasefire, meet, leave office, appoint…)</td></tr>
     <tr><td>Actor → target</td><td>Donald Trump → Taiwan (which side of the verb matters)</td></tr>
-    <tr><td>Time window</td><td>Dec 2, 2025 – Dec 31, 2026, read exactly from the rules</td></tr>
-    <tr><td>Threshold</td><td>— (used for "tariff ≥ 20%"-style questions)</td></tr>
-    <tr><td>Conditions</td><td>physically present (others: in person, incl. phone calls, photographed, becomes law…)</td></tr>
+    <tr><td>Time window</td><td>Dec 2, 2025 – Dec 31, 2026, read from the resolution rules</td></tr>
+    <tr><td>Threshold</td><td>— (used for "tariff ≥ 25%", "more than 260 ships", "20–21 seats")</td></tr>
+    <tr><td>Conditions</td><td>in person, phone calls count, becomes law, negated ("…agrees <em>not</em> to…") …</td></tr>
   </table>
-  <p>On the same venue, the resolution rules are compared too: two markets with identical questions whose rules name different things
-    (e.g. different intersections in "Will Russia capture Novopavlivka?") are different bets. A negated question ("…agrees <em>not</em> to join NATO",
-    "military action <em>ends</em>") is never matched with the plain one.</p>
-  <p>Two markets are the <strong>same question</strong> only if every field matches. Then comes a final check with real money:
-    if their prices differ by more than 10 points, the market is saying they are different bets, so they are linked but not merged. Each pair is judged once, using prices at the moment the newer market was listed, so the decision never flips later.
-    Example: "Trump, Xi and Putin <em>meet</em>" (Kalshi, 34.5%) vs "are <em>seen together</em>" (Polymarket, 84.5%) — linked as near-equivalent, never blended.</p>
+  <p>Two markets become one proposition only if every field matches, and then real money gets the last word: if their prices differ by more than 10 points
+    they are linked as near-equivalent instead, never averaged. Other safeguards: a negated question never matches the plain one; on the same venue the resolution
+    rules are compared too, so two identical questions about different places are kept apart; each pair is judged once, at the moment the newer market was listed, so decisions never flip later.</p>
+  <table>
+    <tr><th>Outcome</th><th>Meaning</th></tr>
+    <tr><td><span class="tag">merged</span></td><td>The same bet as another market; one proposition, prices averaged (weighted by open interest).</td></tr>
+    <tr><td><span class="tag">linked</span></td><td>A similar but different bet (other deadline, threshold or wording): connected, prices kept separate.</td></tr>
+    <tr><td><span class="tag">unmatched</span></td><td>Read fine, but no other market asks exactly this — the usual case, since venues rarely list identical questions.</td></tr>
+    <tr><td><span class="tag">unparsed</span></td><td>The event type isn't in the vocabulary yet, so it can't be compared (about one market in eight).</td></tr>
+  </table>
+  <p>The <strong>Markets</strong> tab lists every market by outcome, with its parsed signature and the reason each near miss was rejected. A person can override any decision.</p>
 
-  <h3>Entities: discovered from the markets, connected through Wikipedia</h3>
-  <p>There is no fixed entity list; it is regenerated from the markets on every update.</p>
+  <h3>Step 3 · Propositions → entities: who and what is involved</h3>
+  <p>There is no hand-made list of countries or leaders; entities are rediscovered from the questions on every update.</p>
   <ul>
-    <li><strong>Discovery.</strong> Phrases in each question are looked up as Wikipedia titles ("People's Republic of China" → China, "household registration system" → Hukou).</li>
-    <li><strong>Type and parent.</strong> Wikidata says what each entity is (person, country, organisation, concept) and which country it belongs to (Trump → United States), so "Trump makes a deal" and "the U.S. makes a deal" are recognised as the same side.</li>
-    <li><strong>Concepts are kept only if specific and relevant</strong> — mentioned in under 1% of Wikipedia articles and related to the question's actors ("tariff" yes, "company" no).</li>
-    <li><strong>Strength of connection</strong> — how often Wikipedia articles mention both, relative to how often each is mentioned (the Normalized Google Distance formula, computed on Wikipedia):</li>
+    <li><strong>Finding them.</strong> Every name-like phrase in a question ("Xi Jinping", "Strait of Hormuz", "ballistic missile") is looked up as a Wikipedia article title;
+      the longest phrase that matches wins. A lone surname ("Xi") resolves to the one person already found with that name; a nationality word ("Chinese") to its country.</li>
+    <li><strong>Knowing what they are.</strong> Wikidata, Wikipedia's structured sister project, says whether each is a person, country, organisation or concept, and which country it
+      belongs to (Trump → United States), so "Trump makes a deal" and "the U.S. makes a deal" are recognised as the same side.</li>
+    <li><strong>Their role in the question.</strong> From the contract signature: <em>actor</em> (China, in "China invades Taiwan"), <em>target</em> (Taiwan), <em>party</em>
+      (both sides of a meeting), or <em>concept</em> (invasion, tariffs).</li>
+    <li><strong>Connecting entities to each other.</strong> Wikidata facts (Xi Jinping — citizen of — China) plus a strength score from how often Wikipedia articles mention both:</li>
   </ul>
   <div class="formula">relatedness(A, B) = 1 − [ log max(|A|,|B|) − log |A∩B| ] / [ log W − log min(|A|,|B|) ]<br>
-    |A|, |B| = articles mentioning each · |A∩B| = articles mentioning both · W = all articles (~7.3M)</div>
-  <p>Example: Putin–Xi Jinping 0.66, China–Taiwan 0.56. Links need at least 10 articles mentioning both, and a score of 0.25 or more.</p>
+    |A|, |B| = articles mentioning each · |A∩B| = articles mentioning both · W = all articles (~7.3M) — the Normalized Google Distance, computed on Wikipedia</div>
+  <p>Example: Putin–Xi Jinping 0.66, China–Taiwan 0.56. Links need at least 10 articles mentioning both and a score of 0.25 or more. Concepts are kept only if specific
+    (mentioned in under 1% of articles) and related to the question's actors — "tariff" yes, "company" no.</p>
 
-  <p>Every market's outcome — merged, linked, unmatched or unparsed, with its parsed signature and the reason each near miss was rejected — is listed in the explorer's <strong>Markets</strong> tab.</p>
+  <h3>Step 4 · Entities → securities</h3>
+  <p>Which securities depend on which entities — Taiwan → TSM, Strait of Hormuz → oil producers — is the one <strong>hand-written input</strong>: analyst estimates
+    (0–1) from industry and headquarters rules, to be replaced by company revenue-by-country data and measured price reactions. A second small table says which industries
+    <em>gain</em> when things get worse on a channel: defense contractors from conflict, oil producers from supply disruption. Everything else suffers with the entity it depends on.</p>
 
-  <h3>Direction and size of impact</h3>
-  <p>Each proposition → entity link records what a YES means for that entity: the <strong>action</strong> (from the contract signature) sets a
-    channel (conflict, trade, sanctions, instability, diplomacy), a severity, and a direction for the target and for the actor — an invasion is adverse
-    for the target (−1.0) and somewhat adverse for the invader (−0.6); a ceasefire or trade deal is favourable for both. Negated questions flip it.
-    Each entity → security link says how the security responds on each channel: by default it suffers with the entity, but defense contractors
-    gain from conflict and oil producers gain from supply disruption.</p>
-  <div class="formula">path strength = severity × role weight × pass-through × exposure weight · sign = direction for the entity × response on that channel<br>
-    impact(security, proposition) = Σ over paths of sign × strength · relevance = 1 − Π(1 − strength) · risk = |impact| × √(p(1−p))<br>
-    pass-through = 1 for the entity itself, 0.5 × link strength for a linked entity (one hop)</div>
-  <p>Impact is in graph units, not returns: <code>backtest.py</code> measures how it maps to actual abnormal returns when odds jump, and whether its direction is right.
-    Risk is largest for events near 50% — a 99% event can't move much more.</p>
+  <h3>Step 5 · Direction and size of impact</h3>
+  <p>Each question's link to an entity records what a YES means for it. The event type sets a <strong>channel</strong> (conflict, trade, sanctions, instability, diplomacy),
+    a <strong>severity</strong> (an invasion 1.0, a missile test 0.4, a meeting 0.2) and a <strong>direction</strong> by role: an invasion is adverse for the target
+    and somewhat adverse for the invader; a ceasefire or trade deal is favourable for both; a negated or reversed question ("…ends", "…lifted") flips it.
+    A security's exposure to a question adds up every path through the graph:</p>
+  <div class="formula">path strength = severity × role weight × pass-through × exposure weight<br>
+    path sign = direction for the entity × how the security responds on that channel<br>
+    <b>impact</b> = Σ sign × strength over all paths · <b>relevance</b> = 1 − Π(1 − strength) · <b>risk</b> = |impact| × √(p (1 − p))<br>
+    pass-through = 1 for the entity itself, 0.5 × relatedness for a linked entity (one hop)</div>
+  <p>Risk is highest for questions near 50% — a 99% event has little left to move. A portfolio's impact nets its holdings, so a position that loses in a conflict
+    and one that gains offset each other.</p>
+
+  <h3>Step 6 · Checking it against reality</h3>
+  <p>The impact numbers are a <strong>structural prior</strong> — what the graph's logic implies — in graph units, not percentage returns. A backtest checks them against
+    what actually happened: on days a question's odds jumped and stayed jumped, did linked securities move more than they usually do, in the predicted direction?</p>
+  <p><strong>Current result (October 2026, 62 securities with price history): not yet validated.</strong> The predicted direction was right about 50% of the time — chance.
+    Linked securities moved about 12% more than usual on those days, but no more for strong links than weak ones, which suggests busy news days rather than the graph's links.
+    The next run will cover all 543 securities. Turning this prior into measured <strong>event betas</strong> — "TSM falls x% per 10-point rise in invasion odds" — is the next stage.</p>
 
   <h3>Numbers you will see</h3>
   <table>
-    <tr><td>Probability</td><td>The latest market price of each venue's contract, averaged (weighted by open interest when available). Only same-question markets are averaged.</td></tr>
-    <tr><td>24h change</td><td>Probability now minus 24 hours earlier.</td></tr>
-    <tr><td>Relevance</td><td>How strongly a security is connected to a question through the graph, 0–1, combining every path.</td></tr>
-    <tr><td>Impact</td><td>Signed: ▲ the security is expected to rise if the event happens, ▼ to fall. A structural prior, not a measured beta.</td></tr>
-    <tr><td>Risk</td><td>|impact| × √(p(1−p)): how much the question can still move the security given today's odds.</td></tr>
+    <tr><td>Probability</td><td>The latest price of the proposition's markets, averaged (weighted by open interest when available); only same-bet markets are averaged.</td></tr>
+    <tr><td>24h change</td><td>Probability now minus 24 hours earlier, in points.</td></tr>
+    <tr><td>Relevance</td><td>How strongly a security is connected to a question, 0–1, combining every path.</td></tr>
+    <tr><td>Impact</td><td>Signed: ▲ expected to rise if the event happens, ▼ to fall; "direction unknown" when the event type has no direction. A prior, not a measured beta.</td></tr>
+    <tr><td>Risk</td><td>|impact| × √(p(1−p)): how much the question can still move the security at today's odds.</td></tr>
   </table>
 
   <h3>Time travel</h3>
   <p><strong>As of</strong> shows the graph and probabilities as they were at any past moment. Nothing is overwritten: every change is stored with when it became true
-    and when the system learned it, so a past view uses only what was known then — safe for backtesting.</p>
+    and when the system learned it, so a past view uses only what was known then — no hindsight, which is what makes backtests honest.</p>
 
   <h3>Data and updates</h3>
   <table>
     <tr><td>Markets</td><td>Kalshi and Polymarket public APIs — a snapshot every 15 minutes (in practice every few hours on the free scheduler), plus hourly history back to 2021</td></tr>
-    <tr><td>Graph</td><td>Updated only when new markets are listed (or a contract's terms change); price updates never alter it. Each new market adds its own connections; existing ones stay as they were</td></tr>
-    <tr><td>Entities</td><td>Wikipedia and Wikidata, cached after the first lookup</td></tr>
-    <tr><td>Security prices</td><td>Daily closes from Yahoo Finance (research use only)</td></tr>
+    <tr><td>Graph</td><td>Rebuilt only when markets are listed or their terms change, or the method changes; price moves never alter it. Each change is recorded, not overwritten</td></tr>
+    <tr><td>Entities</td><td>Wikipedia and Wikidata, cached after the first lookup; refreshed monthly (facts) and yearly (relatedness)</td></tr>
+    <tr><td>Security prices</td><td>Daily closes from Yahoo Finance — research use only, to be replaced by a licensed feed</td></tr>
+  </table>
+
+  <h3>Where the project stands</h3>
+  <table>
+    <tr><th>Stage</th><th>Status</th></tr>
+    <tr><td>Market data (live + history)</td><td>Done</td></tr>
+    <tr><td>Markets → propositions</td><td>Done; vocabulary still growing (unparsed markets cut from 68% to 12%)</td></tr>
+    <tr><td>Entities and their links</td><td>Done; a second, independent entity linker is planned as a cross-check</td></tr>
+    <tr><td>Direction and size of impact</td><td>Structural prior done; not yet validated by the backtest</td></tr>
+    <tr><td>Event betas (measured)</td><td>Next: estimated from price reactions, pulled toward the prior where data is thin</td></tr>
+    <tr><td>Delivery</td><td>Web explorer, REST API and Excel add-in built; alerts and bulk files planned</td></tr>
   </table>
 
   <h3>Current limits</h3>
   <ul>
-    <li>Entity → security weights are analyst estimates, not sourced figures.</li>
-    <li>Direction and impact come from a fixed table of actions and industry responses; about one market in eight uses an action outside the vocabulary and get relevance without direction. Measured "event betas" (how prices actually moved when odds jumped) are the next step.</li>
-    <li>Securities and their exposure weights still cover one theme (US–China, Taiwan, semiconductors), so many propositions have no linked securities yet.</li>
+    <li>Entity → security weights and channel responses are analyst estimates, not sourced figures.</li>
+    <li>Direction comes from a fixed table of event types; unparsed markets carry relevance without direction.</li>
+    <li>Securities and exposures were built around US–China, Taiwan and semiconductors, so many questions about other regions have few linked securities.</li>
+    <li>Security prices are daily and unlicensed; venue terms on redistributing raw quotes still need checking before raw data is sold.</li>
   </ul>
 </article></section>
 <section id="api"><article class="doc">
@@ -395,7 +444,7 @@ function renderList() {
     $("#list").innerHTML = `<li class="note" style="display:block;cursor:default">${["unmatched", "unparsed", "linked", "merged"]
         .map(k => `${c[k] ?? 0} ${k}`).join(" · ")} (live markets)</li>` +
       state.items.slice(0, 500).map(x => `<li data-id="${esc(x.id)}" ${x.id === state.selected ? 'aria-current="true"' : ""}>
-        <i class="swatch proposition" style="opacity:.35"></i><span class="name">${esc(x.name)}</span>
+        <i class="swatch market"></i><span class="name">${esc(x.name)}</span>
         <span class="num">${esc(x.venue)}<br><span class="tag">${esc(x.match)}</span></span></li>`).join("");
     return;
   }
@@ -418,14 +467,17 @@ network.on("stabilizationIterationsDone", () => network.setOptions({ physics: fa
 network.on("click", e => { if (e.nodes.length) select(e.nodes[0]); });
 
 async function drawGraph(id) {
-  const g = await api(`/graph/${encodeURIComponent(id)}`, { depth: $("#depth").value, fanout: 10 });
+  // a selected market is drawn with its proposition and one more hop, so it has context
+  const depth = +$("#depth").value + (typeOf(id) === "market" ? 1 : 0);
+  const g = await api(`/graph/${encodeURIComponent(id)}`, { depth, fanout: 10 });
   const surface = css("--surface"), ink = css("--ink"), muted = css("--muted");
-  const shape = { proposition: "dot", entity: "diamond", security: "square" };
+  const shape = { proposition: "dot", entity: "diamond", security: "square", market: "triangle" };
   const nodes = g.nodes.map(n => {
     const t = n.type, color = css(`--${t}`), root = n.id === g.root;
     // label the selected node and its direct neighbours; farther nodes show their name on hover
-    const label = n.depth > 1 ? undefined : n.name.length > 42 ? n.name.slice(0, 40) + "…" : n.name;
-    return { id: n.id, label, shape: shape[t], size: root ? 18 : n.depth > 1 ? 6 : t === "proposition" ? 9 : 11,
+    const short = n.name.length > 42 ? n.name.slice(0, 40) + "…" : n.name;
+    const label = n.depth > 1 && !root ? undefined : t === "market" ? `${n.venue} · ${short}` : short;
+    return { id: n.id, label, shape: shape[t], size: root ? 18 : n.depth > 1 ? 6 : t === "proposition" || t === "market" ? 9 : 11,
       color: { background: color, border: root ? ink : surface, highlight: { background: color, border: ink },
                hover: { background: color, border: ink } },
       font: { color: ink, strokeWidth: 3, strokeColor: surface, bold: root },
@@ -505,8 +557,7 @@ async function drawDetail(id) {
 async function select(id) {
   state.selected = id;
   renderList();
-  const prop = typeOf(id) === "market" ? (state.items.find(x => x.id === id) || {}).proposition : id;
-  try { await Promise.all([prop ? drawGraph(prop) : null, drawDetail(id)]); }
+  try { await Promise.all([drawGraph(id), drawDetail(id)]); }
   catch (err) { $("#detail").innerHTML = `<p class="note">${esc(err.message)}</p>`; }
 }
 

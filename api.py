@@ -310,7 +310,8 @@ def proposition_history(proposition_id: str, start: datetime | None = None, end:
                 points=[dict(t=t, prob=blend(v), n_markets=len(v)) for t, v in sorted(buckets.items())])
 
 def neighbourhood(g, root, depth, fanout):
-    """Nodes within `depth` hops of `root` (edges in both directions, markets left out). Each node
+    """Nodes within `depth` hops of `root` (edges in both directions; markets only as the root's own
+    neighbours: a proposition's venue markets, or a selected market's proposition). Each node
     keeps its `fanout` strongest links *per kind of neighbour* (propositions, entities,
     securities; at most MUTEX_SHOWN mutex), so a hub's 60 propositions don't crowd out its
     links to other entities."""
@@ -321,7 +322,7 @@ def neighbourhood(g, root, depth, fanout):
         by_kind = defaultdict(list)
         for e in sorted(g.out[n] + g.inc[n], key=lambda e: -(e["weight"] or 0)):
             other = e["dst"] if e["src"] == n else e["src"]
-            if g.nodes[other]["type"] != "market":
+            if g.nodes[other]["type"] != "market" or n == root:
                 by_kind[g.nodes[other]["type"]].append((e, other))
         for links in by_kind.values():
             mutex = [e for e, _ in links if e["type"] == "mutex"][:MUTEX_SHOWN]  # mutex sets are cliques
@@ -342,6 +343,7 @@ def node_graph(node_id: str, depth: int = Query(1, ge=1, le=3), fanout: int = Qu
     probs = prop_probs(cur, g, [i for i in seen if g.nodes[i]["type"] == "proposition"], at)
     return dict(as_of=at, known_as_of=known, root=node_id,
                 nodes=[g.ref(i) | dict(depth=d, entity_type=g.nodes[i]["attrs"].get("entity_type"),
+                                       venue=g.nodes[i]["attrs"].get("venue"),
                                        **{k: probs[i][k] for k in ("prob", "change_24h")} if i in probs else {})
                        for i, d in seen.items()],
                 edges=[dict(src=e["src"], dst=e["dst"], type=e["type"], weight=e["weight"],

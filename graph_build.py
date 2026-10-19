@@ -206,6 +206,10 @@ def channel_signs(secs):
     return {s["ticker"]: by_match.get(s.get("sub_industry") or "", {}) | by_match.get(s["ticker"], {})
             for s in secs if s["ticker"] in by_match or (s.get("sub_industry") or "") in by_match}
 
+def readable(text, ents):
+    """Matcher notes name entities by Wikidata id ("entities: Q22686 vs Q58132"); show names."""
+    return text and re.sub(r"\bQ\d+\b", lambda q: ents.entities.get(f"wd:{q[0]}", {}).get("name", q[0]), text)
+
 def match_status(markets, sigs, relations, rejected, members, prop_of, ents):
     """{market key: attrs} saying how each market fared in matching, for the review tab:
     merged (shares a proposition) / linked (near_equivalent or implies another market only) /
@@ -229,7 +233,7 @@ def match_status(markets, sigs, relations, rejected, members, prop_of, ents):
                           window=sig.window and [str(d) if d else None for d in sig.window],
                           threshold=sig.threshold and list(sig.threshold), conditions=sorted(sig.conditions),
                           negated=sig.negated),
-                      candidates=[dict(market=market_id(dict(venue=v, market_id=i)), reason=why)
+                      candidates=[dict(market=market_id(dict(venue=v, market_id=i)), reason=readable(why, ents))
                                   for (v, i), why in cands])
     return out
 
@@ -262,7 +266,7 @@ def build(markets, prices, ents):
         how = joined[key(m)]
         add_e(edge(market_id(m), pid, "same_as", start,
                    provenance="curated" if any(p == "curated" for p, _ in how) else "signature" if how else "rule",
-                   note="; ".join(sorted({n for _, n in how if n})) or None))
+                   note=readable("; ".join(sorted({n for _, n in how if n})), ents) or None))
 
     prop_start = {}
     for pid, ms in members.items():
@@ -279,7 +283,7 @@ def build(markets, prices, ents):
         if r == "same_as" or pa == pb: continue
         if r == "near_equivalent": pa, pb = sorted((pa, pb))
         add_e(edge(pa, pb, r, max(filter(None, (prop_start[pa], prop_start[pb])), default=None),
-                   confidence=conf, provenance=prov, note=note))
+                   confidence=conf, provenance=prov, note=readable(note, ents)))
 
     # logical edges within each venue event
     by_event = defaultdict(list)
