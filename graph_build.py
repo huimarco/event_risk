@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Build the knowledge graph from collected contract terms, Wikipedia / Wikidata, and one curated
-input (entity -> security exposures) into graph_nodes / graph_edges. Bitemporal and append-only: each run diffs the desired graph against
+Build the knowledge graph from collected contract terms, Wikipedia / Wikidata, and the curated
+inputs (entity -> security exposures and their channel signs) into graph_nodes / graph_edges. Bitemporal and append-only: each run diffs the desired graph against
 the current one and records only changes (new or changed -> 'assert', gone -> 'retract').
 
 Nodes: market, proposition, entity, security
@@ -14,12 +14,18 @@ Edges:
                               mutex             mutually exclusive events (venue flags)
   proposition -> entity       involves          phrases in market titles linked to Wikipedia
                                                 articles (entities.py); entities are
-                                                regenerated from the markets on every run
+                                                regenerated from the markets on every run.
+                                                Signed: role (actor / target / party / concept),
+                                                channel, weight = severity x role, sign = what
+                                                YES means for the entity (matching.EFFECTS)
   entity -> entity            citizen_of, ...   Wikidata statements between entities
                               related           Wikipedia co-occurrence (entities.py)
-  entity -> security          exposure          seeds/exposures.csv — the only hand-written
-                                                input (analyst priors until event betas)
+  entity -> security          exposure          seeds/exposures.csv — analyst priors until event
+                                                betas; per-channel signs (which securities gain
+                                                from escalation) from seeds/channel_signs.csv
 Human overrides of market matches (seeds/match_overrides.csv) always win over the algorithm.
+Market nodes carry their match outcome (merged / linked / unmatched / unparsed, with the parsed
+signature, parser issues and the nearest rejected candidates) for the review tab in the web app.
 
 Scope: geopolitical markets (minus EXCLUDE_REGEX noise). Polymarket's geopolitics tag is the
 venue's own classification; a Kalshi World/Politics market is geopolitical when it involves a
@@ -56,6 +62,7 @@ EXCLUDE_REGEX = re.compile(r"what will .* say|shake hands|nobel|pope|covid|birth
 DATE_SUBTITLE = re.compile(r"^(before|by)\b|^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.? \d", re.I)
 GREATER, LESS = {"greater", "greater_or_equal"}, {"less", "less_or_equal"}
 HOME = "Q30"  # United States: involving only the US is domestic politics
+PRICE_LOOKUP_BATCH = 5000  # (market, time) requests per query; one huge ASOF join times out on MotherDuck
 REFRESH_KINDS = {"wikidata": {"entity"}, "relatedness": {"mentions", "comentions", "df"}}  # wiki_cache kinds
 
 def seed(name):
@@ -113,18 +120,21 @@ def prices_at(con):
     """For matching's price check: a function {(market key, t)} -> {(market key, t): probability},
     the latest cleaned price at or before t (within 7 days)."""
     def lookup(requests):
+        out = {}
         reqs = sorted(requests)
-        if not reqs: return {}
-        con.register("req", pa.table({"i": list(range(len(reqs))), "venue": [k[0] for k, _ in reqs],
-                                       "market_id": [k[1] for k, _ in reqs],
-                                       "t": pa.array([t for _, t in reqs], pa.timestamp("ms", tz="UTC"))}))
-        rows = con.execute("""
-            SELECT r.i, p.prob FROM req r
-            ASOF JOIN (SELECT venue, market_id, ts, prob FROM v_market_prob WHERE prob IS NOT NULL) p
-              ON r.venue = p.venue AND r.market_id = p.market_id AND r.t >= p.ts
-            WHERE p.ts > r.t - INTERVAL 7 DAY""").fetchall()
-        con.unregister("req")
-        return {reqs[i]: prob for i, prob in rows}
+        for part in (reqs[i:i + PRICE_LOOKUP_BATCH] for i in range(0, len(reqs), PRICE_LOOKUP_BATCH)):
+            con.register("req", pa.table({"i": list(range(len(part))), "venue": [k[0] for k, _ in part],
+                                           "market_id": [k[1] for k, _ in part],
+                                           "t": pa.array([t for _, t in part], pa.timestamp("ms", tz="UTC"))}))
+            rows = con.execute("""
+                SELECT r.i, p.prob FROM req r
+                ASOF JOIN (SELECT venue, market_id, ts, prob FROM v_market_prob WHERE prob IS NOT NULL
+                           AND (venue, market_id) IN (SELECT (venue, market_id) FROM req)) p
+                  ON r.venue = p.venue AND r.market_id = p.market_id AND r.t >= p.ts
+                WHERE p.ts > r.t - INTERVAL 7 DAY""").fetchall()
+            con.unregister("req")
+            out |= {part[i]: prob for i, prob in rows}
+        return out
     return lookup
 
 def fingerprint(con):
@@ -186,6 +196,43 @@ def group(markets, relations):
         for k in ks: prop_of[k] = f"prop:{anchor[0]}:{anchor[1]}"
     return prop_of
 
+def channel_signs(secs):
+    """{ticker: {channel: sign}} for the exceptions in seeds/channel_signs.csv (default +1: an
+    adverse event for an exposed entity hurts the security). A ticker row beats a sub-industry row."""
+    rows = seed("channel_signs.csv")
+    by_match = defaultdict(dict)
+    for r in rows:
+        by_match[r["match"]][r["channel"]] = float(r["sign"])
+    return {s["ticker"]: by_match.get(s.get("sub_industry") or "", {}) | by_match.get(s["ticker"], {})
+            for s in secs if s["ticker"] in by_match or (s.get("sub_industry") or "") in by_match}
+
+def match_status(markets, sigs, relations, rejected, members, prop_of, ents):
+    """{market key: attrs} saying how each market fared in matching, for the review tab:
+    merged (shares a proposition) / linked (near_equivalent or implies another market only) /
+    unmatched (parsed, but no partner) / unparsed (the parser couldn't read it), with its
+    signature, parser issues and the nearest rejected candidates (other venue first)."""
+    linked = {k for r, a, b, *_ in relations.values() if r != "same_as" for k in (a, b)}
+    near = defaultdict(list)
+    for a, b, why in rejected:
+        near[a].append((b, why)); near[b].append((a, why))
+    label = lambda i: ents.entities.get(i, {}).get("name", i)
+    out = {}
+    for m in markets:
+        k, sig = (m["venue"], m["market_id"]), sigs.get((m["venue"], m["market_id"]))
+        status = ("merged" if len(members[prop_of[market_id(m)]]) > 1 else "linked" if k in linked
+                  else "unparsed" if not (sig and sig.parsed) else "unmatched")
+        cands = sorted(near[k], key=lambda c: (c[0][0] == k[0], c[0]))[:3]
+        out[k] = dict(match=status, match_issues=list(sig.issues) if sig else [],
+                      signature=sig and dict(
+                          action=sig.action, actors=sorted(map(label, sig.actors)),
+                          targets=sorted(map(label, sig.targets)), concepts=sorted(s for _, s in sig.concepts),
+                          window=sig.window and [str(d) if d else None for d in sig.window],
+                          threshold=sig.threshold and list(sig.threshold), conditions=sorted(sig.conditions),
+                          negated=sig.negated),
+                      candidates=[dict(market=market_id(dict(venue=v, market_id=i)), reason=why)
+                                  for (v, i), why in cands])
+    return out
+
 # ── desired graph ─────────────────────────────────────────────────────────────
 def build(markets, prices, ents):
     nodes, edges = {}, {}
@@ -195,7 +242,7 @@ def build(markets, prices, ents):
     # markets -> propositions, by contract signature (+ overrides)
     key = lambda m: (m["venue"], m["market_id"])
     by_key = {key(m): m for m in markets}
-    _, matches, _ = match(markets, prices, ents)
+    sigs, matches, rejected = match(markets, prices, ents)
     relations = resolve(matches, by_key)
     keyed = group(markets, relations)
     prop_of = {market_id(m): keyed[key(m)] for m in markets}
@@ -205,11 +252,13 @@ def build(markets, prices, ents):
             for k in (a, b): joined[k].append((prov, note))
     members = defaultdict(list)
     for m in markets:
+        members[prop_of[market_id(m)]].append(m)
+    status = match_status(markets, sigs, relations, rejected, members, prop_of, ents)
+    for m in markets:
         pid, start = prop_of[market_id(m)], m["open_time"] or m["first_seen_at"]
-        members[pid].append(m)
         add_n(node(market_id(m), "market", market_name(m), start, venue=m["venue"],
                    market_id=m["market_id"], event_id=m["event_id"], series_id=m["series_id"],
-                   close_time=m["close_time"], rules=m["rules_primary"]))
+                   close_time=m["close_time"], rules=m["rules_primary"], **status[key(m)]))
         how = joined[key(m)]
         add_e(edge(market_id(m), pid, "same_as", start,
                    provenance="curated" if any(p == "curated" for p, _ in how) else "signature" if how else "rule",
@@ -266,28 +315,37 @@ def build(markets, prices, ents):
         add_n(node(eid, "entity", e["name"], REFERENCE_VALID_FROM, entity_type=e["type"], qid=e["qid"],
                    description=e["description"], wikipedia=e["title"]))
     with open(ROOT / "securities.csv") as f:
-        for s in csv.DictReader(f):
-            add_n(node(f"sec:{s['ticker']}", "security", s["name"], REFERENCE_VALID_FROM, ticker=s["ticker"],
-                       **{k: s.get(k) or None for k in ("asset_class", "country", "role", "sector",
-                                                       "sub_industry", "issuer_qid", "index")}))
+        secs = list(csv.DictReader(f))
+    for s in secs:
+        add_n(node(f"sec:{s['ticker']}", "security", s["name"], REFERENCE_VALID_FROM, ticker=s["ticker"],
+                   **{k: s.get(k) or None for k in ("asset_class", "country", "role", "sector",
+                                                   "sub_industry", "issuer_qid", "index")}))
+    signs = channel_signs(secs)
     for a, b, kind, w in ents.links:
         add_e(edge(a, b, kind, REFERENCE_VALID_FROM, weight=w or 0.0, confidence=0.9 if kind != "related" else 0.6,
                    provenance="wikidata" if kind != "related" else "wikipedia_cooccurrence"))
     for r in seed("exposures.csv"):
         add_e(edge(f"wd:{r['qid']}", f"sec:{r['ticker']}", "exposure", REFERENCE_VALID_FROM,
                    weight=float(r["weight"]), confidence=0.3, provenance="analyst_prior",
-                   note=r["rationale"] or None))
+                   note=r["rationale"] or None, sign=1.0, channel_signs=signs.get(r["ticker"], {})))
 
-    # proposition -> entity: the Wikipedia-linked mentions in its markets' questions
+    # proposition -> entity: the Wikipedia-linked mentions in its markets' questions, signed by
+    # what YES means for each (role in the contract signature x action effect). The first parsed
+    # market (earliest listed) speaks for the proposition, so the edge never changes as others join.
     for pid, ms in members.items():
         seen = {}
         for m in ms:
             for mt in ents.mentions.get((m["venue"], m["market_id"]), []):
                 seen.setdefault(mt["id"], mt)
+        ordered = sorted(ms, key=lambda m: (m["open_time"] or m["first_seen_at"] or REFERENCE_VALID_FROM,
+                                            m["venue"], m["market_id"]))
+        msigs = [sigs[(m["venue"], m["market_id"])] for m in ordered]
+        sig = next((s for s in msigs if s.action), msigs[0])
         for eid, mt in seen.items():
-            add_e(edge(pid, eid, "involves", prop_start[pid], confidence=0.8 if mt["named"] else 0.6,
-                       provenance="wikipedia_link", matched=mt["surface"],
-                       role="actor_or_place" if mt["named"] else "concept"))
+            role, channel, weight, sign = matching.effect(sig, eid)
+            add_e(edge(pid, eid, "involves", prop_start[pid], weight=weight, sign=sign,
+                       confidence=0.8 if mt["named"] else 0.6, provenance="wikipedia_link",
+                       matched=mt["surface"], role=role, action=sig.action, channel=channel))
 
     dangling = [e for e in edges.values() if e["src_id"] not in nodes or e["dst_id"] not in nodes]
     for e in dangling:

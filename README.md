@@ -12,6 +12,7 @@ a point-in-time knowledge graph linking markets → propositions → entities �
 | `backfill.py` | `backfill_market_history` | manual, one-time | `market_snapshots` (source=`backfill`) |
 | `graph_build.py --refresh …` | `refresh_wikipedia_facts` | manual | re-fetched Wikipedia/Wikidata facts, then graph |
 | `securities.py` | — (run locally) | after index rebalances | `securities.csv` (S&P 500 from Wikipedia; review and commit) |
+| `backtest.py` | — (run locally) | after graph or price changes | nothing; prints whether exposure priors predict returns when odds jump |
 
 All data lives in MotherDuck: put `MOTHERDUCK_TOKEN` in `.env` (copy `.env.example`; git-ignored) or the environment. `DB` defaults to `md:geo_odds`.
 
@@ -26,12 +27,15 @@ uvicorn api:app      # reads .env; explorer at http://localhost:8000, docs at /d
 GET  /propositions?entity=country:TW&sort=move          # what moved, filtered by entity
 GET  /propositions/{id}                                 # markets, entities, logical links
 GET  /propositions/{id}/history?interval=1d&start=...   # blended probability series
-GET  /securities/TSM/exposures                          # propositions a security is exposed to
+GET  /securities/TSM/exposures?sort=risk                # propositions a security is exposed to, signed
 POST /portfolio/scan  {"holdings":[{"ticker":"TSM","weight":0.1}]}
+GET  /markets?status=unparsed                           # match review: unmatched / unparsed / linked / merged
+GET  /markets/{id}                                      # signature, parser issues, rejected candidates
 ```
 
 The same server hosts an interactive explorer at `/` (`web/index.html`): browse propositions
-(sorted by 24h move), entities and securities; click anything to see its neighbourhood as a
+(sorted by 24h move), entities, securities and markets (the **Markets** tab lists markets that
+weren't matched, with their parsed signature and why each near miss was rejected); click anything to see its neighbourhood as a
 network and its details (prices, markets and rules, Wikipedia description, exposures); set
 "As of" to view the graph and prices at any past moment.
 
@@ -39,6 +43,39 @@ The explorer's **API** tab documents every endpoint with examples; `/docs` is th
 
 Every read accepts `as_of` (state of the world at T) and `known_as_of` (what the graph knew at T);
 set both to T for a point-in-time, backtest-safe view. Set `API_KEYS` to require `X-API-Key`.
+
+## Excel add-in
+
+The API also serves an Excel add-in (`excel/`: Office.js custom functions plus a task pane, no build
+step). It works in Microsoft 365 Excel on Windows, Mac and the web. Office only loads add-ins over
+HTTPS, so point it at the deployed server.
+
+```
+=EVENTRISK.PROPOSITIONS("taiwan", 20)          table of propositions, biggest 24h movers first
+=EVENTRISK.PROB(A2)  =EVENTRISK.CHANGE(A2)     blended probability / 24h change for the id in A2
+=EVENTRISK.PROB(A2, "2026-09-01", "2026-09-01")  point-in-time (as_of, known_as_of)
+=EVENTRISK.HISTORY(A2, DATE(2026,9,1))         daily series (format column A as a date)
+=EVENTRISK.EXPOSURES("TSM")                    propositions a security is exposed to
+=EVENTRISK.SCAN(Holdings!A2:B40)               live portfolio scan over ticker/weight columns
+```
+
+The **Event Risk** button on the Home tab opens the pane: search propositions and click one to add a
+live watchlist row at the selected cell; select ticker/weight columns and click **Scan selection**
+to get a live `SCAN` on a new sheet; set the API key there if the server has `API_KEYS` set.
+Identical requests are cached for 60 s; **Refresh** in the pane forces a full recalculation.
+
+Install by downloading `https://<your-domain>/excel/manifest.xml` (it already points at that server), then:
+- **Excel on the web**: Insert → Add-ins → *Upload My Add-in* → choose the file.
+- **Mac**: copy it to `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef/`, restart Excel,
+  then Insert → Add-ins → *My Add-ins*.
+- **Windows**: put it in a network share, add the share under File → Options → Trust Center →
+  Trusted Add-in Catalogs, restart, then Insert → My Add-ins → *Shared Folder*.
+- **For a whole organisation**: an M365 admin uploads it under Admin center → Settings →
+  Integrated apps. Corporate tenants often block sideloading, so this is the usual route.
+
+Local development needs HTTPS on localhost: `npx office-addin-dev-certs install`, then
+`uvicorn api:app --ssl-keyfile ~/.office-addin-dev-certs/localhost.key --ssl-certfile ~/.office-addin-dev-certs/localhost.crt`
+and sideload `https://localhost:8000/excel/manifest.xml`.
 
 ## Deploying (Railway)
 
@@ -91,14 +128,33 @@ The terminal commands need `MOTHERDUCK_TOKEN` in `.env`; the workflow uses the r
 threshold, conditions — from venue fields and the venues' templated rules text, then compares them
 field by field: `same_as` (merged, prices blended), `near_equivalent` (linked, never blended),
 `implies` (A ⇒ B), or rejected with a reason. Prices are the final check: markets that the text
-says are identical but trade more than 10 points apart are not merged.
+says are identical but trade more than 10 points apart are not merged. Within one venue the
+operative rules are compared as well (names in the rules that neither question has mean different
+bets), and a negated question ("agrees *not* to join", "military action *ends*") never matches the
+plain one.
+
+## Direction and size of impact
+
+Each `involves` edge carries the entity's role in the contract (actor / target / party / concept)
+and what YES means for it: `matching.EFFECTS` maps each action to a channel (conflict, trade,
+sanctions, instability, diplomacy), a severity and a direction for target and actor; negated
+questions flip it. `seeds/channel_signs.csv` lists the industries that *gain* from escalation on
+a channel (defense, oil producers, fertilizers); every other exposure suffers with its entity.
+`/securities/{t}/exposures` sums over every path: `impact` = Σ sign × severity × role weight ×
+pass-through × exposure weight (> 0: expected to rise if the event happens), `score` = relevance,
+`risk` = |impact| × √(p(1−p)). These are priors in graph units; `python backtest.py` checks them
+against abnormal returns on days odds jump (magnitude within each security, direction hit rate,
+calibration slope). First run (2026-10-18, 62 priced securities, daily data): direction at chance
+(~50%), so the priors are not yet validated.
 
 ## Curating the graph
 
 - `seeds/match_overrides.csv` — human overrides of the matcher (`same_as`, `near_equivalent`,
   `implies`, `different`); always win. Review queue: `python graph_build.py --review > review.csv`.
-- `seeds/exposures.csv` — entity → security exposures, keyed by Wikidata id. The only
-  hand-written input; current weights are analyst placeholders, not sourced data.
+- `seeds/exposures.csv` — entity → security exposures, keyed by Wikidata id. Hand-written;
+  current weights are analyst placeholders, not sourced data.
+- `seeds/channel_signs.csv` — which sub-industries / tickers gain (−1) rather than suffer from an
+  adverse event on a channel. Hand-written priors, like exposures.
 
 ## How entities are found and connected
 

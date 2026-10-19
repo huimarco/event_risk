@@ -17,11 +17,20 @@ proposition only when their contract signatures match (matching.py); proposition
 different terms are linked as `near_equivalent` and never blended.
 
 Entities are discovered from market titles via Wikipedia; entity links come from Wikidata statements
-and Wikipedia co-occurrence. Exposure scores are path products: involves x [entity link weight] x
-exposure weight. Exposure weights are analyst priors (seeds/exposures.csv) until empirical event
-betas exist; scores rank relevance, they are not betas.
+and Wikipedia co-occurrence.
+
+Security exposure to a proposition, summed over every path proposition -> entity [-> linked
+entity] -> security. Each path's strength = involves weight (severity x role) x pass-through
+(1, or LINK_DAMPING x link weight for a linked entity) x exposure weight; its sign = what YES
+means for the entity x how the security responds on that channel (seeds/channel_signs.csv).
+  score   relevance in [0, 1]: noisy-OR of path strengths
+  impact  signed structural sensitivity: sum of signed path strengths (> 0: the security is
+          expected to rise if the event happens). A prior in graph units, not a measured beta —
+          backtest.py measures how it maps to returns.
+  risk    |impact| x sqrt(p (1 - p)): how much the event can still move the security now
+Weights are analyst priors (seeds/exposures.csv) until empirical event betas exist.
 """
-import json, os, threading, time
+import json, math, os, threading, time
 from contextlib import asynccontextmanager
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
@@ -30,7 +39,8 @@ from pathlib import Path
 
 import duckdb
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from collector import DB
@@ -42,9 +52,12 @@ BLENDED, LOGICAL = {"same_as"}, {"mutex", "implies", "near_equivalent"}
 API_KEYS = {k for k in os.getenv("API_KEYS", "").split(",") if k}
 ISO = "strftime({} AT TIME ZONE 'UTC', '%Y-%m-%dT%H:%M:%SZ')"
 INTERVALS = {"1h": "1 hour", "1d": "1 day"}
+LINK_DAMPING = 0.5  # share of an entity's shock passed to a linked entity, x the link's weight
+MATCH_STATUSES = ("unmatched", "unparsed", "linked", "merged")
 
 def require_key(request: Request, x_api_key: str | None = Header(None)):
-    if request.url.path == "/": return  # the web page itself is public; its data calls are not
+    if request.url.path == "/" or request.url.path.startswith("/excel/"):
+        return  # the web page and Excel add-in files are public; their data calls are not
     if API_KEYS and x_api_key not in API_KEYS:
         raise HTTPException(401, "missing or invalid X-API-Key")
 
@@ -90,9 +103,9 @@ class Graph:
             SELECT node_id, node_type, name, attrs::VARCHAR, {ISO.format('valid_from')}
             FROM nodes_asof(?, ?)""", [as_of, known]).fetchall()}
         self.edges = [dict(src=r[0], dst=r[1], type=r[2], weight=r[3], confidence=r[4],
-                           provenance=r[5], note=r[6], attrs=json.loads(r[7] or "{}"))
+                           provenance=r[5], note=r[6], attrs=json.loads(r[7] or "{}"), sign=r[8])
                       for r in cur.execute("""
-            SELECT src_id, dst_id, edge_type, weight, confidence, provenance, note, attrs::VARCHAR
+            SELECT src_id, dst_id, edge_type, weight, confidence, provenance, note, attrs::VARCHAR, sign
             FROM edges_asof(?, ?)""", [as_of, known]).fetchall()]
         self.latest = None  # on the shared "now" graph: every market's price now and 24h ago
         self.out, self.inc = defaultdict(list), defaultdict(list)
@@ -119,21 +132,32 @@ class Graph:
         return [(e["src"], e["type"], e["note"]) for e in self.inc[pid] if self.nodes[e["src"]]["type"] == "market"]
 
     def exposures_of(self, sec):
-        """{proposition_id: (score, path)} for one security, walking back from it:
-        security <- exposure - entity [<- link -> entity] <- involves - proposition."""
-        best = {}
+        """{proposition_id: dict(score, impact, paths)} for one security, walking back from it over
+        every path security <- exposure - entity [<- link -> entity] <- involves - proposition.
+        A path = dict(strength, sign, channel, role, nodes); sign None = direction unknown."""
+        paths = defaultdict(list)
         for x in self.inc[sec]:
             if x["type"] != "exposure": continue
-            held = x["src"]
-            hops = [(held, x["weight"], [held])]
-            hops += [(other, x["weight"] * (l["weight"] or 0), [other, held]) for l, other in self.linked(held)]
-            for ent, w, via in hops:
+            held, responds = x["src"], (x["attrs"] or {}).get("channel_signs") or {}
+            hops = [(held, 1.0, [held])]
+            hops += [(other, LINK_DAMPING * (l["weight"] or 0), [other, held]) for l, other in self.linked(held)]
+            for ent, passed, via in hops:
+                if passed <= 0: continue
                 for inv in self.inc[ent]:
                     if inv["type"] != "involves": continue
-                    score = round(inv["weight"] * w, 4)
-                    if score > best.get(inv["src"], (0,))[0]:
-                        best[inv["src"]] = (score, [inv["src"], *via, sec])
-        return best
+                    a = inv["attrs"] or {}
+                    strength = (inv["weight"] or 0) * passed * (x["weight"] or 0)
+                    if strength <= 0: continue
+                    sign = None if inv["sign"] is None else inv["sign"] * responds.get(a.get("channel"), x["sign"] or 1.0)
+                    paths[inv["src"]].append(dict(strength=strength, sign=sign, channel=a.get("channel"),
+                                                  role=a.get("role"), nodes=[inv["src"], *via, sec]))
+        out = {}
+        for p, ps in paths.items():
+            ps.sort(key=lambda q: -q["strength"])
+            signed = [q["strength"] * q["sign"] for q in ps if q["sign"] is not None]
+            out[p] = dict(score=round(1 - math.prod(1 - min(q["strength"], 1.0) for q in ps), 4),
+                          impact=round(sum(signed), 4) if signed else None, paths=ps)
+        return out
 
 _current = {"graph": None, "loaded": 0.0}   # the graph "as of now", shared by requests
 _reloading = threading.Lock()
@@ -255,7 +279,9 @@ def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
         markets=[dict(id=m, relation=rel, note=note, venue=g.nodes[m]["attrs"]["venue"],
                       name=g.nodes[m]["name"], rules=g.nodes[m]["attrs"].get("rules"), **(mprobs.get(m) or {}))
                  for m, rel, note in mkts],
-        entities=[dict(**g.ref(e["dst"]), matched=(e["attrs"] or {}).get("matched"), confidence=e["confidence"])
+        entities=[dict(**g.ref(e["dst"]), matched=(e["attrs"] or {}).get("matched"), confidence=e["confidence"],
+                       role=(e["attrs"] or {}).get("role"), channel=(e["attrs"] or {}).get("channel"),
+                       weight=e["weight"], sign=e["sign"])
                   for e in g.out[proposition_id] if e["type"] == "involves"],
         logical=logical)
 
@@ -330,6 +356,50 @@ def proposition_graph(proposition_id: str, depth: int = Query(2, ge=1, le=3), fa
     graph(cur, as_of, known_as_of).get(proposition_id, "proposition")
     return node_graph(proposition_id, depth, fanout, as_of, known_as_of, cur)
 
+def market_row(g, mid):
+    n = g.nodes[mid]
+    a = n["attrs"]
+    return dict(**g.ref(mid), venue=a.get("venue"), match=a.get("match"), issues=a.get("match_issues") or [],
+                proposition=next((e["dst"] for e in g.out[mid] if e["type"] == "same_as"), None),
+                close_time=a.get("close_time"))
+
+@app.get("/markets")
+def list_markets(status: list[str] = Query(["unmatched", "unparsed"], description="merged | linked | unmatched | unparsed"),
+                 q: str | None = Query(None, description="Substring of the market name"),
+                 venue: str | None = Query(None, pattern="^(kalshi|polymarket)$"),
+                 limit: int = Query(200, le=2000), include_closed: bool = IncludeClosed,
+                 as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
+    """Venue markets by how they fared in cross-venue matching: `merged` (shares a proposition with
+    another market), `linked` (near_equivalent / implies only), `unmatched` (parsed, no partner),
+    `unparsed` (the contract parser couldn't read it; `issues` says why). Counts cover all statuses."""
+    at, known = times(as_of, known_as_of)
+    g = graph(cur, as_of, known_as_of)
+    mids = [i for i, n in g.nodes.items() if n["type"] == "market"
+            and (not venue or n["attrs"].get("venue") == venue)
+            and (not q or q.lower() in n["name"].lower())]
+    live = market_probs(cur, mids, at, g)
+    mids = [i for i in mids if include_closed or i in live]
+    match = lambda i: g.nodes[i]["attrs"].get("match") or "unmatched"   # graphs built before match status
+    counts = {s: sum(1 for i in mids if match(i) == s) for s in MATCH_STATUSES}
+    rows = [dict(market_row(g, i), prob=(live.get(i) or {}).get("prob")) for i in mids if match(i) in status]
+    rows.sort(key=lambda r: (MATCH_STATUSES.index(r["match"]) if r["match"] in MATCH_STATUSES else 9, r["name"]))
+    return dict(as_of=at, known_as_of=known, counts=counts, count=len(rows), markets=rows[:limit])
+
+@app.get("/markets/{market_id}")
+def get_market(market_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
+               cur=Depends(db)):
+    """One market: match status, parsed contract signature, parser issues, the nearest rejected
+    candidates (with the reason each was rejected) and its rules text."""
+    at, known = times(as_of, known_as_of)
+    g = graph(cur, as_of, known_as_of)
+    n = g.get(market_id, "market")
+    a = n["attrs"]
+    cands = [dict(c, name=g.nodes[c["market"]]["name"] if c["market"] in g.nodes else None,
+                  venue=c["market"].split(":")[1]) for c in a.get("candidates") or []]
+    return dict(as_of=at, known_as_of=known, **market_row(g, market_id),
+                prob=(market_probs(cur, [market_id], at, g).get(market_id) or {}).get("prob"),
+                signature=a.get("signature"), candidates=cands, rules=a.get("rules"))
+
 @app.get("/securities")
 def list_securities(as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     at, known = times(as_of, known_as_of)
@@ -365,21 +435,40 @@ def get_entity(entity_id: str, as_of: datetime | None = AsOf, known_as_of: datet
                 exposures=[dict(security=g.ref(e["dst"]), weight=e["weight"], rationale=e["note"])
                            for e in g.out[entity_id] if e["type"] == "exposure"])
 
+def direction(impact):
+    return "unknown" if impact is None else "up" if impact > 0 else "down" if impact < 0 else "neutral"
+
+def risk(impact, prob):
+    return None if impact is None or prob is None else round(abs(impact) * math.sqrt(prob * (1 - prob)), 4)
+
+def path_out(g, q):
+    return dict(strength=round(q["strength"], 4), sign=q["sign"], channel=q["channel"], role=q["role"],
+                nodes=[g.ref(x) for x in q["nodes"]])
+
+EXPOSURE_SORTS = {"score": lambda r: -r["score"], "impact": lambda r: -abs(r["impact"] or 0),
+                  "risk": lambda r: -(r["risk"] or 0)}
+
 @app.get("/securities/{ticker}/exposures")
 def security_exposures(ticker: str, min_score: float = Query(0.1, ge=0, le=1),
+                       sort: str = Query("score", pattern="^(score|impact|risk)$"),
                        limit: int = Query(50, le=500), include_closed: bool = IncludeClosed,
                        as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                        cur=Depends(db)):
-    """Propositions this security is exposed to, via proposition -> entity [-> entity] -> security."""
+    """Propositions this security is exposed to, summed over every path proposition -> entity
+    [-> entity] -> security: `score` (relevance 0-1), `impact` (signed: > 0 = expected to rise if
+    the event happens), `direction`, `risk` (|impact| x sqrt(p(1-p))) and the strongest `paths`."""
     at, known = times(as_of, known_as_of)
     g = graph(cur, as_of, known_as_of)
     sid = f"sec:{ticker}"
     g.get(sid, "security")
-    hits = {p: v for p, v in g.exposures_of(sid).items() if v[0] >= min_score}
+    hits = {p: v for p, v in g.exposures_of(sid).items() if v["score"] >= min_score}
     probs = prop_probs(cur, g, list(hits), at)
-    rows = [dict(proposition_summary(g, p, probs), score=s, path=[g.ref(x) for x in path])
-            for p, (s, path) in hits.items() if include_closed or probs[p]["prob"] is not None]
-    rows.sort(key=lambda r: (-r["score"], -abs(r["change_24h"] or 0)))
+    rows = [dict(proposition_summary(g, p, probs), score=v["score"], impact=v["impact"],
+                 direction=direction(v["impact"]), risk=risk(v["impact"], probs[p]["prob"]),
+                 path=[g.ref(x) for x in v["paths"][0]["nodes"]],
+                 paths=[path_out(g, q) for q in v["paths"][:3]], n_paths=len(v["paths"]))
+            for p, v in hits.items() if include_closed or probs[p]["prob"] is not None]
+    rows.sort(key=lambda r: (EXPOSURE_SORTS[sort](r), -abs(r["change_24h"] or 0)))
     return dict(as_of=at, known_as_of=known, security=g.ref(sid), count=len(rows), exposures=rows[:limit])
 
 class Holding(BaseModel):
@@ -398,26 +487,32 @@ class ScanRequest(BaseModel):
 @app.post("/portfolio/scan")
 def portfolio_scan(req: ScanRequest, cur=Depends(db)):
     """Rank propositions by portfolio exposure = sum over holdings of weight x exposure score.
+    `impact` = sum of weight x signed impact (> 0: the portfolio is expected to gain if the event
+    happens; holdings on opposite sides offset), `risk` = |impact| x sqrt(p(1-p)).
     `moved` flags propositions whose blended probability moved >= move_threshold in 24h."""
     at, known = times(req.as_of, req.known_as_of)
     g = graph(cur, req.as_of, req.known_as_of)
-    agg, contrib, unknown = defaultdict(float), defaultdict(list), []
+    agg, net, contrib, unknown = defaultdict(float), {}, defaultdict(list), []
     for h in req.holdings:
         sid = f"sec:{h.ticker}"
         if sid not in g.nodes:
             unknown.append(h.ticker); continue
-        for p, (s, path) in g.exposures_of(sid).items():
-            if s >= req.min_score:
-                agg[p] += h.weight * s
-                contrib[p].append(dict(ticker=h.ticker, weight=h.weight, score=s,
-                                       via=[g.nodes[x]["name"] for x in path[1:-1]]))
+        for p, v in g.exposures_of(sid).items():
+            if v["score"] >= req.min_score:
+                agg[p] += h.weight * v["score"]
+                if v["impact"] is not None:
+                    net[p] = net.get(p, 0.0) + h.weight * v["impact"]
+                contrib[p].append(dict(ticker=h.ticker, weight=h.weight, score=v["score"], impact=v["impact"],
+                                       via=[g.nodes[x]["name"] for x in v["paths"][0]["nodes"][1:-1]]))
     probs = prop_probs(cur, g, list(agg), at)
     live = [p for p in agg if req.include_closed or probs[p]["prob"] is not None]
     top = sorted(live, key=lambda p: -agg[p])[:req.limit]
     rows = []
     for p in top:
         r = proposition_summary(g, p, probs)
-        rows.append(dict(r, exposure=round(agg[p], 4),
+        impact = round(net[p], 4) if p in net else None
+        rows.append(dict(r, exposure=round(agg[p], 4), impact=impact, direction=direction(impact),
+                         risk=risk(impact, r["prob"]),
                          moved=r["change_24h"] is not None and abs(r["change_24h"]) >= req.move_threshold,
                          holdings=sorted(contrib[p], key=lambda c: -c["weight"] * c["score"])[:5]))
     return dict(as_of=at, known_as_of=known, unknown_tickers=unknown, count=len(live), propositions=rows)
@@ -426,3 +521,16 @@ def portfolio_scan(req: ScanRequest, cur=Depends(db)):
 def web():
     """Interactive graph explorer (web/index.html)."""
     return FileResponse(Path(__file__).parent / "web" / "index.html")
+
+EXCEL = Path(__file__).parent / "excel"
+
+@app.get("/excel/manifest.xml", include_in_schema=False)
+def excel_manifest(request: Request):
+    """Excel add-in manifest pointing at this server (Office requires HTTPS; Railway terminates TLS)."""
+    scheme = request.headers.get("x-forwarded-proto", request.url.scheme).split(",")[0]
+    base = f"{scheme}://{request.headers.get('host', request.url.netloc)}"
+    xml = (EXCEL / "manifest.xml").read_text().replace("{BASE}", base)
+    return Response(xml, media_type="application/xml",
+                    headers={"Content-Disposition": 'attachment; filename="event-risk-manifest.xml"'})
+
+app.mount("/excel", StaticFiles(directory=EXCEL), name="excel")  # functions.js/json, taskpane.html, icons

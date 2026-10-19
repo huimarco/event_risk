@@ -1,0 +1,17 @@
+match,channel,sign,rationale
+"# Which way a security moves when an entity it is exposed to suffers an adverse event (escalation) on a channel. Default for every exposure and channel is +1: an adverse event for the entity hurts the security. List only the exceptions (-1: the security benefits). `match` = a GICS sub-industry (as in securities.csv) or a ticker; a ticker row wins. Analyst priors, like exposures.csv; event betas will replace them."
+Aerospace & Defense,conflict,-1,defense demand rises with conflict
+Aerospace & Defense,instability,-1,defense demand rises with instability
+Oil & Gas Exploration & Production,conflict,-1,supply disruption raises oil and gas prices
+Oil & Gas Exploration & Production,sanctions,-1,sanctions on producers tighten supply
+Integrated Oil & Gas,conflict,-1,supply disruption raises oil and gas prices
+Integrated Oil & Gas,sanctions,-1,sanctions on producers tighten supply
+Oil & Gas Equipment & Services,conflict,-1,higher prices lift drilling activity
+Oil & Gas Equipment & Services,sanctions,-1,higher prices lift drilling activity
+Oil & Gas Storage & Transportation,conflict,-1,rerouting and price spikes raise volumes and spreads
+Oil & Gas Storage & Transportation,sanctions,-1,rerouting raises volumes and spreads
+Fertilizers & Agricultural Chemicals,conflict,-1,"Russia/Belarus/Middle East supply disruption raises fertilizer prices"
+Fertilizers & Agricultural Chemicals,sanctions,-1,sanctions on Russian/Belarusian potash raise prices
+Gold,conflict,-1,safe haven
+GLD,conflict,-1,safe haven
+GLD,instability,-1,safe haven

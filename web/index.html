@@ -34,8 +34,8 @@
   main { display: grid; grid-template-columns: 300px 1fr 360px; }
   aside, section { min-height: 0; overflow: auto; }
   aside { border-right: 1px solid var(--hairline); display: flex; flex-direction: column; }
-  .tabs { display: flex; gap: 4px; padding: 10px 12px 0; }
-  .tabs button { border: 0; background: none; color: var(--ink-2); padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+  .tabs { display: flex; gap: 2px; padding: 10px 8px 0; }
+  .tabs button { border: 0; background: none; color: var(--ink-2); padding: 6px 6px; border-radius: 6px; cursor: pointer; font-size: 13px; }
   .tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; background: var(--hover); }
   #search { margin: 10px 12px; }
   #list { list-style: none; margin: 0; padding: 0 0 12px; overflow: auto; }
@@ -102,6 +102,10 @@
   body.api main, body.api .explore-only, body.api #about { display: none; }
   #api { display: none; overflow: auto; }
   body.api #api { display: block; }
+  .up { color: var(--security); } .down { color: var(--entity); }
+  #status { margin: 10px 12px 0; } #status[hidden] { display: none; }
+  .kv { display: grid; grid-template-columns: 90px 1fr; gap: 2px 10px; font-size: 13px; }
+  .kv dt { color: var(--muted); } .kv dd { margin: 0; color: var(--ink-2); }
   .tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--axis); color: var(--ink-2); }
 </style>
 </head>
@@ -119,10 +123,17 @@
 <main>
   <aside>
     <div class="tabs" role="tablist">
+      <button role="tab" data-tab="markets" title="Venue markets by how they fared in cross-venue matching">Markets</button>
       <button role="tab" data-tab="propositions" aria-selected="true">Propositions</button>
       <button role="tab" data-tab="entities">Entities</button>
       <button role="tab" data-tab="securities">Securities</button>
     </div>
+    <select id="status" hidden aria-label="Match status">
+      <option value="unparsed" selected>Unparsed — event type not recognised</option>
+      <option value="unmatched">Unmatched — the only market for this bet</option>
+      <option value="linked">Linked — similar bet, not merged</option>
+      <option value="merged">Merged — same bet as another market</option>
+    </select>
     <input id="search" type="search" placeholder="Search">
     <ul id="list"></ul>
   </aside>
@@ -157,19 +168,20 @@
   <p>In the explorer, pick anything on the left; the network shows what it is connected to, and the panel on the right explains each connection.</p>
 
   <h3>How every connection is made</h3>
-  <p>Everything is produced by algorithms from public data — no AI models, no hand-picked lists — except one input, marked below.</p>
+  <p>Everything is produced by algorithms from public data — no AI models, no hand-picked lists — except the analyst estimates marked below.</p>
   <table>
     <tr><th>Connection</th><th>Example</th><th>How it is made</th></tr>
     <tr><td>Market → Proposition</td><td>Kalshi and Polymarket "Trump visits Taiwan in 2026" are one question</td>
         <td>Contract terms compared field by field, then confirmed by prices (below)</td></tr>
     <tr><td>Proposition ↔ Proposition</td><td>"Invasion by June 2027" implies "by Dec 2027"</td>
         <td>Logic from the contracts: <span class="tag">implies</span> nested deadlines or thresholds, <span class="tag">mutex</span> can't both happen (venue flags), <span class="tag">near_equivalent</span> same event, materially different terms</td></tr>
-    <tr><td>Proposition → Entity</td><td>"…China invade Taiwan…" involves China, Taiwan, invasion</td>
-        <td>Phrases in the question linked to Wikipedia articles</td></tr>
+    <tr><td>Proposition → Entity</td><td>"…China invade Taiwan…" involves China (actor), Taiwan (target), invasion</td>
+        <td>Phrases in the question linked to Wikipedia articles; each link carries the entity's role and what a YES means for it (below)</td></tr>
     <tr><td>Entity ↔ Entity</td><td>Xi Jinping — citizen of — China</td>
         <td>Facts from Wikidata, strength from Wikipedia co-occurrence (below)</td></tr>
     <tr><td>Entity → Security</td><td>Taiwan → TSM</td>
-        <td><strong>Hand-written analyst estimates</strong> — the only manual input, to be replaced by company revenue data and measured price reactions</td></tr>
+        <td><strong>Hand-written analyst estimates</strong> — the only manual input, to be replaced by company revenue data and measured price reactions —
+          plus which industries <em>gain</em> from escalation (defense, oil producers)</td></tr>
   </table>
 
   <h3>Markets → propositions: comparing contracts, not wording</h3>
@@ -183,6 +195,9 @@
     <tr><td>Threshold</td><td>— (used for "tariff ≥ 20%"-style questions)</td></tr>
     <tr><td>Conditions</td><td>physically present (others: in person, incl. phone calls, photographed, becomes law…)</td></tr>
   </table>
+  <p>On the same venue, the resolution rules are compared too: two markets with identical questions whose rules name different things
+    (e.g. different intersections in "Will Russia capture Novopavlivka?") are different bets. A negated question ("…agrees <em>not</em> to join NATO",
+    "military action <em>ends</em>") is never matched with the plain one.</p>
   <p>Two markets are the <strong>same question</strong> only if every field matches. Then comes a final check with real money:
     if their prices differ by more than 10 points, the market is saying they are different bets, so they are linked but not merged. Each pair is judged once, using prices at the moment the newer market was listed, so the decision never flips later.
     Example: "Trump, Xi and Putin <em>meet</em>" (Kalshi, 34.5%) vs "are <em>seen together</em>" (Polymarket, 84.5%) — linked as near-equivalent, never blended.</p>
@@ -199,11 +214,27 @@
     |A|, |B| = articles mentioning each · |A∩B| = articles mentioning both · W = all articles (~7.3M)</div>
   <p>Example: Putin–Xi Jinping 0.66, China–Taiwan 0.56. Links need at least 10 articles mentioning both, and a score of 0.25 or more.</p>
 
+  <p>Every market's outcome — merged, linked, unmatched or unparsed, with its parsed signature and the reason each near miss was rejected — is listed in the explorer's <strong>Markets</strong> tab.</p>
+
+  <h3>Direction and size of impact</h3>
+  <p>Each proposition → entity link records what a YES means for that entity: the <strong>action</strong> (from the contract signature) sets a
+    channel (conflict, trade, sanctions, instability, diplomacy), a severity, and a direction for the target and for the actor — an invasion is adverse
+    for the target (−1.0) and somewhat adverse for the invader (−0.6); a ceasefire or trade deal is favourable for both. Negated questions flip it.
+    Each entity → security link says how the security responds on each channel: by default it suffers with the entity, but defense contractors
+    gain from conflict and oil producers gain from supply disruption.</p>
+  <div class="formula">path strength = severity × role weight × pass-through × exposure weight · sign = direction for the entity × response on that channel<br>
+    impact(security, proposition) = Σ over paths of sign × strength · relevance = 1 − Π(1 − strength) · risk = |impact| × √(p(1−p))<br>
+    pass-through = 1 for the entity itself, 0.5 × link strength for a linked entity (one hop)</div>
+  <p>Impact is in graph units, not returns: <code>backtest.py</code> measures how it maps to actual abnormal returns when odds jump, and whether its direction is right.
+    Risk is largest for events near 50% — a 99% event can't move much more.</p>
+
   <h3>Numbers you will see</h3>
   <table>
     <tr><td>Probability</td><td>The latest market price of each venue's contract, averaged (weighted by open interest when available). Only same-question markets are averaged.</td></tr>
     <tr><td>24h change</td><td>Probability now minus 24 hours earlier.</td></tr>
-    <tr><td>Exposure score</td><td>How strongly a security is connected to a question through the graph (product of link strengths along the path). It ranks <strong>relevance, not impact</strong>: it does not say whether an event helps or hurts, or by how much.</td></tr>
+    <tr><td>Relevance</td><td>How strongly a security is connected to a question through the graph, 0–1, combining every path.</td></tr>
+    <tr><td>Impact</td><td>Signed: ▲ the security is expected to rise if the event happens, ▼ to fall. A structural prior, not a measured beta.</td></tr>
+    <tr><td>Risk</td><td>|impact| × √(p(1−p)): how much the question can still move the security given today's odds.</td></tr>
   </table>
 
   <h3>Time travel</h3>
@@ -221,7 +252,7 @@
   <h3>Current limits</h3>
   <ul>
     <li>Entity → security weights are analyst estimates, not sourced figures.</li>
-    <li>Exposure scores have no direction or size yet; measured "event betas" (how prices actually moved when odds jumped) are the next step.</li>
+    <li>Direction and impact come from a fixed table of actions and industry responses; about one market in eight uses an action outside the vocabulary and get relevance without direction. Measured "event betas" (how prices actually moved when odds jumped) are the next step.</li>
     <li>Securities and their exposure weights still cover one theme (US–China, Taiwan, semiconductors), so many propositions have no linked securities yet.</li>
   </ul>
 </article></section>
@@ -281,14 +312,19 @@ for p in top["propositions"]:
   <p>All securities (ticker, name, asset class, country, sector, index) and how many exposure links each has.</p>
 
   <div class="endpoint"><span>GET</span>/securities/{ticker}/exposures</div>
-  <p>Propositions a security is exposed to, strongest first, each with the path through the graph. Params: <code>min_score</code> (default 0.1), <code>limit</code>, <code>include_closed</code>.</p>
+  <p>Propositions a security is exposed to, summed over every path through the graph: <code>score</code> (relevance 0–1), <code>impact</code>
+    (signed; &gt; 0 = expected to rise if the event happens; <code>null</code> when no path has a known direction), <code>direction</code> (up · down · unknown),
+    <code>risk</code> (|impact| × √(p(1−p))) and the three strongest <code>paths</code> with their channel and sign.
+    Params: <code>sort</code> = <code>score</code> (default) · <code>impact</code> · <code>risk</code>, <code>min_score</code> (default 0.1), <code>limit</code>, <code>include_closed</code>.</p>
 <pre>{ "security": { "id": "sec:TSM", "name": "Taiwan Semiconductor (ADR)" },
-  "exposures": [ { "id": "prop:kalshi:KXTAIWANLVL4-29JAN01", "name": "…Level 4 warning for Taiwan…",
-                   "prob": 0.29, "score": 0.9,
-                   "path": [ {"id": "prop:kalshi:KXTAIWANLVL4-29JAN01"}, {"id": "wd:Q865", "name": "Taiwan"}, {"id": "sec:TSM"} ] } ] }</pre>
+  "exposures": [ { "id": "prop:polymarket:567621", "name": "Will China invade Taiwan by December 31, 2027?",
+                   "prob": 0.095, "score": 0.95, "impact": -1.46, "direction": "down", "risk": 0.43, "n_paths": 4,
+                   "path": [ {"id": "prop:polymarket:567621"}, {"id": "wd:Q865", "name": "Taiwan"}, {"id": "sec:TSM"} ],
+                   "paths": [ { "strength": 0.9, "sign": -1.0, "channel": "conflict", "role": "target", "nodes": [ … ] } ] } ] }</pre>
 
   <div class="endpoint"><span>POST</span>/portfolio/scan</div>
-  <p>Send holdings, get back the geopolitical propositions the portfolio is most exposed to: exposure = Σ weight × exposure score.
+  <p>Send holdings, get back the geopolitical propositions the portfolio is most exposed to: exposure = Σ weight × relevance score;
+    <code>impact</code> = Σ weight × signed impact (holdings on opposite sides offset), with <code>direction</code> and <code>risk</code>.
     <code>moved</code> flags propositions whose probability moved at least <code>move_threshold</code> in 24h.</p>
 <pre>curl -X POST "BASE/portfolio/scan" -H "Content-Type: application/json" -H "X-API-Key: $KEY" \
   -d '{"holdings": [{"ticker": "TSM", "weight": 0.10}, {"ticker": "NVDA", "weight": 0.08}],
@@ -298,10 +334,17 @@ for p in top["propositions"]:
       "change_24h": 0.001, "exposure": 0.177, "moved": false,
       "holdings": [ { "ticker": "TSM", "weight": 0.1, "score": 0.9, "via": ["Taiwan"] } ] } ] }</pre>
 
+  <h3>Markets (match review)</h3>
+  <div class="endpoint"><span>GET</span>/markets</div>
+  <p>Venue markets by how they fared in cross-venue matching: <code>merged</code> · <code>linked</code> · <code>unmatched</code> · <code>unparsed</code>.
+    Params: <code>status</code> (repeatable; default unmatched + unparsed), <code>q</code>, <code>venue</code>, <code>limit</code>, <code>include_closed</code>. <code>counts</code> covers every status.</p>
+  <div class="endpoint"><span>GET</span>/markets/{id}</div>
+  <p>One market: status, parsed contract signature, parser issues, nearest rejected candidates with the reason for each, rules text and its proposition.</p>
+
   <h3>Other</h3>
   <div class="endpoint"><span>GET</span>/health</div>
   <p>Service status and when data was last collected successfully.</p>
-  <p class="note">Exposure scores rank relevance through the graph; they are not betas and carry no direction. Security prices come from Yahoo Finance for research use.</p>
+  <p class="note">Impact is a structural prior in graph units, not a measured beta. Security prices come from Yahoo Finance for research use.</p>
 </article></section>
 <script>
 const $ = s => document.querySelector(s);
@@ -309,15 +352,18 @@ const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).
 const pct = p => p == null ? "–" : `${(p * 100).toFixed(1)}%`;
 const move = d => d == null ? "" : `${d > 0 ? "▲" : d < 0 ? "▼" : "•"} ${Math.abs(d * 100).toFixed(1)} pts`;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const typeOf = id => id.startsWith("prop:") ? "proposition" : id.startsWith("sec:") ? "security" : "entity";
+const typeOf = id => id.startsWith("prop:") ? "proposition" : id.startsWith("sec:") ? "security"
+                   : id.startsWith("mkt:") ? "market" : "entity";
+const arrow = (d, text) => `<span class="${d === "up" ? "up" : d === "down" ? "down" : ""}">${d === "up" ? "▲" : d === "down" ? "▼" : "?"} ${text}</span>`;
+const signWord = s => s == null ? "direction unknown" : s > 0 ? "favourable" : "adverse";
 const LOGICAL = new Set(["implies", "mutex", "near_equivalent"]);
 const state = { tab: "propositions", items: [], selected: null };
 
 async function api(path, params = {}) {
   const asof = $("#asof").value;
-  const q = new URLSearchParams(Object.fromEntries(Object.entries({ ...params,
+  const q = new URLSearchParams(Object.entries({ ...params,
     ...(asof ? { as_of: new Date(asof).toISOString(), known_as_of: new Date(asof).toISOString() } : {}) })
-    .filter(([, v]) => v != null)));
+    .filter(([, v]) => v != null).flatMap(([k, v]) => Array.isArray(v) ? v.map(x => [k, x]) : [[k, v]]));
   const key = localStorage.getItem("apiKey");
   const r = await fetch(`${path}?${q}`, { headers: key ? { "X-API-Key": key } : {} });
   if (r.status === 401) {
@@ -331,6 +377,10 @@ async function api(path, params = {}) {
 async function loadList() {
   const t = state.tab;
   const q = $("#search").value.trim() || undefined;  // propositions are searched on the server
+  if (t === "markets") {
+    const r = await api("/markets", { status: $("#status").value.split(","), q, limit: 500 });
+    state.counts = r.counts; state.items = r.markets; renderList(); return;
+  }
   const data = t === "propositions" ? (await api("/propositions", { limit: 300, q })).propositions
              : t === "entities" ? (await api("/entities")).sort((a, b) => b.n_propositions - a.n_propositions)
              : (await api("/securities")).sort((a, b) => b.n_exposures - a.n_exposures);
@@ -340,6 +390,15 @@ async function loadList() {
 function renderList() {
   const q = $("#search").value.toLowerCase();
   const kind = state.tab.slice(0, -1).replace("entitie", "entity");
+  if (kind === "market") {
+    const c = state.counts || {};
+    $("#list").innerHTML = `<li class="note" style="display:block;cursor:default">${["unmatched", "unparsed", "linked", "merged"]
+        .map(k => `${c[k] ?? 0} ${k}`).join(" · ")} (live markets)</li>` +
+      state.items.slice(0, 500).map(x => `<li data-id="${esc(x.id)}" ${x.id === state.selected ? 'aria-current="true"' : ""}>
+        <i class="swatch proposition" style="opacity:.35"></i><span class="name">${esc(x.name)}</span>
+        <span class="num">${esc(x.venue)}<br><span class="tag">${esc(x.match)}</span></span></li>`).join("");
+    return;
+  }
   $("#list").innerHTML = state.items.filter(x => x.name.toLowerCase().includes(q) || (x.ticker || "").toLowerCase().includes(q))
     .slice(0, 300).map(x => `<li data-id="${esc(x.id)}" ${x.id === state.selected ? 'aria-current="true"' : ""}>
       <i class="swatch ${kind}"></i><span class="name">${esc(x.ticker ? `${x.ticker} · ${x.name}` : x.name)}</span>
@@ -393,7 +452,8 @@ async function drawDetail(id) {
       <h3>Markets</h3>${p.markets.map(m => `<div class="row">${esc(m.venue)} · ${pct(m.prob)}
         <div class="meta">${esc(m.name)}</div>${m.note ? `<div class="meta">${esc(m.note)}</div>` : ""}
         ${m.rules ? `<details><summary>Rules</summary><p>${esc(m.rules)}</p></details>` : ""}</div>`).join("")}
-      <h3>Involves</h3>${p.entities.map(e => `<div class="row">${go(e.id, e.name)}</div>`).join("") || '<p class="note">None</p>'}
+      <h3>Involves</h3>${p.entities.map(e => `<div class="row">${go(e.id, e.name)}
+        <div class="meta">${esc(e.role || "")}${e.channel ? ` · ${esc(e.channel)}` : ""} · YES is ${signWord(e.sign)} for it${e.weight != null ? ` · weight ${e.weight.toFixed(2)}` : ""}</div></div>`).join("") || '<p class="note">None</p>'}
       ${p.logical.length ? `<h3>Logical links</h3>${p.logical.map(l => `<div class="row">${esc(l.relation)} ${l.direction === "out" ? "→" : "←"}
         ${go(l.proposition.id, l.proposition.name)}${l.note ? `<div class="meta">${esc(l.note)}</div>` : ""}</div>`).join("")}` : ""}`;
   } else if (t === "entity") {
@@ -407,20 +467,46 @@ async function drawDetail(id) {
         <div class="meta">${esc(l.relation)} · ${l.weight != null ? l.weight.toFixed(2) : "–"}</div></div>`).join("") || '<p class="note">None</p>'}
       ${e.exposures.length ? `<h3>Exposed securities</h3>${e.exposures.map(x => `<div class="row">${go(x.security.id, x.security.name)}
         <div class="meta">${x.weight.toFixed(2)} · ${esc(x.rationale || "")}</div></div>`).join("")}` : ""}`;
-  } else {
-    const ticker = id.slice(4), x = await api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 25 });
+  } else if (t === "security") {
+    const ticker = id.slice(4), x = await api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 25, sort: "risk" });
     el.innerHTML = `<div class="kind">Security · ${esc(ticker)}</div><h2>${esc(x.security.name)}</h2>
-      <h3>Most exposed propositions</h3>${x.exposures.map(r => `<div class="row">${go(r.id, r.name)}
-        <div class="meta">score ${r.score.toFixed(2)} · ${pct(r.prob)} · via ${esc(r.path.slice(1, -1).map(p => p.name).join(" → "))}</div></div>`).join("")
+      <h3>Propositions that move it most</h3>${x.exposures.map(r => `<div class="row">${go(r.id, r.name)}
+        <div class="meta">${arrow(r.direction, r.impact != null ? `impact ${r.impact > 0 ? "+" : ""}${r.impact.toFixed(2)}` : "direction unknown")}
+          · ${pct(r.prob)} · relevance ${r.score.toFixed(2)}</div>
+        <div class="meta">via ${esc(r.paths[0].nodes.slice(1, -1).map(p => p.name).join(" → "))}${r.paths[0].channel ? ` (${esc(r.paths[0].channel)})` : ""}${r.n_paths > 1 ? ` · ${r.n_paths} paths` : ""}</div></div>`).join("")
         || '<p class="note">No live propositions linked.</p>'}
-      <p class="note">Scores rank relevance through the graph; they are not betas.</p>`;
+      <p class="note">Ranked by risk = |impact| × √(p(1−p)). Impact is a structural prior in graph units (▲ = expected to rise if the event happens), not a measured beta.</p>`;
+  } else if (t === "market") {
+    const m = await api(`/markets/${encodeURIComponent(id)}`), s = m.signature || {};
+    const why = {
+      merged: "The same bet as at least one other market, so they are combined into one proposition and their prices averaged.",
+      linked: "Close to another market but not the same bet (e.g. a different deadline, threshold or wording), so they are connected but their prices are kept separate.",
+      unmatched: "Read successfully, but it is the only market asking exactly this: no other Kalshi or Polymarket market has the same event, parties, deadline and terms. That's normal (most markets exist on one venue only); it stands alone as its own proposition. The closest other markets and why they differ are listed below.",
+      unparsed: "The system couldn't work out what kind of event this is (its wording isn't in the action vocabulary yet), so it can't be compared with other markets. It still appears as its own proposition." }[m.match] || "";
+    el.innerHTML = `<div class="kind">Market · ${esc(m.venue)} · <span class="tag">${esc(m.match)}</span></div><h2>${esc(m.name)}</h2>
+      <div class="hero"><b>${pct(m.prob)}</b></div><p class="meta">${why}</p>
+      ${m.issues.length ? `<h3>Parser issues</h3><p class="meta">${m.issues.map(esc).join("<br>")}</p>` : ""}
+      <h3>Contract signature</h3><dl class="kv">
+        <dt>Action</dt><dd>${esc(s.action || "—")}</dd>
+        <dt>Actors</dt><dd>${esc((s.actors || []).join(", ") || "—")}</dd>
+        <dt>Targets</dt><dd>${esc((s.targets || []).join(", ") || "—")}</dd>
+        <dt>Concepts</dt><dd>${esc((s.concepts || []).join(", ") || "—")}</dd>
+        <dt>Window</dt><dd>${esc(s.window ? s.window.map(d => d || "open").join(" → ") : "—")}</dd>
+        <dt>Threshold</dt><dd>${esc(s.threshold ? JSON.stringify(s.threshold) : "—")}</dd>
+        <dt>Conditions</dt><dd>${esc([...(s.conditions || []), ...(s.negated ? ["negated"] : [])].join(", ") || "—")}</dd></dl>
+      ${m.candidates.length ? `<h3>Nearest rejected candidates</h3>${m.candidates.map(c => `<div class="row">${esc(c.venue)} · ${esc(c.name || c.market)}
+        <div class="meta">${esc(c.reason)}</div></div>`).join("")}` : ""}
+      ${m.proposition ? `<h3>Proposition</h3><div class="row">${go(m.proposition, "Open the proposition")}</div>` : ""}
+      ${m.rules ? `<details><summary>Rules</summary><p>${esc(m.rules)}</p></details>` : ""}
+      <p class="note">Override a decision by adding a row to seeds/match_overrides.csv.</p>`;
   }
 }
 
 async function select(id) {
   state.selected = id;
   renderList();
-  try { await Promise.all([drawGraph(id), drawDetail(id)]); }
+  const prop = typeOf(id) === "market" ? (state.items.find(x => x.id === id) || {}).proposition : id;
+  try { await Promise.all([prop ? drawGraph(prop) : null, drawDetail(id)]); }
   catch (err) { $("#detail").innerHTML = `<p class="note">${esc(err.message)}</p>`; }
 }
 
@@ -433,14 +519,15 @@ document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
 });
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
-  state.tab = b.dataset.tab; $("#search").value = ""; loadList();
+  state.tab = b.dataset.tab; $("#search").value = ""; $("#status").hidden = state.tab !== "markets"; loadList();
 });
 let searchTimer;
+$("#status").onchange = loadList;
 $("#search").oninput = () => {
-  if (state.tab !== "propositions") return renderList();
+  if (state.tab !== "propositions" && state.tab !== "markets") return renderList();
   clearTimeout(searchTimer); searchTimer = setTimeout(loadList, 250);
 };
-$("#list").onclick = e => { const li = e.target.closest("li"); if (li) select(li.dataset.id); };
+$("#list").onclick = e => { const li = e.target.closest("li"); if (li && li.dataset.id) select(li.dataset.id); };
 $("#detail").onclick = e => { const a = e.target.closest("[data-go]"); if (a) select(a.dataset.go); };
 $("#depth").onchange = () => state.selected && drawGraph(state.selected);
 $("#asof").onchange = () => { loadList(); if (state.selected) select(state.selected); };
