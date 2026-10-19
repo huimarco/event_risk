@@ -179,13 +179,36 @@ def resolve(matches, keys):
         else: rel[frozenset((a, b))] = (o["relation"], a, b, 1.0, "curated", o["note"] or None)
     return rel
 
-def group(markets, relations):
+def group(markets, relations, sigs):
     """{market key: proposition id}. same_as pairs are unioned; a proposition is named after its
-    earliest-listed market, so its id stays stable as later markets join."""
+    earliest-listed market, so its id stays stable as later markets join.
+
+    Matching is pairwise and allows a day of slack across venues, so unions can chain: Kalshi
+    "before Jul 21" = Polymarket "by Jul 20", and = Polymarket "by Jul 19", would put two
+    different Polymarket deadlines in one proposition. A union is therefore refused if it would
+    join two markets of the same venue with different deadlines (window ends); the pair becomes
+    near_equivalent (rewritten in `relations`). Same-venue markets whose windows differ only in
+    start (relisted later; the matcher verified the elapsed time by price) still merge. Curated overrides always merge. Pairs are unioned in key order,
+    curated first, so the outcome is reproducible."""
     parent = {k: k for k in (( m["venue"], m["market_id"]) for m in markets)}
+    members = {k: [k] for k in parent}
     find = lambda k: k if parent[k] == k else find(parent[k])
-    for r, a, b, *_ in relations.values():
-        if r == "same_as": parent[find(a)] = find(b)
+    deadline = lambda k: sigs[k].window[1] if k in sigs and sigs[k].window else None
+    def clash(ra, rb):
+        return next(((x, y) for x in members[ra] for y in members[rb]
+                     if x[0] == y[0] and deadline(x) != deadline(y)), None)
+    for pair, (r, a, b, conf, prov, note) in sorted(relations.items(),
+                                                    key=lambda kv: (kv[1][4] != "curated", sorted(kv[0]))):
+        if r != "same_as": continue
+        ra, rb = find(a), find(b)
+        if ra == rb: continue
+        if prov != "curated" and (c := clash(ra, rb)):
+            why = (f"not merged: would put two {c[0][0]} markets with different deadlines "
+                   f"({c[0][1]}, {c[1][1]}) in one proposition")
+            relations[pair] = ("near_equivalent", a, b, conf, prov, "; ".join(filter(None, (why, note))))
+            continue
+        parent[ra] = rb
+        members[rb] += members.pop(ra)
     first = {(m["venue"], m["market_id"]): (m["open_time"] or m["first_seen_at"] or REFERENCE_VALID_FROM,
                                              m["venue"], m["market_id"]) for m in markets}
     groups = defaultdict(list)
@@ -248,7 +271,7 @@ def build(markets, prices, ents):
     by_key = {key(m): m for m in markets}
     sigs, matches, rejected = match(markets, prices, ents)
     relations = resolve(matches, by_key)
-    keyed = group(markets, relations)
+    keyed = group(markets, relations, sigs)
     prop_of = {market_id(m): keyed[key(m)] for m in markets}
     joined = defaultdict(list)  # notes of the same_as matches that joined each market
     for r, a, b, _, prov, note in relations.values():
