@@ -311,17 +311,20 @@ def entity_links(g, qid):
 def get_question(question_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                  cur=Depends(db)):
     """One question: headline, every rung (deadline / threshold, probability, 24h change, status,
-    volume) in deadline then threshold order, and the entities it involves."""
+    volume), latest deadline first (lowest threshold first within a deadline), and the entities
+    it involves."""
     at, known = times(as_of, known_as_of)
     g = graph(cur, as_of, known_as_of)
     g.get(question_id, "question")
     qp = question_probs(cur, g, [question_id], at)
     pp = qp[question_id].pop("rung_probs")
     level = lambda t: (t[1][0] if isinstance(t[1], list) else t[1]) if t else 0   # ["between", [lo, hi]] -> lo
-    order = lambda r: ((r[1] or [None, ""])[1] or "", level(r[2]))
+    # latest deadline first; within one deadline (threshold questions), lowest threshold first
+    by_threshold = sorted(g.rungs(question_id), key=lambda r: level(r[2]))
+    ordered = sorted(by_threshold, key=lambda r: (r[1] or [None, ""])[1] or "", reverse=True)
     rungs = [dict(proposition_summary(g, p, pp), window=w, threshold=t,
                   n_markets=g.nodes[p]["attrs"].get("n_markets"))
-             for p, w, t in sorted(g.rungs(question_id), key=order)]
+             for p, w, t in ordered]
     return dict(as_of=at, known_as_of=known, **question_summary(g, question_id, qp), rungs=rungs,
                 entities=entity_links(g, question_id))
 
