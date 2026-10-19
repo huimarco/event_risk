@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Risk</title>
+<!-- This page is the add-in's shared runtime: it hosts the custom functions as well as the pane. -->
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<script src="functions.js"></script>
+<style>
+  body { font: 13px "Segoe UI", system-ui, sans-serif; margin: 0; padding: 12px; color: #1f2933; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #1f3a60; margin: 18px 0 6px; }
+  h2:first-child { margin-top: 0; }
+  input { width: 100%; box-sizing: border-box; padding: 6px; border: 1px solid #c3cad3; border-radius: 3px; font: inherit; }
+  button { padding: 6px 10px; border: 1px solid #1f3a60; background: #1f3a60; color: #fff; border-radius: 3px; font: inherit; cursor: pointer; }
+  button.secondary { background: #fff; color: #1f3a60; }
+  .row { display: flex; gap: 6px; margin-top: 6px; }
+  .row input { flex: 1; }
+  .muted { color: #6b7785; font-size: 12px; }
+  .err { color: #b42318; }
+  ul { list-style: none; padding: 0; margin: 6px 0 0; }
+  li { padding: 6px; border-bottom: 1px solid #eef1f4; cursor: pointer; }
+  li:hover { background: #f3f6fa; }
+  li .meta { display: flex; justify-content: space-between; color: #6b7785; font-size: 12px; margin-top: 2px; }
+  .up { color: #067647; } .down { color: #b42318; }
+  code { font: 12px Consolas, monospace; background: #f3f6fa; padding: 0 3px; }
+  dl { margin: 0; } dt { margin-top: 6px; } dd { margin: 0 0 0 8px; color: #6b7785; font-size: 12px; }
+</style>
+</head>
+<body>
+<h2>Search propositions</h2>
+<div class="row"><input id="q" placeholder="e.g. taiwan, iran, tariffs"><button id="search">Search</button></div>
+<div class="muted">Click a result to add a live row at the selected cell: id, name, probability, 24h change.</div>
+<ul id="results"></ul>
+
+<h2>Portfolio scan</h2>
+<div class="muted">Select two columns, ticker and weight (header row optional), then:</div>
+<div class="row"><button id="scan">Scan selection</button></div>
+<div id="scanMsg" class="muted"></div>
+
+<h2>Refresh</h2>
+<div class="row"><button id="refresh" class="secondary">Refresh all Event Risk formulas</button></div>
+<div id="health" class="muted"></div>
+
+<h2>API key</h2>
+<div class="row"><input id="key" type="password" placeholder="only if the server requires one"><button id="saveKey" class="secondary">Save</button></div>
+<div id="keyMsg" class="muted"></div>
+
+<h2>Functions</h2>
+<dl>
+  <dt><code>=EVENTRISK.PROB(id, [as_of], [known_as_of])</code></dt><dd>Blended probability, 0–1.</dd>
+  <dt><code>=EVENTRISK.CHANGE(id, [as_of], [known_as_of])</code></dt><dd>24h change in probability.</dd>
+  <dt><code>=EVENTRISK.NAME(id)</code></dt><dd>The question the proposition asks.</dd>
+  <dt><code>=EVENTRISK.PROPOSITIONS([query], [limit], [sort], [entity])</code></dt><dd>Table of propositions, biggest movers first.</dd>
+  <dt><code>=EVENTRISK.EXPOSURES(ticker, [limit], [min_score], [as_of])</code></dt><dd>Propositions a security is exposed to.</dd>
+  <dt><code>=EVENTRISK.HISTORY(id, [start], [end], [interval])</code></dt><dd>Probability over time (daily by default).</dd>
+  <dt><code>=EVENTRISK.SCAN(holdings, [limit], [move_threshold])</code></dt><dd>Live portfolio scan over a ticker/weight range.</dd>
+</dl>
+<p class="muted">Set <code>known_as_of</code> = <code>as_of</code> for a point-in-time, backtest-safe value.
+Exposure scores rank relevance; they are not betas.</p>
+
+<script>
+const $ = id => document.getElementById(id);
+const pct = v => v === null || v === undefined ? "–" : (100 * v).toFixed(1) + "%";
+const pts = v => v === null || v === undefined ? "" : (v >= 0 ? "+" : "") + (100 * v).toFixed(1) + " pts";
+
+function show(el, text, isError) { el.textContent = text; el.className = isError ? "err" : "muted"; }
+
+async function search() {
+  const list = $("results");
+  list.innerHTML = "<li class='muted'>Searching…</li>";
+  try {
+    const r = await EventRisk.request("/propositions", { q: $("q").value.trim(), limit: 25, sort: "move" });
+    list.innerHTML = "";
+    if (!r.propositions.length) list.innerHTML = "<li class='muted'>No live propositions match.</li>";
+    for (const p of r.propositions) {
+      const li = document.createElement("li");
+      li.innerHTML = `<div></div><div class="meta"><span>${pct(p.prob)}</span>
+        <span class="${p.change_24h > 0 ? "up" : p.change_24h < 0 ? "down" : ""}">${pts(p.change_24h)}</span></div>`;
+      li.firstChild.textContent = p.name;
+      li.title = p.id;
+      li.onclick = () => insertRow(p.id);
+      list.appendChild(li);
+    }
+  } catch (e) {
+    list.innerHTML = "";
+    const li = document.createElement("li"); li.className = "err"; li.textContent = e.message; list.appendChild(li);
+  }
+}
+
+// Writes [id, NAME, PROB, CHANGE] at the active cell, then moves down a row so clicks build a watchlist.
+async function insertRow(id) {
+  await Excel.run(async ctx => {
+    const cell = ctx.workbook.getActiveCell();
+    const row = cell.getResizedRange(0, 3);
+    row.formulasR1C1 = [[id, "=EVENTRISK.NAME(RC[-1])", "=EVENTRISK.PROB(RC[-2])", "=EVENTRISK.CHANGE(RC[-3])"]];
+    row.getCell(0, 2).numberFormat = [["0.0%"]];
+    row.getCell(0, 3).numberFormat = [["+0.0%;-0.0%;0.0%"]];
+    cell.getOffsetRange(1, 0).select();
+    await ctx.sync();
+  });
+}
+
+// Puts a live =EVENTRISK.SCAN over the selected range on a new sheet.
+async function scan() {
+  try {
+    await Excel.run(async ctx => {
+      const sel = ctx.workbook.getSelectedRange();
+      sel.load("address, values");
+      await ctx.sync();
+      const n = EventRisk.parseHoldings(sel.values).length;
+      if (!n) throw new Error("Select two columns: ticker, numeric weight.");
+      const [sheetName, cells] = sel.address.split("!");
+      const sheet = sheetName.startsWith("'") ? sheetName : `'${sheetName}'`;  // Excel quotes names that need it
+      const ref = `${sheet}!${cells.replace(/([A-Z]+)(\d+)/g, "$$$1$$$2")}`;    // absolute: A2 -> $A$2
+      const sheets = ctx.workbook.worksheets;
+      sheets.load("items/name");
+      await ctx.sync();
+      let name = "Event risk scan", i = 2;
+      while (sheets.items.some(s => s.name === name)) name = `Event risk scan ${i++}`;
+      const ws = sheets.add(name);
+      ws.getRange("A1").formulas = [[`=EVENTRISK.SCAN(${ref})`]];
+      ws.getRange("C:C").numberFormat = [["0.0%"]];
+      ws.getRange("D:D").numberFormat = [["+0.0%;-0.0%;0.0%"]];
+      ws.getRange("E:E").numberFormat = [["0.000"]];
+      ws.getRange("A:A").format.columnWidth = 140;
+      ws.getRange("B:B").format.columnWidth = 360;
+      ws.getRange("A1:G1").format.font.bold = true;
+      ws.activate();
+      await ctx.sync();
+      show($("scanMsg"), `Scanning ${n} holdings on sheet “${name}”. It stays live: edit the holdings and it re-runs.`);
+    });
+  } catch (e) { show($("scanMsg"), e.message, true); }
+}
+
+async function refresh() {
+  EventRisk.clearCache();
+  await Excel.run(async ctx => { ctx.workbook.application.calculate(Excel.CalculationType.full); await ctx.sync(); });
+  health();
+}
+
+async function health() {
+  try {
+    const h = await EventRisk.request("/health", { t: Date.now() });
+    show($("health"), `Connected. Market data last collected ${h.last_successful_run || "never"} (UTC).`);
+  } catch (e) { show($("health"), e.message, true); }
+}
+
+function saveKey() {
+  const k = $("key").value.trim();
+  k ? localStorage.setItem("apiKey", k) : localStorage.removeItem("apiKey");
+  EventRisk.clearCache();
+  show($("keyMsg"), k ? "Saved. Click Refresh to recalculate." : "Cleared.");
+  health();
+}
+
+Office.onReady(() => {
+  $("key").value = localStorage.getItem("apiKey") || "";
+  $("search").onclick = search;
+  $("q").onkeydown = e => { if (e.key === "Enter") search(); };
+  $("scan").onclick = scan;
+  $("refresh").onclick = refresh;
+  $("saveKey").onclick = saveKey;
+  health();
+});
+</script>
+</body>
+</html>
