@@ -12,17 +12,18 @@
     color-scheme: light;
     --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
     --hairline: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10); --hover: rgba(11,11,11,0.04);
-    --proposition: #2a78d6; --entity: #eb6834; --security: #1baf7a;
-    /* Markets are the raw inputs behind propositions, not a peer category: no fourth hue passes
-       all-pairs against slots 1-3, so they are neutral grey + triangle + venue label. */
-    --market: #898781;
+    --question: #2a78d6; --entity: #eb6834; --security: #1baf7a;
+    /* Propositions (a question's rungs) and markets are the inputs behind questions, not peer
+       categories: no fourth hue passes all-pairs against slots 1-3, so they are neutral grey,
+       told apart by shape (small dot / triangle) and labels. */
+    --proposition: #898781; --market: #898781;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
       --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
       --hairline: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10); --hover: rgba(255,255,255,0.05);
-      --proposition: #3987e5; --entity: #d95926; --security: #199e70;
+      --question: #3987e5; --entity: #d95926; --security: #199e70;
     }
   }
   * { box-sizing: border-box; }
@@ -34,9 +35,17 @@
   input, select, button { font: inherit; color: var(--ink); background: var(--surface);
          border: 1px solid var(--axis); border-radius: 6px; padding: 4px 8px; }
   main, #about { min-height: 0; }
-  main { display: grid; grid-template-columns: 300px 1fr 360px; }
+  main { display: grid; grid-template-columns: var(--left, 300px) 6px 1fr 6px var(--right, 360px); }
+  /* drag handles between the panels; the line shows on hover */
+  .split { cursor: col-resize; position: relative; z-index: 2; touch-action: none; }
+  .split::after { content: ""; position: absolute; inset: 0 2px; background: transparent; transition: background .1s; }
+  .split:hover::after, .split.dragging::after { background: var(--axis); }
+  body.resizing { cursor: col-resize; user-select: none; }
+  .caption { position: absolute; left: 12px; top: 12px; padding: 4px 8px; font-size: 12px; color: var(--ink-2);
+             background: var(--surface); border: 1px solid var(--ring); border-radius: 6px; }
+  .caption[hidden] { display: none; }
   aside, section { min-height: 0; overflow: auto; }
-  aside { border-right: 1px solid var(--hairline); display: flex; flex-direction: column; }
+  aside { display: flex; flex-direction: column; }
   .tabs { display: flex; gap: 2px; padding: 10px 8px 0; }
   .tabs button { border: 0; background: none; color: var(--ink-2); padding: 6px 6px; border-radius: 6px; cursor: pointer; font-size: 13px; }
   .tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; background: var(--hover); }
@@ -47,7 +56,8 @@
   #list .name { overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   #list .num { color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; font-size: 13px; }
   .swatch { width: 10px; height: 10px; display: inline-block; align-self: center; }
-  .swatch.proposition { background: var(--proposition); border-radius: 50%; }
+  .swatch.question { background: var(--question); border-radius: 50%; }
+  .swatch.proposition { background: var(--proposition); border-radius: 50%; transform: scale(.7); }
   .swatch.entity { background: var(--entity); transform: rotate(45deg) scale(.85); }
   .swatch.security { background: var(--security); border-radius: 2px; }
   .swatch.market { background: var(--market); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
@@ -59,7 +69,9 @@
   .legend .dash { width: 18px; border-top: 2px dashed var(--muted); }
   .empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); pointer-events: none; }
   .empty[hidden] { display: none; }
-  #detail { border-left: 1px solid var(--hairline); padding: 16px; }
+  #detail { padding: 16px; }
+  .split[data-side="left"] { border-left: 1px solid var(--hairline); }
+  .split[data-side="right"] { border-right: 1px solid var(--hairline); }
   #detail h2 { font-size: 16px; margin: 0 0 4px; line-height: 1.35; }
   #detail .kind { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
   .hero { display: flex; align-items: baseline; gap: 10px; margin: 12px 0; }
@@ -102,7 +114,7 @@
   .doc pre { font: 12px/1.5 ui-monospace, Menlo, monospace; color: var(--ink); background: var(--surface);
              border: 1px solid var(--ring); border-radius: 8px; padding: 12px 14px; overflow-x: auto; margin: 8px 0 4px; }
   .doc .endpoint { margin: 22px 0 6px; font: 600 13px ui-monospace, Menlo, monospace; color: var(--ink); }
-  .doc .endpoint span { color: var(--proposition); margin-right: 8px; }
+  .doc .endpoint span { color: var(--question); margin-right: 8px; }
   body.api main, body.api .explore-only, body.api #about { display: none; }
   #api { display: none; overflow: auto; }
   body.api #api { display: block; }
@@ -110,6 +122,12 @@
   #status { margin: 10px 12px 0; } #status[hidden] { display: none; }
   .kv { display: grid; grid-template-columns: 90px 1fr; gap: 2px 10px; font-size: 13px; }
   .kv dt { color: var(--muted); } .kv dd { margin: 0; color: var(--ink-2); }
+  table.rungs { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.rungs th { text-align: left; color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; padding: 4px 6px 4px 0; }
+  table.rungs td { padding: 5px 6px 5px 0; border-top: 1px solid var(--hairline); vertical-align: top; }
+  table.rungs td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.rungs tr.closed td { color: var(--muted); }
+  table.rungs tr.head td:first-child::before { content: "★ "; color: var(--question); }
   .tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--axis); color: var(--ink-2); }
 </style>
 </head>
@@ -128,7 +146,7 @@
   <aside>
     <div class="tabs" role="tablist">
       <button role="tab" data-tab="markets" title="Venue markets by how they fared in cross-venue matching">Markets</button>
-      <button role="tab" data-tab="propositions" aria-selected="true">Propositions</button>
+      <button role="tab" data-tab="questions" aria-selected="true">Questions</button>
       <button role="tab" data-tab="entities">Entities</button>
       <button role="tab" data-tab="securities">Securities</button>
     </div>
@@ -141,17 +159,21 @@
     <input id="search" type="search" placeholder="Search">
     <ul id="list"></ul>
   </aside>
+  <div class="split" data-side="left" role="separator" aria-orientation="vertical" aria-label="Resize list panel" tabindex="0"></div>
   <section id="canvas-wrap">
     <div id="graph"></div>
+    <div class="caption" id="caption" hidden></div>
     <div class="empty" id="empty">Pick something on the left to see its connections</div>
     <div class="legend">
-      <span><i class="swatch proposition"></i>Proposition</span>
+      <span><i class="swatch question"></i>Question</span>
       <span><i class="swatch entity"></i>Entity</span>
       <span><i class="swatch security"></i>Security</span>
+      <span><i class="swatch proposition"></i>Rung</span>
       <span><i class="swatch market"></i>Market</span>
       <span><i class="dash"></i>Logical link</span>
     </div>
   </section>
+  <div class="split" data-side="right" role="separator" aria-orientation="vertical" aria-label="Resize details panel" tabindex="0"></div>
   <section id="detail"><p class="note">Details appear here.</p></section>
 </main>
 <section id="about"><article class="doc">
@@ -190,7 +212,8 @@
   <h3>The pipeline at a glance</h3>
   <div class="flow">
     <div class="step"><b><i class="swatch market"></i>Market</b><span>one contract on Kalshi or Polymarket</span></div><span class="arrow">→</span>
-    <div class="step"><b><i class="swatch proposition"></i>Proposition</b><span>the real-world question, merged across venues</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch proposition"></i>Proposition</b><span>one bet, merged across venues</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch question"></i>Question</b><span>all deadlines / thresholds of one bet</span></div><span class="arrow">→</span>
     <div class="step"><b><i class="swatch entity"></i>Entity</b><span>country, person, organisation, concept</span></div><span class="arrow">→</span>
     <div class="step"><b><i class="swatch security"></i>Security</b><span>stock, ETF, currency</span></div>
   </div>
@@ -223,9 +246,24 @@
     <tr><td><span class="tag">unmatched</span></td><td>Read fine, but no other market asks exactly this — the usual case, since venues rarely list identical questions.</td></tr>
     <tr><td><span class="tag">unparsed</span></td><td>The event type isn't in the vocabulary yet, so it can't be compared (about one market in eight).</td></tr>
   </table>
-  <p>The <strong>Markets</strong> tab lists every market by outcome, with its parsed signature and the reason each near miss was rejected. A person can override any decision.</p>
+  <p>The <strong>Markets</strong> tab lists every market by outcome, with its parsed signature and the reason each near miss was rejected. A person can override any decision.
+    Two markets from the same venue with different deadlines are never merged, even when each matches a third market from the other venue.</p>
 
-  <h3>Step 3 · Propositions → entities: who and what is involved</h3>
+  <h3>Step 2b · Propositions → questions: one row per real-world question</h3>
+  <p>Venues list the same question many times with different deadlines ("Will China invade Taiwan by June 2026 / December 2026 / December 2027?")
+    or, for counts and levels, different thresholds ("more than 15 / 20 / 25 ships through Hormuz in the week of Oct 19–25"). Each of these is a
+    separate bet — a proposition — but a risk desk thinks of them as one question. Propositions whose contract signatures are identical except for
+    the deadline become <strong>rungs of one question</strong>; for threshold series, each measurement period (each week) is its own question with the
+    thresholds as rungs, because consecutive weeks are separate events. Different outcomes listed side by side ("Person O / Person P as head of state",
+    same deadline) stay separate questions.</p>
+  <ul>
+    <li><strong>The rungs form a curve</strong>: 2.1% by end-2026, 5.5% by mid-2027, 9.5% by end-2027 for a Chinese invasion of Taiwan.</li>
+    <li><strong>The headline probability</strong> is the most-traded live rung (24-hour volume, then open interest) — the one with the most money behind it.</li>
+    <li><strong>Live or closed:</strong> a rung is live if it traded in the last 7 days; a question is live while any rung is. Closed rungs stay visible as history.</li>
+    <li><strong>Entities and securities attach to questions</strong>, once, instead of to each rung.</li>
+  </ul>
+
+  <h3>Step 3 · Questions → entities: who and what is involved</h3>
   <p>There is no hand-made list of countries or leaders; entities are rediscovered from the questions on every update.</p>
   <ul>
     <li><strong>Finding them.</strong> Every name-like phrase in a question ("Xi Jinping", "Strait of Hormuz", "ballistic missile") is looked up as a Wikipedia article title;
@@ -267,7 +305,8 @@
 
   <h3>Numbers you will see</h3>
   <table>
-    <tr><td>Probability</td><td>The latest price of the proposition's markets, averaged (weighted by open interest when available); only same-bet markets are averaged.</td></tr>
+    <tr><td>Probability</td><td>For a rung (proposition): the latest price of its markets, averaged (weighted by open interest when available); only same-bet markets are averaged.
+      For a question: its headline rung — the most-traded live one.</td></tr>
     <tr><td>24h change</td><td>Probability now minus 24 hours earlier, in points.</td></tr>
     <tr><td>Relevance</td><td>How strongly a security is connected to a question, 0–1, combining every path.</td></tr>
     <tr><td>Impact</td><td>Signed: ▲ expected to rise if the event happens, ▼ to fall; "direction unknown" when the event type has no direction. A prior, not a measured beta.</td></tr>
@@ -291,6 +330,7 @@
     <tr><th>Stage</th><th>Status</th></tr>
     <tr><td>Market data (live + history)</td><td>Done</td></tr>
     <tr><td>Markets → propositions</td><td>Done; vocabulary still growing (unparsed markets cut from 68% to 12%)</td></tr>
+    <tr><td>Propositions → questions</td><td>Built (ladders by deadline; threshold series per period)</td></tr>
     <tr><td>Entities and their links</td><td>Done; a second, independent entity linker is planned as a cross-check</td></tr>
     <tr><td>Direction and size of impact</td><td>Structural prior done; not yet validated by the backtest</td></tr>
     <tr><td>Event betas (measured)</td><td>Next: estimated from price reactions, pulled toward the prior where data is thin</td></tr>
@@ -314,9 +354,9 @@
   <table>
     <tr><td>Authentication</td><td>If the server has API keys configured, send yours in the <code>X-API-Key</code> header. A missing or wrong key returns <code>401</code>.</td></tr>
     <tr><td>Time travel</td><td>Every read accepts <code>as_of</code> (the world at that moment) and <code>known_as_of</code> (only what the graph had recorded by then), as ISO 8601 timestamps, e.g. <code>2026-06-01T00:00:00Z</code>. Both default to now. Set both to the same time for a point-in-time, backtest-safe view.</td></tr>
-    <tr><td>IDs</td><td>Propositions <code>prop:polymarket:665270</code> · entities <code>wd:Q865</code> (Wikidata id; Taiwan) · securities <code>sec:TSM</code> · markets <code>mkt:kalshi:KXTAIWANLVL4-29JAN01</code>. Get them from the list endpoints.</td></tr>
+    <tr><td>IDs</td><td>Questions <code>q:polymarket:253889</code> · propositions (rungs) <code>prop:polymarket:665270</code> · entities <code>wd:Q865</code> (Wikidata id; Taiwan) · securities <code>sec:TSM</code> · markets <code>mkt:kalshi:KXTAIWANLVL4-29JAN01</code>. Get them from the list endpoints.</td></tr>
     <tr><td>Probabilities</td><td>0–1. <code>prob</code> is the blended price of a proposition's markets; <code>change_24h</code> is in probability units (0.05 = 5 points).</td></tr>
-    <tr><td>Live only</td><td>List endpoints return propositions priced in the last 7 days unless <code>include_closed=true</code>.</td></tr>
+    <tr><td>Live only</td><td>Every question and proposition has <code>status</code> = <code>live</code> (priced in the last 7 days) or <code>closed</code>. List endpoints return live items unless <code>include_closed=true</code>.</td></tr>
     <tr><td>Errors</td><td><code>401</code> bad key · <code>404</code> id not found at that <code>as_of</code> / <code>known_as_of</code> · <code>422</code> invalid parameter.</td></tr>
   </table>
 
@@ -328,7 +368,17 @@ top = api.get("BASE/propositions", params={"sort": "move", "limit": 10}).json()
 for p in top["propositions"]:
     print(f'{p["prob"]:.1%}  {p["change_24h"] or 0:+.1%}  {p["name"]}')</pre>
 
-  <h3>Propositions</h3>
+  <h3>Questions</h3>
+  <div class="endpoint"><span>GET</span>/questions</div>
+  <p>List questions with their headline probability (most-traded live rung) and its 24h change. Params: <code>q</code>, <code>entity</code>,
+    <code>sort</code> = <code>move</code> · <code>prob</code> · <code>name</code>, <code>limit</code>, <code>include_closed</code>.</p>
+<pre>{ "count": 1968, "questions": [
+    { "id": "q:polymarket:253889", "name": "Will China invade Taiwan?", "kind": "deadlines", "n_rungs": 8, "n_live": 3,
+      "status": "live", "prob": 0.095, "change_24h": 0.0, "headline": { "id": "prop:polymarket:…", "name": "…by December 31, 2027?" } } ] }</pre>
+  <div class="endpoint"><span>GET</span>/questions/{id}</div>
+  <p>One question: every rung (window, threshold, probability, 24h change, status, 24h volume) and the entities it involves, with role and direction.</p>
+
+  <h3>Propositions (rungs)</h3>
   <div class="endpoint"><span>GET</span>/propositions</div>
   <p>List propositions with probability and 24h change. Params: <code>q</code> (name search), <code>entity</code> (only those involving this entity id),
     <code>sort</code> = <code>move</code> (largest |24h change|, default) · <code>prob</code> · <code>name</code>, <code>limit</code> (≤ 500), <code>include_closed</code>.</p>
@@ -338,7 +388,7 @@ for p in top["propositions"]:
       "close_time": "2027-01-01 04:59:00+00:00", "venues": ["polymarket"] } ] }</pre>
 
   <div class="endpoint"><span>GET</span>/propositions/{id}</div>
-  <p>One proposition: its venue markets (price, rules text), the entities it involves, and logical links
+  <p>One proposition: its venue markets (price, rules text), its <code>question</code>, the question's entities, and logical links
     (<code>implies</code>, <code>mutex</code>, <code>near_equivalent</code>) to other propositions, with the reason for each.</p>
 
   <div class="endpoint"><span>GET</span>/propositions/{id}/history</div>
@@ -347,38 +397,38 @@ for p in top["propositions"]:
 
   <h3>Graph</h3>
   <div class="endpoint"><span>GET</span>/graph/{node_id}</div>
-  <p>The neighbourhood of any proposition, entity or security, for visualisation: <code>nodes</code> (id, type, name, depth, prob) and
+  <p>The neighbourhood of any question, proposition, market, entity or security, for visualisation: <code>nodes</code> (id, type, name, depth, prob) and
     <code>edges</code> (src, dst, type, weight, provenance, note). Params: <code>depth</code> (1–3), <code>fanout</code> (strongest links kept per node).</p>
 
   <div class="endpoint"><span>GET</span>/entities</div>
-  <p>All entities, optionally <code>type</code> = <code>person</code> · <code>country</code> · <code>organisation_or_place</code> · <code>concept</code>, with how many propositions involve each.</p>
+  <p>All entities, optionally <code>type</code> = <code>person</code> · <code>country</code> · <code>organisation_or_place</code> · <code>concept</code>, with how many questions involve each (<code>n_questions</code>).</p>
 
   <div class="endpoint"><span>GET</span>/entities/{id}</div>
-  <p>One entity: Wikidata description and Wikipedia link, propositions involving it, linked entities (with relation and strength), and securities exposed to it.</p>
+  <p>One entity: Wikidata description and Wikipedia link, questions involving it (live first), linked entities (with relation and strength), and securities exposed to it.</p>
 
   <h3>Securities and portfolios</h3>
   <div class="endpoint"><span>GET</span>/securities</div>
   <p>All securities (ticker, name, asset class, country, sector, index) and how many exposure links each has.</p>
 
   <div class="endpoint"><span>GET</span>/securities/{ticker}/exposures</div>
-  <p>Propositions a security is exposed to, summed over every path through the graph: <code>score</code> (relevance 0–1), <code>impact</code>
+  <p>Questions a security is exposed to, summed over every path through the graph: <code>score</code> (relevance 0–1), <code>impact</code>
     (signed; &gt; 0 = expected to rise if the event happens; <code>null</code> when no path has a known direction), <code>direction</code> (up · down · unknown),
     <code>risk</code> (|impact| × √(p(1−p))) and the three strongest <code>paths</code> with their channel and sign.
     Params: <code>sort</code> = <code>score</code> (default) · <code>impact</code> · <code>risk</code>, <code>min_score</code> (default 0.1), <code>limit</code>, <code>include_closed</code>.</p>
 <pre>{ "security": { "id": "sec:TSM", "name": "Taiwan Semiconductor (ADR)" },
-  "exposures": [ { "id": "prop:polymarket:567621", "name": "Will China invade Taiwan by December 31, 2027?",
+  "exposures": [ { "id": "q:polymarket:253889", "name": "Will China invade Taiwan?",
                    "prob": 0.095, "score": 0.95, "impact": -1.46, "direction": "down", "risk": 0.43, "n_paths": 4,
                    "path": [ {"id": "prop:polymarket:567621"}, {"id": "wd:Q865", "name": "Taiwan"}, {"id": "sec:TSM"} ],
                    "paths": [ { "strength": 0.9, "sign": -1.0, "channel": "conflict", "role": "target", "nodes": [ … ] } ] } ] }</pre>
 
   <div class="endpoint"><span>POST</span>/portfolio/scan</div>
-  <p>Send holdings, get back the geopolitical propositions the portfolio is most exposed to: exposure = Σ weight × relevance score;
+  <p>Send holdings, get back the geopolitical questions the portfolio is most exposed to: exposure = Σ weight × relevance score;
     <code>impact</code> = Σ weight × signed impact (holdings on opposite sides offset), with <code>direction</code> and <code>risk</code>.
-    <code>moved</code> flags propositions whose probability moved at least <code>move_threshold</code> in 24h.</p>
+    <code>moved</code> flags questions whose headline probability moved at least <code>move_threshold</code> in 24h.</p>
 <pre>curl -X POST "BASE/portfolio/scan" -H "Content-Type: application/json" -H "X-API-Key: $KEY" \
   -d '{"holdings": [{"ticker": "TSM", "weight": 0.10}, {"ticker": "NVDA", "weight": 0.08}],
        "move_threshold": 0.05, "limit": 10}'</pre>
-<pre>{ "unknown_tickers": [], "count": 150, "propositions": [
+<pre>{ "unknown_tickers": [], "count": 150, "questions": [
     { "id": "prop:polymarket:567621", "name": "Will China invade Taiwan by end of 2026?", "prob": 0.0215,
       "change_24h": 0.001, "exposure": 0.177, "moved": false,
       "holdings": [ { "ticker": "TSM", "weight": 0.1, "score": 0.9, "via": ["Taiwan"] } ] } ] }</pre>
@@ -401,12 +451,14 @@ const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).
 const pct = p => p == null ? "–" : `${(p * 100).toFixed(1)}%`;
 const move = d => d == null ? "" : `${d > 0 ? "▲" : d < 0 ? "▼" : "•"} ${Math.abs(d * 100).toFixed(1)} pts`;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const typeOf = id => id.startsWith("prop:") ? "proposition" : id.startsWith("sec:") ? "security"
-                   : id.startsWith("mkt:") ? "market" : "entity";
+const typeOf = id => id.startsWith("q:") ? "question" : id.startsWith("prop:") ? "proposition"
+                   : id.startsWith("sec:") ? "security" : id.startsWith("mkt:") ? "market" : "entity";
+const fmtThreshold = t => !t ? "" : t[0] === "between" ? `${t[1][0]}–${t[1][1]}` : `${t[0]} ${t[1]}`;
+const fmtWindow = w => !w ? "—" : w[0] === w[1] ? w[1] : `by ${w[1]}`;
 const arrow = (d, text) => `<span class="${d === "up" ? "up" : d === "down" ? "down" : ""}">${d === "up" ? "▲" : d === "down" ? "▼" : "?"} ${text}</span>`;
 const signWord = s => s == null ? "direction unknown" : s > 0 ? "favourable" : "adverse";
 const LOGICAL = new Set(["implies", "mutex", "near_equivalent"]);
-const state = { tab: "propositions", items: [], selected: null };
+const state = { tab: "questions", items: [], selected: null };
 
 async function api(path, params = {}) {
   const asof = $("#asof").value;
@@ -425,13 +477,13 @@ async function api(path, params = {}) {
 // ── list ─────────────────────────────────────────────────────────────────────
 async function loadList() {
   const t = state.tab;
-  const q = $("#search").value.trim() || undefined;  // propositions are searched on the server
+  const q = $("#search").value.trim() || undefined;  // questions and markets are searched on the server
   if (t === "markets") {
     const r = await api("/markets", { status: $("#status").value.split(","), q, limit: 500 });
     state.counts = r.counts; state.items = r.markets; renderList(); return;
   }
-  const data = t === "propositions" ? (await api("/propositions", { limit: 300, q })).propositions
-             : t === "entities" ? (await api("/entities")).sort((a, b) => b.n_propositions - a.n_propositions)
+  const data = t === "questions" ? (await api("/questions", { limit: 300, q })).questions
+             : t === "entities" ? (await api("/entities")).sort((a, b) => b.n_live_questions - a.n_live_questions || b.n_questions - a.n_questions)
              : (await api("/securities")).sort((a, b) => b.n_exposures - a.n_exposures);
   state.items = data;
   renderList();
@@ -451,8 +503,8 @@ function renderList() {
   $("#list").innerHTML = state.items.filter(x => x.name.toLowerCase().includes(q) || (x.ticker || "").toLowerCase().includes(q))
     .slice(0, 300).map(x => `<li data-id="${esc(x.id)}" ${x.id === state.selected ? 'aria-current="true"' : ""}>
       <i class="swatch ${kind}"></i><span class="name">${esc(x.ticker ? `${x.ticker} · ${x.name}` : x.name)}</span>
-      <span class="num">${kind === "proposition" ? `${pct(x.prob)}<br>${move(x.change_24h)}`
-                        : kind === "entity" ? `${x.n_propositions} props` : `${x.n_exposures} links`}</span></li>`).join("");
+      <span class="num">${kind === "question" ? `${pct(x.prob)}<br>${x.n_rungs > 1 ? `${x.n_rungs} rungs` : move(x.change_24h)}`
+                        : kind === "entity" ? `${x.n_live_questions} live<br>${x.n_questions} total` : `${x.n_exposures} links`}</span></li>`).join("");
 }
 
 // ── graph ────────────────────────────────────────────────────────────────────
@@ -469,25 +521,28 @@ network.on("click", e => { if (e.nodes.length) select(e.nodes[0]); });
 async function drawGraph(id) {
   // a selected market is drawn with its proposition and one more hop, so it has context
   const depth = +$("#depth").value + (typeOf(id) === "market" ? 1 : 0);
-  const g = await api(`/graph/${encodeURIComponent(id)}`, { depth, fanout: 10 });
+  const g = await api(`/graph/${encodeURIComponent(id)}`, { depth, fanout: SHOWN });
   const surface = css("--surface"), ink = css("--ink"), muted = css("--muted");
-  const shape = { proposition: "dot", entity: "diamond", security: "square", market: "triangle" };
+  const shape = { question: "dot", proposition: "dot", entity: "diamond", security: "square", market: "triangle" };
   const nodes = g.nodes.map(n => {
     const t = n.type, color = css(`--${t}`), root = n.id === g.root;
     // label the selected node and its direct neighbours; farther nodes show their name on hover
     const short = n.name.length > 42 ? n.name.slice(0, 40) + "…" : n.name;
     const label = n.depth > 1 && !root ? undefined : t === "market" ? `${n.venue} · ${short}` : short;
-    return { id: n.id, label, shape: shape[t], size: root ? 18 : n.depth > 1 ? 6 : t === "proposition" || t === "market" ? 9 : 11,
+    return { id: n.id, label, shape: shape[t], size: root ? 18 : n.depth > 1 ? 6 : t === "proposition" ? 6 : t === "market" ? 9 : 11,
       color: { background: color, border: root ? ink : surface, highlight: { background: color, border: ink },
                hover: { background: color, border: ink } },
       font: { color: ink, strokeWidth: 3, strokeColor: surface, bold: root },
-      title: `${n.name}\n${t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
+      title: `${n.name}\n${t === "proposition" ? "rung" : t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.status ? ` · ${n.status}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
   });
   // hairline links: thin, light and translucent so dense hubs stay legible; hover highlights
   const edges = g.edges.map(e => ({ from: e.src, to: e.dst, width: 0.5 + Math.min(e.weight ?? 0.3, 1),
     dashes: LOGICAL.has(e.type), arrows: e.type === "implies" ? { to: { enabled: true, scaleFactor: .4 } } : undefined,
     color: { color: css("--axis"), highlight: css("--ink-2"), hover: css("--ink-2"), opacity: 0.5 },
     title: `${e.type}${e.weight != null ? ` · ${e.weight.toFixed(2)}` : ""}${e.note ? `\n${e.note}` : ""}\n${e.provenance}` }));
+  const shown = g.nodes.filter(n => n.depth === 1 && n.type === "question").length, total = (g.totals || {}).question || 0;
+  $("#caption").hidden = total <= shown;
+  $("#caption").textContent = `Showing ${shown} of ${total} questions — live first, most traded first`;
   network.setOptions({ physics: true });
   network.setData({ nodes, edges });
   $("#empty").hidden = true;
@@ -495,17 +550,41 @@ async function drawGraph(id) {
 
 // ── detail ───────────────────────────────────────────────────────────────────
 const go = (id, text) => `<span class="link" data-go="${esc(id)}">${esc(text)}</span>`;
+// the same top live questions the graph shows (live, most traded first; the API sorts them)
+const SHOWN = 10;
+function questionList(qs) {
+  const row = q => `<div class="row">${go(q.id, q.name)}<div class="meta">${pct(q.prob)} ${move(q.change_24h)}${q.volume_24h
+      ? ` · vol ${Math.round(q.volume_24h).toLocaleString()}` : ""}${q.n_rungs > 1 ? ` · ${q.n_rungs} rungs` : ""}</div></div>`;
+  const live = qs.filter(q => q.status === "live");
+  return `<h3>Top live questions (${Math.min(SHOWN, live.length)} of ${live.length} live · ${qs.length} total)</h3>
+    ${live.slice(0, SHOWN).map(row).join("") || '<p class="note">No live questions.</p>'}`;
+}
 async function drawDetail(id) {
   const t = typeOf(id), el = $("#detail");
-  if (t === "proposition") {
+  const involves = es => es.map(e => `<div class="row">${go(e.id, e.name)}
+        <div class="meta">${esc(e.role || "")}${e.channel ? ` · ${esc(e.channel)}` : ""} · YES is ${signWord(e.sign)} for it${e.weight != null ? ` · weight ${e.weight.toFixed(2)}` : ""}</div></div>`).join("") || '<p class="note">None</p>';
+  if (t === "question") {
+    const x = await api(`/questions/${encodeURIComponent(id)}`);
+    const kind = { deadlines: "rungs by deadline", thresholds: "rungs by threshold", single: "single rung" }[x.kind] || "";
+    el.innerHTML = `<div class="kind">Question · ${esc((x.venues || []).join(", "))} · ${esc(x.status)}</div><h2>${esc(x.name)}</h2>
+      <div class="hero"><b>${pct(x.prob)}</b>${x.change_24h != null ? `<span>${move(x.change_24h)} in 24h</span>` : ""}</div>
+      ${x.headline ? `<p class="meta">Headline: ${go(x.headline.id, x.headline.name)} — the most-traded live rung</p>` : '<p class="meta">Closed: no rung has traded in the last 7 days.</p>'}
+      <h3>Rungs (${x.n_rungs}, ${x.n_live} live) · ${esc(kind)}</h3>
+      <table class="rungs"><tr><th>${x.kind === "thresholds" ? "Threshold" : "Deadline"}</th><th class="n">Prob</th><th class="n">24h</th><th class="n">Vol 24h</th></tr>
+      ${x.rungs.map(r => `<tr class="${r.status}${x.headline && r.id === x.headline.id ? " head" : ""}">
+        <td>${go(r.id, x.kind === "thresholds" ? fmtThreshold(r.threshold) || r.name : fmtWindow(r.window))}${r.status === "closed" ? " · closed" : ""}</td>
+        <td class="n">${pct(r.prob)}</td><td class="n">${r.change_24h != null ? move(r.change_24h) : ""}</td>
+        <td class="n">${r.volume_24h != null ? Math.round(r.volume_24h).toLocaleString() : ""}</td></tr>`).join("")}</table>
+      <h3>Involves</h3>${involves(x.entities)}`;
+  } else if (t === "proposition") {
     const p = await api(`/propositions/${encodeURIComponent(id)}`);
-    el.innerHTML = `<div class="kind">Proposition · ${esc((p.venues || []).join(", "))}</div><h2>${esc(p.name)}</h2>
+    el.innerHTML = `<div class="kind">Rung · ${esc((p.venues || []).join(", "))} · ${esc(p.status)}</div><h2>${esc(p.name)}</h2>
       <div class="hero"><b>${pct(p.prob)}</b>${p.change_24h != null ? `<span>${move(p.change_24h)} in 24h</span>` : ""}</div>
+      ${p.question ? `<p class="meta">One rung of ${go(p.question.id, p.question.name)}</p>` : ""}
       <h3>Markets</h3>${p.markets.map(m => `<div class="row">${esc(m.venue)} · ${pct(m.prob)}
         <div class="meta">${esc(m.name)}</div>${m.note ? `<div class="meta">${esc(m.note)}</div>` : ""}
         ${m.rules ? `<details><summary>Rules</summary><p>${esc(m.rules)}</p></details>` : ""}</div>`).join("")}
-      <h3>Involves</h3>${p.entities.map(e => `<div class="row">${go(e.id, e.name)}
-        <div class="meta">${esc(e.role || "")}${e.channel ? ` · ${esc(e.channel)}` : ""} · YES is ${signWord(e.sign)} for it${e.weight != null ? ` · weight ${e.weight.toFixed(2)}` : ""}</div></div>`).join("") || '<p class="note">None</p>'}
+      <h3>Involves (via its question)</h3>${involves(p.entities)}
       ${p.logical.length ? `<h3>Logical links</h3>${p.logical.map(l => `<div class="row">${esc(l.relation)} ${l.direction === "out" ? "→" : "←"}
         ${go(l.proposition.id, l.proposition.name)}${l.note ? `<div class="meta">${esc(l.note)}</div>` : ""}</div>`).join("")}` : ""}`;
   } else if (t === "entity") {
@@ -513,8 +592,7 @@ async function drawDetail(id) {
     el.innerHTML = `<div class="kind">Entity · ${esc(e.entity_type)}</div><h2>${esc(e.name)}</h2>
       <p class="meta">${esc(e.description || "")}</p>
       ${e.wikipedia ? `<p><a href="https://en.wikipedia.org/wiki/${encodeURIComponent(e.wikipedia)}" target="_blank" rel="noopener">Wikipedia</a> · ${esc(e.qid)}</p>` : ""}
-      <h3>Propositions (${e.propositions.length})</h3>${e.propositions.slice(0, 25).map(p => `<div class="row">${go(p.id, p.name)}
-        <div class="meta">${pct(p.prob)} ${move(p.change_24h)}</div></div>`).join("") || '<p class="note">None</p>'}
+      ${questionList(e.questions)}
       <h3>Linked entities</h3>${e.links.slice(0, 15).map(l => `<div class="row">${go(l.entity.id, l.entity.name)}
         <div class="meta">${esc(l.relation)} · ${l.weight != null ? l.weight.toFixed(2) : "–"}</div></div>`).join("") || '<p class="note">None</p>'}
       ${e.exposures.length ? `<h3>Exposed securities</h3>${e.exposures.map(x => `<div class="row">${go(x.security.id, x.security.name)}
@@ -522,18 +600,18 @@ async function drawDetail(id) {
   } else if (t === "security") {
     const ticker = id.slice(4), x = await api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 25, sort: "risk" });
     el.innerHTML = `<div class="kind">Security · ${esc(ticker)}</div><h2>${esc(x.security.name)}</h2>
-      <h3>Propositions that move it most</h3>${x.exposures.map(r => `<div class="row">${go(r.id, r.name)}
+      <h3>Questions that move it most</h3>${x.exposures.map(r => `<div class="row">${go(r.id, r.name)}
         <div class="meta">${arrow(r.direction, r.impact != null ? `impact ${r.impact > 0 ? "+" : ""}${r.impact.toFixed(2)}` : "direction unknown")}
           · ${pct(r.prob)} · relevance ${r.score.toFixed(2)}</div>
         <div class="meta">via ${esc(r.paths[0].nodes.slice(1, -1).map(p => p.name).join(" → "))}${r.paths[0].channel ? ` (${esc(r.paths[0].channel)})` : ""}${r.n_paths > 1 ? ` · ${r.n_paths} paths` : ""}</div></div>`).join("")
-        || '<p class="note">No live propositions linked.</p>'}
+        || '<p class="note">No live questions linked.</p>'}
       <p class="note">Ranked by risk = |impact| × √(p(1−p)). Impact is a structural prior in graph units (▲ = expected to rise if the event happens), not a measured beta.</p>`;
   } else if (t === "market") {
     const m = await api(`/markets/${encodeURIComponent(id)}`), s = m.signature || {};
     const why = {
       merged: "The same bet as at least one other market, so they are combined into one proposition and their prices averaged.",
       linked: "Close to another market but not the same bet (e.g. a different deadline, threshold or wording), so they are connected but their prices are kept separate.",
-      unmatched: "Read successfully, but it is the only market asking exactly this: no other Kalshi or Polymarket market has the same event, parties, deadline and terms. That's normal (most markets exist on one venue only); it stands alone as its own proposition. The closest other markets and why they differ are listed below.",
+      unmatched: "Read successfully, but it is the only market asking exactly this: no other Kalshi or Polymarket market has the same event, parties, deadline and terms. That's normal (most markets exist on one venue only); it is a proposition of its own, and still joins a question with its other deadlines or thresholds. The closest other markets and why they differ are listed below.",
       unparsed: "The system couldn't work out what kind of event this is (its wording isn't in the action vocabulary yet), so it can't be compared with other markets. It still appears as its own proposition." }[m.match] || "";
     el.innerHTML = `<div class="kind">Market · ${esc(m.venue)} · <span class="tag">${esc(m.match)}</span></div><h2>${esc(m.name)}</h2>
       <div class="hero"><b>${pct(m.prob)}</b></div><p class="meta">${why}</p>
@@ -561,6 +639,31 @@ async function select(id) {
   catch (err) { $("#detail").innerHTML = `<p class="note">${esc(err.message)}</p>`; }
 }
 
+// ── resizable panels ─────────────────────────────────────────────────────────
+const root = document.documentElement.style;
+for (const side of ["left", "right"]) {
+  const saved = localStorage.getItem(`panel-${side}`);
+  if (saved) root.setProperty(`--${side}`, saved);
+}
+document.querySelectorAll(".split").forEach(h => {
+  const side = h.dataset.side;
+  const set = px => {
+    const w = `${Math.max(200, Math.min(px, window.innerWidth * 0.5))}px`;
+    root.setProperty(`--${side}`, w); localStorage.setItem(`panel-${side}`, w);
+  };
+  h.onpointerdown = e => {
+    h.setPointerCapture(e.pointerId); h.classList.add("dragging"); document.body.classList.add("resizing");
+    h.onpointermove = m => set(side === "left" ? m.clientX : window.innerWidth - m.clientX);
+    h.onpointerup = () => { h.onpointermove = null; h.classList.remove("dragging"); document.body.classList.remove("resizing"); };
+  };
+  h.onkeydown = k => {   // arrow keys nudge the edge too
+    const step = { ArrowLeft: -24, ArrowRight: 24 }[k.key]; if (!step) return;
+    const cur = parseInt(getComputedStyle(document.documentElement).getPropertyValue(`--${side}`)) || (side === "left" ? 300 : 360);
+    set(cur + (side === "left" ? step : -step));
+  };
+});
+new ResizeObserver(() => network.redraw()).observe($("#canvas-wrap"));
+
 // ── wiring ───────────────────────────────────────────────────────────────────
 document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
   document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
@@ -575,7 +678,7 @@ document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
 let searchTimer;
 $("#status").onchange = loadList;
 $("#search").oninput = () => {
-  if (state.tab !== "propositions" && state.tab !== "markets") return renderList();
+  if (state.tab !== "questions" && state.tab !== "markets") return renderList();
   clearTimeout(searchTimer); searchTimer = setTimeout(loadList, 250);
 };
 $("#list").onclick = e => { const li = e.target.closest("li"); if (li && li.dataset.id) select(li.dataset.id); };

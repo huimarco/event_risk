@@ -249,6 +249,16 @@ def parse_window(text, open_d, close_d):
     """(start, end) inclusive dates from templated rules/question text, or None."""
     t, y = text.lower(), (close_d or open_d or date(2000, 1, 1)).year
     d = lambda g, i: _date(g[i], g[i + 1], g[i + 2], y)
+    # a measurement period: "from Oct 19, 2026 to Oct 25, 2026", "between March 17-23", "July 6-July 12"
+    if m := re.search(rf"\bfrom {DATE}{CLOCK} (?:to|through|until|-) {DATE}", t):
+        g = m.groups()
+        end = d(g, 3)
+        return _date(g[0], g[1], g[2], end.year), end
+    if m := re.search(rf"\b(?:between |from )?{MON}\.?\s+(\d{{1,2}})\s?(?:-|–|to)\s?(?:{MON}\.?\s+)?(\d{{1,2}})\b(?:,?\s+(\d{{4}}))?", t):
+        mon1, d1, mon2, d2, yr = m.groups()
+        end = _date(mon2 or mon1, d2, yr, y)
+        start = _date(mon1, d1, yr, y)
+        if start <= end: return start, end
     if m := re.search(rf"between (?:(?:this |the )?market(?:'s)? creation|{DATE}){CLOCK} and {DATE}", t):
         g = m.groups()
         end = d(g, 3)
@@ -383,6 +393,38 @@ def parse(m, mentions):
         conditions=frozenset([c for c, rx in CONDITIONS.items() if rx.search(rules)]
                              + [c for c, rx in QUESTION_CONDITIONS.items() if rx.search(question)]),
         negated=bool(NEGATION.search(re.sub(r"\([^)]*\)", " ", question))), rules_words=names(head), qwords=words(question), text=(question + " " + rules).lower(), issues=tuple(issues))
+
+# ── questions (ladders) ───────────────────────────────────────────────────────
+def ladder_key(sig):
+    """Propositions with equal keys are rungs of one question. A question is everything in the
+    signature but its deadline: "China invades Taiwan by Jun 2026 / Dec 2026 / Dec 2027" is one
+    question with three rungs. Threshold questions are one per measurement period: "more than 15 /
+    20 / 25 transit calls, week of Oct 19-25" is a question; the next week is another (consecutive
+    periods are separate events, not a ladder). None = unparsed: a question of its own."""
+    if not sig or not sig.action: return None
+    base = (sig.action, sig.kind, sig.symmetric, sig.actors, sig.targets, frozenset(c for c, _ in sig.concepts),
+            sig.terms - THRESHOLD_WORDS, sig.conditions, sig.negated)
+    return base + (("period", sig.window) if sig.threshold else ("deadlines",))
+
+# Words that phrase a threshold ("fewer than 20", "above 15"): not part of what the question asks.
+THRESHOLD_WORDS = frozenset("fewer less more above below under over least most exactly times".split())
+
+# A question's name is its first rung's, minus the deadline (or plus the period) and threshold.
+_DATEPHRASE = re.compile(rf"\s*\b(?:by|before|in|on|between|after|through|during|from)\s+(?:the )?(?:end of\s+)?"
+                         rf"(?:{MON}\b|\d)[^?—]*?(?=\?|—|$)|\s+(?:end of|this|next) (?:\d{{4}}|year|week|month)\b", re.I)
+_THRESH = re.compile(r"\b(?:more|fewer|less) than \$?[\d,.]+%?|\$?[\d,.]+%?\s*(?:or more|or fewer|\+)|\b\d+\s?-\s?\d+\b"
+                     r"|\b(?:at least|above|below|under|over) \$?[\d,.]+%?|\b\d+ times?\b", re.I)
+
+def question_name(name, sig):
+    n = name.split(" — ")[0]
+    if sig and sig.threshold:
+        n = _THRESH.sub("N", n)
+    out = re.sub(r"\s{2,}", " ", _DATEPHRASE.sub("", n)).strip().replace(" ?", "?") or n
+    if sig and sig.threshold and sig.window and sig.window[0]:
+        a, b = sig.window
+        period = f"{a:%b %-d} – {b:%b %-d, %Y}" if a != b else f"{b:%b %-d, %Y}"
+        out = f"{out.rstrip('?')} ({period})?"
+    return out
 
 # ── comparison ────────────────────────────────────────────────────────────────
 @dataclass(frozen=True)

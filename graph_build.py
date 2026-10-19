@@ -4,7 +4,7 @@ Build the knowledge graph from collected contract terms, Wikipedia / Wikidata, a
 inputs (entity -> security exposures and their channel signs) into graph_nodes / graph_edges. Bitemporal and append-only: each run diffs the desired graph against
 the current one and records only changes (new or changed -> 'assert', gone -> 'retract').
 
-Nodes: market, proposition, entity, security
+Nodes: market, proposition, question, entity, security
 Edges:
   market -> proposition       same_as           markets with matching contract signatures
                                                 (matching.py) form one proposition
@@ -12,7 +12,11 @@ Edges:
                               implies           signature windows/thresholds nest, or
                                                 date/strike ladders within an event
                               mutex             mutually exclusive events (venue flags)
-  proposition -> entity       involves          phrases in market titles linked to Wikipedia
+  proposition -> question     rung_of           propositions whose signatures differ only in
+                                                deadline (or, per measurement period, in
+                                                threshold) are rungs of one question
+                                                (matching.ladder_key, questions())
+  question -> entity          involves          phrases in market titles linked to Wikipedia
                                                 articles (entities.py); entities are
                                                 regenerated from the markets on every run.
                                                 Signed: role (actor / target / party / concept),
@@ -260,6 +264,29 @@ def match_status(markets, sigs, relations, rejected, members, prop_of, ents):
                                   for (v, i), why in cands])
     return out
 
+def questions(members, psig, prop_start):
+    """{question id: [proposition ids, first-listed first]}. Propositions sharing a ladder key
+    (matching.ladder_key) are rungs of one question. Within one venue, two propositions with the same
+    window and threshold are different outcomes ("Person O" / "Person P" as Iran's head of state)
+    or different rules, not rungs: each becomes a question of its own. A question is named and
+    identified after its first-listed rung, so its id stays stable as rungs are added."""
+    first = lambda p: (prop_start[p] or REFERENCE_VALID_FROM, p)
+    groups = defaultdict(list)
+    for pid in sorted(members, key=first):
+        k = matching.ladder_key(psig[pid])
+        groups[k if k else ("single", pid)].append(pid)
+    out = {}
+    for k, pids in groups.items():
+        venue = lambda p: members[p][0]["venue"]
+        slot = Counter((venue(p), psig[p].window, psig[p].threshold) for p in pids)
+        clash = [p for p in pids if len(pids) > 1 and slot[(venue(p), psig[p].window, psig[p].threshold)] > 1]
+        for p in clash:
+            out[f"q:{p[5:]}"] = [p]
+        rest = [p for p in pids if p not in clash]
+        if rest:
+            out[f"q:{rest[0][5:]}"] = rest
+    return out
+
 # ── desired graph ─────────────────────────────────────────────────────────────
 def build(markets, prices, ents):
     nodes, edges = {}, {}
@@ -356,21 +383,35 @@ def build(markets, prices, ents):
                    weight=float(r["weight"]), confidence=0.3, provenance="analyst_prior",
                    note=r["rationale"] or None, sign=1.0, channel_signs=signs.get(r["ticker"], {})))
 
-    # proposition -> entity: the Wikipedia-linked mentions in its markets' questions, signed by
-    # what YES means for each (role in the contract signature x action effect). The first parsed
-    # market (earliest listed) speaks for the proposition, so the edge never changes as others join.
+    # propositions -> questions (ladders), then question -> entity
+    listed = lambda m: (m["open_time"] or m["first_seen_at"] or REFERENCE_VALID_FROM, m["venue"], m["market_id"])
+    psig = {}  # the first parsed market (earliest listed) speaks for its proposition
     for pid, ms in members.items():
+        msigs = [sigs[(m["venue"], m["market_id"])] for m in sorted(ms, key=listed)]
+        psig[pid] = next((s for s in msigs if s.action), msigs[0])
+    for qid, rungs in questions(members, psig, prop_start).items():
+        sig = psig[rungs[0]]
+        q_start = min(filter(None, (prop_start[p] for p in rungs)), default=None)
+        closes = [nodes[p]["attrs"]["close_time"] for p in rungs if nodes[p]["attrs"]["close_time"]]
+        add_n(node(qid, "question", matching.question_name(nodes[rungs[0]]["name"], sig), q_start,
+                   kind="single" if len(rungs) == 1 else "thresholds" if sig.threshold else "deadlines",
+                   n_rungs=len(rungs), close_time=max(closes) if closes else None,
+                   venues=sorted({v for p in rungs for v in nodes[p]["attrs"]["venues"]})))
+        for p in rungs:
+            w = psig[p].window
+            add_e(edge(p, qid, "rung_of", prop_start[p], window=w and [str(d) if d else None for d in w],
+                       threshold=psig[p].threshold and list(psig[p].threshold)))
+        # question -> entity: the Wikipedia-linked mentions in its markets' questions, signed by
+        # what YES means for each (role in the contract signature x action effect), from the
+        # first rung's signature (all rungs share it but for deadline / threshold)
         seen = {}
-        for m in ms:
-            for mt in ents.mentions.get((m["venue"], m["market_id"]), []):
-                seen.setdefault(mt["id"], mt)
-        ordered = sorted(ms, key=lambda m: (m["open_time"] or m["first_seen_at"] or REFERENCE_VALID_FROM,
-                                            m["venue"], m["market_id"]))
-        msigs = [sigs[(m["venue"], m["market_id"])] for m in ordered]
-        sig = next((s for s in msigs if s.action), msigs[0])
+        for p in rungs:
+            for m in sorted(members[p], key=listed):
+                for mt in ents.mentions.get((m["venue"], m["market_id"]), []):
+                    seen.setdefault(mt["id"], mt)
         for eid, mt in seen.items():
             role, channel, weight, sign = matching.effect(sig, eid)
-            add_e(edge(pid, eid, "involves", prop_start[pid], weight=weight, sign=sign,
+            add_e(edge(qid, eid, "involves", q_start, weight=weight, sign=sign,
                        confidence=0.8 if mt["named"] else 0.6, provenance="wikipedia_link",
                        matched=mt["surface"], role=role, action=sig.action, channel=channel))
 

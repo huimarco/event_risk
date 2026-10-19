@@ -96,8 +96,10 @@ def main():
     if BENCHMARK not in rets: sys.exit(f"no prices for the benchmark {BENCHMARK}")
     bench = rets[BENCHMARK]
     secs = [s for s in secs if s[4:] in rets and s[4:] != BENCHMARK]
+    # exposures are per question; jumps are per rung (proposition), credited to its question
     expo = {s: g.exposures_of(s) for s in secs}
-    props = {p for e in expo.values() for p in e}
+    question_of = {p: q for q in {q for e in expo.values() for q in e} for p, _, _ in g.rungs(q)}
+    props = set(question_of)
     members = {p: [m for m, rel, _ in g.markets(p) if rel in api.BLENDED] for p in props}
     probs = daily_probs(cur, members, args.since)
 
@@ -125,7 +127,7 @@ def main():
         t0 = days[i]
         for s in secs:
             if s not in sd or t0 not in ar[s]: continue
-            hits = {p: expo[s][p] for p in moved if p in expo[s]}
+            hits = {p: expo[s][question_of[p]] for p in moved if question_of[p] in expo[s]}
             score = max((v["score"] for v in hits.values()), default=0.0)
             signed = [v["impact"] * moved[p] for p, v in hits.items() if v["impact"] is not None]
             rows.append(dict(day=d, security=s[4:], n_jumps=len(moved), score=score,

@@ -110,7 +110,7 @@ async function scan(holdings, limit, moveThreshold) {
   const r = await request("/portfolio/scan", {}, { holdings: h, limit: limit || 25,
                                                    move_threshold: moveThreshold ?? 0.05 });
   const rows = [["id", "name", "prob", "change_24h", "exposure", "moved", "top_holdings"],
-                ...r.propositions.map(p => [p.id, p.name, blank(p.prob), blank(p.change_24h), p.exposure, p.moved,
+                ...r.questions.map(p => [p.id, p.name, blank(p.prob), blank(p.change_24h), p.exposure, p.moved,
                                             p.holdings.map(c => c.ticker).join(", ")])];
   if (r.unknown_tickers.length)
     rows.push(["unknown tickers", r.unknown_tickers.join(", "), "", "", "", "", ""]);
