@@ -200,13 +200,14 @@
   <h3>How it is used</h3>
   <table>
     <tr><th>Who</th><th>Question</th><th>Where</th></tr>
-    <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Propositions list (sorted by 24h move) · <code>POST /portfolio/scan</code></td></tr>
-    <tr><td>Portfolio manager</td><td>"Which events matter for TSMC, and would they push it up or down?"</td><td>Securities tab · <code>/securities/TSM/exposures</code></td></tr>
+    <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Questions tab (sorted by 24h move) · portfolio scan</td></tr>
+    <tr><td>Portfolio manager</td><td>"Which events matter for TSMC, and would they push it up or down?"</td><td>Securities tab</td></tr>
     <tr><td>Analyst</td><td>"Everything that involves Iran, and how the odds connect"</td><td>Entities tab · the network view</td></tr>
-    <tr><td>Quant</td><td>"Probability history, exactly as it was known each day"</td><td><code>/propositions/{id}/history</code> with <code>as_of</code> / <code>known_as_of</code></td></tr>
+    <tr><td>Quant</td><td>"Probability history, exactly as it was known each day"</td><td>The API, with "as of" time travel</td></tr>
   </table>
-  <p>A worked example: selecting <strong>TSM</strong> shows <em>"Will China invade Taiwan by December 31, 2027?"</em> near the top —
-    ▼ impact −1.46, odds 9.5%. The path reads: the question <em>involves</em> Taiwan as the <em>target</em> of an invasion (adverse for Taiwan) → TSM is
+  <p>Everything in the explorer is also available through the API and the Excel add-in (see the API page).</p>
+  <p>A worked example: selecting <strong>TSM</strong> shows <em>"Will China invade Taiwan?"</em> near the top —
+    ▼ impact −1.46, odds 9.5% by the end of 2027. The path reads: the question <em>involves</em> Taiwan as the <em>target</em> of an invasion (adverse for Taiwan) → TSM is
     exposed to Taiwan (its fabs are there) → so a YES pushes TSM down. A ceasefire question would show the opposite sign for a defense contractor like Lockheed Martin.</p>
 
   <h3>The pipeline at a glance</h3>
@@ -217,12 +218,12 @@
     <div class="step"><b><i class="swatch entity"></i>Entity</b><span>country, person, organisation, concept</span></div><span class="arrow">→</span>
     <div class="step"><b><i class="swatch security"></i>Security</b><span>stock, ETF, currency</span></div>
   </div>
-  <p>Scale today: about 10,900 geopolitical markets, 10,700 propositions, 1,450 entities, 543 securities (the S&amp;P 500 plus Asian chipmakers, country ETFs and currencies),
-    and about 97,000 connections. Everything is produced by algorithms from public data — no AI models — except the analyst estimates marked below.</p>
+  <p>Coverage: about 10,900 geopolitical markets, grouped into about 4,800 questions (around 2,000 trading at any time), linked to 1,450 entities and
+    543 securities (the S&amp;P 500 plus Asian chipmakers, country ETFs and currencies). Everything is produced by algorithms from public data — no AI models — except the analyst estimates marked below.</p>
 
   <h3>Step 1 · Collect the markets</h3>
-  <p>Every 15 minutes the collector reads Kalshi's world and politics markets and Polymarket's geopolitics section: prices (bid, ask, last trade), open interest,
-    and the full contract terms. Hourly history back to 2021 was backfilled once. A market is in scope if Polymarket files it under geopolitics, or — for Kalshi —
+  <p>Kalshi's world and politics markets and Polymarket's geopolitics section are read several times a day: prices (bid, ask, last trade), open interest,
+    and the full contract terms, with hourly price history back to 2021. A market is in scope if Polymarket files it under geopolitics, or — for Kalshi —
     if it involves a foreign state actor: a country other than the US, or a person or organisation belonging to one. "Will Trump visit China?" is in; "Will the Senate confirm…?" is out.</p>
 
   <h3>Step 2 · Markets → propositions: is it the same bet?</h3>
@@ -244,9 +245,9 @@
     <tr><td><span class="tag">merged</span></td><td>The same bet as another market; one proposition, prices averaged (weighted by open interest).</td></tr>
     <tr><td><span class="tag">linked</span></td><td>A similar but different bet (other deadline, threshold or wording): connected, prices kept separate.</td></tr>
     <tr><td><span class="tag">unmatched</span></td><td>Read fine, but no other market asks exactly this — the usual case, since venues rarely list identical questions.</td></tr>
-    <tr><td><span class="tag">unparsed</span></td><td>The event type isn't in the vocabulary yet, so it can't be compared (about one market in eight).</td></tr>
+    <tr><td><span class="tag">unparsed</span></td><td>The type of event isn't recognised, so it can't be compared with other markets (about one market in eight). It still appears as its own question.</td></tr>
   </table>
-  <p>The <strong>Markets</strong> tab lists every market by outcome, with its parsed signature and the reason each near miss was rejected. A person can override any decision.
+  <p>The <strong>Markets</strong> tab lists every market by outcome, with its parsed signature and the reason each near miss was rejected. Decisions can be reviewed and overridden by hand.
     Two markets from the same venue with different deadlines are never merged, even when each matches a third market from the other venue.</p>
 
   <h3>Step 2b · Propositions → questions: one row per real-world question</h3>
@@ -281,7 +282,7 @@
 
   <h3>Step 4 · Entities → securities</h3>
   <p>Which securities depend on which entities — Taiwan → TSM, Strait of Hormuz → oil producers — is the one <strong>hand-written input</strong>: analyst estimates
-    (0–1) from industry and headquarters rules, to be replaced by company revenue-by-country data and measured price reactions. A second small table says which industries
+    (0–1) based on each company's industry and headquarters. A second small table says which industries
     <em>gain</em> when things get worse on a channel: defense contractors from conflict, oil producers from supply disruption. Everything else suffers with the entity it depends on.</p>
 
   <h3>Step 5 · Direction and size of impact</h3>
@@ -296,12 +297,10 @@
   <p>Risk is highest for questions near 50% — a 99% event has little left to move. A portfolio's impact nets its holdings, so a position that loses in a conflict
     and one that gains offset each other.</p>
 
-  <h3>Step 6 · Checking it against reality</h3>
-  <p>The impact numbers are a <strong>structural prior</strong> — what the graph's logic implies — in graph units, not percentage returns. A backtest checks them against
-    what actually happened: on days a question's odds jumped and stayed jumped, did linked securities move more than they usually do, in the predicted direction?</p>
-  <p><strong>Current result (October 2026, 62 securities with price history): not yet validated.</strong> The predicted direction was right about 50% of the time — chance.
-    Linked securities moved about 12% more than usual on those days, but no more for strong links than weak ones, which suggests busy news days rather than the graph's links.
-    The next run will cover all 543 securities. Turning this prior into measured <strong>event betas</strong> — "TSM falls x% per 10-point rise in invasion odds" — is the next stage.</p>
+  <h3>How to read the impact numbers</h3>
+  <p>Impact is an <strong>estimate from the graph's logic</strong> — which entities a question involves, and how each security depends on them — in relative units,
+    not percentage returns. It is <strong>not measured from price history</strong>, and tests against past price moves have not yet confirmed it.
+    Use it to see <em>which</em> questions matter for a security and in <em>which direction</em>, not as a forecast of how much it will move.</p>
 
   <h3>Numbers you will see</h3>
   <table>
@@ -315,34 +314,22 @@
 
   <h3>Time travel</h3>
   <p><strong>As of</strong> shows the graph and probabilities as they were at any past moment. Nothing is overwritten: every change is stored with when it became true
-    and when the system learned it, so a past view uses only what was known then — no hindsight, which is what makes backtests honest.</p>
+    and when the system learned it, so a past view uses only what was known then — no hindsight.</p>
 
   <h3>Data and updates</h3>
   <table>
-    <tr><td>Markets</td><td>Kalshi and Polymarket public APIs — a snapshot every 15 minutes (in practice every few hours on the free scheduler), plus hourly history back to 2021</td></tr>
-    <tr><td>Graph</td><td>Rebuilt only when markets are listed or their terms change, or the method changes; price moves never alter it. Each change is recorded, not overwritten</td></tr>
-    <tr><td>Entities</td><td>Wikipedia and Wikidata, cached after the first lookup; refreshed monthly (facts) and yearly (relatedness)</td></tr>
-    <tr><td>Security prices</td><td>Daily closes from Yahoo Finance — research use only, to be replaced by a licensed feed</td></tr>
+    <tr><td>Markets</td><td>Kalshi and Polymarket — prices updated several times a day, with hourly history back to 2021</td></tr>
+    <tr><td>Connections</td><td>Updated when new markets are listed or their terms change; price moves never alter them. Every change is kept, so past views stay exact</td></tr>
+    <tr><td>Entities</td><td>Wikipedia and Wikidata, refreshed monthly</td></tr>
+    <tr><td>Security prices</td><td>Daily closing prices</td></tr>
   </table>
 
-  <h3>Where the project stands</h3>
-  <table>
-    <tr><th>Stage</th><th>Status</th></tr>
-    <tr><td>Market data (live + history)</td><td>Done</td></tr>
-    <tr><td>Markets → propositions</td><td>Done; vocabulary still growing (unparsed markets cut from 68% to 12%)</td></tr>
-    <tr><td>Propositions → questions</td><td>Built (ladders by deadline; threshold series per period)</td></tr>
-    <tr><td>Entities and their links</td><td>Done; a second, independent entity linker is planned as a cross-check</td></tr>
-    <tr><td>Direction and size of impact</td><td>Structural prior done; not yet validated by the backtest</td></tr>
-    <tr><td>Event betas (measured)</td><td>Next: estimated from price reactions, pulled toward the prior where data is thin</td></tr>
-    <tr><td>Delivery</td><td>Web explorer, REST API and Excel add-in built; alerts and bulk files planned</td></tr>
-  </table>
-
-  <h3>Current limits</h3>
+  <h3>Limitations</h3>
   <ul>
-    <li>Entity → security weights and channel responses are analyst estimates, not sourced figures.</li>
-    <li>Direction comes from a fixed table of event types; unparsed markets carry relevance without direction.</li>
-    <li>Securities and exposures were built around US–China, Taiwan and semiconductors, so many questions about other regions have few linked securities.</li>
-    <li>Security prices are daily and unlicensed; venue terms on redistributing raw quotes still need checking before raw data is sold.</li>
+    <li>Which securities depend on which entities, and how they respond, are analyst estimates rather than sourced figures.</li>
+    <li>Direction of impact comes from the type of event; questions whose event type isn't recognised show relevance but no direction.</li>
+    <li>Coverage of securities is deepest for US–China, Taiwan and semiconductors; questions about other regions may have few linked securities.</li>
+    <li>Prices on prediction markets can be thin: a small trade can move a quiet market, so check volume before reading much into a jump.</li>
   </ul>
 </article></section>
 <section id="api"><article class="doc">
