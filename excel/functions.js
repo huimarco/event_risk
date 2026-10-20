@@ -23,6 +23,18 @@ function excelDate(iso) { return Date.parse(iso) / 86400000 + 25569; }
 
 function blank(v) { return v === null || v === undefined ? "" : v; }
 
+// API timestamps ("2030-01-01 04:59:00+00:00") -> Excel date serial; blank if missing.
+function dateCell(v) { return v ? excelDate(String(v).replace(" ", "T")) : ""; }
+
+// Tickers as in securities.csv: upper case, Yahoo-style class shares (BRK.B -> BRK-B).
+function normTicker(t) { return String(t).trim().toUpperCase().replace(".", "-"); }
+
+// ["between", [lo, hi]] -> "20-21"; [">", 60] -> ">60"; null -> "".
+function thresholdText(t) {
+  if (!t) return "";
+  return Array.isArray(t[1]) ? `${t[1][0]}-${t[1][1]}` : `${t[0]}${t[1]}`;
+}
+
 async function request(path, params, body) {
   const q = new URLSearchParams();
   for (const [k, v] of Object.entries(params || {})) if (v !== undefined && v !== null && v !== "") q.set(k, v);
@@ -55,9 +67,12 @@ async function request(path, params, body) {
   return promise;
 }
 
+// Accepts a proposition id or a question id ("q:..."; what EXPOSURES and SCAN return). A question's
+// prob / change_24h / name are its headline rung's, as in the API.
 function proposition(id, asOf, knownAsOf) {
-  if (!id) throw fail("proposition_id is required", CustomFunctions.ErrorCode.invalidValue);
-  return request(`/propositions/${encodeURIComponent(id)}`, { as_of: isoTime(asOf), known_as_of: isoTime(knownAsOf) });
+  if (!id) throw fail("id is required", CustomFunctions.ErrorCode.invalidValue);
+  const kind = String(id).startsWith("q:") ? "questions" : "propositions";
+  return request(`/${kind}/${encodeURIComponent(id)}`, { as_of: isoTime(asOf), known_as_of: isoTime(knownAsOf) });
 }
 
 async function prob(id, asOf, knownAsOf) {
@@ -79,20 +94,42 @@ async function name(id) {
 async function propositions(query, limit, sort, entity) {
   const r = await request("/propositions", { q: query, limit: limit || 20, sort: sort || "move", entity });
   return [["id", "name", "prob", "change_24h", "close_time"],
-          ...r.propositions.map(p => [p.id, p.name, blank(p.prob), blank(p.change_24h), blank(p.close_time)])];
+          ...r.propositions.map(p => [p.id, p.name, blank(p.prob), blank(p.change_24h), dateCell(p.close_time)])];
 }
 
-async function exposures(ticker, limit, minScore, asOf) {
+async function questions(query, limit, sort, entity) {
+  const r = await request("/questions", { q: query, limit: limit || 20, sort: sort || "move", entity });
+  return [["id", "name", "prob", "change_24h", "rungs", "headline"],
+          ...r.questions.map(q => [q.id, q.name, blank(q.prob), blank(q.change_24h), q.n_rungs,
+                                   q.headline ? q.headline.name : ""])];
+}
+
+// A question's ladder: one row per rung (proposition), latest deadline first, as in the API.
+async function rungs(id, asOf, knownAsOf) {
+  if (!String(id || "").startsWith("q:")) throw fail("question id (q:...) is required", CustomFunctions.ErrorCode.invalidValue);
+  const q = await proposition(id, asOf, knownAsOf);
+  const head = q.headline && q.headline.id;
+  return [["id", "name", "deadline", "threshold", "prob", "change_24h", "status", "headline"],
+          ...q.rungs.map(p => [p.id, p.name, p.window ? dateCell(p.window[1]) : "", thresholdText(p.threshold),
+                               blank(p.prob), blank(p.change_24h), p.status, p.id === head])];
+}
+
+async function exposures(ticker, limit, minScore, asOf, sort) {
   if (!ticker) throw fail("ticker is required", CustomFunctions.ErrorCode.invalidValue);
-  const r = await request(`/securities/${encodeURIComponent(String(ticker).trim().toUpperCase())}/exposures`,
-                          { limit: limit || 20, min_score: minScore ?? undefined, as_of: isoTime(asOf) });
-  return [["id", "name", "prob", "change_24h", "score", "path"],
-          ...r.exposures.map(e => [e.id, e.name, blank(e.prob), blank(e.change_24h), e.score,
-                                   e.path.slice(1).map(n => n.name).join(" → ")])];
+  const r = await request(`/securities/${encodeURIComponent(normTicker(ticker))}/exposures`,
+                          { limit: limit || 20, min_score: minScore ?? undefined, as_of: isoTime(asOf), sort });
+  return [["id", "name", "prob", "change_24h", "score", "impact", "direction", "risk", "path"],
+          ...r.exposures.map(e => [e.id, e.name, blank(e.prob), blank(e.change_24h), e.score, blank(e.impact),
+                                   blank(e.direction), blank(e.risk), e.path.slice(1).map(n => n.name).join(" → ")])];
 }
 
 async function history(id, start, end, interval) {
-  if (!id) throw fail("proposition_id is required", CustomFunctions.ErrorCode.invalidValue);
+  if (!id) throw fail("id is required", CustomFunctions.ErrorCode.invalidValue);
+  if (String(id).startsWith("q:")) {  // a question's history = its current headline rung's
+    const q = await proposition(id);
+    if (!q.headline) throw fail("question has no live rung");
+    id = q.headline.id;
+  }
   const r = await request(`/propositions/${encodeURIComponent(id)}/history`,
                           { start: isoTime(start), end: isoTime(end), interval: interval || "1d" });
   return [["date", "prob", "n_markets"], ...r.points.map(p => [excelDate(p.t), blank(p.prob), p.n_markets])];
@@ -101,7 +138,7 @@ async function history(id, start, end, interval) {
 // Rows of [ticker, weight]; rows whose weight isn't a number (headers, blanks) are skipped.
 function parseHoldings(range) {
   return range.filter(row => row.length >= 2 && row[0] !== "" && typeof row[1] === "number")
-              .map(row => ({ ticker: String(row[0]).trim().toUpperCase(), weight: row[1] }));
+              .map(row => ({ ticker: normTicker(row[0]), weight: row[1] }));
 }
 
 async function scan(holdings, limit, moveThreshold) {
@@ -109,11 +146,12 @@ async function scan(holdings, limit, moveThreshold) {
   if (!h.length) throw fail("holdings must be two columns: ticker, numeric weight", CustomFunctions.ErrorCode.invalidValue);
   const r = await request("/portfolio/scan", {}, { holdings: h, limit: limit || 25,
                                                    move_threshold: moveThreshold ?? 0.05 });
-  const rows = [["id", "name", "prob", "change_24h", "exposure", "moved", "top_holdings"],
-                ...r.questions.map(p => [p.id, p.name, blank(p.prob), blank(p.change_24h), p.exposure, p.moved,
-                                            p.holdings.map(c => c.ticker).join(", ")])];
+  const rows = [["id", "name", "prob", "change_24h", "exposure", "impact", "direction", "risk", "moved", "top_holdings"],
+                ...r.questions.map(p => [p.id, p.name, blank(p.prob), blank(p.change_24h), p.exposure, blank(p.impact),
+                                         blank(p.direction), blank(p.risk), p.moved,
+                                         p.holdings.map(c => c.ticker).join(", ")])];
   if (r.unknown_tickers.length)
-    rows.push(["unknown tickers", r.unknown_tickers.join(", "), "", "", "", "", ""]);
+    rows.push(["unknown tickers", r.unknown_tickers.join(", "), "", "", "", "", "", "", "", ""]);
   return rows;
 }
 
@@ -121,6 +159,8 @@ CustomFunctions.associate("PROB", prob);
 CustomFunctions.associate("CHANGE", change);
 CustomFunctions.associate("NAME", name);
 CustomFunctions.associate("PROPOSITIONS", propositions);
+CustomFunctions.associate("QUESTIONS", questions);
+CustomFunctions.associate("RUNGS", rungs);
 CustomFunctions.associate("EXPOSURES", exposures);
 CustomFunctions.associate("HISTORY", history);
 CustomFunctions.associate("SCAN", scan);

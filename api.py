@@ -638,6 +638,9 @@ def excel_manifest(request: Request):
     scheme = request.headers.get("x-forwarded-proto", request.url.scheme).split(",")[0]
     base = f"{scheme}://{request.headers.get('host', request.url.netloc)}"
     xml = (EXCEL / "manifest.xml").read_text().replace("{BASE}", base)
+    if request.url.hostname in ("localhost", "127.0.0.1"):  # a separate add-in, so it can sit beside the deployed one
+        xml = (xml.replace("eeb823d5-3150-4ee3-a983-57ef26e13f0b", "5c0e7a3e-8f2b-4d61-9a47-1b6e2d0c9f14")
+                  .replace('<DisplayName DefaultValue="Event Risk"/>', '<DisplayName DefaultValue="Event Risk (local)"/>'))
     return Response(xml, media_type="application/xml",
                     headers={"Content-Disposition": 'attachment; filename="event-risk-manifest.xml"'})
 

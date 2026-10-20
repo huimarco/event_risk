@@ -28,7 +28,7 @@
 </style>
 </head>
 <body>
-<h2>Search propositions</h2>
+<h2>Search questions</h2>
 <div class="row"><input id="q" placeholder="e.g. taiwan, iran, tariffs"><button id="search">Search</button></div>
 <div class="muted">Click a result to add a live row at the selected cell: id, name, probability, 24h change.</div>
 <ul id="results"></ul>
@@ -48,15 +48,18 @@
 
 <h2>Functions</h2>
 <dl>
-  <dt><code>=EVENTRISK.PROB(id, [as_of], [known_as_of])</code></dt><dd>Blended probability, 0–1.</dd>
+  <dt><code>=EVENTRISK.PROB(id, [as_of], [known_as_of])</code></dt><dd>Probability, 0–1. A question id gives its headline (most-traded live) rung.</dd>
   <dt><code>=EVENTRISK.CHANGE(id, [as_of], [known_as_of])</code></dt><dd>24h change in probability.</dd>
-  <dt><code>=EVENTRISK.NAME(id)</code></dt><dd>The question the proposition asks.</dd>
-  <dt><code>=EVENTRISK.PROPOSITIONS([query], [limit], [sort], [entity])</code></dt><dd>Table of propositions, biggest movers first.</dd>
-  <dt><code>=EVENTRISK.EXPOSURES(ticker, [limit], [min_score], [as_of])</code></dt><dd>Propositions a security is exposed to.</dd>
+  <dt><code>=EVENTRISK.NAME(id)</code></dt><dd>The question asked.</dd>
+  <dt><code>=EVENTRISK.QUESTIONS([query], [limit], [sort], [entity])</code></dt><dd>Table of questions, biggest movers first.</dd>
+  <dt><code>=EVENTRISK.RUNGS(question_id, [as_of], [known_as_of])</code></dt><dd>A question's ladder: every deadline / threshold.</dd>
+  <dt><code>=EVENTRISK.PROPOSITIONS([query], [limit], [sort], [entity])</code></dt><dd>Table of single rungs, biggest movers first.</dd>
+  <dt><code>=EVENTRISK.EXPOSURES(ticker, [limit], [min_score], [as_of], [sort])</code></dt><dd>Questions a security is exposed to, with signed impact.</dd>
   <dt><code>=EVENTRISK.HISTORY(id, [start], [end], [interval])</code></dt><dd>Probability over time (daily by default).</dd>
   <dt><code>=EVENTRISK.SCAN(holdings, [limit], [move_threshold])</code></dt><dd>Live portfolio scan over a ticker/weight range.</dd>
 </dl>
-<p class="muted">Set <code>known_as_of</code> = <code>as_of</code> for a point-in-time, backtest-safe value.
+<p class="muted">A question's headline rung can change as trading moves; use a rung id from RUNGS to pin one deadline.
+Set <code>known_as_of</code> = <code>as_of</code> for a point-in-time, backtest-safe value.
 Exposure scores rank relevance; they are not betas.</p>
 
 <script>
@@ -70,15 +73,16 @@ async function search() {
   const list = $("results");
   list.innerHTML = "<li class='muted'>Searching…</li>";
   try {
-    const r = await EventRisk.request("/propositions", { q: $("q").value.trim(), limit: 25, sort: "move" });
+    const r = await EventRisk.request("/questions", { q: $("q").value.trim(), limit: 25, sort: "move" });
     list.innerHTML = "";
-    if (!r.propositions.length) list.innerHTML = "<li class='muted'>No live propositions match.</li>";
-    for (const p of r.propositions) {
+    if (!r.questions.length) list.innerHTML = "<li class='muted'>No live questions match.</li>";
+    for (const p of r.questions) {
       const li = document.createElement("li");
       li.innerHTML = `<div></div><div class="meta"><span>${pct(p.prob)}</span>
         <span class="${p.change_24h > 0 ? "up" : p.change_24h < 0 ? "down" : ""}">${pts(p.change_24h)}</span></div>`;
       li.firstChild.textContent = p.name;
-      li.title = p.id;
+      li.title = `${p.id}
+Headline: ${p.headline ? p.headline.name : "–"}`;
       li.onclick = () => insertRow(p.id);
       list.appendChild(li);
     }
@@ -122,10 +126,11 @@ async function scan() {
       ws.getRange("A1").formulas = [[`=EVENTRISK.SCAN(${ref})`]];
       ws.getRange("C:C").numberFormat = [["0.0%"]];
       ws.getRange("D:D").numberFormat = [["+0.0%;-0.0%;0.0%"]];
-      ws.getRange("E:E").numberFormat = [["0.000"]];
+      ws.getRange("E:F").numberFormat = [["0.000"]];
+      ws.getRange("H:H").numberFormat = [["0.000"]];
       ws.getRange("A:A").format.columnWidth = 140;
       ws.getRange("B:B").format.columnWidth = 360;
-      ws.getRange("A1:G1").format.font.bold = true;
+      ws.getRange("A1:J1").format.font.bold = true;
       ws.activate();
       await ctx.sync();
       show($("scanMsg"), `Scanning ${n} holdings on sheet “${name}”. It stays live: edit the holdings and it re-runs.`);

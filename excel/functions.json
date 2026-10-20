@@ -3,79 +3,303 @@
     {
       "id": "PROB",
       "name": "PROB",
-      "description": "Blended probability (0-1) of a proposition, e.g. =EVENTRISK.PROB(A2) where A2 holds an id from EVENTRISK.PROPOSITIONS.",
-      "result": { "type": "number", "dimensionality": "scalar" },
+      "description": "Probability (0-1) of a proposition, or of a question's headline (most-traded live) rung, e.g. =EVENTRISK.PROB(A2) where A2 holds an id from EVENTRISK.QUESTIONS.",
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      },
       "parameters": [
-        { "name": "proposition_id", "description": "Proposition id (search for it in the Event Risk pane).", "type": "string", "dimensionality": "scalar" },
-        { "name": "as_of", "description": "Optional date/time: the probability at that moment. Default now.", "type": "any", "dimensionality": "scalar", "optional": true },
-        { "name": "known_as_of", "description": "Optional date/time: only what the graph knew by then. Set equal to as_of for a backtest-safe value.", "type": "any", "dimensionality": "scalar", "optional": true }
+        {
+          "name": "id",
+          "description": "Proposition id (search in the Event Risk pane) or question id (q:..., from EXPOSURES or SCAN).",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "as_of",
+          "description": "Optional date/time: the probability at that moment. Default now.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "known_as_of",
+          "description": "Optional date/time: only what the graph knew by then. Set equal to as_of for a backtest-safe value.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        }
       ]
     },
     {
       "id": "CHANGE",
       "name": "CHANGE",
-      "description": "24-hour change in a proposition's blended probability (e.g. 0.05 = +5 points).",
-      "result": { "type": "number", "dimensionality": "scalar" },
+      "description": "24-hour change in probability of a proposition or a question's headline rung (e.g. 0.05 = +5 points).",
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      },
       "parameters": [
-        { "name": "proposition_id", "description": "Proposition id.", "type": "string", "dimensionality": "scalar" },
-        { "name": "as_of", "description": "Optional date/time. Default now.", "type": "any", "dimensionality": "scalar", "optional": true },
-        { "name": "known_as_of", "description": "Optional date/time: only what the graph knew by then.", "type": "any", "dimensionality": "scalar", "optional": true }
+        {
+          "name": "id",
+          "description": "Proposition or question id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "as_of",
+          "description": "Optional date/time. Default now.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "known_as_of",
+          "description": "Optional date/time: only what the graph knew by then.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        }
       ]
     },
     {
       "id": "NAME",
       "name": "NAME",
-      "description": "The question a proposition asks, e.g. \"Will China invade Taiwan before 2027?\"",
-      "result": { "type": "string", "dimensionality": "scalar" },
+      "description": "The question a proposition or question asks, e.g. \"Will China blockade Taiwan?\"",
+      "result": {
+        "type": "string",
+        "dimensionality": "scalar"
+      },
       "parameters": [
-        { "name": "proposition_id", "description": "Proposition id.", "type": "string", "dimensionality": "scalar" }
+        {
+          "name": "id",
+          "description": "Proposition or question id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "QUESTIONS",
+      "name": "QUESTIONS",
+      "description": "Spills a table of questions (id, name, headline prob, 24h change, number of rungs, headline rung), biggest 24h movers first.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "description": "Optional text the question name must contain, e.g. \"taiwan\". Empty = all.",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 20, max 500.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "sort",
+          "description": "Optional: \"move\" (default), \"prob\" or \"name\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "entity",
+          "description": "Optional entity id, e.g. \"country:TW\": only questions involving it.",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "RUNGS",
+      "name": "RUNGS",
+      "description": "Spills a question's ladder: one row per rung (id, name, deadline, threshold, prob, 24h change, status, headline), latest deadline first.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "question_id",
+          "description": "Question id (q:...).",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "as_of",
+          "description": "Optional date/time. Default now.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "known_as_of",
+          "description": "Optional date/time: only what the graph knew by then.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        }
       ]
     },
     {
       "id": "PROPOSITIONS",
       "name": "PROPOSITIONS",
-      "description": "Spills a table of propositions (id, name, prob, 24h change, close time), biggest 24h movers first.",
-      "result": { "type": "any", "dimensionality": "matrix" },
+      "description": "Spills a table of propositions (single rungs: id, name, prob, 24h change, close date), biggest 24h movers first.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
       "parameters": [
-        { "name": "query", "description": "Optional text the proposition name must contain, e.g. \"taiwan\". Empty = all.", "type": "string", "dimensionality": "scalar", "optional": true },
-        { "name": "limit", "description": "Optional max rows. Default 20, max 500.", "type": "number", "dimensionality": "scalar", "optional": true },
-        { "name": "sort", "description": "Optional: \"move\" (default), \"prob\" or \"name\".", "type": "string", "dimensionality": "scalar", "optional": true },
-        { "name": "entity", "description": "Optional entity id, e.g. \"country:TW\": only propositions involving it.", "type": "string", "dimensionality": "scalar", "optional": true }
+        {
+          "name": "query",
+          "description": "Optional text the proposition name must contain, e.g. \"taiwan\". Empty = all.",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 20, max 500.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "sort",
+          "description": "Optional: \"move\" (default), \"prob\" or \"name\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "entity",
+          "description": "Optional entity id, e.g. \"country:TW\": only propositions involving it.",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
       ]
     },
     {
       "id": "EXPOSURES",
       "name": "EXPOSURES",
-      "description": "Spills the propositions a security is exposed to (id, name, prob, 24h change, score, path).",
-      "result": { "type": "any", "dimensionality": "matrix" },
+      "description": "Spills the questions a security is exposed to (id, name, prob, 24h change, score, impact, direction, risk, path).",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
       "parameters": [
-        { "name": "ticker", "description": "Ticker as in the securities list, e.g. \"TSM\" or \"BRK-B\".", "type": "string", "dimensionality": "scalar" },
-        { "name": "limit", "description": "Optional max rows. Default 20.", "type": "number", "dimensionality": "scalar", "optional": true },
-        { "name": "min_score", "description": "Optional minimum exposure score (0-1). Default 0.1.", "type": "number", "dimensionality": "scalar", "optional": true },
-        { "name": "as_of", "description": "Optional date/time. Default now.", "type": "any", "dimensionality": "scalar", "optional": true }
+        {
+          "name": "ticker",
+          "description": "Ticker as in the securities list, e.g. \"TSM\" or \"BRK-B\".",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 20.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "min_score",
+          "description": "Optional minimum exposure score (0-1). Default 0.1.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "as_of",
+          "description": "Optional date/time. Default now.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "sort",
+          "description": "Optional: \"score\" (default), \"impact\" or \"risk\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
       ]
     },
     {
       "id": "HISTORY",
       "name": "HISTORY",
-      "description": "Spills a proposition's blended probability over time (date, prob, markets). Format the date column as a date.",
-      "result": { "type": "any", "dimensionality": "matrix" },
+      "description": "Spills probability over time (date, prob, markets) for a proposition, or a question's current headline rung. Format the date column as a date.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
       "parameters": [
-        { "name": "proposition_id", "description": "Proposition id.", "type": "string", "dimensionality": "scalar" },
-        { "name": "start", "description": "Optional start date. Default 30 days before end.", "type": "any", "dimensionality": "scalar", "optional": true },
-        { "name": "end", "description": "Optional end date. Default now.", "type": "any", "dimensionality": "scalar", "optional": true },
-        { "name": "interval", "description": "Optional: \"1d\" (default) or \"1h\".", "type": "string", "dimensionality": "scalar", "optional": true }
+        {
+          "name": "id",
+          "description": "Proposition or question id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "start",
+          "description": "Optional start date. Default 30 days before end.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "end",
+          "description": "Optional end date. Default now.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "interval",
+          "description": "Optional: \"1d\" (default) or \"1h\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
       ]
     },
     {
       "id": "SCAN",
       "name": "SCAN",
-      "description": "Portfolio scan: spills the propositions your holdings are most exposed to (id, name, prob, 24h change, exposure, moved, top holdings).",
-      "result": { "type": "any", "dimensionality": "matrix" },
+      "description": "Portfolio scan: spills the questions your holdings are most exposed to (id, name, prob, 24h change, exposure, impact, direction, risk, moved, top holdings).",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
       "parameters": [
-        { "name": "holdings", "description": "Two columns: ticker, weight (e.g. 0.05 for 5%). A header row is ignored.", "type": "any", "dimensionality": "matrix" },
-        { "name": "limit", "description": "Optional max rows. Default 25.", "type": "number", "dimensionality": "scalar", "optional": true },
-        { "name": "move_threshold", "description": "Optional |24h change| that flags a proposition as moved. Default 0.05.", "type": "number", "dimensionality": "scalar", "optional": true }
+        {
+          "name": "holdings",
+          "description": "Two columns: ticker, weight (e.g. 0.05 for 5%). A header row is ignored.",
+          "type": "any",
+          "dimensionality": "matrix"
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 25.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "move_threshold",
+          "description": "Optional |24h change| that flags a question as moved. Default 0.05.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        }
       ]
     }
   ]
