@@ -43,13 +43,13 @@ CREATE TABLE IF NOT EXISTS wiki_cache (
 -- retracts (op='retract') a node/edge. recorded_at = when the graph learned it (transaction time);
 -- valid_from/valid_to = when it is true in the world (valid time).
 CREATE TABLE IF NOT EXISTS graph_nodes (
-  node_id VARCHAR, node_type VARCHAR,   -- market | proposition | entity | security
+  node_id VARCHAR, node_type VARCHAR,   -- market | proposition | question | entity | security | factor
   name VARCHAR, attrs JSON, attrs_hash VARCHAR, op VARCHAR,
   valid_from TIMESTAMPTZ, valid_to TIMESTAMPTZ, recorded_at TIMESTAMPTZ, run_id VARCHAR);
 
 CREATE TABLE IF NOT EXISTS graph_edges (
   edge_id VARCHAR, src_id VARCHAR, dst_id VARCHAR,
-  edge_type VARCHAR,   -- same_as | near_equivalent | mutex | implies | involves | <entity link> | exposure
+  edge_type VARCHAR,   -- same_as | near_equivalent | mutex | implies | involves | relevant_to | <entity link> | exposure
   sign DOUBLE, weight DOUBLE, confidence DOUBLE, provenance VARCHAR, note VARCHAR,
   attrs JSON, attrs_hash VARCHAR, op VARCHAR,
   valid_from TIMESTAMPTZ, valid_to TIMESTAMPTZ, recorded_at TIMESTAMPTZ, run_id VARCHAR);

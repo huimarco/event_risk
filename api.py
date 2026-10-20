@@ -49,6 +49,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+import factors
 from collector import DB
 
 LOOKBACK = timedelta(days=7)
@@ -311,8 +312,8 @@ def entity_links(g, qid):
 def get_question(question_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                  cur=Depends(db)):
     """One question: headline, every rung (deadline / threshold, probability, 24h change, status,
-    volume), latest deadline first (lowest threshold first within a deadline), and the entities
-    it involves."""
+    volume), latest deadline first (lowest threshold first within a deadline), the entities
+    it involves and the factors it is relevant to (factors.py)."""
     at, known = times(as_of, known_as_of)
     g = graph(cur, as_of, known_as_of)
     g.get(question_id, "question")
@@ -326,7 +327,7 @@ def get_question(question_id: str, as_of: datetime | None = AsOf, known_as_of: d
                   n_markets=g.nodes[p]["attrs"].get("n_markets"))
              for p, w, t in ordered]
     return dict(as_of=at, known_as_of=known, **question_summary(g, question_id, qp), rungs=rungs,
-                entities=entity_links(g, question_id))
+                entities=entity_links(g, question_id), factors=factors.links(g, question_id))
 
 @app.get("/propositions")
 def list_propositions(q: str | None = Query(None, description="Substring of the proposition name"),
@@ -349,7 +350,7 @@ def list_propositions(q: str | None = Query(None, description="Substring of the 
 def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
                     known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     """Proposition (one rung of a question) with its markets, its question, the question's
-    entities and logical relations."""
+    entities and factors, and logical relations."""
     at, known = times(as_of, known_as_of)
     g = graph(cur, as_of, known_as_of)
     n = g.get(proposition_id, "proposition")
@@ -370,6 +371,7 @@ def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
                       name=g.nodes[m]["name"], rules=g.nodes[m]["attrs"].get("rules"), **(mprobs.get(m) or {}))
                  for m, rel, note in mkts],
         entities=entity_links(g, g.question_of(proposition_id)),
+        factors=factors.links(g, g.question_of(proposition_id)),
         logical=logical)
 
 @app.get("/propositions/{proposition_id}/history")
@@ -426,9 +428,10 @@ def neighbourhood(g, root, depth, fanout, rank=None):
 @app.get("/graph/{node_id}")
 def node_graph(node_id: str, depth: int = Query(1, ge=1, le=3), fanout: int = Query(30, ge=1, le=200),
                as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
-    """Neighbourhood of any question, proposition, market, entity or security, for visualisation.
-    Questions are picked live first, then by 24h trading volume; other links by strength.
-    `totals` = how many links of each kind the root has (the graph shows at most `fanout`)."""
+    """Neighbourhood of any question, proposition, market, entity, security or factor
+    (`factor:<id>`), for visualisation. Questions are picked live first, then by 24h trading
+    volume; other links by strength. `totals` = how many links of each kind the root has (the
+    graph shows at most `fanout`)."""
     at, known = times(as_of, known_as_of)
     g = graph(cur, as_of, known_as_of)
     if node_id not in g.nodes: raise HTTPException(404, f"{node_id} not found at this as_of / known_as_of")
@@ -444,6 +447,7 @@ def node_graph(node_id: str, depth: int = Query(1, ge=1, le=3), fanout: int = Qu
     return dict(as_of=at, known_as_of=known, root=node_id, totals=totals,
                 nodes=[g.ref(i) | dict(depth=d, entity_type=g.nodes[i]["attrs"].get("entity_type"),
                                        venue=g.nodes[i]["attrs"].get("venue"),
+                                       family=g.nodes[i]["attrs"].get("family"),
                                        **{k: probs[i][k] for k in ("prob", "change_24h", "status")} if i in probs else {})
                        for i, d in seen.items()],
                 edges=[dict(src=e["src"], dst=e["dst"], type=e["type"], weight=e["weight"],
@@ -510,15 +514,19 @@ def list_securities(as_of: datetime | None = AsOf, known_as_of: datetime | None 
                  n_exposures=sum(1 for e in g.inc[i] if e["type"] == "exposure"))
             for i, n in g.nodes.items() if n["type"] == "security"]
 
+def live_questions(cur, g, at):
+    """{question id: live}: a question is live when any of its rungs has a market priced in the
+    last 7 days."""
+    priced = market_probs(cur, [i for i, n in g.nodes.items() if n["type"] == "market"], at, g)
+    return {q: any(m in priced for p, _, _ in g.rungs(q) for m, _, _ in g.markets(p))
+            for q, n in g.nodes.items() if n["type"] == "question"}
+
 @app.get("/entities")
 def list_entities(type: str | None = Query(None, description="person | country | organisation_or_place | concept"),
                   as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
     at, known = times(as_of, known_as_of)
     g = graph(cur, as_of, known_as_of)
-    # a question is live when any of its rungs has a market priced in the last 7 days
-    priced = market_probs(cur, [i for i, n in g.nodes.items() if n["type"] == "market"], at, g)
-    live = {q: any(m in priced for p, _, _ in g.rungs(q) for m, _, _ in g.markets(p))
-            for q, n in g.nodes.items() if n["type"] == "question"}
+    live = live_questions(cur, g, at)
     return [dict(**g.ref(i), entity_type=n["attrs"].get("entity_type"), description=n["attrs"].get("description"),
                  n_questions=sum(1 for e in g.inc[i] if e["type"] == "involves"),
                  n_live_questions=sum(1 for e in g.inc[i] if e["type"] == "involves" and live.get(e["src"])))
@@ -542,6 +550,40 @@ def get_entity(entity_id: str, as_of: datetime | None = AsOf, known_as_of: datet
                              key=lambda l: -(l["weight"] or 0)),
                 exposures=[dict(security=g.ref(e["dst"]), weight=e["weight"], rationale=e["note"])
                            for e in g.out[entity_id] if e["type"] == "exposure"])
+
+def factor_links(g, factor_id=None):
+    """{factor id: {question id: paths}} over every question (or for one factor)."""
+    out = defaultdict(dict)
+    for q, n in g.nodes.items():
+        if n["type"] == "question":
+            for f in factors.links(g, q):
+                if not factor_id or f["id"] == factor_id:
+                    out[f["id"]][q] = f["paths"]
+    return out
+
+@app.get("/factors")
+def list_factors(family: str | None = Query(None, description="country_equity | fx | commodity | rates | industry"),
+                 as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
+    """The factor catalog (seeds/factors.csv) with how many questions are relevant to each."""
+    at, known = times(as_of, known_as_of)
+    g = graph(cur, as_of, known_as_of)
+    live, hits = live_questions(cur, g, at), factor_links(g)
+    return [dict(f, n_questions=len(hits[f["id"]]), n_live_questions=sum(live[q] for q in hits[f["id"]]))
+            for f in factors.CATALOG.values() if not family or f["family"] == family]
+
+@app.get("/factors/{factor_id}")
+def get_factor(factor_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
+               cur=Depends(db)):
+    """Factor with every question relevant to it (live first, then by 24h trading volume) and the
+    paths that link each one (question -> entity [-> its country] -> factor)."""
+    if factor_id not in factors.CATALOG: raise HTTPException(404, f"factor {factor_id} not found")
+    at, known = times(as_of, known_as_of)
+    g = graph(cur, as_of, known_as_of)
+    links = factor_links(g, factor_id)[factor_id]
+    qp = question_probs(cur, g, list(links), at)
+    return dict(as_of=at, known_as_of=known, **factors.CATALOG[factor_id],
+                questions=sorted((dict(question_summary(g, x, qp), paths=links[x]) for x in links),
+                                 key=lambda r: (r["status"] != "live", -(r["volume_24h"] or 0), r["name"])))
 
 def direction(impact):
     return "unknown" if impact is None else "up" if impact > 0 else "down" if impact < 0 else "neutral"

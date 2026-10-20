@@ -422,7 +422,7 @@ def question_name(name, sig):
     out = re.sub(r"\s{2,}", " ", _DATEPHRASE.sub("", n)).strip().replace(" ?", "?") or n
     if sig and sig.threshold and sig.window and sig.window[0]:
         a, b = sig.window
-        period = f"{a:%b %-d} – {b:%b %-d, %Y}" if a != b else f"{b:%b %-d, %Y}"
+        period = f"{a:%b} {a.day} – {b:%b} {b.day}, {b.year}" if a != b else f"{b:%b} {b.day}, {b.year}"  # %-d is not portable to Windows
         out = f"{out.rstrip('?')} ({period})?"
     return out
 

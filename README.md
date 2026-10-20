@@ -29,6 +29,7 @@ GET  /propositions/{id}                                 # markets, entities, log
 GET  /propositions/{id}/history?interval=1d&start=...   # blended probability series
 GET  /securities/TSM/exposures?sort=risk                # propositions a security is exposed to, signed
 POST /portfolio/scan  {"holdings":[{"ticker":"TSM","weight":0.1}]}
+GET  /factors/brent                                     # questions relevant to a factor, and why
 GET  /markets?status=unparsed                           # match review: unmatched / unparsed / linked / merged
 GET  /markets/{id}                                      # signature, parser issues, rejected candidates
 ```
@@ -155,6 +156,10 @@ calibration slope). First run (2026-10-18, 62 priced securities, daily data): di
   current weights are analyst placeholders, not sourced data.
 - `seeds/channel_signs.csv` — which sub-industries / tickers gain (−1) rather than suffer from an
   adverse event on a channel. Hand-written priors, like exposures.
+- `seeds/factors.csv` + `seeds/entity_factors.csv` — market factors (country equities, FX, oil,
+  freight, policy rates…) and which entities make a question relevant to each, on which action
+  channels and in which contract roles. Qualitative links (no weights), derived by `factors.py`
+  during the graph build and stored as `factor` nodes and `relevant_to` edges.
 
 ## How entities are found and connected
 

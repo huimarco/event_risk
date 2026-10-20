@@ -1,0 +1,36 @@
+factor_id,name,family,definition
+"# Market factors a question can be relevant to (factors.py). Qualitative links only: no loadings, betas or signs. Linked to questions through seeds/entity_factors.csv."
+equity_us,US equities,country_equity,US equity market (e.g. S&P 500)
+equity_china,China equities,country_equity,China equity market (onshore and offshore)
+equity_taiwan,Taiwan equities,country_equity,Taiwan equity market (TAIEX)
+equity_japan,Japan equities,country_equity,Japan equity market (TOPIX)
+equity_korea,South Korea equities,country_equity,South Korea equity market (KOSPI)
+equity_india,India equities,country_equity,India equity market (Nifty 50)
+equity_europe,Europe equities,country_equity,Euro-area equity market (Euro Stoxx)
+equity_uk,UK equities,country_equity,UK equity market (FTSE 100)
+equity_israel,Israel equities,country_equity,Israel equity market (TA-35)
+equity_saudi,Saudi Arabia equities,country_equity,Saudi equity market (Tadawul)
+equity_turkey,Turkey equities,country_equity,Turkey equity market (BIST 100)
+equity_canada,Canada equities,country_equity,Canada equity market (S&P/TSX)
+equity_mexico,Mexico equities,country_equity,Mexico equity market (S&P/BMV IPC)
+equity_brazil,Brazil equities,country_equity,Brazil equity market (Ibovespa)
+fx_cny,USD/CNH,fx,US dollar vs offshore Chinese yuan
+fx_twd,USD/TWD,fx,US dollar vs Taiwan dollar
+fx_jpy,USD/JPY,fx,US dollar vs Japanese yen
+fx_krw,USD/KRW,fx,US dollar vs South Korean won
+fx_inr,USD/INR,fx,US dollar vs Indian rupee
+fx_eur,EUR/USD,fx,Euro vs US dollar
+fx_gbp,GBP/USD,fx,British pound vs US dollar
+fx_ils,USD/ILS,fx,US dollar vs Israeli shekel
+fx_try,USD/TRY,fx,US dollar vs Turkish lira
+fx_cad,USD/CAD,fx,US dollar vs Canadian dollar
+fx_mxn,USD/MXN,fx,US dollar vs Mexican peso
+fx_brl,USD/BRL,fx,US dollar vs Brazilian real
+brent,Brent crude oil,commodity,Brent crude oil futures
+natgas_europe,European natural gas,commodity,Dutch TTF natural gas futures
+lng_asia,Asian LNG,commodity,JKM liquefied natural gas price
+wheat,Wheat,commodity,CBOT wheat futures
+freight,Ocean freight,commodity,Container and tanker shipping rates
+rates_us_policy,US policy rate,rates,Federal funds rate expectations
+rates_ecb_policy,ECB policy rate,rates,ECB deposit rate expectations
+semiconductors,Semiconductors,industry,Global semiconductor equities

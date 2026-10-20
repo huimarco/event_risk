@@ -1,0 +1,73 @@
+qid,entity,factor_id,channels,roles,rationale
+"# Analyst priors, keyed by Wikidata id like exposures.csv: a question involving the entity (or a person who is a citizen of it) links to the factor when its action's channel (matching.EFFECTS: conflict / trade / sanctions / instability / diplomacy; 'any' = all) is listed and its role in the contract (actor / target / party / concept; 'any' = all) is listed. Unparsed questions have no channel and link to nothing."
+Q30,United States,equity_us,trade,any,US equities move on US trade policy; US military action abroad rarely moves them
+Q148,China,equity_china,conflict;trade;sanctions;instability,any,country risk
+Q148,China,fx_cny,conflict;trade;sanctions;instability,any,country risk
+Q148,China,semiconductors,trade;sanctions,any,export controls and chip tariffs
+Q865,Taiwan,equity_taiwan,conflict;trade;sanctions;instability,any,country risk
+Q865,Taiwan,fx_twd,conflict;trade;sanctions;instability,any,country risk
+Q865,Taiwan,semiconductors,conflict;trade,any,Taiwan makes most leading-edge chips
+Q17,Japan,equity_japan,conflict;trade;sanctions;instability,any,country risk
+Q17,Japan,fx_jpy,conflict;trade;sanctions;instability,any,country risk
+Q884,South Korea,equity_korea,conflict;trade;sanctions;instability,any,country risk
+Q884,South Korea,fx_krw,conflict;trade;sanctions;instability,any,country risk
+Q668,India,equity_india,conflict;trade;sanctions;instability,any,country risk
+Q668,India,fx_inr,conflict;trade;sanctions;instability,any,country risk
+Q458,European Union,equity_europe,conflict;trade;sanctions;instability,any,euro-area risk
+Q458,European Union,fx_eur,conflict;trade;sanctions;instability,any,euro-area risk
+Q183,Germany,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
+Q183,Germany,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
+Q142,France,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
+Q142,France,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
+Q38,Italy,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
+Q38,Italy,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
+Q29,Spain,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
+Q29,Spain,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
+Q145,United Kingdom,equity_uk,conflict;trade;sanctions;instability,any,country risk
+Q145,United Kingdom,fx_gbp,conflict;trade;sanctions;instability,any,country risk
+Q801,Israel,equity_israel,conflict;trade;sanctions;instability,any,country risk
+Q801,Israel,fx_ils,conflict;trade;sanctions;instability,any,country risk
+Q851,Saudi Arabia,equity_saudi,conflict;trade;sanctions;instability,any,country risk
+Q851,Saudi Arabia,brent,conflict;instability,target;party,largest OPEC producer
+Q43,Turkey,equity_turkey,conflict;trade;sanctions;instability,any,country risk
+Q43,Turkey,fx_try,conflict;trade;sanctions;instability,any,country risk
+Q16,Canada,equity_canada,conflict;trade;sanctions;instability,any,country risk
+Q16,Canada,fx_cad,conflict;trade;sanctions;instability,any,country risk
+Q96,Mexico,equity_mexico,conflict;trade;sanctions;instability,any,country risk
+Q96,Mexico,fx_mxn,conflict;trade;sanctions;instability,any,country risk
+Q155,Brazil,equity_brazil,conflict;trade;sanctions;instability,any,country risk
+Q155,Brazil,fx_brl,conflict;trade;sanctions;instability,any,country risk
+Q159,Russia,brent,conflict,target,major oil exporter
+Q159,Russia,brent,sanctions,any,major oil exporter
+Q159,Russia,natgas_europe,conflict,target,pipeline gas supplier to Europe
+Q159,Russia,natgas_europe,sanctions,any,pipeline gas supplier to Europe
+Q159,Russia,wheat,conflict,target,largest wheat exporter
+Q159,Russia,wheat,sanctions,any,largest wheat exporter
+Q212,Ukraine,wheat,conflict,target,major wheat exporter via the Black Sea
+Q212,Ukraine,natgas_europe,conflict,target,gas transit route to Europe
+Q794,Iran,brent,conflict,target,oil exporter beside the Strait of Hormuz
+Q794,Iran,brent,sanctions,any,oil exporter beside the Strait of Hormuz
+Q717,Venezuela,brent,conflict,target,largest proven oil reserves
+Q717,Venezuela,brent,sanctions;instability,any,largest proven oil reserves
+Q846,Qatar,lng_asia,conflict;instability,target;party,major LNG exporter
+Q79883,Strait of Hormuz,brent,conflict,any,about a fifth of world oil passes through it
+Q79883,Strait of Hormuz,lng_asia,conflict,any,Qatari LNG passes through it
+Q79883,Strait of Hormuz,freight,conflict,any,tanker route
+Q899,Suez Canal,freight,conflict;trade;instability,any,Asia-Europe shipping route
+Q23406,Red Sea,freight,conflict;instability,any,Asia-Europe shipping route
+Q7350,Panama Canal,freight,conflict;trade;instability,any,Atlantic-Pacific shipping route
+Q166,Black Sea,wheat,conflict,any,Ukrainian and Russian grain exports
+Q166,Black Sea,freight,conflict,any,grain shipping route
+Q7795,OPEC,brent,any,any,oil supply policy
+Q22656,petroleum,brent,any,any,oil
+Q14928,oil tanker,brent,any,any,oil shipping
+Q14928,oil tanker,freight,any,any,tanker rates
+Q40858,natural gas,natgas_europe,any,any,gas
+Q358333,liquefied natural gas,lng_asia,any,any,LNG
+Q110586381,Nord Stream,natgas_europe,any,any,Russia-Germany gas pipeline
+Q53536,Federal Reserve,rates_us_policy,any,any,sets the US policy rate
+Q2666591,Chair of the Federal Reserve,rates_us_policy,any,any,sets the US policy rate
+Q605440,President of the European Central Bank,rates_ecb_policy,any,any,sets the euro-area policy rate
+Q713418,TSMC,semiconductors,any,any,largest chip foundry
+Q648533,SMIC,semiconductors,any,any,largest Chinese chip foundry
+Q2986369,semiconductor industry,semiconductors,any,any,chips

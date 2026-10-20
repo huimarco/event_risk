@@ -60,6 +60,7 @@
   .swatch.proposition { background: var(--proposition); border-radius: 50%; transform: scale(.7); }
   .swatch.entity { background: var(--entity); transform: rotate(45deg) scale(.85); }
   .swatch.security { background: var(--security); border-radius: 2px; }
+  .swatch.factor { background: var(--ink-2); clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); }
   .swatch.market { background: var(--market); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   #canvas-wrap { position: relative; background: var(--surface); }
   #graph { position: absolute; inset: 0; }
@@ -149,6 +150,7 @@
       <button role="tab" data-tab="markets" title="Venue markets by how they fared in cross-venue matching">Markets</button>
       <button role="tab" data-tab="questions" aria-selected="true">Questions</button>
       <button role="tab" data-tab="entities">Entities</button>
+      <button role="tab" data-tab="factors" title="Market factors (equity indices, currencies, commodities, rates) that questions are relevant to">Factors</button>
       <button role="tab" data-tab="securities">Securities</button>
     </div>
     <select id="status" hidden aria-label="Match status">
@@ -169,6 +171,7 @@
       <span><i class="swatch question"></i>Question</span>
       <span><i class="swatch entity"></i>Entity</span>
       <span><i class="swatch security"></i>Security</span>
+      <span><i class="swatch factor"></i>Factor</span>
       <span><i class="swatch proposition"></i>Rung</span>
       <span><i class="swatch market"></i>Market</span>
       <span><i class="dash"></i>Logical link</span>
@@ -524,7 +527,7 @@ const pct = p => p == null ? "–" : `${(p * 100).toFixed(1)}%`;
 const move = d => d == null ? "" : `${d > 0 ? "▲" : d < 0 ? "▼" : "•"} ${Math.abs(d * 100).toFixed(1)} pts`;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 const typeOf = id => id.startsWith("q:") ? "question" : id.startsWith("prop:") ? "proposition"
-                   : id.startsWith("sec:") ? "security" : id.startsWith("mkt:") ? "market" : "entity";
+                   : id.startsWith("factor:") ? "factor" : id.startsWith("sec:") ? "security" : id.startsWith("mkt:") ? "market" : "entity";
 const fmtThreshold = t => !t ? "" : t[0] === "between" ? `${t[1][0]}–${t[1][1]}` : `${t[0]} ${t[1]}`;
 const fmtWindow = w => !w ? "—" : w[0] === w[1] ? w[1] : `by ${w[1]}`;
 const arrow = (d, text) => `<span class="${d === "up" ? "up" : d === "down" ? "down" : ""}">${d === "up" ? "▲" : d === "down" ? "▼" : "?"} ${text}</span>`;
@@ -556,6 +559,8 @@ async function loadList() {
   }
   const data = t === "questions" ? (await api("/questions", { limit: 300, q })).questions
              : t === "entities" ? (await api("/entities")).sort((a, b) => b.n_live_questions - a.n_live_questions || b.n_questions - a.n_questions)
+             : t === "factors" ? (await api("/factors")).map(f => ({ ...f, id: `factor:${f.id}` }))
+                 .sort((a, b) => b.n_live_questions - a.n_live_questions || b.n_questions - a.n_questions)
              : (await api("/securities")).sort((a, b) => b.n_exposures - a.n_exposures);
   state.items = data;
   renderList();
@@ -576,7 +581,7 @@ function renderList() {
     .slice(0, 300).map(x => `<li data-id="${esc(x.id)}" ${x.id === state.selected ? 'aria-current="true"' : ""}>
       <i class="swatch ${kind}"></i><span class="name">${esc(x.ticker ? `${x.ticker} · ${x.name}` : x.name)}</span>
       <span class="num">${kind === "question" ? `${pct(x.prob)}<br>${x.n_rungs > 1 ? `${x.n_rungs} rungs` : move(x.change_24h)}`
-                        : kind === "entity" ? `${x.n_live_questions} live<br>${x.n_questions} total` : `${x.n_exposures} links`}</span></li>`).join("");
+                        : kind === "entity" || kind === "factor" ? `${x.n_live_questions} live<br>${x.n_questions} total` : `${x.n_exposures} links`}</span></li>`).join("");
 }
 
 // ── graph ────────────────────────────────────────────────────────────────────
@@ -595,9 +600,9 @@ async function drawGraph(id) {
   const depth = +$("#depth").value + (typeOf(id) === "market" ? 1 : 0);
   const g = await api(`/graph/${encodeURIComponent(id)}`, { depth, fanout: SHOWN });
   const surface = css("--surface"), ink = css("--ink"), muted = css("--muted");
-  const shape = { question: "dot", proposition: "dot", entity: "diamond", security: "square", market: "triangle" };
+  const shape = { question: "dot", proposition: "dot", entity: "diamond", security: "square", market: "triangle", factor: "hexagon" };
   const nodes = g.nodes.map(n => {
-    const t = n.type, color = css(`--${t}`), root = n.id === g.root;
+    const t = n.type, color = css(t === "factor" ? "--ink-2" : `--${t}`), root = n.id === g.root;
     // label the selected node and its direct neighbours; farther nodes show their name on hover
     const short = n.name.length > 42 ? n.name.slice(0, 40) + "…" : n.name;
     const label = n.depth > 1 && !root ? undefined : t === "market" ? `${n.venue} · ${short}` : short;
@@ -605,7 +610,7 @@ async function drawGraph(id) {
       color: { background: color, border: root ? ink : surface, highlight: { background: color, border: ink },
                hover: { background: color, border: ink } },
       font: { color: ink, strokeWidth: 3, strokeColor: surface, bold: root },
-      title: `${n.name}\n${t === "proposition" ? "rung" : t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.status ? ` · ${n.status}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
+      title: `${n.name}\n${t === "proposition" ? "rung" : t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.family ? ` · ${n.family}` : ""}${n.status ? ` · ${n.status}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
   });
   // hairline links: thin, light and translucent so dense hubs stay legible; hover highlights
   const edges = g.edges.map(e => ({ from: e.src, to: e.dst, width: 0.5 + Math.min(e.weight ?? 0.3, 1),
@@ -631,6 +636,9 @@ function questionList(qs) {
   return `<h3>Top live questions (${Math.min(SHOWN, live.length)} of ${live.length} live · ${qs.length} total)</h3>
     ${live.slice(0, SHOWN).map(row).join("") || '<p class="note">No live questions.</p>'}`;
 }
+const factorPath = p => `${p.nodes.map(n => esc(n.name)).join(" → ")} (${esc(p.channel)}${p.role ? `, ${esc(p.role)}` : ""}) — ${esc(p.rationale)}`;
+const factorList = fs => fs && fs.length ? `<h3>Relevant factors</h3>${fs.map(f => `<div class="row">${go(`factor:${f.id}`, f.name)}
+  <div class="meta">${esc(f.family)} · ${factorPath(f.paths[0])}${f.paths.length > 1 ? ` · ${f.paths.length} paths` : ""}</div></div>`).join("")}` : "";
 async function drawDetail(id) {
   const t = typeOf(id), el = $("#detail");
   const involves = es => es.map(e => `<div class="row">${go(e.id, e.name)}
@@ -647,7 +655,7 @@ async function drawDetail(id) {
         <td>${go(r.id, x.kind === "thresholds" ? fmtThreshold(r.threshold) || r.name : fmtWindow(r.window))}${r.status === "closed" ? " · closed" : ""}</td>
         <td class="n">${pct(r.prob)}</td><td class="n">${r.change_24h != null ? move(r.change_24h) : ""}</td>
         <td class="n">${r.volume_24h != null ? Math.round(r.volume_24h).toLocaleString() : ""}</td></tr>`).join("")}</table>
-      <h3>Involves</h3>${involves(x.entities)}`;
+      <h3>Involves</h3>${involves(x.entities)}${factorList(x.factors)}`;
   } else if (t === "proposition") {
     const p = await api(`/propositions/${encodeURIComponent(id)}`);
     el.innerHTML = `<div class="kind">Rung · ${esc((p.venues || []).join(", "))} · ${esc(p.status)}</div><h2>${esc(p.name)}</h2>
@@ -656,7 +664,7 @@ async function drawDetail(id) {
       <h3>Markets</h3>${p.markets.map(m => `<div class="row">${esc(m.venue)} · ${pct(m.prob)}
         <div class="meta">${esc(m.name)}</div>${m.note ? `<div class="meta">${esc(m.note)}</div>` : ""}
         ${m.rules ? `<details><summary>Rules</summary><p>${esc(m.rules)}</p></details>` : ""}</div>`).join("")}
-      <h3>Involves (via its question)</h3>${involves(p.entities)}
+      <h3>Involves (via its question)</h3>${involves(p.entities)}${factorList(p.factors)}
       ${p.logical.length ? `<h3>Logical links</h3>${p.logical.map(l => `<div class="row">${esc(l.relation)} ${l.direction === "out" ? "→" : "←"}
         ${go(l.proposition.id, l.proposition.name)}${l.note ? `<div class="meta">${esc(l.note)}</div>` : ""}</div>`).join("")}` : ""}`;
   } else if (t === "entity") {
@@ -669,6 +677,16 @@ async function drawDetail(id) {
         <div class="meta">${esc(l.relation)} · ${l.weight != null ? l.weight.toFixed(2) : "–"}</div></div>`).join("") || '<p class="note">None</p>'}
       ${e.exposures.length ? `<h3>Exposed securities</h3>${e.exposures.map(x => `<div class="row">${go(x.security.id, x.security.name)}
         <div class="meta">${x.weight.toFixed(2)} · ${esc(x.rationale || "")}</div></div>`).join("")}` : ""}`;
+  } else if (t === "factor") {
+    const f = await api(`/factors/${encodeURIComponent(id.slice(7))}`);
+    const live = f.questions.filter(q => q.status === "live");
+    el.innerHTML = `<div class="kind">Factor · ${esc(f.family)}</div><h2>${esc(f.name)}</h2><p class="meta">${esc(f.definition)}</p>
+      <h3>Relevant questions (${live.length} live · ${f.questions.length} total)</h3>
+      ${f.questions.slice(0, 50).map(q => `<div class="row">${go(q.id, q.name)}
+        <div class="meta">${pct(q.prob)} ${move(q.change_24h)}${q.status === "closed" ? " · closed" : ""}</div>
+        <div class="meta">${factorPath(q.paths[0])}${q.paths.length > 1 ? ` · ${q.paths.length} paths` : ""}</div></div>`).join("")
+        || '<p class="note">No questions linked.</p>'}
+      <p class="note">Qualitative links only: a question is relevant to a factor, with no loading or sign. Rules are analyst priors in seeds/entity_factors.csv.</p>`;
   } else if (t === "security") {
     const ticker = id.slice(4), x = await api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 25, sort: "risk" });
     el.innerHTML = `<div class="kind">Security · ${esc(ticker)}</div><h2>${esc(x.security.name)}</h2>

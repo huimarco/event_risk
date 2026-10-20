@@ -4,7 +4,7 @@ Build the knowledge graph from collected contract terms, Wikipedia / Wikidata, a
 inputs (entity -> security exposures and their channel signs) into graph_nodes / graph_edges. Bitemporal and append-only: each run diffs the desired graph against
 the current one and records only changes (new or changed -> 'assert', gone -> 'retract').
 
-Nodes: market, proposition, question, entity, security
+Nodes: market, proposition, question, entity, security, factor
 Edges:
   market -> proposition       same_as           markets with matching contract signatures
                                                 (matching.py) form one proposition
@@ -22,6 +22,9 @@ Edges:
                                                 Signed: role (actor / target / party / concept),
                                                 channel, weight = severity x role, sign = what
                                                 YES means for the entity (matching.EFFECTS)
+  question -> factor          relevant_to       market factors (country equities, FX, oil, rates, ...) the
+                                                question matters to; qualitative, no weight or sign
+                                                (factors.py, seeds/entity_factors.csv)
   entity -> entity            citizen_of, ...   Wikidata statements between entities
                               related           Wikipedia co-occurrence (entities.py)
   entity -> security          exposure          seeds/exposures.csv — analyst priors until event
@@ -146,7 +149,7 @@ def fingerprint(con):
     n, last = con.execute("SELECT count(*), max(first_seen_at)::VARCHAR FROM market_versions").fetchone()
     h = hashlib.sha256()
     for f in sorted([*SEEDS.glob("*.csv"), ROOT / "securities.csv",
-                     *(ROOT / m for m in ("graph_build.py", "matching.py", "entities.py"))]):
+                     *(ROOT / m for m in ("graph_build.py", "matching.py", "entities.py", "factors.py"))]):
         h.update(f.name.encode() + f.read_bytes())
     return f"{n}|{last}|{h.hexdigest()[:16]}"
 
@@ -414,6 +417,26 @@ def build(markets, prices, ents):
             add_e(edge(qid, eid, "involves", q_start, weight=weight, sign=sign,
                        confidence=0.8 if mt["named"] else 0.6, provenance="wikipedia_link",
                        matched=mt["surface"], role=role, action=sig.action, channel=channel))
+
+    # question -> factor (factors.py): rules over each question's involves edges
+    import factors  # here, not at the top: factors reads seeds through this module
+    citizen_of = defaultdict(list)
+    for a, b, kind, _ in ents.links:
+        if kind == "citizen_of": citizen_of[a].append(b)
+    for fid, f in factors.CATALOG.items():
+        add_n(node(f"factor:{fid}", "factor", f["name"], REFERENCE_VALID_FROM, family=f["family"],
+                   definition=f["definition"]))
+    involved = defaultdict(list)
+    for e in edges.values():
+        if e["edge_type"] == "involves":
+            a = e["attrs"]
+            involved[e["src_id"]].append((e["dst_id"], a.get("role"), a.get("action"), a.get("channel")))
+    for qid, inv in involved.items():
+        for fid, paths in sorted(factors.derive(inv, citizen_of).items()):
+            add_e(edge(qid, f"factor:{fid}", "relevant_to", nodes[qid]["valid_from"], weight=None, confidence=0.3,
+                       provenance="analyst_prior", paths=paths,
+                       note="; ".join(dict.fromkeys(" -> ".join(nodes[x]["name"] for x in p["nodes"]) + f" ({p['channel']})"
+                                                    for p in paths))))
 
     dangling = [e for e in edges.values() if e["src_id"] not in nodes or e["dst_id"] not in nodes]
     for e in dangling:
