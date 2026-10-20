@@ -88,7 +88,8 @@
   nav { display: flex; gap: 4px; margin-right: auto; }
   nav button { border: 0; background: none; color: var(--ink-2); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
   nav button[aria-selected="true"] { color: var(--ink); font-weight: 600; background: var(--hover); }
-  header h1 { margin: 0 12px 0 0; }
+  header h1 { margin: 0 12px 0 0; user-select: none; }
+  body:not(.unlocked) nav button.secret { display: none; }
   body.about main, body.about .explore-only { display: none; }
   #about { display: none; overflow: auto; }
   body.about #about { display: block; }
@@ -136,8 +137,8 @@
   <h1>Event Risk Graph</h1>
   <nav role="tablist">
     <button role="tab" data-view="explore" aria-selected="true">Explore</button>
-    <button role="tab" data-view="about">How it works</button>
-    <button role="tab" data-view="api">Excel &amp; API</button>
+    <button role="tab" data-view="about" class="secret">How it works</button>
+    <button role="tab" data-view="api" class="secret">Excel &amp; API</button>
   </nav>
   <label class="explore-only">As of <input id="asof" type="datetime-local"></label>
   <label class="explore-only">Depth <select id="depth"><option selected>1</option><option>2</option></select></label>
@@ -741,6 +742,19 @@ document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
   document.body.classList.toggle("about", b.dataset.view === "about");
   document.body.classList.toggle("api", b.dataset.view === "api");
   if (b.dataset.view === "explore") network.redraw();
+});
+// hidden views: five quick clicks on the title toggles them (remembered per browser)
+document.body.classList.toggle("unlocked", localStorage.getItem("unlocked") === "1");
+let titleClicks = [];
+$("header h1").addEventListener("click", () => {
+  const now = Date.now();
+  titleClicks = titleClicks.filter(t => now - t < 1500).concat(now);
+  if (titleClicks.length < 5) return;
+  titleClicks = [];
+  const on = !document.body.classList.contains("unlocked");
+  document.body.classList.toggle("unlocked", on);
+  localStorage.setItem("unlocked", on ? "1" : "0");
+  if (!on) document.querySelector('nav button[data-view="explore"]').click();
 });
 // links like <a data-open="api"> switch to that top-level view
 document.addEventListener("click", e => {
