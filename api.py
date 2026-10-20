@@ -632,16 +632,34 @@ def web():
 
 EXCEL = Path(__file__).parent / "excel"
 
-@app.get("/excel/manifest.xml", include_in_schema=False)
-def excel_manifest(request: Request):
-    """Excel add-in manifest pointing at this server (Office requires HTTPS; Railway terminates TLS)."""
+ADDIN_ID, LOCAL_ADDIN_ID = "eeb823d5-3150-4ee3-a983-57ef26e13f0b", "5c0e7a3e-8f2b-4d61-9a47-1b6e2d0c9f14"
+
+def excel_template(request: Request, name: str) -> str:
+    """An excel/ template with {BASE} = this server's origin (Office requires HTTPS; Railway terminates
+    TLS), {ID} = the add-in id and {FILE} = the manifest's file name on the user's machine. Served
+    from localhost it is a separate add-in, "Event Risk (local)", so it can sit beside the deployed one."""
     scheme = request.headers.get("x-forwarded-proto", request.url.scheme).split(",")[0]
     base = f"{scheme}://{request.headers.get('host', request.url.netloc)}"
-    xml = (EXCEL / "manifest.xml").read_text().replace("{BASE}", base)
-    if request.url.hostname in ("localhost", "127.0.0.1"):  # a separate add-in, so it can sit beside the deployed one
-        xml = (xml.replace("eeb823d5-3150-4ee3-a983-57ef26e13f0b", "5c0e7a3e-8f2b-4d61-9a47-1b6e2d0c9f14")
-                  .replace('<DisplayName DefaultValue="Event Risk"/>', '<DisplayName DefaultValue="Event Risk (local)"/>'))
-    return Response(xml, media_type="application/xml",
+    local = request.url.hostname in ("localhost", "127.0.0.1")
+    text = (EXCEL / name).read_text().replace("{BASE}", base).replace("{ID}", LOCAL_ADDIN_ID if local else ADDIN_ID) \
+                                     .replace("{FILE}", "event-risk-local.xml" if local else "event-risk-manifest.xml")
+    return text.replace(ADDIN_ID, LOCAL_ADDIN_ID).replace(
+        '<DisplayName DefaultValue="Event Risk"/>', '<DisplayName DefaultValue="Event Risk (local)"/>') if local else text
+
+@app.get("/excel/manifest.xml", include_in_schema=False)
+def excel_manifest(request: Request):
+    """Excel add-in manifest pointing at this server."""
+    return Response(excel_template(request, "manifest.xml"), media_type="application/xml",
                     headers={"Content-Disposition": 'attachment; filename="event-risk-manifest.xml"'})
+
+@app.get("/excel/install.cmd", include_in_schema=False)
+@app.get("/excel/uninstall.cmd", include_in_schema=False)
+def excel_installer(request: Request):
+    """Double-click installer / uninstaller for Windows (no admin rights): fetches the manifest and
+    registers it as a developer add-in for the current user. Windows batch files need CRLF."""
+    name = request.url.path.rsplit("/", 1)[1]
+    text = excel_template(request, name).replace("\r\n", "\n").replace("\n", "\r\n")
+    return Response(text, media_type="application/octet-stream",
+                    headers={"Content-Disposition": f'attachment; filename="{name.replace(".", "-event-risk.")}"'})
 
 app.mount("/excel", StaticFiles(directory=EXCEL), name="excel")  # functions.js/json, taskpane.html, icons

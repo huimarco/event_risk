@@ -205,10 +205,91 @@
     <tr><td>Analyst</td><td>"Everything that involves Iran, and how the odds connect"</td><td>Entities tab · the network view</td></tr>
     <tr><td>Quant</td><td>"Probability history, exactly as it was known each day"</td><td>The API, with "as of" time travel</td></tr>
   </table>
-  <p>Everything in the explorer is also available through the API and the Excel add-in (see the API page).</p>
+  <p>Everything in the explorer is also available through the API (see the API page) and in Excel (see <a href="#excel">Use it in Excel</a> below).</p>
   <p>A worked example: selecting <strong>TSM</strong> shows <em>"Will China invade Taiwan?"</em> near the top —
     ▼ impact −1.46, odds 9.5% by the end of 2027. The path reads: the question <em>involves</em> Taiwan as the <em>target</em> of an invasion (adverse for Taiwan) → TSM is
     exposed to Taiwan (its fabs are there) → so a YES pushes TSM down. A ceasefire question would show the opposite sign for a defense contractor like Lockheed Martin.</p>
+
+  <h3 id="excel">Use it in Excel</h3>
+  <p>The Excel add-in brings these probabilities, exposures and portfolio scans into your own spreadsheets, and keeps them up to date.
+    Setting it up takes about five minutes. You don't need admin rights or any technical knowledge.</p>
+  <p><strong>Before you start:</strong> you need the Microsoft 365 version of Excel. To check, open Excel and click <em>File</em> → <em>Account</em>:
+    under "Product Information" it should say <em>Microsoft 365</em>. The steps below are for Windows; for a Mac or Excel in a web browser, see further down.</p>
+
+  <p><strong>Install it (Windows)</strong></p>
+  <ol>
+    <li><strong>Close Excel</strong> if it is open (save your work first).</li>
+    <li><strong>Download the installer:</strong> <a href="/excel/install.cmd"><strong>Download the Event Risk installer</strong></a>.
+      <br>Your browser may warn that the file "isn't commonly downloaded". This is normal for small installers.
+      In Microsoft Edge: point at the download, click the <em>⋯</em> (three dots) → <em>Keep</em> → <em>Show more</em> → <em>Keep anyway</em>. In Chrome: click <em>Keep</em>.</li>
+    <li><strong>Open the file you downloaded</strong> — click it in your browser's list of downloads, or find <em>install-event-risk.cmd</em> in your Downloads folder and double-click it.
+      <br>If a blue box says <em>"Windows protected your PC"</em>, click <em>More info</em>, then <em>Run anyway</em>.
+      If a box asks <em>"Do you want to run this file?"</em>, click <em>Run</em>.</li>
+    <li><strong>A black window opens</strong> and says <em>"Done! The add-in is installed."</em> Press any key (for example the space bar) to close it.</li>
+    <li><strong>Open Excel</strong> with a blank workbook. On the <em>Home</em> tab, at the far right, click the <strong>Event Risk</strong> button. A panel opens on the right of the window.
+      <br>Can't see the button? Make the Excel window wider, or click <em>Home</em> → <em>Add-ins</em> and choose Event Risk under <em>Developer Add-ins</em>. If Excel asks whether to allow it, click yes.</li>
+    <li><strong>Check the panel</strong> says <em>"Connected."</em> under the <em>Refresh</em> button. If it mentions an API key, paste the key you were given into the <em>API key</em> box further down,
+      click <em>Save</em>, then click <em>Refresh all Event Risk formulas</em>.</li>
+  </ol>
+
+  <p><strong>Try it</strong></p>
+  <ol>
+    <li><strong>Build a watch list.</strong> In the panel, type <em>taiwan</em> in the search box and press Enter. Click an empty cell in your sheet, then click a question in the panel:
+      Excel fills in a row with the question, today's probability and its change over the last 24 hours. Click more questions to add more rows underneath.</li>
+    <li><strong>Use a formula.</strong> Click an empty cell, type <code>=EVENTRISK.QUESTIONS("taiwan", 10)</code> and press Enter.
+      A table of questions fills in below and to the right — leave those cells empty so it has room.</li>
+    <li><strong>Scan a portfolio.</strong> Type tickers in one column and portfolio weights next to them (for example <em>TSM</em> and <em>0.05</em> for 5%).
+      Select both columns, then click <em>Scan selection</em> in the panel. A new sheet lists the questions your holdings are most exposed to, and whether each would push them up or down.</li>
+  </ol>
+
+  <p>All the formulas start with <code>=EVENTRISK.</code> — as you type it, Excel lists them and explains each part. The main ones:</p>
+  <table>
+    <tr><th>Formula</th><th>What you get</th></tr>
+    <tr><td><code>=EVENTRISK.QUESTIONS("iran")</code></td><td>A table of questions mentioning Iran, biggest moves today first. The first column is each question's id, used by the formulas below.</td></tr>
+    <tr><td><code>=EVENTRISK.PROB(A2)</code></td><td>The probability (as a decimal: 0.25 = 25%) for the question whose id is in cell A2. <code>CHANGE</code> gives its 24-hour change and <code>NAME</code> its wording.</td></tr>
+    <tr><td><code>=EVENTRISK.RUNGS(A2)</code></td><td>Every deadline of that question with its own probability — for example by June, by December, by next year.</td></tr>
+    <tr><td><code>=EVENTRISK.EXPOSURES("TSM")</code></td><td>The questions a stock is exposed to, how strongly, and whether each would push it up or down.</td></tr>
+    <tr><td><code>=EVENTRISK.SCAN(A2:B20)</code></td><td>The portfolio scan from above, as a formula over your ticker and weight columns.</td></tr>
+    <tr><td><code>=EVENTRISK.HISTORY(A2)</code></td><td>The probability day by day over the last 30 days. Format the first column as a date.</td></tr>
+  </table>
+  <p>The numbers update whenever Excel recalculates, or when you click <em>Refresh all Event Risk formulas</em> in the panel.</p>
+
+  <table>
+    <tr><th>If you see</th><th>What to do</th></tr>
+    <tr><td><code>#NAME?</code></td><td>The add-in hasn't started yet: click the Event Risk button on the Home tab once. If it stays, close Excel completely and open it again.</td></tr>
+    <tr><td><code>#BUSY!</code></td><td>The numbers are loading — wait a few seconds.</td></tr>
+    <tr><td><code>#SPILL!</code></td><td>A table formula needs empty cells below and to the right. Clear them or move the formula.</td></tr>
+    <tr><td><code>#N/A</code></td><td>Point at the cell to read why — usually the id or ticker isn't recognised. Check it's typed exactly as shown in the panel.</td></tr>
+    <tr><td>"missing or invalid API key"</td><td>Enter your key in the panel's API key box, click <em>Save</em>, then <em>Refresh all Event Risk formulas</em>.</td></tr>
+    <tr><td>"cannot reach the Event Risk API"</td><td>Check this page opens in a browser on the same computer. If it doesn't, your network may be blocking it — ask your IT team.</td></tr>
+    <tr><td>The installer says it didn't finish</td><td>Same as above: check this page opens on the same computer, then run the installer again.</td></tr>
+  </table>
+
+  <p><strong>On a Mac or in a web browser</strong></p>
+  <ul>
+    <li><strong>Excel in a web browser:</strong> first <a href="/excel/manifest.xml">download the add-in file</a>. Open any workbook in Excel online, click <em>Home</em> → <em>Add-ins</em> → <em>More Settings</em>
+      (it may say <em>Advanced</em>) → <em>Upload My Add-in</em>, choose the file you downloaded, and click <em>Upload</em>.</li>
+    <li><strong>Mac:</strong> first <a href="/excel/manifest.xml">download the add-in file</a>. In Finder, click <em>Go</em> → <em>Go to Folder…</em>, paste
+      <code>~/Library/Containers/com.microsoft.Excel/Data/Documents</code> and press Return. Create a folder there called <em>wef</em> (if there isn't one already) and drag the downloaded file into it.
+      Restart Excel, then click <em>Insert</em> → <em>My Add-ins</em> and choose Event Risk.</li>
+  </ul>
+
+  <p><strong>Remove it</strong> — on Windows, <a href="/excel/uninstall.cmd">download the uninstaller</a> and open it the same way as the installer, then restart Excel.</p>
+
+  <details>
+    <summary>For IT staff: what the installer does</summary>
+    <p>It runs for the current user only and needs no admin rights. It downloads the add-in manifest from this server to <code>C:\addins\event-risk-manifest.xml</code>
+      and registers it as a developer add-in under <code>HKCU\Software\Microsoft\Office\16.0\WEF\Developer</code>, using built-in Windows tools only.
+      If running a downloaded <code>.cmd</code> file is blocked, the same can be done by pasting these lines into Windows PowerShell after downloading the <a href="/excel/manifest.xml">add-in file</a>:</p>
+<pre>$dl = (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path
+New-Item -ItemType Directory -Force C:\addins | Out-Null
+Copy-Item "$dl\event-risk-manifest.xml" C:\addins\ -Force
+$k = "HKCU:\Software\Microsoft\Office\16.0\WEF\Developer"
+if (-not (Test-Path $k)) { New-Item -Path $k | Out-Null }
+New-ItemProperty -Path $k -Name "eeb823d5-3150-4ee3-a983-57ef26e13f0b" -Value "C:\addins\event-risk-manifest.xml" -PropertyType String -Force | Out-Null
+"Done - now open Excel"</pre>
+    <p>For the whole organisation, a Microsoft 365 admin can deploy the same manifest under Integrated Apps instead.</p>
+  </details>
 
   <h3>The pipeline at a glance</h3>
   <div class="flow">
