@@ -1,57 +1,6 @@
 {
   "functions": [
     {
-      "id": "PROB",
-      "name": "PROB",
-      "description": "Probability (0-1) of a proposition, or of a question's headline (most-traded live) rung, e.g. =EVENTRISK.PROB(A2) where A2 holds an id from EVENTRISK.QUESTIONS.",
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "description": "Proposition id (search in the Event Risk pane) or question id (q:..., from EXPOSURES).",
-          "type": "string",
-          "dimensionality": "scalar"
-        }
-      ]
-    },
-    {
-      "id": "CHANGE",
-      "name": "CHANGE",
-      "description": "24-hour change in probability of a proposition or a question's headline rung (e.g. 0.05 = +5 points).",
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "description": "Proposition or question id.",
-          "type": "string",
-          "dimensionality": "scalar"
-        }
-      ]
-    },
-    {
-      "id": "NAME",
-      "name": "NAME",
-      "description": "The question a proposition or question asks, e.g. \"Will China blockade Taiwan?\"",
-      "result": {
-        "type": "string",
-        "dimensionality": "scalar"
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "description": "Proposition or question id.",
-          "type": "string",
-          "dimensionality": "scalar"
-        }
-      ]
-    },
-    {
       "id": "QUESTIONS",
       "name": "QUESTIONS",
       "description": "Spills a table of questions (id, name, headline prob, 24h change, number of rungs, headline rung), biggest 24h movers first.",
@@ -83,10 +32,108 @@
         },
         {
           "name": "entity",
-          "description": "Optional entity id, e.g. \"country:TW\": only questions involving it.",
+          "description": "Optional entity name or id, e.g. \"Iran\": only questions involving it.",
           "type": "string",
           "dimensionality": "scalar",
           "optional": true
+        }
+      ]
+    },
+    {
+      "id": "ENTITY",
+      "name": "ENTITY",
+      "description": "Spills the questions involving a country, person or organisation (id, name, prob, 24h change, status, 24h volume, rungs), live and most traded first.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Entity name, e.g. \"Iran\" or \"Xi Jinping\" (or a Wikidata id such as wd:Q794).",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 20.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "PROB",
+      "name": "PROB",
+      "description": "Probability (0-1). q: = the question's headline rung (most-traded live rung; it can switch), prop: = one rung blended across venues, mkt: = one venue's own price.",
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Id from ER.QUESTIONS, ER.RUNGS or ER.CONTRACTS: question (q:...), rung (prop:...) or venue contract (mkt:...).",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "CHANGE",
+      "name": "CHANGE",
+      "description": "24-hour change in probability of a proposition or a question's headline rung (e.g. 0.05 = +5 points).",
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Question (q:...) or rung (prop:...) id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "NAME",
+      "name": "NAME",
+      "description": "The wording of a question, rung or venue contract, e.g. \"Will China blockade Taiwan?\"",
+      "result": {
+        "type": "string",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Id from ER.QUESTIONS, ER.RUNGS or ER.CONTRACTS: question (q:...), rung (prop:...) or venue contract (mkt:...).",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "FIELD",
+      "name": "FIELD",
+      "description": "One detail of a question, rung or venue contract: name, prob, status, volume_24h, open_interest, updated, close_time (dates as Excel dates); questions also headline, headline_id, n_rungs, n_live, venues; rungs also question, n_markets, venues; contracts (mkt:) also title, rules, rules_secondary, resolution_sources, outcomes, venue, match.",
+      "result": {
+        "type": "any",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Id from ER.QUESTIONS, ER.RUNGS or ER.CONTRACTS: question (q:...), rung (prop:...) or venue contract (mkt:...).",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "field",
+          "description": "Field name, e.g. \"rules\", \"updated\", \"volume_24h\" or \"headline\".",
+          "type": "string",
+          "dimensionality": "scalar"
         }
       ]
     },
@@ -108,86 +155,9 @@
       ]
     },
     {
-      "id": "PROPOSITIONS",
-      "name": "PROPOSITIONS",
-      "description": "Spills a table of propositions (single rungs: id, name, prob, 24h change, close date), biggest 24h movers first.",
-      "result": {
-        "type": "any",
-        "dimensionality": "matrix"
-      },
-      "parameters": [
-        {
-          "name": "query",
-          "description": "Optional text the proposition name must contain, e.g. \"taiwan\". Empty = all.",
-          "type": "string",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "limit",
-          "description": "Optional max rows. Default 20, max 500.",
-          "type": "number",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "sort",
-          "description": "Optional: \"move\" (default), \"prob\" or \"name\".",
-          "type": "string",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "entity",
-          "description": "Optional entity id, e.g. \"country:TW\": only propositions involving it.",
-          "type": "string",
-          "dimensionality": "scalar",
-          "optional": true
-        }
-      ]
-    },
-    {
-      "id": "EXPOSURES",
-      "name": "EXPOSURES",
-      "description": "Spills the questions a security is exposed to (id, name, prob, 24h change, score, impact, direction, risk, path).",
-      "result": {
-        "type": "any",
-        "dimensionality": "matrix"
-      },
-      "parameters": [
-        {
-          "name": "ticker",
-          "description": "Ticker as in the securities list, e.g. \"TSM\" or \"BRK-B\".",
-          "type": "string",
-          "dimensionality": "scalar"
-        },
-        {
-          "name": "limit",
-          "description": "Optional max rows. Default 20.",
-          "type": "number",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "min_score",
-          "description": "Optional minimum exposure score (0-1). Default 0.1.",
-          "type": "number",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "sort",
-          "description": "Optional: \"score\" (default), \"impact\" or \"risk\".",
-          "type": "string",
-          "dimensionality": "scalar",
-          "optional": true
-        }
-      ]
-    },
-    {
-      "id": "HISTORY",
-      "name": "HISTORY",
-      "description": "Spills probability over time (date, prob, markets) for a proposition, or a question's current headline rung. Format the date column as a date.",
+      "id": "CONTRACTS",
+      "name": "CONTRACTS",
+      "description": "Spills the venue contracts behind a question (its live rungs) or a rung: id, venue, name, rung, relation (same_as = blended; near_equivalent = similar, not blended), prob, 24h volume, open interest, updated, close time, rules.",
       "result": {
         "type": "any",
         "dimensionality": "matrix"
@@ -195,13 +165,30 @@
       "parameters": [
         {
           "name": "id",
-          "description": "Proposition or question id.",
+          "description": "Question (q:...) or rung (prop:...) id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "HISTORY",
+      "name": "HISTORY",
+      "description": "Restated probability over time (date, prob, n_markets): today's contracts for the rung applied to every past day. A q: id uses its current headline rung.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Question (q:...) or rung (prop:...) id.",
           "type": "string",
           "dimensionality": "scalar"
         },
         {
           "name": "start",
-          "description": "Optional start date. Default 30 days before end.",
+          "description": "Optional start date. Default 30 days before end; must be on or before end.",
           "type": "any",
           "dimensionality": "scalar",
           "optional": true

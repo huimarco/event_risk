@@ -50,14 +50,20 @@ step). It works in Microsoft 365 Excel on Windows, Mac and the web. Office only 
 HTTPS, so point it at the deployed server.
 
 ```
-=EVENTRISK.PROPOSITIONS("taiwan", 20)          table of propositions, biggest 24h movers first
-=EVENTRISK.PROB(A2)  =EVENTRISK.CHANGE(A2)     blended probability / 24h change for the id in A2
-=EVENTRISK.HISTORY(A2, DATE(2026,9,1))         daily series (format column A as a date)
-=EVENTRISK.EXPOSURES("TSM")                    propositions a security is exposed to
+=ER.QUESTIONS("taiwan", 20)          table of questions (first column = id), biggest 24h movers first
+=ER.ENTITY("Iran")                   questions involving an entity, live and most traded first
+=ER.PROB(A2)  =ER.CHANGE(A2)         probability / 24h change for the id in A2 (q:, prop: or mkt:)
+=ER.NAME(A2)  =ER.FIELD(A2, "updated")   wording / one detail (volume_24h, open_interest, headline, rules, ...)
+=ER.RUNGS(A2)                        a question's deadlines / thresholds, with rung ids
+=ER.CONTRACTS(A2)                    the Kalshi / Polymarket contracts behind it, with rules
+=ER.HISTORY(A2, DATE(2026,9,1))      daily series (format column A as a date)
 ```
 
-The **Event Risk** button on the Home tab opens the pane: search propositions and click one to add a
-live watchlist row at the selected cell; set the API key there if the server has `API_KEYS` set.
+Ids: `q:` question (its probability = headline rung, the most-traded live one; it can switch), `prop:`
+one rung, `mkt:` one venue contract. The local copy of the add-in uses `ERDEV.` so both can be installed.
+
+The **Event Risk** button on the Home tab opens the pane: search questions and click one to add a
+live watchlist row at the selected cell (id, name, prob, change, headline rung); set the API key there if the server has `API_KEYS` set.
 Identical requests are cached for 60 s; **Refresh** in the pane forces a full recalculation.
 
 Install by downloading `https://<your-domain>/excel/manifest.xml` (it already points at that server), then:

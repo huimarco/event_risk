@@ -100,13 +100,13 @@
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="{BASE}/"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="Functions.Namespace" DefaultValue="EVENTRISK"/>
+        <bt:String id="Functions.Namespace" DefaultValue="ER"/>
         <bt:String id="GetStarted.Title" DefaultValue="Event Risk is ready"/>
         <bt:String id="Group.Label" DefaultValue="Event Risk"/>
         <bt:String id="TaskpaneButton.Label" DefaultValue="Event Risk"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Open the Event Risk pane from the Home tab, or type =EVENTRISK. in a cell."/>
+        <bt:String id="GetStarted.Description" DefaultValue="Open the Event Risk pane from the Home tab, or type =ER. in a cell."/>
         <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Search questions, refresh, set your API key."/>
       </bt:LongStrings>
     </Resources>

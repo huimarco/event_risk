@@ -135,6 +135,15 @@ class Graph:
         return [(e["src"], (e["attrs"] or {}).get("window"), (e["attrs"] or {}).get("threshold"))
                 for e in self.inc[qid] if e["type"] == "rung_of"]
 
+    def entity(self, key):
+        """An entity id, or an entity name (case-insensitive; the most-discussed one if several
+        share it) -> entity id; None if neither."""
+        n = self.nodes.get(key)
+        if n and n["type"] == "entity": return key
+        k = key.strip().lower()
+        hits = [i for i, n in self.nodes.items() if n["type"] == "entity" and n["name"].lower() == k]
+        return max(hits, key=lambda i: len(self.inc[i]), default=None)
+
     def question_of(self, pid):
         return next((e["dst"] for e in self.out[pid] if e["type"] == "rung_of"), None)
 
@@ -232,8 +241,20 @@ def prop_probs(cur, g, pids, at):
         out[p] = dict(prob=a, prob_24h_ago=b, status="live" if a is not None else "closed",
                       change_24h=round(a - b, 4) if a is not None and b is not None else None,
                       volume_24h=total([now_.get(m) for m in ms], "volume_24h"),
-                      open_interest=total([now_.get(m) for m in ms], "open_interest"))
+                      open_interest=total([now_.get(m) for m in ms], "open_interest"),
+                      updated=max((now_[m]["observed_at"] for m in ms if m in now_), default=None))
     return out
+
+def contract_rows(cur, g, pids, at):
+    """The venue contracts (markets) behind each proposition, in order: how each joined it
+    (same_as = blended, near_equivalent = linked only), its price, liquidity and rules."""
+    mkts = [(p, m, rel, note) for p in pids for m, rel, note in g.markets(p)]
+    mprobs = market_probs(cur, [m for _, m, _, _ in mkts], at, g)
+    return [dict(id=m, rung=g.ref(p), relation=rel, note=note, venue=g.nodes[m]["attrs"]["venue"],
+                 name=g.nodes[m]["name"], close_time=g.nodes[m]["attrs"].get("close_time"),
+                 rules=g.nodes[m]["attrs"].get("rules"), **(mprobs.get(m) or {}),
+                 updated=(mprobs.get(m) or {}).get("observed_at"))
+            for p, m, rel, note in mkts]
 
 def proposition_summary(g, pid, probs):
     n = g.nodes[pid]
@@ -253,7 +274,9 @@ def question_probs(cur, g, qids, at):
         h = pp.get(head, {})
         out[q] = dict(prob=h.get("prob"), prob_24h_ago=h.get("prob_24h_ago"), change_24h=h.get("change_24h"),
                       status="live" if live else "closed", headline=head, n_live=len(live), rung_probs=pp,
-                      volume_24h=sum(pp[p]["volume_24h"] or 0 for p, _ in live) or None)
+                      volume_24h=sum(pp[p]["volume_24h"] or 0 for p, _ in live) or None,
+                      open_interest=sum(pp[p]["open_interest"] or 0 for p, _ in live) or None,
+                      updated=h.get("updated"))
     return out
 
 def question_summary(g, qid, qp):
@@ -262,7 +285,8 @@ def question_summary(g, qid, qp):
     return dict(id=qid, name=n["name"], kind=a.get("kind"), n_rungs=a.get("n_rungs"), n_live=v.get("n_live"),
                 status=v.get("status"), venues=a.get("venues"), close_time=a.get("close_time"),
                 prob=v.get("prob"), prob_24h_ago=v.get("prob_24h_ago"), change_24h=v.get("change_24h"),
-                volume_24h=v.get("volume_24h"), headline=g.ref(v["headline"]) if v.get("headline") else None)
+                volume_24h=v.get("volume_24h"), open_interest=v.get("open_interest"), updated=v.get("updated"),
+                headline=g.ref(v["headline"]) if v.get("headline") else None)
 
 SORTS = {"move": lambda r: -abs(r["change_24h"] or 0), "prob": lambda r: -(r["prob"] or 0),
          "name": lambda r: r["name"]}
@@ -275,7 +299,7 @@ def health(cur=Depends(db)):
 
 @app.get("/questions")
 def list_questions(q: str | None = Query(None, description="Substring of the question name"),
-                   entity: str | None = Query(None, description="Only questions involving this entity id"),
+                   entity: str | None = Query(None, description="Only questions involving this entity (id or name, e.g. Iran)"),
                    sort: str = Query("move", pattern="^(move|prob|name)$"),
                    limit: int = Query(50, le=500), include_closed: bool = IncludeClosed,
                    cur=Depends(db)):
@@ -283,6 +307,8 @@ def list_questions(q: str | None = Query(None, description="Substring of the que
     sort=move ranks by |24h change|."""
     at = datetime.now(timezone.utc)
     g = graph(cur)
+    if entity:
+        entity = g.entity(entity) or g.get(entity, "entity")["id"]  # unknown -> 404
     qids = [i for i, n in g.nodes.items() if n["type"] == "question"
             and (not q or q.lower() in n["name"].lower())
             and (not entity or any(e["dst"] == entity for e in g.out[i] if e["type"] == "involves"))]
@@ -316,15 +342,31 @@ def get_question(question_id: str, cur=Depends(db)):
     return dict(as_of=at, **question_summary(g, question_id, qp), rungs=rungs,
                 entities=entity_links(g, question_id), factors=factors.links(g, question_id))
 
+@app.get("/questions/{question_id}/contracts")
+def question_contracts(question_id: str, include_closed: bool = IncludeClosed, cur=Depends(db)):
+    """Every venue contract behind a question's rungs (latest deadline first, as in
+    /questions/{id}), with price, liquidity and rules. Live rungs only unless include_closed."""
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
+    g.get(question_id, "question")
+    ordered = sorted(g.rungs(question_id), key=lambda r: (r[1] or [None, ""])[1] or "", reverse=True)
+    pids = [p for p, _, _ in ordered]
+    if not include_closed:
+        pp = prop_probs(cur, g, pids, at)
+        pids = [p for p in pids if pp[p]["status"] == "live"]
+    return dict(as_of=at, question=g.ref(question_id), contracts=contract_rows(cur, g, pids, at))
+
 @app.get("/propositions")
 def list_propositions(q: str | None = Query(None, description="Substring of the proposition name"),
-                      entity: str | None = Query(None, description="Only propositions involving this entity id"),
+                      entity: str | None = Query(None, description="Only propositions involving this entity (id or name)"),
                       sort: str = Query("move", pattern="^(move|prob|name)$"),
                       limit: int = Query(50, le=500), include_closed: bool = IncludeClosed,
                       cur=Depends(db)):
     """Propositions with blended probability and 24h change. sort=move ranks by |24h change|."""
     at = datetime.now(timezone.utc)
     g = graph(cur)
+    if entity:
+        entity = g.entity(entity) or g.get(entity, "entity")["id"]  # unknown -> 404
     pids = [i for i, n in g.nodes.items() if n["type"] == "proposition"
             and (not q or q.lower() in n["name"].lower())
             and (not entity or any(e["dst"] == entity for e in g.out[g.question_of(i)] if e["type"] == "involves"))]
@@ -339,8 +381,6 @@ def get_proposition(proposition_id: str, cur=Depends(db)):
     at = datetime.now(timezone.utc)
     g = graph(cur)
     n = g.get(proposition_id, "proposition")
-    mkts = g.markets(proposition_id)
-    mprobs = market_probs(cur, [m for m, _, _ in mkts], at, g)
     logical = [dict(relation=e["type"], direction="out", proposition=g.ref(e["dst"]), note=e["note"],
                     provenance=e["provenance"], **(e["attrs"] or {}))
                for e in g.out[proposition_id] if e["type"] in LOGICAL]
@@ -352,9 +392,7 @@ def get_proposition(proposition_id: str, cur=Depends(db)):
         **proposition_summary(g, proposition_id, prop_probs(cur, g, [proposition_id], at)),
         valid_from=n["valid_from"],
         question=g.ref(g.question_of(proposition_id)) if g.question_of(proposition_id) else None,
-        markets=[dict(id=m, relation=rel, note=note, venue=g.nodes[m]["attrs"]["venue"],
-                      name=g.nodes[m]["name"], rules=g.nodes[m]["attrs"].get("rules"), **(mprobs.get(m) or {}))
-                 for m, rel, note in mkts],
+        markets=[{k: v for k, v in r.items() if k != "rung"} for r in contract_rows(cur, g, [proposition_id], at)],
         entities=entity_links(g, g.question_of(proposition_id)),
         factors=factors.links(g, g.question_of(proposition_id)),
         logical=logical)
@@ -477,17 +515,30 @@ def list_markets(status: list[str] = Query(["unmatched", "unparsed"], descriptio
 
 @app.get("/markets/{market_id}")
 def get_market(market_id: str, cur=Depends(db)):
-    """One market: match status, parsed contract signature, parser issues, the nearest rejected
-    candidates (with the reason each was rejected) and its rules text."""
+    """One market (venue contract): its terms (title, rules, resolution sources, outcomes; latest
+    version), price and liquidity, match status, parsed contract signature, parser issues and the
+    nearest rejected candidates (with the reason each was rejected)."""
     at = datetime.now(timezone.utc)
     g = graph(cur)
     n = g.get(market_id, "market")
     a = n["attrs"]
     cands = [dict(c, name=g.nodes[c["market"]]["name"] if c["market"] in g.nodes else None,
                   venue=c["market"].split(":")[1]) for c in a.get("candidates") or []]
-    return dict(as_of=at, **market_row(g, market_id),
-                prob=(market_probs(cur, [market_id], at, g).get(market_id) or {}).get("prob"),
-                signature=a.get("signature"), candidates=cands, rules=a.get("rules"))
+    terms = cur.execute("""
+        SELECT title, subtitle, event_title, rules_primary, rules_secondary,
+               resolution_sources::VARCHAR, outcomes::VARCHAR
+        FROM market_versions WHERE venue = ? AND market_id = ?
+        ORDER BY version_no DESC LIMIT 1""", [a.get("venue"), a.get("market_id")]).fetchone()
+    t = dict(zip(("title", "subtitle", "event_title", "rules", "rules_secondary", "resolution_sources", "outcomes"),
+                 terms or [None] * 7))
+    for k in ("resolution_sources", "outcomes"):
+        t[k] = json.loads(t[k]) if t[k] else None
+    t["rules"] = t["rules"] or a.get("rules")
+    px = market_probs(cur, [market_id], at, g).get(market_id) or {}
+    return dict(as_of=at, **market_row(g, market_id), **t,
+                prob=px.get("prob"), volume_24h=px.get("volume_24h"), open_interest=px.get("open_interest"),
+                updated=px.get("observed_at"), status="live" if px.get("prob") is not None else "closed",
+                signature=a.get("signature"), candidates=cands)
 
 @app.get("/securities")
 def list_securities(cur=Depends(db)):
@@ -517,10 +568,11 @@ def list_entities(type: str | None = Query(None, description="person | country |
 
 @app.get("/entities/{entity_id}")
 def get_entity(entity_id: str, cur=Depends(db)):
-    """Entity with every question that involves it (live first, then by 24h trading volume), its
-    links, and securities exposed to it."""
+    """Entity (id, or a name such as Iran) with every question that involves it (live first, then
+    by 24h trading volume), its links, and securities exposed to it."""
     at = datetime.now(timezone.utc)
     g = graph(cur)
+    entity_id = g.entity(entity_id) or entity_id
     n = g.get(entity_id, "entity")
     qids = [e["src"] for e in g.inc[entity_id] if e["type"] == "involves"]
     qp = question_probs(cur, g, qids, at)
@@ -613,14 +665,17 @@ ADDIN_ID, LOCAL_ADDIN_ID = "eeb823d5-3150-4ee3-a983-57ef26e13f0b", "5c0e7a3e-8f2
 def excel_template(request: Request, name: str) -> str:
     """An excel/ template with {BASE} = this server's origin (Office requires HTTPS; Railway terminates
     TLS), {ID} = the add-in id and {FILE} = the manifest's file name on the user's machine. Served
-    from localhost it is a separate add-in, "Event Risk (local)", so it can sit beside the deployed one."""
+    from localhost it is a separate add-in, "Event Risk (local)" with functions ERDEV.* instead of ER.*,
+    so it can sit beside the deployed one."""
     scheme = request.headers.get("x-forwarded-proto", request.url.scheme).split(",")[0]
     base = f"{scheme}://{request.headers.get('host', request.url.netloc)}"
     local = request.url.hostname in ("localhost", "127.0.0.1")
     text = (EXCEL / name).read_text().replace("{BASE}", base).replace("{ID}", LOCAL_ADDIN_ID if local else ADDIN_ID) \
                                      .replace("{FILE}", "event-risk-local.xml" if local else "event-risk-manifest.xml")
     return text.replace(ADDIN_ID, LOCAL_ADDIN_ID).replace(
-        '<DisplayName DefaultValue="Event Risk"/>', '<DisplayName DefaultValue="Event Risk (local)"/>') if local else text
+        '<DisplayName DefaultValue="Event Risk"/>', '<DisplayName DefaultValue="Event Risk (local)"/>').replace(
+        'id="Functions.Namespace" DefaultValue="ER"', 'id="Functions.Namespace" DefaultValue="ERDEV"').replace(
+        "type =ER. in a cell", "type =ERDEV. in a cell") if local else text
 
 @app.get("/excel/manifest.xml", include_in_schema=False)
 def excel_manifest(request: Request):

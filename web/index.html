@@ -75,6 +75,7 @@
   .split[data-side="right"] { border-right: 1px solid var(--hairline); }
   #detail h2 { font-size: 16px; margin: 0 0 4px; line-height: 1.35; }
   #detail .kind { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  #detail .kind .copy { text-transform: none; letter-spacing: 0; font-size: 11px; padding: 1px 6px; margin-left: 6px; cursor: pointer; }
   .hero { display: flex; align-items: baseline; gap: 10px; margin: 12px 0; }
   .hero b { font-size: 32px; font-weight: 600; }
   .hero span { color: var(--ink-2); }
@@ -356,21 +357,29 @@
   <h3>Try it</h3>
   <ol>
     <li><strong>Build a watch list.</strong> In the panel, type <em>taiwan</em> in the search box and press Enter. Click an empty cell in your sheet, then click a question in the panel:
-      Excel fills in a row with the question, today's probability and its change over the last 24 hours. Click more questions to add more rows underneath.</li>
-    <li><strong>Use a formula.</strong> Click an empty cell, type <code>=EVENTRISK.QUESTIONS("taiwan", 10)</code> and press Enter.
+      Excel fills in a row with the question's id, its wording, today's probability, its change over the last 24 hours and which deadline the probability is for. Click more questions to add more rows underneath.</li>
+    <li><strong>Use a formula.</strong> Click an empty cell, type <code>=ER.QUESTIONS("taiwan", 10)</code> and press Enter.
       A table of questions fills in below and to the right — leave those cells empty so it has room.</li>
+    <li><strong>Point at the id.</strong> Every table's first column is an id (it starts with <em>q:</em>, <em>prop:</em> or <em>mkt:</em>). You never type ids:
+      point a formula at the cell, e.g. <code>=ER.PROB(A2)</code>. In the Explore tab, <em>Copy id</em> on any question, rung or contract copies its id to paste into Excel.</li>
   </ol>
 
   <h3>Formulas</h3>
-  <p>All the formulas start with <code>=EVENTRISK.</code> — as you type it, Excel lists them and explains each part. The main ones:</p>
+  <p>All the formulas start with <code>=ER.</code> — as you type it, Excel lists them and explains each part.</p>
   <table>
     <tr><th>Formula</th><th>What you get</th></tr>
-    <tr><td><code>=EVENTRISK.QUESTIONS("iran")</code></td><td>A table of questions mentioning Iran, biggest moves today first. The first column is each question's id, used by the formulas below.</td></tr>
-    <tr><td><code>=EVENTRISK.PROB(A2)</code></td><td>The probability (as a decimal: 0.25 = 25%) for the question whose id is in cell A2. <code>CHANGE</code> gives its 24-hour change and <code>NAME</code> its wording.</td></tr>
-    <tr><td><code>=EVENTRISK.RUNGS(A2)</code></td><td>Every deadline of that question with its own probability — for example by June, by December, by next year.</td></tr>
-    <tr><td><code>=EVENTRISK.EXPOSURES("TSM")</code></td><td>The questions a stock is exposed to, how strongly, and whether each would push it up or down.</td></tr>
-    <tr><td><code>=EVENTRISK.HISTORY(A2)</code></td><td>The probability day by day over the last 30 days. Format the first column as a date.</td></tr>
+    <tr><td><code>=ER.QUESTIONS("iran")</code></td><td>A table of questions mentioning Iran, biggest moves today first. The first column is each question's id, used by the formulas below.</td></tr>
+    <tr><td><code>=ER.ENTITY("Iran")</code></td><td>Every question involving a country, person or organisation — including ones that don't name it in the title — busiest first.</td></tr>
+    <tr><td><code>=ER.PROB(A2)</code></td><td>The probability (as a decimal: 0.25 = 25%) for the id in cell A2. <code>=ER.CHANGE(A2)</code> gives its 24-hour change and <code>=ER.NAME(A2)</code> its wording.</td></tr>
+    <tr><td><code>=ER.FIELD(A2, "updated")</code></td><td>One detail: <em>updated</em> (time of the latest price — format the cell as a date), <em>volume_24h</em>, <em>open_interest</em>, <em>status</em>, <em>headline</em>, <em>close_time</em>;
+      for a single contract (an <em>mkt:</em> id) also <em>title</em>, <em>rules</em>, <em>rules_secondary</em>, <em>resolution_sources</em>.</td></tr>
+    <tr><td><code>=ER.RUNGS(A2)</code></td><td>Every deadline of that question with its own probability — for example by June, by December, by next year — and each one's id.</td></tr>
+    <tr><td><code>=ER.CONTRACTS(A2)</code></td><td>The actual Kalshi and Polymarket contracts behind it: venue, wording, price, trading volume and the full rules.</td></tr>
+    <tr><td><code>=ER.HISTORY(A2)</code></td><td>The probability day by day over the last 30 days. Format the first column as a date.</td></tr>
   </table>
+  <p><strong>Which probability does a question give?</strong> A question like "Will China invade Taiwan?" has several deadlines (by 2026, by 2027, …).
+    Its probability is the <em>headline</em> deadline: the one with the most trading in the last 24 hours. The headline can switch as trading moves,
+    so to follow one deadline over time use its id from <code>ER.RUNGS</code>. <code>=ER.FIELD(A2, "headline")</code> shows which deadline you're getting.</p>
   <p>The numbers update whenever Excel recalculates, or when you click <em>Refresh all Event Risk formulas</em> in the panel.</p>
 
   <h3>If something goes wrong</h3>
@@ -435,17 +444,21 @@ for p in top["propositions"]:
 
   <h3>Questions</h3>
   <div class="endpoint"><span>GET</span>/questions</div>
-  <p>List questions with their headline probability (most-traded live rung) and its 24h change. Params: <code>q</code>, <code>entity</code>,
+  <p>List questions with their headline probability (most-traded live rung) and its 24h change, 24h volume and open interest (summed over live rungs) and <code>updated</code> (the headline's latest price time). Params: <code>q</code>, <code>entity</code> (id or name, e.g. <code>Iran</code>),
     <code>sort</code> = <code>move</code> · <code>prob</code> · <code>name</code>, <code>limit</code>, <code>include_closed</code>.</p>
 <pre>{ "count": 1968, "questions": [
     { "id": "q:polymarket:253889", "name": "Will China invade Taiwan?", "kind": "deadlines", "n_rungs": 8, "n_live": 3,
       "status": "live", "prob": 0.095, "change_24h": 0.0, "headline": { "id": "prop:polymarket:…", "name": "…by December 31, 2027?" } } ] }</pre>
   <div class="endpoint"><span>GET</span>/questions/{id}</div>
   <p>One question: every rung (window, threshold, probability, 24h change, status, 24h volume) and the entities it involves, with role and direction.</p>
+  <div class="endpoint"><span>GET</span>/questions/{id}/contracts</div>
+  <p>Every venue contract behind the question's live rungs (latest deadline first): <code>id</code>, <code>rung</code>, <code>venue</code>, <code>name</code>,
+    <code>relation</code> (<code>same_as</code> = blended into the rung's probability, <code>near_equivalent</code> = similar terms, kept separate), <code>prob</code>,
+    <code>volume_24h</code>, <code>open_interest</code>, <code>updated</code>, <code>close_time</code>, <code>rules</code>. Param: <code>include_closed</code>.</p>
 
   <h3>Propositions (rungs)</h3>
   <div class="endpoint"><span>GET</span>/propositions</div>
-  <p>List propositions with probability and 24h change. Params: <code>q</code> (name search), <code>entity</code> (only those involving this entity id),
+  <p>List propositions with probability and 24h change. Params: <code>q</code> (name search), <code>entity</code> (only those involving this entity: id or name),
     <code>sort</code> = <code>move</code> (largest |24h change|, default) · <code>prob</code> · <code>name</code>, <code>limit</code> (≤ 500), <code>include_closed</code>.</p>
 <pre>{ "count": 151, "propositions": [
     { "id": "prop:polymarket:567621", "name": "Will China invade Taiwan by end of 2026?",
@@ -469,7 +482,7 @@ for p in top["propositions"]:
   <p>All entities, optionally <code>type</code> = <code>person</code> · <code>country</code> · <code>organisation_or_place</code> · <code>concept</code>, with how many questions involve each (<code>n_questions</code>).</p>
 
   <div class="endpoint"><span>GET</span>/entities/{id}</div>
-  <p>One entity: Wikidata description and Wikipedia link, questions involving it (live first), linked entities (with relation and strength), and securities exposed to it.</p>
+  <p>One entity — by id (<code>wd:Q794</code>) or name (<code>Iran</code>) — with its Wikidata description and Wikipedia link, questions involving it (live first), linked entities (with relation and strength), and securities exposed to it.</p>
 
   <h3>Securities</h3>
   <div class="endpoint"><span>GET</span>/securities</div>
@@ -491,7 +504,9 @@ for p in top["propositions"]:
   <p>Venue markets by how they fared in cross-venue matching: <code>merged</code> · <code>linked</code> · <code>unmatched</code> · <code>unparsed</code>.
     Params: <code>status</code> (repeatable; default unmatched + unparsed), <code>q</code>, <code>venue</code>, <code>limit</code>, <code>include_closed</code>. <code>counts</code> covers every status.</p>
   <div class="endpoint"><span>GET</span>/markets/{id}</div>
-  <p>One market: status, parsed contract signature, parser issues, nearest rejected candidates with the reason for each, rules text and its proposition.</p>
+  <p>One venue contract: its terms (latest version: <code>title</code>, <code>subtitle</code>, <code>event_title</code>, <code>rules</code>, <code>rules_secondary</code>, <code>resolution_sources</code>, <code>outcomes</code>),
+    <code>prob</code>, <code>volume_24h</code>, <code>open_interest</code>, <code>updated</code>, <code>status</code>, its match status, parsed contract signature, parser issues,
+    nearest rejected candidates with the reason for each, and its proposition.</p>
 
   <h3>Other</h3>
   <div class="endpoint"><span>GET</span>/health</div>
@@ -701,8 +716,24 @@ async function drawDetail(id) {
 async function select(id) {
   state.selected = id;
   renderList();
-  try { await Promise.all([drawGraph(id), drawDetail(id)]); }
+  try { await Promise.all([drawGraph(id), drawDetail(id)]); addCopyId(id); }
   catch (err) { $("#detail").innerHTML = `<p class="note">${esc(err.message)}</p>`; }
+}
+
+// "Copy id" next to the kind label, for pasting into Excel (=ER.PROB(cell) etc.). Entities copy
+// their name, which is what =ER.ENTITY takes.
+function addCopyId(id) {
+  const t = typeOf(id), kind = $("#detail").querySelector(".kind");
+  if (!kind || !["question", "proposition", "market", "entity"].includes(t)) return;
+  const text = t === "entity" ? $("#detail").querySelector("h2").textContent : id;
+  const b = document.createElement("button");
+  b.className = "copy"; b.textContent = t === "entity" ? "Copy name" : "Copy id"; b.title = text;
+  b.onclick = async () => {
+    try { await navigator.clipboard.writeText(text); b.textContent = "Copied"; }
+    catch (e) { prompt("Copy this:", text); }
+    setTimeout(() => b.textContent = t === "entity" ? "Copy name" : "Copy id", 1500);
+  };
+  kind.append(" ", b);
 }
 
 // ── resizable panels ─────────────────────────────────────────────────────────

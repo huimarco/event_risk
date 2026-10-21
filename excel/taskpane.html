@@ -30,7 +30,7 @@
 <body>
 <h2>Search questions</h2>
 <div class="row"><input id="q" placeholder="e.g. taiwan, iran, tariffs"><button id="search">Search</button></div>
-<div class="muted">Click a result to add a live row at the selected cell: id, name, probability, 24h change.</div>
+<div class="muted">Click a result to add a live row at the selected cell: id, name, probability, 24h change, and the rung the probability comes from.</div>
 <ul id="results"></ul>
 
 <h2>Refresh</h2>
@@ -43,20 +43,24 @@
 
 <h2>Functions</h2>
 <dl>
-  <dt><code>=EVENTRISK.PROB(id)</code></dt><dd>Probability, 0–1. A question id gives its headline (most-traded live) rung.</dd>
-  <dt><code>=EVENTRISK.CHANGE(id)</code></dt><dd>24h change in probability.</dd>
-  <dt><code>=EVENTRISK.NAME(id)</code></dt><dd>The question asked.</dd>
-  <dt><code>=EVENTRISK.QUESTIONS([query], [limit], [sort], [entity])</code></dt><dd>Table of questions, biggest movers first.</dd>
-  <dt><code>=EVENTRISK.RUNGS(question_id)</code></dt><dd>A question's ladder: every deadline / threshold.</dd>
-  <dt><code>=EVENTRISK.PROPOSITIONS([query], [limit], [sort], [entity])</code></dt><dd>Table of single rungs, biggest movers first.</dd>
-  <dt><code>=EVENTRISK.EXPOSURES(ticker, [limit], [min_score], [sort])</code></dt><dd>Questions a security is exposed to, with signed impact.</dd>
-  <dt><code>=EVENTRISK.HISTORY(id, [start], [end], [interval])</code></dt><dd>Probability over time (daily by default).</dd>
+  <dt><code>=ER.QUESTIONS([query], [limit], [sort], [entity])</code></dt><dd>Search questions; the first column is the id the other functions take.</dd>
+  <dt><code>=ER.ENTITY(name, [limit])</code></dt><dd>Questions involving a country, person or organisation, e.g. "Iran".</dd>
+  <dt><code>=ER.PROB(id)</code></dt><dd>Probability, 0–1.</dd>
+  <dt><code>=ER.CHANGE(id)</code></dt><dd>24h change in probability.</dd>
+  <dt><code>=ER.NAME(id)</code></dt><dd>The question asked.</dd>
+  <dt><code>=ER.FIELD(id, field)</code></dt><dd>One detail: volume_24h, open_interest, updated, status, headline, close_time; for a contract (mkt:) also title, rules, resolution_sources.</dd>
+  <dt><code>=ER.RUNGS(question_id)</code></dt><dd>A question's ladder: every deadline / threshold, with rung ids.</dd>
+  <dt><code>=ER.CONTRACTS(id)</code></dt><dd>The Kalshi / Polymarket contracts behind it, with their rules.</dd>
+  <dt><code>=ER.HISTORY(id, [start], [end], [interval])</code></dt><dd>Probability over time (daily by default).</dd>
 </dl>
-<p class="muted">A question's headline rung can change as trading moves; use a rung id from RUNGS to pin one deadline.
-Exposure scores rank relevance; they are not betas.</p>
+<p class="muted">Ids: q:… question, prop:… one rung (one deadline or threshold), mkt:… one venue contract.
+A question's probability is its <b>headline rung</b>: the live rung with the most trading in the last 24h. It can switch
+as trading moves; use a rung id from RUNGS to track one deadline over time.</p>
 
 <script>
 const $ = id => document.getElementById(id);
+// The local copy of the add-in registers its functions as ERDEV.* so it can sit beside the deployed ER.*.
+const NS = ["localhost", "127.0.0.1"].includes(location.hostname) ? "ERDEV" : "ER";
 const pct = v => v === null || v === undefined ? "–" : (100 * v).toFixed(1) + "%";
 const pts = v => v === null || v === undefined ? "" : (v >= 0 ? "+" : "") + (100 * v).toFixed(1) + " pts";
 
@@ -85,12 +89,14 @@ Headline: ${p.headline ? p.headline.name : "–"}`;
   }
 }
 
-// Writes [id, NAME, PROB, CHANGE] at the active cell, then moves down a row so clicks build a watchlist.
+// Writes [id, NAME, PROB, CHANGE, headline rung] at the active cell, then moves down a row so clicks
+// build a watchlist. The last column shows which rung PROB is reporting, so a headline switch is visible.
 async function insertRow(id) {
   await Excel.run(async ctx => {
     const cell = ctx.workbook.getActiveCell();
-    const row = cell.getResizedRange(0, 3);
-    row.formulasR1C1 = [[id, "=EVENTRISK.NAME(RC[-1])", "=EVENTRISK.PROB(RC[-2])", "=EVENTRISK.CHANGE(RC[-3])"]];
+    const row = cell.getResizedRange(0, 4);
+    row.formulasR1C1 = [[id, `=${NS}.NAME(RC[-1])`, `=${NS}.PROB(RC[-2])`, `=${NS}.CHANGE(RC[-3])`,
+                         `=${NS}.FIELD(RC[-4],"headline")`]];
     row.getCell(0, 2).numberFormat = [["0.0%"]];
     row.getCell(0, 3).numberFormat = [["+0.0%;-0.0%;0.0%"]];
     cell.getOffsetRange(1, 0).select();
