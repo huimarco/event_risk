@@ -28,7 +28,6 @@ GET  /propositions?entity=country:TW&sort=move          # what moved, filtered b
 GET  /propositions/{id}                                 # markets, entities, logical links
 GET  /propositions/{id}/history?interval=1d&start=...   # blended probability series
 GET  /securities/TSM/exposures?sort=risk                # propositions a security is exposed to, signed
-POST /portfolio/scan  {"holdings":[{"ticker":"TSM","weight":0.1}]}
 GET  /factors/brent                                     # questions relevant to a factor, and why
 GET  /markets?status=unparsed                           # match review: unmatched / unparsed / linked / merged
 GET  /markets/{id}                                      # signature, parser issues, rejected candidates
@@ -57,12 +56,10 @@ HTTPS, so point it at the deployed server.
 =EVENTRISK.PROB(A2, "2026-09-01", "2026-09-01")  point-in-time (as_of, known_as_of)
 =EVENTRISK.HISTORY(A2, DATE(2026,9,1))         daily series (format column A as a date)
 =EVENTRISK.EXPOSURES("TSM")                    propositions a security is exposed to
-=EVENTRISK.SCAN(Holdings!A2:B40)               live portfolio scan over ticker/weight columns
 ```
 
 The **Event Risk** button on the Home tab opens the pane: search propositions and click one to add a
-live watchlist row at the selected cell; select ticker/weight columns and click **Scan selection**
-to get a live `SCAN` on a new sheet; set the API key there if the server has `API_KEYS` set.
+live watchlist row at the selected cell; set the API key there if the server has `API_KEYS` set.
 Identical requests are cached for 60 s; **Refresh** in the pane forces a full recalculation.
 
 Install by downloading `https://<your-domain>/excel/manifest.xml` (it already points at that server), then:

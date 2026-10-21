@@ -33,11 +33,6 @@
 <div class="muted">Click a result to add a live row at the selected cell: id, name, probability, 24h change.</div>
 <ul id="results"></ul>
 
-<h2>Portfolio scan</h2>
-<div class="muted">Select two columns, ticker and weight (header row optional), then:</div>
-<div class="row"><button id="scan">Scan selection</button></div>
-<div id="scanMsg" class="muted"></div>
-
 <h2>Refresh</h2>
 <div class="row"><button id="refresh" class="secondary">Refresh all Event Risk formulas</button></div>
 <div id="health" class="muted"></div>
@@ -56,7 +51,6 @@
   <dt><code>=EVENTRISK.PROPOSITIONS([query], [limit], [sort], [entity])</code></dt><dd>Table of single rungs, biggest movers first.</dd>
   <dt><code>=EVENTRISK.EXPOSURES(ticker, [limit], [min_score], [as_of], [sort])</code></dt><dd>Questions a security is exposed to, with signed impact.</dd>
   <dt><code>=EVENTRISK.HISTORY(id, [start], [end], [interval])</code></dt><dd>Probability over time (daily by default).</dd>
-  <dt><code>=EVENTRISK.SCAN(holdings, [limit], [move_threshold])</code></dt><dd>Live portfolio scan over a ticker/weight range.</dd>
 </dl>
 <p class="muted">A question's headline rung can change as trading moves; use a rung id from RUNGS to pin one deadline.
 Set <code>known_as_of</code> = <code>as_of</code> for a point-in-time, backtest-safe value.
@@ -105,39 +99,6 @@ async function insertRow(id) {
   });
 }
 
-// Puts a live =EVENTRISK.SCAN over the selected range on a new sheet.
-async function scan() {
-  try {
-    await Excel.run(async ctx => {
-      const sel = ctx.workbook.getSelectedRange();
-      sel.load("address, values");
-      await ctx.sync();
-      const n = EventRisk.parseHoldings(sel.values).length;
-      if (!n) throw new Error("Select two columns: ticker, numeric weight.");
-      const [sheetName, cells] = sel.address.split("!");
-      const sheet = sheetName.startsWith("'") ? sheetName : `'${sheetName}'`;  // Excel quotes names that need it
-      const ref = `${sheet}!${cells.replace(/([A-Z]+)(\d+)/g, "$$$1$$$2")}`;    // absolute: A2 -> $A$2
-      const sheets = ctx.workbook.worksheets;
-      sheets.load("items/name");
-      await ctx.sync();
-      let name = "Event risk scan", i = 2;
-      while (sheets.items.some(s => s.name === name)) name = `Event risk scan ${i++}`;
-      const ws = sheets.add(name);
-      ws.getRange("A1").formulas = [[`=EVENTRISK.SCAN(${ref})`]];
-      ws.getRange("C:C").numberFormat = [["0.0%"]];
-      ws.getRange("D:D").numberFormat = [["+0.0%;-0.0%;0.0%"]];
-      ws.getRange("E:F").numberFormat = [["0.000"]];
-      ws.getRange("H:H").numberFormat = [["0.000"]];
-      ws.getRange("A:A").format.columnWidth = 140;
-      ws.getRange("B:B").format.columnWidth = 360;
-      ws.getRange("A1:J1").format.font.bold = true;
-      ws.activate();
-      await ctx.sync();
-      show($("scanMsg"), `Scanning ${n} holdings on sheet “${name}”. It stays live: edit the holdings and it re-runs.`);
-    });
-  } catch (e) { show($("scanMsg"), e.message, true); }
-}
-
 async function refresh() {
   EventRisk.clearCache();
   await Excel.run(async ctx => { ctx.workbook.application.calculate(Excel.CalculationType.full); await ctx.sync(); });
@@ -163,7 +124,6 @@ Office.onReady(() => {
   $("key").value = localStorage.getItem("apiKey") || "";
   $("search").onclick = search;
   $("q").onkeydown = e => { if (e.key === "Enter") search(); };
-  $("scan").onclick = scan;
   $("refresh").onclick = refresh;
   $("saveKey").onclick = saveKey;
   health();

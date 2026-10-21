@@ -204,7 +204,7 @@
   <h3>How it is used</h3>
   <table>
     <tr><th>Who</th><th>Question</th><th>Where</th></tr>
-    <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Questions tab (sorted by 24h move) · portfolio scan</td></tr>
+    <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Questions tab (sorted by 24h move) · Securities tab</td></tr>
     <tr><td>Portfolio manager</td><td>"Which events matter for TSMC, and would they push it up or down?"</td><td>Securities tab</td></tr>
     <tr><td>Analyst</td><td>"Everything that involves Iran, and how the odds connect"</td><td>Entities tab · the network view</td></tr>
     <tr><td>Quant</td><td>"Probability history, exactly as it was known each day"</td><td>The API, with "as of" time travel</td></tr>
@@ -298,8 +298,7 @@
     path sign = direction for the entity × how the security responds on that channel<br>
     <b>impact</b> = Σ sign × strength over all paths · <b>relevance</b> = 1 − Π(1 − strength) · <b>risk</b> = |impact| × √(p (1 − p))<br>
     pass-through = 1 for the entity itself, 0.5 × relatedness for a linked entity (one hop)</div>
-  <p>Risk is highest for questions near 50% — a 99% event has little left to move. A portfolio's impact nets its holdings, so a position that loses in a conflict
-    and one that gains offset each other.</p>
+  <p>Risk is highest for questions near 50% — a 99% event has little left to move.</p>
 
   <h3>How to read the impact numbers</h3>
   <p>Impact is an <strong>estimate from the graph's logic</strong> — which entities a question involves, and how each security depends on them — in relative units,
@@ -338,7 +337,7 @@
 </article></section>
 <section id="api"><article class="doc">
   <h2 id="excel">Use it in Excel</h2>
-  <p class="lede">The Excel add-in brings these probabilities, exposures and portfolio scans into your own spreadsheets, and keeps them up to date.
+  <p class="lede">The Excel add-in brings these probabilities and exposures into your own spreadsheets, and keeps them up to date.
     Setting it up takes about five minutes. You don't need admin rights or any technical knowledge.</p>
   <p><strong>Before you start:</strong> you need the Microsoft 365 version of Excel. To check, open Excel and click <em>File</em> → <em>Account</em>:
     under "Product Information" it should say <em>Microsoft 365</em>. The steps below are for Windows; for a Mac or Excel in a web browser, see further down.</p>
@@ -365,8 +364,6 @@
       Excel fills in a row with the question, today's probability and its change over the last 24 hours. Click more questions to add more rows underneath.</li>
     <li><strong>Use a formula.</strong> Click an empty cell, type <code>=EVENTRISK.QUESTIONS("taiwan", 10)</code> and press Enter.
       A table of questions fills in below and to the right — leave those cells empty so it has room.</li>
-    <li><strong>Scan a portfolio.</strong> Type tickers in one column and portfolio weights next to them (for example <em>TSM</em> and <em>0.05</em> for 5%).
-      Select both columns, then click <em>Scan selection</em> in the panel. A new sheet lists the questions your holdings are most exposed to, and whether each would push them up or down.</li>
   </ol>
 
   <h3>Formulas</h3>
@@ -377,7 +374,6 @@
     <tr><td><code>=EVENTRISK.PROB(A2)</code></td><td>The probability (as a decimal: 0.25 = 25%) for the question whose id is in cell A2. <code>CHANGE</code> gives its 24-hour change and <code>NAME</code> its wording.</td></tr>
     <tr><td><code>=EVENTRISK.RUNGS(A2)</code></td><td>Every deadline of that question with its own probability — for example by June, by December, by next year.</td></tr>
     <tr><td><code>=EVENTRISK.EXPOSURES("TSM")</code></td><td>The questions a stock is exposed to, how strongly, and whether each would push it up or down.</td></tr>
-    <tr><td><code>=EVENTRISK.SCAN(A2:B20)</code></td><td>The portfolio scan from above, as a formula over your ticker and weight columns.</td></tr>
     <tr><td><code>=EVENTRISK.HISTORY(A2)</code></td><td>The probability day by day over the last 30 days. Format the first column as a date.</td></tr>
   </table>
   <p>The numbers update whenever Excel recalculates, or when you click <em>Refresh all Event Risk formulas</em> in the panel.</p>
@@ -481,7 +477,7 @@ for p in top["propositions"]:
   <div class="endpoint"><span>GET</span>/entities/{id}</div>
   <p>One entity: Wikidata description and Wikipedia link, questions involving it (live first), linked entities (with relation and strength), and securities exposed to it.</p>
 
-  <h3>Securities and portfolios</h3>
+  <h3>Securities</h3>
   <div class="endpoint"><span>GET</span>/securities</div>
   <p>All securities (ticker, name, asset class, country, sector, index) and how many exposure links each has.</p>
 
@@ -495,18 +491,6 @@ for p in top["propositions"]:
                    "prob": 0.095, "score": 0.95, "impact": -1.46, "direction": "down", "risk": 0.43, "n_paths": 4,
                    "path": [ {"id": "prop:polymarket:567621"}, {"id": "wd:Q865", "name": "Taiwan"}, {"id": "sec:TSM"} ],
                    "paths": [ { "strength": 0.9, "sign": -1.0, "channel": "conflict", "role": "target", "nodes": [ … ] } ] } ] }</pre>
-
-  <div class="endpoint"><span>POST</span>/portfolio/scan</div>
-  <p>Send holdings, get back the geopolitical questions the portfolio is most exposed to: exposure = Σ weight × relevance score;
-    <code>impact</code> = Σ weight × signed impact (holdings on opposite sides offset), with <code>direction</code> and <code>risk</code>.
-    <code>moved</code> flags questions whose headline probability moved at least <code>move_threshold</code> in 24h.</p>
-<pre>curl -X POST "BASE/portfolio/scan" -H "Content-Type: application/json" -H "X-API-Key: $KEY" \
-  -d '{"holdings": [{"ticker": "TSM", "weight": 0.10}, {"ticker": "NVDA", "weight": 0.08}],
-       "move_threshold": 0.05, "limit": 10}'</pre>
-<pre>{ "unknown_tickers": [], "count": 150, "questions": [
-    { "id": "prop:polymarket:567621", "name": "Will China invade Taiwan by end of 2026?", "prob": 0.0215,
-      "change_24h": 0.001, "exposure": 0.177, "moved": false,
-      "holdings": [ { "ticker": "TSM", "weight": 0.1, "score": 0.9, "via": ["Taiwan"] } ] } ] }</pre>
 
   <h3>Markets (match review)</h3>
   <div class="endpoint"><span>GET</span>/markets</div>

@@ -107,7 +107,7 @@
       </bt:ShortStrings>
       <bt:LongStrings>
         <bt:String id="GetStarted.Description" DefaultValue="Open the Event Risk pane from the Home tab, or type =EVENTRISK. in a cell."/>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Search propositions, scan a portfolio, set your API key."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Search questions, refresh, set your API key."/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>

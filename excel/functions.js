@@ -35,19 +35,18 @@ function thresholdText(t) {
   return Array.isArray(t[1]) ? `${t[1][0]}-${t[1][1]}` : `${t[0]}${t[1]}`;
 }
 
-async function request(path, params, body) {
+async function request(path, params) {
   const q = new URLSearchParams();
   for (const [k, v] of Object.entries(params || {})) if (v !== undefined && v !== null && v !== "") q.set(k, v);
   const url = `${path}${q.toString() ? "?" + q : ""}`;
-  const key = body ? null : url;
-  const hit = key && cache.get(key);
+  const hit = cache.get(url);
   if (hit && Date.now() - hit.t < CACHE_MS) return hit.promise;
   const promise = (async () => {
-    const headers = { "Content-Type": "application/json" };
+    const headers = {};
     if (apiKey()) headers["X-API-Key"] = apiKey();
     let r;
     try {
-      r = await fetch(url, body ? { method: "POST", headers, body: JSON.stringify(body) } : { headers });
+      r = await fetch(url, { headers });
     } catch (e) {
       throw fail("cannot reach the Event Risk API");
     }
@@ -60,14 +59,12 @@ async function request(path, params, body) {
     }
     return r.json();
   })();
-  if (key) {
-    cache.set(key, { t: Date.now(), promise });
-    promise.catch(() => cache.delete(key));  // don't cache failures
-  }
+  cache.set(url, { t: Date.now(), promise });
+  promise.catch(() => cache.delete(url));  // don't cache failures
   return promise;
 }
 
-// Accepts a proposition id or a question id ("q:..."; what EXPOSURES and SCAN return). A question's
+// Accepts a proposition id or a question id ("q:..."; what EXPOSURES returns). A question's
 // prob / change_24h / name are its headline rung's, as in the API.
 function proposition(id, asOf, knownAsOf) {
   if (!id) throw fail("id is required", CustomFunctions.ErrorCode.invalidValue);
@@ -135,26 +132,6 @@ async function history(id, start, end, interval) {
   return [["date", "prob", "n_markets"], ...r.points.map(p => [excelDate(p.t), blank(p.prob), p.n_markets])];
 }
 
-// Rows of [ticker, weight]; rows whose weight isn't a number (headers, blanks) are skipped.
-function parseHoldings(range) {
-  return range.filter(row => row.length >= 2 && row[0] !== "" && typeof row[1] === "number")
-              .map(row => ({ ticker: normTicker(row[0]), weight: row[1] }));
-}
-
-async function scan(holdings, limit, moveThreshold) {
-  const h = parseHoldings(holdings);
-  if (!h.length) throw fail("holdings must be two columns: ticker, numeric weight", CustomFunctions.ErrorCode.invalidValue);
-  const r = await request("/portfolio/scan", {}, { holdings: h, limit: limit || 25,
-                                                   move_threshold: moveThreshold ?? 0.05 });
-  const rows = [["id", "name", "prob", "change_24h", "exposure", "impact", "direction", "risk", "moved", "top_holdings"],
-                ...r.questions.map(p => [p.id, p.name, blank(p.prob), blank(p.change_24h), p.exposure, blank(p.impact),
-                                         blank(p.direction), blank(p.risk), p.moved,
-                                         p.holdings.map(c => c.ticker).join(", ")])];
-  if (r.unknown_tickers.length)
-    rows.push(["unknown tickers", r.unknown_tickers.join(", "), "", "", "", "", "", "", "", ""]);
-  return rows;
-}
-
 CustomFunctions.associate("PROB", prob);
 CustomFunctions.associate("CHANGE", change);
 CustomFunctions.associate("NAME", name);
@@ -163,7 +140,6 @@ CustomFunctions.associate("QUESTIONS", questions);
 CustomFunctions.associate("RUNGS", rungs);
 CustomFunctions.associate("EXPOSURES", exposures);
 CustomFunctions.associate("HISTORY", history);
-CustomFunctions.associate("SCAN", scan);
 
 // Shared with the task pane.
-window.EventRisk = { request, parseHoldings, clearCache: () => cache.clear() };
+window.EventRisk = { request, clearCache: () => cache.clear() };

@@ -11,7 +11,7 @@
       "parameters": [
         {
           "name": "id",
-          "description": "Proposition id (search in the Event Risk pane) or question id (q:..., from EXPOSURES or SCAN).",
+          "description": "Proposition id (search in the Event Risk pane) or question id (q:..., from EXPOSURES).",
           "type": "string",
           "dimensionality": "scalar"
         },
@@ -266,37 +266,6 @@
           "name": "interval",
           "description": "Optional: \"1d\" (default) or \"1h\".",
           "type": "string",
-          "dimensionality": "scalar",
-          "optional": true
-        }
-      ]
-    },
-    {
-      "id": "SCAN",
-      "name": "SCAN",
-      "description": "Portfolio scan: spills the questions your holdings are most exposed to (id, name, prob, 24h change, exposure, impact, direction, risk, moved, top holdings).",
-      "result": {
-        "type": "any",
-        "dimensionality": "matrix"
-      },
-      "parameters": [
-        {
-          "name": "holdings",
-          "description": "Two columns: ticker, weight (e.g. 0.05 for 5%). A header row is ignored.",
-          "type": "any",
-          "dimensionality": "matrix"
-        },
-        {
-          "name": "limit",
-          "description": "Optional max rows. Default 25.",
-          "type": "number",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "move_threshold",
-          "description": "Optional |24h change| that flags a question as moved. Default 0.05.",
-          "type": "number",
           "dimensionality": "scalar",
           "optional": true
         }

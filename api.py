@@ -47,7 +47,6 @@ import duckdb
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
 
 import factors
 from collector import DB
@@ -620,52 +619,6 @@ def security_exposures(ticker: str, min_score: float = Query(0.1, ge=0, le=1),
             for p, v in hits.items() if include_closed or qp[p]["status"] == "live"]
     rows.sort(key=lambda r: (EXPOSURE_SORTS[sort](r), -abs(r["change_24h"] or 0)))
     return dict(as_of=at, known_as_of=known, security=g.ref(sid), count=len(rows), exposures=rows[:limit])
-
-class Holding(BaseModel):
-    ticker: str
-    weight: float = Field(description="Portfolio weight, e.g. 0.05 for 5%")
-
-class ScanRequest(BaseModel):
-    holdings: list[Holding]
-    as_of: datetime | None = None
-    known_as_of: datetime | None = None
-    min_score: float = 0.1
-    move_threshold: float = Field(0.05, description="Flag questions whose headline |24h change| >= this")
-    limit: int = 25
-    include_closed: bool = False
-
-@app.post("/portfolio/scan")
-def portfolio_scan(req: ScanRequest, cur=Depends(db)):
-    """Rank questions by portfolio exposure = sum over holdings of weight x exposure score.
-    `impact` = sum of weight x signed impact (> 0: the portfolio is expected to gain if the event
-    happens; holdings on opposite sides offset), `risk` = |impact| x sqrt(p(1-p)).
-    `moved` flags questions whose headline probability moved >= move_threshold in 24h."""
-    at, known = times(req.as_of, req.known_as_of)
-    g = graph(cur, req.as_of, req.known_as_of)
-    agg, net, contrib, unknown = defaultdict(float), {}, defaultdict(list), []
-    for h in req.holdings:
-        sid = f"sec:{h.ticker}"
-        if sid not in g.nodes:
-            unknown.append(h.ticker); continue
-        for p, v in g.exposures_of(sid).items():
-            if v["score"] >= req.min_score:
-                agg[p] += h.weight * v["score"]
-                if v["impact"] is not None:
-                    net[p] = net.get(p, 0.0) + h.weight * v["impact"]
-                contrib[p].append(dict(ticker=h.ticker, weight=h.weight, score=v["score"], impact=v["impact"],
-                                       via=[g.nodes[x]["name"] for x in v["paths"][0]["nodes"][1:-1]]))
-    qp = question_probs(cur, g, list(agg), at)
-    live = [p for p in agg if req.include_closed or qp[p]["status"] == "live"]
-    top = sorted(live, key=lambda p: -agg[p])[:req.limit]
-    rows = []
-    for p in top:
-        r = question_summary(g, p, qp)
-        impact = round(net[p], 4) if p in net else None
-        rows.append(dict(r, exposure=round(agg[p], 4), impact=impact, direction=direction(impact),
-                         risk=risk(impact, r["prob"]),
-                         moved=r["change_24h"] is not None and abs(r["change_24h"]) >= req.move_threshold,
-                         holdings=sorted(contrib[p], key=lambda c: -c["weight"] * c["score"])[:5]))
-    return dict(as_of=at, known_as_of=known, unknown_tickers=unknown, count=len(live), questions=rows)
 
 @app.get("/", include_in_schema=False)
 def web():
