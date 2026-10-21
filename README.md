@@ -36,13 +36,12 @@ GET  /markets/{id}                                      # signature, parser issu
 The same server hosts an interactive explorer at `/` (`web/index.html`): browse propositions
 (sorted by 24h move), entities, securities and markets (the **Markets** tab lists markets that
 weren't matched, with their parsed signature and why each near miss was rejected); click anything to see its neighbourhood as a
-network and its details (prices, markets and rules, Wikipedia description, exposures); set
-"As of" to view the graph and prices at any past moment.
+network and its details (prices, markets and rules, Wikipedia description, exposures).
 
 The explorer's **API** tab documents every endpoint with examples; `/docs` is the interactive reference.
 
-Every read accepts `as_of` (state of the world at T) and `known_as_of` (what the graph knew at T);
-set both to T for a point-in-time, backtest-safe view. Set `API_KEYS` to require `X-API-Key`.
+Every read serves the current graph and latest prices (point-in-time `as_of` reads are planned,
+not exposed yet). Set `API_KEYS` to require `X-API-Key`.
 
 ## Excel add-in
 
@@ -53,7 +52,6 @@ HTTPS, so point it at the deployed server.
 ```
 =EVENTRISK.PROPOSITIONS("taiwan", 20)          table of propositions, biggest 24h movers first
 =EVENTRISK.PROB(A2)  =EVENTRISK.CHANGE(A2)     blended probability / 24h change for the id in A2
-=EVENTRISK.PROB(A2, "2026-09-01", "2026-09-01")  point-in-time (as_of, known_as_of)
 =EVENTRISK.HISTORY(A2, DATE(2026,9,1))         daily series (format column A as a date)
 =EVENTRISK.EXPOSURES("TSM")                    propositions a security is exposed to
 ```

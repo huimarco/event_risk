@@ -54,7 +54,7 @@ async function request(path, params) {
     if (!r.ok) {
       let detail = r.statusText;
       try { const d = (await r.json()).detail; detail = typeof d === "string" ? d : JSON.stringify(d); } catch (e) {}
-      if (r.status === 404) throw fail(detail);  // e.g. not in the graph at this as_of / known_as_of
+      if (r.status === 404) throw fail(detail);  // e.g. unknown id
       throw fail(`API error ${r.status}: ${detail}`, CustomFunctions.ErrorCode.invalidValue);
     }
     return r.json();
@@ -66,20 +66,20 @@ async function request(path, params) {
 
 // Accepts a proposition id or a question id ("q:..."; what EXPOSURES returns). A question's
 // prob / change_24h / name are its headline rung's, as in the API.
-function proposition(id, asOf, knownAsOf) {
+function proposition(id) {
   if (!id) throw fail("id is required", CustomFunctions.ErrorCode.invalidValue);
   const kind = String(id).startsWith("q:") ? "questions" : "propositions";
-  return request(`/${kind}/${encodeURIComponent(id)}`, { as_of: isoTime(asOf), known_as_of: isoTime(knownAsOf) });
+  return request(`/${kind}/${encodeURIComponent(id)}`, {});
 }
 
-async function prob(id, asOf, knownAsOf) {
-  const p = await proposition(id, asOf, knownAsOf);
-  if (p.prob === null || p.prob === undefined) throw fail("no price in the 7 days before as_of");
+async function prob(id) {
+  const p = await proposition(id);
+  if (p.prob === null || p.prob === undefined) throw fail("no price in the last 7 days");
   return p.prob;
 }
 
-async function change(id, asOf, knownAsOf) {
-  const p = await proposition(id, asOf, knownAsOf);
+async function change(id) {
+  const p = await proposition(id);
   if (p.change_24h === null || p.change_24h === undefined) throw fail("no price 24h earlier");
   return p.change_24h;
 }
@@ -102,19 +102,19 @@ async function questions(query, limit, sort, entity) {
 }
 
 // A question's ladder: one row per rung (proposition), latest deadline first, as in the API.
-async function rungs(id, asOf, knownAsOf) {
+async function rungs(id) {
   if (!String(id || "").startsWith("q:")) throw fail("question id (q:...) is required", CustomFunctions.ErrorCode.invalidValue);
-  const q = await proposition(id, asOf, knownAsOf);
+  const q = await proposition(id);
   const head = q.headline && q.headline.id;
   return [["id", "name", "deadline", "threshold", "prob", "change_24h", "status", "headline"],
           ...q.rungs.map(p => [p.id, p.name, p.window ? dateCell(p.window[1]) : "", thresholdText(p.threshold),
                                blank(p.prob), blank(p.change_24h), p.status, p.id === head])];
 }
 
-async function exposures(ticker, limit, minScore, asOf, sort) {
+async function exposures(ticker, limit, minScore, sort) {
   if (!ticker) throw fail("ticker is required", CustomFunctions.ErrorCode.invalidValue);
   const r = await request(`/securities/${encodeURIComponent(normTicker(ticker))}/exposures`,
-                          { limit: limit || 20, min_score: minScore ?? undefined, as_of: isoTime(asOf), sort });
+                          { limit: limit || 20, min_score: minScore ?? undefined, sort });
   return [["id", "name", "prob", "change_24h", "score", "impact", "direction", "risk", "path"],
           ...r.exposures.map(e => [e.id, e.name, blank(e.prob), blank(e.change_24h), e.score, blank(e.impact),
                                    blank(e.direction), blank(e.risk), e.path.slice(1).map(n => n.name).join(" → ")])];

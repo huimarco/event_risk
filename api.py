@@ -6,20 +6,19 @@ Knowledge-graph API for geopolitical event risk.
 
 Auth: set API_KEYS="key1,key2" to require an `X-API-Key` header; unset = open (local dev).
 
-Time travel: every read endpoint takes
-  as_of        valid time: the state of the world at this moment (default now)
-  known_as_of  transaction time: only what the graph had recorded by then (default now).
-               Use both = T for a backtest-safe, point-in-time view.
+Every read serves the current graph (refreshed every GRAPH_TTL seconds) and the latest prices;
+`as_of` in a response is when it was computed. The stored graph is bitemporal, but point-in-time
+reads (as_of / known_as_of) are not exposed yet.
 
 Market -> proposition -> question. A proposition is one bet (one deadline / threshold), possibly
-listed on several venues; its probability = blend of its markets' latest cleaned prices at or
-before as_of (within 7 days), weighted by open interest when every market reports it, else
+listed on several venues; its probability = blend of its markets' latest cleaned prices (within
+the last 7 days), weighted by open interest when every market reports it, else
 equally. Markets join a proposition only when their contract signatures match (matching.py);
 propositions with materially different terms are linked as `near_equivalent` and never blended.
 A question groups the propositions that differ only in deadline ("China invades Taiwan by Jun
 2026 / Dec 2026 / Dec 2027") or, for one measurement period, in threshold: its rungs. Its
 headline probability is its most-traded live rung (24h volume, then open interest). A
-proposition or question is `live` when it has a price in the 7 days before as_of, else `closed`.
+proposition or question is `live` when it has a price in the last 7 days, else `closed`.
 Entities (and through them securities) attach to questions.
 
 Entities are discovered from market titles via Wikipedia; entity links come from Wikidata statements
@@ -92,17 +91,11 @@ def db():
     try: yield cur
     finally: cur.close()
 
-def times(as_of, known_as_of):
-    t = as_of or datetime.now(timezone.utc)
-    return t, known_as_of or datetime.now(timezone.utc)
-
-AsOf = Query(None, description="Valid time (ISO 8601). Default: now.")
-KnownAsOf = Query(None, description="Transaction time (ISO 8601). Default: now.")
-IncludeClosed = Query(False, description="Include closed items: no price in the 7 days before as_of (resolved / delisted). Default: live only.")
+IncludeClosed = Query(False, description="Include closed items: no price in the last 7 days (resolved / delisted). Default: live only.")
 
 # ── graph + prices ────────────────────────────────────────────────────────────
 class Graph:
-    """The graph at (as_of, known_as_of), loaded once per request."""
+    """The graph at valid time `as_of` as recorded by `known` (nodes_asof / edges_asof)."""
     def __init__(self, cur, as_of, known):
         self.nodes = {r[0]: dict(id=r[0], type=r[1], name=r[2], attrs=json.loads(r[3] or "{}"), valid_from=r[4])
                       for r in cur.execute(f"""
@@ -121,7 +114,7 @@ class Graph:
     def get(self, node_id, node_type):
         n = self.nodes.get(node_id)
         if not n or n["type"] != node_type:
-            raise HTTPException(404, f"{node_type} {node_id} not found at this as_of / known_as_of")
+            raise HTTPException(404, f"{node_type} {node_id} not found")
         return n
 
     def ref(self, node_id):
@@ -179,8 +172,8 @@ _reloading = threading.Lock()
 def _load_current():
     cur = connection().cursor()
     cur.execute("SET TimeZone = 'UTC'")
-    now, known = times(None, None)
-    g = Graph(cur, now, known)
+    now = datetime.now(timezone.utc)
+    g = Graph(cur, now, now)
     g.latest = dict(at=now, now=all_market_probs(cur, now), ago=all_market_probs(cur, now - timedelta(hours=24)))
     _current.update(graph=g, loaded=time.monotonic())
 
@@ -188,12 +181,9 @@ def _reload_in_background():
     try: _load_current()
     finally: _reloading.release()
 
-def graph(cur, as_of, known_as_of):
-    """The graph for a request. Requests about now share one copy, refreshed in the background
-    every GRAPH_TTL seconds (callers never wait for a reload); time-travel requests (explicit
-    as_of / known_as_of) load their own."""
-    if as_of or known_as_of:
-        return Graph(cur, *times(as_of, known_as_of))
+def graph(cur):
+    """The current graph, shared by all requests and refreshed in the background every
+    GRAPH_TTL seconds (callers never wait for a reload)."""
     if _current["graph"] is None:
         _load_current()
     elif time.monotonic() - _current["loaded"] > GRAPH_TTL and _reloading.acquire(blocking=False):
@@ -288,18 +278,17 @@ def list_questions(q: str | None = Query(None, description="Substring of the que
                    entity: str | None = Query(None, description="Only questions involving this entity id"),
                    sort: str = Query("move", pattern="^(move|prob|name)$"),
                    limit: int = Query(50, le=500), include_closed: bool = IncludeClosed,
-                   as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                    cur=Depends(db)):
     """Questions with their headline probability (most-traded live rung) and its 24h change.
     sort=move ranks by |24h change|."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     qids = [i for i, n in g.nodes.items() if n["type"] == "question"
             and (not q or q.lower() in n["name"].lower())
             and (not entity or any(e["dst"] == entity for e in g.out[i] if e["type"] == "involves"))]
     qp = question_probs(cur, g, qids, at)
     rows = [question_summary(g, x, qp) for x in qids if include_closed or qp[x]["status"] == "live"]
-    return dict(as_of=at, known_as_of=known, count=len(rows), questions=sorted(rows, key=SORTS[sort])[:limit])
+    return dict(as_of=at, count=len(rows), questions=sorted(rows, key=SORTS[sort])[:limit])
 
 def entity_links(g, qid):
     return [dict(**g.ref(e["dst"]), matched=(e["attrs"] or {}).get("matched"), confidence=e["confidence"],
@@ -308,13 +297,12 @@ def entity_links(g, qid):
             for e in g.out[qid] if e["type"] == "involves"] if qid else []
 
 @app.get("/questions/{question_id}")
-def get_question(question_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
-                 cur=Depends(db)):
+def get_question(question_id: str, cur=Depends(db)):
     """One question: headline, every rung (deadline / threshold, probability, 24h change, status,
     volume), latest deadline first (lowest threshold first within a deadline), the entities
     it involves and the factors it is relevant to (factors.py)."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     g.get(question_id, "question")
     qp = question_probs(cur, g, [question_id], at)
     pp = qp[question_id].pop("rung_probs")
@@ -325,7 +313,7 @@ def get_question(question_id: str, as_of: datetime | None = AsOf, known_as_of: d
     rungs = [dict(proposition_summary(g, p, pp), window=w, threshold=t,
                   n_markets=g.nodes[p]["attrs"].get("n_markets"))
              for p, w, t in ordered]
-    return dict(as_of=at, known_as_of=known, **question_summary(g, question_id, qp), rungs=rungs,
+    return dict(as_of=at, **question_summary(g, question_id, qp), rungs=rungs,
                 entities=entity_links(g, question_id), factors=factors.links(g, question_id))
 
 @app.get("/propositions")
@@ -333,25 +321,23 @@ def list_propositions(q: str | None = Query(None, description="Substring of the 
                       entity: str | None = Query(None, description="Only propositions involving this entity id"),
                       sort: str = Query("move", pattern="^(move|prob|name)$"),
                       limit: int = Query(50, le=500), include_closed: bool = IncludeClosed,
-                      as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                       cur=Depends(db)):
     """Propositions with blended probability and 24h change. sort=move ranks by |24h change|."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     pids = [i for i, n in g.nodes.items() if n["type"] == "proposition"
             and (not q or q.lower() in n["name"].lower())
             and (not entity or any(e["dst"] == entity for e in g.out[g.question_of(i)] if e["type"] == "involves"))]
     probs = prop_probs(cur, g, pids, at)
     rows = [proposition_summary(g, p, probs) for p in pids if include_closed or probs[p]["prob"] is not None]
-    return dict(as_of=at, known_as_of=known, count=len(rows), propositions=sorted(rows, key=SORTS[sort])[:limit])
+    return dict(as_of=at, count=len(rows), propositions=sorted(rows, key=SORTS[sort])[:limit])
 
 @app.get("/propositions/{proposition_id}")
-def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
-                    known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
+def get_proposition(proposition_id: str, cur=Depends(db)):
     """Proposition (one rung of a question) with its markets, its question, the question's
     entities and factors, and logical relations."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     n = g.get(proposition_id, "proposition")
     mkts = g.markets(proposition_id)
     mprobs = market_probs(cur, [m for m, _, _ in mkts], at, g)
@@ -362,7 +348,7 @@ def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
                      provenance=e["provenance"], **(e["attrs"] or {}))
                 for e in g.inc[proposition_id] if e["type"] in LOGICAL]
     return dict(
-        as_of=at, known_as_of=known,
+        as_of=at,
         **proposition_summary(g, proposition_id, prop_probs(cur, g, [proposition_id], at)),
         valid_from=n["valid_from"],
         question=g.ref(g.question_of(proposition_id)) if g.question_of(proposition_id) else None,
@@ -375,13 +361,13 @@ def get_proposition(proposition_id: str, as_of: datetime | None = AsOf,
 
 @app.get("/propositions/{proposition_id}/history")
 def proposition_history(proposition_id: str, start: datetime | None = None, end: datetime | None = None,
-                        interval: str = Query("1h", pattern="^(1h|1d)$"),
-                        known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
+                        interval: str = Query("1h", pattern="^(1h|1d)$"), cur=Depends(db)):
     """Blended probability series (default: last 30 days, hourly). Each point uses the markets
-    observed in that bucket; `n_markets` says how many."""
+    observed in that bucket; `n_markets` says how many. Uses the proposition's current markets
+    for the whole series."""
     end = end or datetime.now(timezone.utc)
     start = start or end - timedelta(days=30)
-    g = Graph(cur, end, known_as_of or datetime.now(timezone.utc))
+    g = graph(cur)
     g.get(proposition_id, "proposition")
     ids = [m for m, rel, _ in g.markets(proposition_id) if rel in BLENDED]
     rows = cur.execute(f"""
@@ -426,14 +412,14 @@ def neighbourhood(g, root, depth, fanout, rank=None):
 
 @app.get("/graph/{node_id}")
 def node_graph(node_id: str, depth: int = Query(1, ge=1, le=3), fanout: int = Query(30, ge=1, le=200),
-               as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
+               cur=Depends(db)):
     """Neighbourhood of any question, proposition, market, entity, security or factor
     (`factor:<id>`), for visualisation. Questions are picked live first, then by 24h trading
     volume; other links by strength. `totals` = how many links of each kind the root has (the
     graph shows at most `fanout`)."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
-    if node_id not in g.nodes: raise HTTPException(404, f"{node_id} not found at this as_of / known_as_of")
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
+    if node_id not in g.nodes: raise HTTPException(404, f"{node_id} not found")
     qp = {}
     def rank(e, other):
         if g.nodes[other]["type"] != "question": return (0, 0, -(e["weight"] or 0))
@@ -443,7 +429,7 @@ def node_graph(node_id: str, depth: int = Query(1, ge=1, le=3), fanout: int = Qu
     seen, edges, totals = neighbourhood(g, node_id, depth, fanout, rank)
     probs = prop_probs(cur, g, [i for i in seen if g.nodes[i]["type"] == "proposition"], at)
     probs |= question_probs(cur, g, [i for i in seen if g.nodes[i]["type"] == "question"], at)
-    return dict(as_of=at, known_as_of=known, root=node_id, totals=totals,
+    return dict(as_of=at, root=node_id, totals=totals,
                 nodes=[g.ref(i) | dict(depth=d, entity_type=g.nodes[i]["attrs"].get("entity_type"),
                                        venue=g.nodes[i]["attrs"].get("venue"),
                                        family=g.nodes[i]["attrs"].get("family"),
@@ -455,11 +441,10 @@ def node_graph(node_id: str, depth: int = Query(1, ge=1, le=3), fanout: int = Qu
 
 @app.get("/propositions/{proposition_id}/graph")
 def proposition_graph(proposition_id: str, depth: int = Query(2, ge=1, le=3), fanout: int = Query(30, ge=1, le=200),
-                      as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                       cur=Depends(db)):
     """Neighbourhood of a proposition up to `depth` hops (edges followed in both directions)."""
-    graph(cur, as_of, known_as_of).get(proposition_id, "proposition")
-    return node_graph(proposition_id, depth, fanout, as_of, known_as_of, cur)
+    graph(cur).get(proposition_id, "proposition")
+    return node_graph(proposition_id, depth, fanout, cur)
 
 def market_row(g, mid):
     n = g.nodes[mid]
@@ -473,12 +458,12 @@ def list_markets(status: list[str] = Query(["unmatched", "unparsed"], descriptio
                  q: str | None = Query(None, description="Substring of the market name"),
                  venue: str | None = Query(None, pattern="^(kalshi|polymarket)$"),
                  limit: int = Query(200, le=2000), include_closed: bool = IncludeClosed,
-                 as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
+                 cur=Depends(db)):
     """Venue markets by how they fared in cross-venue matching: `merged` (shares a proposition with
     another market), `linked` (near_equivalent / implies only), `unmatched` (parsed, no partner),
     `unparsed` (the contract parser couldn't read it; `issues` says why). Counts cover all statuses."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     mids = [i for i, n in g.nodes.items() if n["type"] == "market"
             and (not venue or n["attrs"].get("venue") == venue)
             and (not q or q.lower() in n["name"].lower())]
@@ -488,27 +473,26 @@ def list_markets(status: list[str] = Query(["unmatched", "unparsed"], descriptio
     counts = {s: sum(1 for i in mids if match(i) == s) for s in MATCH_STATUSES}
     rows = [dict(market_row(g, i), prob=(live.get(i) or {}).get("prob")) for i in mids if match(i) in status]
     rows.sort(key=lambda r: (MATCH_STATUSES.index(r["match"]) if r["match"] in MATCH_STATUSES else 9, r["name"]))
-    return dict(as_of=at, known_as_of=known, counts=counts, count=len(rows), markets=rows[:limit])
+    return dict(as_of=at, counts=counts, count=len(rows), markets=rows[:limit])
 
 @app.get("/markets/{market_id}")
-def get_market(market_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
-               cur=Depends(db)):
+def get_market(market_id: str, cur=Depends(db)):
     """One market: match status, parsed contract signature, parser issues, the nearest rejected
     candidates (with the reason each was rejected) and its rules text."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     n = g.get(market_id, "market")
     a = n["attrs"]
     cands = [dict(c, name=g.nodes[c["market"]]["name"] if c["market"] in g.nodes else None,
                   venue=c["market"].split(":")[1]) for c in a.get("candidates") or []]
-    return dict(as_of=at, known_as_of=known, **market_row(g, market_id),
+    return dict(as_of=at, **market_row(g, market_id),
                 prob=(market_probs(cur, [market_id], at, g).get(market_id) or {}).get("prob"),
                 signature=a.get("signature"), candidates=cands, rules=a.get("rules"))
 
 @app.get("/securities")
-def list_securities(as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+def list_securities(cur=Depends(db)):
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     return [dict(**g.ref(i), **{k: n["attrs"].get(k) for k in ("ticker", "asset_class", "country", "sector", "index")},
                  n_exposures=sum(1 for e in g.inc[i] if e["type"] == "exposure"))
             for i, n in g.nodes.items() if n["type"] == "security"]
@@ -522,9 +506,9 @@ def live_questions(cur, g, at):
 
 @app.get("/entities")
 def list_entities(type: str | None = Query(None, description="person | country | organisation_or_place | concept"),
-                  as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+                  cur=Depends(db)):
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     live = live_questions(cur, g, at)
     return [dict(**g.ref(i), entity_type=n["attrs"].get("entity_type"), description=n["attrs"].get("description"),
                  n_questions=sum(1 for e in g.inc[i] if e["type"] == "involves"),
@@ -532,16 +516,15 @@ def list_entities(type: str | None = Query(None, description="person | country |
             for i, n in g.nodes.items() if n["type"] == "entity" and (not type or n["attrs"].get("entity_type") == type)]
 
 @app.get("/entities/{entity_id}")
-def get_entity(entity_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
-               cur=Depends(db)):
+def get_entity(entity_id: str, cur=Depends(db)):
     """Entity with every question that involves it (live first, then by 24h trading volume), its
     links, and securities exposed to it."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     n = g.get(entity_id, "entity")
     qids = [e["src"] for e in g.inc[entity_id] if e["type"] == "involves"]
     qp = question_probs(cur, g, qids, at)
-    return dict(as_of=at, known_as_of=known, **g.ref(entity_id), **n["attrs"],
+    return dict(as_of=at, **g.ref(entity_id), **n["attrs"],
                 questions=sorted((question_summary(g, x, qp) for x in qids),
                                  key=lambda r: (r["status"] != "live", -(r["volume_24h"] or 0), r["name"])),
                 links=sorted((dict(relation=e["type"], entity=g.ref(other), weight=e["weight"],
@@ -562,25 +545,24 @@ def factor_links(g, factor_id=None):
 
 @app.get("/factors")
 def list_factors(family: str | None = Query(None, description="country_equity | fx | commodity | rates | industry"),
-                 as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf, cur=Depends(db)):
+                 cur=Depends(db)):
     """The factor catalog (seeds/factors.csv) with how many questions are relevant to each."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     live, hits = live_questions(cur, g, at), factor_links(g)
     return [dict(f, n_questions=len(hits[f["id"]]), n_live_questions=sum(live[q] for q in hits[f["id"]]))
             for f in factors.CATALOG.values() if not family or f["family"] == family]
 
 @app.get("/factors/{factor_id}")
-def get_factor(factor_id: str, as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
-               cur=Depends(db)):
+def get_factor(factor_id: str, cur=Depends(db)):
     """Factor with every question relevant to it (live first, then by 24h trading volume) and the
     paths that link each one (question -> entity [-> its country] -> factor)."""
     if factor_id not in factors.CATALOG: raise HTTPException(404, f"factor {factor_id} not found")
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     links = factor_links(g, factor_id)[factor_id]
     qp = question_probs(cur, g, list(links), at)
-    return dict(as_of=at, known_as_of=known, **factors.CATALOG[factor_id],
+    return dict(as_of=at, **factors.CATALOG[factor_id],
                 questions=sorted((dict(question_summary(g, x, qp), paths=links[x]) for x in links),
                                  key=lambda r: (r["status"] != "live", -(r["volume_24h"] or 0), r["name"])))
 
@@ -601,13 +583,12 @@ EXPOSURE_SORTS = {"score": lambda r: -r["score"], "impact": lambda r: -abs(r["im
 def security_exposures(ticker: str, min_score: float = Query(0.1, ge=0, le=1),
                        sort: str = Query("score", pattern="^(score|impact|risk)$"),
                        limit: int = Query(50, le=500), include_closed: bool = IncludeClosed,
-                       as_of: datetime | None = AsOf, known_as_of: datetime | None = KnownAsOf,
                        cur=Depends(db)):
     """Questions this security is exposed to, summed over every path question -> entity
     [-> entity] -> security: `score` (relevance 0-1), `impact` (signed: > 0 = expected to rise if
     the event happens), `direction`, `risk` (|impact| x sqrt(p(1-p))) and the strongest `paths`."""
-    at, known = times(as_of, known_as_of)
-    g = graph(cur, as_of, known_as_of)
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
     sid = f"sec:{ticker}"
     g.get(sid, "security")
     hits = {p: v for p, v in g.exposures_of(sid).items() if v["score"] >= min_score}
@@ -618,7 +599,7 @@ def security_exposures(ticker: str, min_score: float = Query(0.1, ge=0, le=1),
                  paths=[path_out(g, q) for q in v["paths"][:3]], n_paths=len(v["paths"]))
             for p, v in hits.items() if include_closed or qp[p]["status"] == "live"]
     rows.sort(key=lambda r: (EXPOSURE_SORTS[sort](r), -abs(r["change_24h"] or 0)))
-    return dict(as_of=at, known_as_of=known, security=g.ref(sid), count=len(rows), exposures=rows[:limit])
+    return dict(as_of=at, security=g.ref(sid), count=len(rows), exposures=rows[:limit])
 
 @app.get("/", include_in_schema=False)
 def web():

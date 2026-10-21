@@ -141,7 +141,6 @@
     <button role="tab" data-view="about" class="secret">How it works</button>
     <button role="tab" data-view="api" class="secret">Excel &amp; API</button>
   </nav>
-  <label class="explore-only">As of <input id="asof" type="datetime-local"></label>
   <label class="explore-only">Depth <select id="depth"><option selected>1</option><option>2</option></select></label>
 </header>
 <main>
@@ -196,7 +195,7 @@
     <li><strong>The odds are scattered and hard to use.</strong> The same question is listed on several venues in different wording; thousands of contracts
       expire, get renamed or vanish. Nobody links them to securities. This project does the cleaning, matching and linking.</li>
     <li><strong>The history can't be rebuilt later.</strong> Venues keep only part of their past prices and none of their past contract terms. Everything here is
-      stored as it was known at each moment, so any past day can be replayed exactly — essential for testing whether the signal would have helped.</li>
+      stored as it was known at each moment, so past days can be replayed later — essential for testing whether the signal would have helped.</li>
   </ul>
   <p>It is built as <strong>risk-measurement infrastructure</strong>, not a trading signal: the consensus probability is the point — a shared, auditable number
     a risk committee can watch — and raw history is available to quants who want to build their own models.</p>
@@ -207,7 +206,7 @@
     <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Questions tab (sorted by 24h move) · Securities tab</td></tr>
     <tr><td>Portfolio manager</td><td>"Which events matter for TSMC, and would they push it up or down?"</td><td>Securities tab</td></tr>
     <tr><td>Analyst</td><td>"Everything that involves Iran, and how the odds connect"</td><td>Entities tab · the network view</td></tr>
-    <tr><td>Quant</td><td>"Probability history, exactly as it was known each day"</td><td>The API, with "as of" time travel</td></tr>
+    <tr><td>Quant</td><td>"How has this probability moved over the last month?"</td><td>The API · <code>HISTORY</code> in Excel</td></tr>
   </table>
   <p>Everything in the explorer is also available in Excel and through the API — see the <a href="#" data-open="api">Excel &amp; API</a> tab for a five-minute setup guide.</p>
   <p>A worked example: selecting <strong>TSM</strong> shows <em>"Will China invade Taiwan?"</em> near the top —
@@ -315,10 +314,6 @@
     <tr><td>Risk</td><td>|impact| × √(p(1−p)): how much the question can still move the security at today's odds.</td></tr>
   </table>
 
-  <h3>Time travel</h3>
-  <p><strong>As of</strong> shows the graph and probabilities as they were at any past moment. Nothing is overwritten: every change is stored with when it became true
-    and when the system learned it, so a past view uses only what was known then — no hindsight.</p>
-
   <h3>Data and updates</h3>
   <table>
     <tr><td>Markets</td><td>Kalshi and Polymarket — prices updated several times a day, with hourly history back to 2021</td></tr>
@@ -424,11 +419,10 @@ New-ItemProperty -Path $k -Name "eeb823d5-3150-4ee3-a983-57ef26e13f0b" -Value "C
   <h3>Basics</h3>
   <table>
     <tr><td>Authentication</td><td>If the server has API keys configured, send yours in the <code>X-API-Key</code> header. A missing or wrong key returns <code>401</code>.</td></tr>
-    <tr><td>Time travel</td><td>Every read accepts <code>as_of</code> (the world at that moment) and <code>known_as_of</code> (only what the graph had recorded by then), as ISO 8601 timestamps, e.g. <code>2026-06-01T00:00:00Z</code>. Both default to now. Set both to the same time for a point-in-time, backtest-safe view.</td></tr>
     <tr><td>IDs</td><td>Questions <code>q:polymarket:253889</code> · propositions (rungs) <code>prop:polymarket:665270</code> · entities <code>wd:Q865</code> (Wikidata id; Taiwan) · securities <code>sec:TSM</code> · markets <code>mkt:kalshi:KXTAIWANLVL4-29JAN01</code>. Get them from the list endpoints.</td></tr>
     <tr><td>Probabilities</td><td>0–1. <code>prob</code> is the blended price of a proposition's markets; <code>change_24h</code> is in probability units (0.05 = 5 points).</td></tr>
     <tr><td>Live only</td><td>Every question and proposition has <code>status</code> = <code>live</code> (priced in the last 7 days) or <code>closed</code>. List endpoints return live items unless <code>include_closed=true</code>.</td></tr>
-    <tr><td>Errors</td><td><code>401</code> bad key · <code>404</code> id not found at that <code>as_of</code> / <code>known_as_of</code> · <code>422</code> invalid parameter.</td></tr>
+    <tr><td>Errors</td><td><code>401</code> bad key · <code>404</code> id not found · <code>422</code> invalid parameter.</td></tr>
   </table>
 
   <h3>Quick start</h3>
@@ -520,9 +514,7 @@ const LOGICAL = new Set(["implies", "mutex", "near_equivalent"]);
 const state = { tab: "questions", items: [], selected: null };
 
 async function api(path, params = {}) {
-  const asof = $("#asof").value;
-  const q = new URLSearchParams(Object.entries({ ...params,
-    ...(asof ? { as_of: new Date(asof).toISOString(), known_as_of: new Date(asof).toISOString() } : {}) })
+  const q = new URLSearchParams(Object.entries(params)
     .filter(([, v]) => v != null).flatMap(([k, v]) => Array.isArray(v) ? v.map(x => [k, x]) : [[k, v]]));
   const key = localStorage.getItem("apiKey");
   const r = await fetch(`${path}?${q}`, { headers: key ? { "X-API-Key": key } : {} });
@@ -776,7 +768,6 @@ $("#search").oninput = () => {
 $("#list").onclick = e => { const li = e.target.closest("li"); if (li && li.dataset.id) select(li.dataset.id); };
 $("#detail").onclick = e => { const a = e.target.closest("[data-go]"); if (a) select(a.dataset.go); };
 $("#depth").onchange = () => state.selected && drawGraph(state.selected);
-$("#asof").onchange = () => { loadList(); if (state.selected) select(state.selected); };
 document.querySelectorAll("#api .base, #api pre").forEach(el => el.innerHTML = el.innerHTML.replaceAll("BASE", location.origin));
 document.querySelector("#api .base-link").href = `${location.origin}/docs`;
 loadList().catch(err => $("#list").innerHTML = `<li>${esc(err.message)}</li>`);

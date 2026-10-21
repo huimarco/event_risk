@@ -14,20 +14,6 @@
           "description": "Proposition id (search in the Event Risk pane) or question id (q:..., from EXPOSURES).",
           "type": "string",
           "dimensionality": "scalar"
-        },
-        {
-          "name": "as_of",
-          "description": "Optional date/time: the probability at that moment. Default now.",
-          "type": "any",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "known_as_of",
-          "description": "Optional date/time: only what the graph knew by then. Set equal to as_of for a backtest-safe value.",
-          "type": "any",
-          "dimensionality": "scalar",
-          "optional": true
         }
       ]
     },
@@ -45,20 +31,6 @@
           "description": "Proposition or question id.",
           "type": "string",
           "dimensionality": "scalar"
-        },
-        {
-          "name": "as_of",
-          "description": "Optional date/time. Default now.",
-          "type": "any",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "known_as_of",
-          "description": "Optional date/time: only what the graph knew by then.",
-          "type": "any",
-          "dimensionality": "scalar",
-          "optional": true
         }
       ]
     },
@@ -132,20 +104,6 @@
           "description": "Question id (q:...).",
           "type": "string",
           "dimensionality": "scalar"
-        },
-        {
-          "name": "as_of",
-          "description": "Optional date/time. Default now.",
-          "type": "any",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "known_as_of",
-          "description": "Optional date/time: only what the graph knew by then.",
-          "type": "any",
-          "dimensionality": "scalar",
-          "optional": true
         }
       ]
     },
@@ -214,13 +172,6 @@
           "name": "min_score",
           "description": "Optional minimum exposure score (0-1). Default 0.1.",
           "type": "number",
-          "dimensionality": "scalar",
-          "optional": true
-        },
-        {
-          "name": "as_of",
-          "description": "Optional date/time. Default now.",
-          "type": "any",
           "dimensionality": "scalar",
           "optional": true
         },
