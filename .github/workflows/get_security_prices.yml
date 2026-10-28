@@ -12,7 +12,7 @@ concurrency:
 jobs:
   prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 45   # ~550 tickers; the first run loads history since 2020
+    timeout-minutes: 60   # ~550 tickers + 42 factor series; the first run loads history since 2020
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,6 +20,14 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - run: python prices.py
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      - run: python factor_betas.py   # re-measure question -> factor sensitivities with the new day's levels
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      - run: python security_betas.py   # factor loadings + question -> security sensitivities, from prices
         env:
           DB: md:geo_odds
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

@@ -180,6 +180,89 @@ async function history(id, start, end, interval) {
   return [["date", "prob", "n_markets"], ...r.points.map(p => [excelDate(p.t), blank(p.prob), p.n_markets])];
 }
 
+// A deadline question as a term structure: per live deadline, the probability by then (market and
+// monotone fit), the probability in that period, the same conditional on not before (hazard per
+// period) and the annualized hazard rate.
+async function curve(id) {
+  if (kindOf(id) !== "question") throw fail("question id (q:...) is required", CustomFunctions.ErrorCode.invalidValue);
+  const c = await request(`/questions/${encodeURIComponent(String(id).trim())}/curve`, {});
+  if (!c.points.length) throw fail("no live deadlines after today");
+  // "continues?" questions: the curve is of the state ending (1 - price), so label it that way
+  const p = c.event === "ends" ? "prob_ended" : "prob";
+  return [["deadline", p, "fitted", "period_start", "period_prob", "conditional_prob", "hazard_annual"],
+          ...c.points.map(p => [dateCell(p.deadline), p.prob, p.fitted, dateCell(p.period_start), p.period_prob,
+                                blank(p.conditional_prob), blank(p.hazard_annual)])];
+}
+
+// P(event by a date) — e.g. before a bond matures — from a deadline question's fitted curve.
+async function probBy(id, when, extrapolate) {
+  if (kindOf(id) !== "question") throw fail("question id (q:...) is required", CustomFunctions.ErrorCode.invalidValue);
+  const d = isoTime(when);
+  if (!d) throw fail("date is required", CustomFunctions.ErrorCode.invalidValue);
+  const c = await request(`/questions/${encodeURIComponent(String(id).trim())}/curve`,
+                          { date: d.slice(0, 10), extrapolate: extrapolate ? "true" : undefined });
+  if (!c.prob_by || c.prob_by.prob === null) throw fail("date is past the last deadline (set extrapolate to TRUE to extend the last hazard)");
+  return c.prob_by.prob;
+}
+
+// Factors a question is relevant to, with the measured sensitivity: the factor's move (in its
+// units, % or bp) per +1.0 of probability, and the move if it resolved YES / NO now.
+async function factorsOf(id) {
+  const kind = kindOf(id);
+  if (kind === "market") throw fail("FACTORS takes a q: or prop: id", CustomFunctions.ErrorCode.invalidValue);
+  const r = await record(id);
+  if (!r.factors.length) throw fail("no factors linked");
+  return [["factor_id", "name", "units", "beta", "se", "per_10pts", "move_if_yes", "move_if_no", "n_events", "level"],
+          ...r.factors.map(f => { const s = f.sensitivity || {};
+            return [f.id, f.name, f.units || "", blank(s.beta), blank(s.se), blank(s.per_10pts), blank(s.move_if_yes),
+                    blank(s.move_if_no), blank(s.n_events), blank(f.level)]; })];
+}
+
+// FACTOR(factor_id, [field]): the factor's latest level (default) or one catalog field.
+const FACTOR_FIELDS = ["level", "level_date", "name", "family", "units", "series", "definition"];
+async function factor(id, fieldName) {
+  const f = String(fieldName ?? "level").trim().toLowerCase() || "level";
+  if (!FACTOR_FIELDS.includes(f)) throw fail(`unknown field "${fieldName}"; one of: ${FACTOR_FIELDS.join(", ")}`,
+                                             CustomFunctions.ErrorCode.invalidValue);
+  const r = await request(`/factors/${encodeURIComponent(String(id).trim().replace(/^factor:/, ""))}`, { limit: 0 });
+  const v = r[f];
+  if (v === null || v === undefined) throw fail(`no ${f} for this factor`);
+  return f === "level_date" ? dateCell(v) : v;
+}
+
+async function sensitivityOf(id, factorId) {
+  const r = await record(id);
+  const fid = String(factorId ?? "").trim().replace(/^factor:/, "");
+  const f = r.factors.find(x => x.id === fid);
+  if (!f) throw fail(`${fid} is not linked to this question`);
+  if (!f.sensitivity) throw fail("not measured yet");
+  return f;
+}
+
+// Factor move per +1.0 of the question's probability (shrunk estimate), in the factor's units.
+async function sensitivity(id, factorId) {
+  return (await sensitivityOf(id, factorId)).sensitivity.beta;
+}
+
+// Portfolio P&L if the question resolves now, computed in Excel: sum over factors of loading x the
+// factor's move_if_yes (or move_if_no). Loadings are your holdings' P&L per unit of each factor's
+// move (per 1% for % factors, per 1 bp for bp factors); they never leave the workbook.
+async function stress(id, factorIds, loadings, outcome) {
+  const which = String(outcome ?? "yes").trim().toLowerCase() || "yes";
+  if (!["yes", "no"].includes(which)) throw fail('outcome must be "yes" or "no"', CustomFunctions.ErrorCode.invalidValue);
+  const ids = factorIds.flat(), ls = loadings.flat();
+  if (ids.length !== ls.length) throw fail("factor ids and loadings must be the same size", CustomFunctions.ErrorCode.invalidValue);
+  const r = await record(id);
+  const by = Object.fromEntries(r.factors.map(f => [f.id, f.sensitivity]));
+  let total = 0;
+  ids.forEach((f, i) => {
+    const s = by[String(f ?? "").trim().replace(/^factor:/, "")];
+    const l = Number(ls[i]);
+    if (s && Number.isFinite(l) && s[`move_if_${which}`] !== null) total += l * s[`move_if_${which}`];
+  });
+  return total;
+}
+
 CustomFunctions.associate("QUESTIONS", questions);
 CustomFunctions.associate("ENTITY", entity);
 CustomFunctions.associate("PROB", prob);
@@ -189,6 +272,12 @@ CustomFunctions.associate("FIELD", field);
 CustomFunctions.associate("RUNGS", rungs);
 CustomFunctions.associate("CONTRACTS", contracts);
 CustomFunctions.associate("HISTORY", history);
+CustomFunctions.associate("CURVE", curve);
+CustomFunctions.associate("PROB_BY", probBy);
+CustomFunctions.associate("FACTORS", factorsOf);
+CustomFunctions.associate("FACTOR", factor);
+CustomFunctions.associate("SENSITIVITY", sensitivity);
+CustomFunctions.associate("STRESS", stress);
 
 // Shared with the task pane.
 window.EventRisk = { request, clearCache: () => cache.clear() };

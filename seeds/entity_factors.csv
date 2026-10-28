@@ -1,42 +1,42 @@
 qid,entity,factor_id,channels,roles,rationale
-"# Analyst priors, keyed by Wikidata id like exposures.csv: a question involving the entity (or a person who is a citizen of it) links to the factor when its action's channel (matching.EFFECTS: conflict / trade / sanctions / instability / diplomacy; 'any' = all) is listed and its role in the contract (actor / target / party / concept; 'any' = all) is listed. Unparsed questions have no channel and link to nothing."
+"# Analyst priors, keyed by Wikidata id like exposures.csv: a question involving the entity (or a person who is a citizen of it) links to the factor when its action's channel (matching.EFFECTS: conflict / trade / sanctions / instability / diplomacy / credit / monetary / fiscal; 'any' = all) is listed and its role in the contract (actor / target / party / concept; 'any' = all) is listed. Unparsed questions have no channel and link to nothing."
 Q30,United States,equity_us,trade,any,US equities move on US trade policy; US military action abroad rarely moves them
-Q148,China,equity_china,conflict;trade;sanctions;instability,any,country risk
-Q148,China,fx_cny,conflict;trade;sanctions;instability,any,country risk
+Q148,China,equity_china,conflict;trade;sanctions;instability;credit,any,country risk
+Q148,China,fx_cny,conflict;trade;sanctions;instability;credit,any,country risk
 Q148,China,semiconductors,trade;sanctions,any,export controls and chip tariffs
-Q865,Taiwan,equity_taiwan,conflict;trade;sanctions;instability,any,country risk
-Q865,Taiwan,fx_twd,conflict;trade;sanctions;instability,any,country risk
+Q865,Taiwan,equity_taiwan,conflict;trade;sanctions;instability;credit,any,country risk
+Q865,Taiwan,fx_twd,conflict;trade;sanctions;instability;credit,any,country risk
 Q865,Taiwan,semiconductors,conflict;trade,any,Taiwan makes most leading-edge chips
-Q17,Japan,equity_japan,conflict;trade;sanctions;instability,any,country risk
-Q17,Japan,fx_jpy,conflict;trade;sanctions;instability,any,country risk
-Q884,South Korea,equity_korea,conflict;trade;sanctions;instability,any,country risk
-Q884,South Korea,fx_krw,conflict;trade;sanctions;instability,any,country risk
-Q668,India,equity_india,conflict;trade;sanctions;instability,any,country risk
-Q668,India,fx_inr,conflict;trade;sanctions;instability,any,country risk
-Q458,European Union,equity_europe,conflict;trade;sanctions;instability,any,euro-area risk
-Q458,European Union,fx_eur,conflict;trade;sanctions;instability,any,euro-area risk
-Q183,Germany,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
-Q183,Germany,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
-Q142,France,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
-Q142,France,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
-Q38,Italy,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
-Q38,Italy,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
-Q29,Spain,equity_europe,conflict;trade;sanctions;instability,any,euro-area member
-Q29,Spain,fx_eur,conflict;trade;sanctions;instability,any,euro-area member
-Q145,United Kingdom,equity_uk,conflict;trade;sanctions;instability,any,country risk
-Q145,United Kingdom,fx_gbp,conflict;trade;sanctions;instability,any,country risk
-Q801,Israel,equity_israel,conflict;trade;sanctions;instability,any,country risk
-Q801,Israel,fx_ils,conflict;trade;sanctions;instability,any,country risk
-Q851,Saudi Arabia,equity_saudi,conflict;trade;sanctions;instability,any,country risk
+Q17,Japan,equity_japan,conflict;trade;sanctions;instability;credit,any,country risk
+Q17,Japan,fx_jpy,conflict;trade;sanctions;instability;credit,any,country risk
+Q884,South Korea,equity_korea,conflict;trade;sanctions;instability;credit,any,country risk
+Q884,South Korea,fx_krw,conflict;trade;sanctions;instability;credit,any,country risk
+Q668,India,equity_india,conflict;trade;sanctions;instability;credit,any,country risk
+Q668,India,fx_inr,conflict;trade;sanctions;instability;credit,any,country risk
+Q458,European Union,equity_europe,conflict;trade;sanctions;instability;credit,any,euro-area risk
+Q458,European Union,fx_eur,conflict;trade;sanctions;instability;credit,any,euro-area risk
+Q183,Germany,equity_europe,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q183,Germany,fx_eur,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q142,France,equity_europe,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q142,France,fx_eur,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q38,Italy,equity_europe,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q38,Italy,fx_eur,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q29,Spain,equity_europe,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q29,Spain,fx_eur,conflict;trade;sanctions;instability;credit,any,euro-area member
+Q145,United Kingdom,equity_uk,conflict;trade;sanctions;instability;credit,any,country risk
+Q145,United Kingdom,fx_gbp,conflict;trade;sanctions;instability;credit,any,country risk
+Q801,Israel,equity_israel,conflict;trade;sanctions;instability;credit,any,country risk
+Q801,Israel,fx_ils,conflict;trade;sanctions;instability;credit,any,country risk
+Q851,Saudi Arabia,equity_saudi,conflict;trade;sanctions;instability;credit,any,country risk
 Q851,Saudi Arabia,brent,conflict;instability,target;party,largest OPEC producer
-Q43,Turkey,equity_turkey,conflict;trade;sanctions;instability,any,country risk
-Q43,Turkey,fx_try,conflict;trade;sanctions;instability,any,country risk
-Q16,Canada,equity_canada,conflict;trade;sanctions;instability,any,country risk
-Q16,Canada,fx_cad,conflict;trade;sanctions;instability,any,country risk
-Q96,Mexico,equity_mexico,conflict;trade;sanctions;instability,any,country risk
-Q96,Mexico,fx_mxn,conflict;trade;sanctions;instability,any,country risk
-Q155,Brazil,equity_brazil,conflict;trade;sanctions;instability,any,country risk
-Q155,Brazil,fx_brl,conflict;trade;sanctions;instability,any,country risk
+Q43,Turkey,equity_turkey,conflict;trade;sanctions;instability;credit,any,country risk
+Q43,Turkey,fx_try,conflict;trade;sanctions;instability;credit,any,country risk
+Q16,Canada,equity_canada,conflict;trade;sanctions;instability;credit,any,country risk
+Q16,Canada,fx_cad,conflict;trade;sanctions;instability;credit,any,country risk
+Q96,Mexico,equity_mexico,conflict;trade;sanctions;instability;credit,any,country risk
+Q96,Mexico,fx_mxn,conflict;trade;sanctions;instability;credit,any,country risk
+Q155,Brazil,equity_brazil,conflict;trade;sanctions;instability;credit,any,country risk
+Q155,Brazil,fx_brl,conflict;trade;sanctions;instability;credit,any,country risk
 Q159,Russia,brent,conflict,target,major oil exporter
 Q159,Russia,brent,sanctions,any,major oil exporter
 Q159,Russia,natgas_europe,conflict,target,pipeline gas supplier to Europe
@@ -71,3 +71,195 @@ Q605440,President of the European Central Bank,rates_ecb_policy,any,any,sets the
 Q713418,TSMC,semiconductors,any,any,largest chip foundry
 Q648533,SMIC,semiconductors,any,any,largest Chinese chip foundry
 Q2986369,semiconductor industry,semiconductors,any,any,chips
+Q148,China,credit_em_asia,conflict;sanctions;instability;credit;trade,any,regional EM credit risk
+Q148,China,credit_em_corp,conflict;sanctions;instability;credit;trade,any,EM credit risk
+Q865,Taiwan,credit_em_asia,conflict;sanctions;instability;credit;trade,any,regional EM credit risk
+Q865,Taiwan,credit_em_corp,conflict;sanctions;instability;credit;trade,any,EM credit risk
+Q884,South Korea,credit_em_asia,conflict;sanctions;instability;credit;trade,any,regional EM credit risk
+Q884,South Korea,credit_em_corp,conflict;sanctions;instability;credit;trade,any,EM credit risk
+Q668,India,credit_em_asia,conflict;sanctions;instability;credit;trade,any,regional EM credit risk
+Q668,India,credit_em_corp,conflict;sanctions;instability;credit;trade,any,EM credit risk
+Q423,North Korea,credit_em_asia,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q423,North Korea,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q928,Philippines,credit_em_asia,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q928,Philippines,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q252,Indonesia,credit_em_asia,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q252,Indonesia,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q843,Pakistan,credit_em_asia,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q843,Pakistan,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q159,Russia,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q159,Russia,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q212,Ukraine,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q212,Ukraine,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q43,Turkey,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q43,Turkey,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q801,Israel,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q801,Israel,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q851,Saudi Arabia,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q851,Saudi Arabia,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q794,Iran,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q794,Iran,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q846,Qatar,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q846,Qatar,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q878,United Arab Emirates,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q878,United Arab Emirates,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q79,Egypt,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q79,Egypt,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q258,South Africa,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q258,South Africa,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q36,Poland,credit_em_emea,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q36,Poland,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q717,Venezuela,credit_em_latam,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q717,Venezuela,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q155,Brazil,credit_em_latam,conflict;sanctions;instability;credit;trade,any,regional EM credit risk
+Q155,Brazil,credit_em_corp,conflict;sanctions;instability;credit;trade,any,EM credit risk
+Q96,Mexico,credit_em_latam,conflict;sanctions;instability;credit;trade,any,regional EM credit risk
+Q96,Mexico,credit_em_corp,conflict;sanctions;instability;credit;trade,any,EM credit risk
+Q414,Argentina,credit_em_latam,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q414,Argentina,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q739,Colombia,credit_em_latam,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q739,Colombia,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q298,Chile,credit_em_latam,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q298,Chile,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q419,Peru,credit_em_latam,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q419,Peru,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q736,Ecuador,credit_em_latam,conflict;sanctions;instability;credit,any,regional EM credit risk
+Q736,Ecuador,credit_em_corp,conflict;sanctions;instability;credit,any,EM credit risk
+Q30,United States,credit_us_hy,trade;credit;fiscal;monetary,any,"US credit: tariffs, default, shutdown and Fed policy reprice high yield"
+Q30,United States,credit_us_ig,credit;fiscal;monetary,any,"US credit: default, shutdown and Fed policy"
+Q30,United States,rates_us_10y,credit;fiscal;monetary;trade,any,"Treasury yields: US default risk, fiscal standoffs, Fed policy, tariff inflation"
+Q30,United States,usd_broad,trade;credit;fiscal;monetary,any,"the dollar: tariffs, US credit and Fed policy"
+Q53536,Federal Reserve,rates_us_10y,any,any,the Fed sets the short end; the long end follows
+Q53536,Federal Reserve,credit_us_hy,any,any,financing conditions for leveraged borrowers
+Q53536,Federal Reserve,usd_broad,any,any,rate differentials
+Q2666591,Chair of the Federal Reserve,rates_us_10y,any,any,Fed leadership and independence
+Q148,China,credit_us_hy,conflict,target;party,a Taiwan or South China Sea conflict is a global risk-off shock
+Q865,Taiwan,credit_us_hy,conflict,target;party,a Taiwan conflict is a global risk-off shock
+Q7804,International Monetary Fund,credit_em_corp,credit,any,IMF programmes support EM sovereigns
+Q30,United States,us_cpi,trade,any,tariffs raise import prices
+Q30,United States,us_import_prices,trade,any,tariffs are paid on imports
+Q30,United States,us_inflation_expectations,trade;monetary,any,tariffs and Fed policy move breakevens
+Q30,United States,us_gdp,trade;fiscal,any,tariffs and shutdowns hit growth
+Q30,United States,us_ism_manufacturing,trade,any,manufacturers' input costs and orders
+Q30,United States,global_trade_volume,trade,any,US tariffs shrink world trade
+Q30,United States,us_fiscal_deficit,fiscal;credit,any,"shutdowns, debt ceiling and default questions"
+Q30,United States,us_consumer_confidence,fiscal,any,shutdowns dent sentiment
+Q30,United States,vix,credit,any,US default / debt-ceiling risk
+Q30,United States,gold,credit;monetary,any,safe haven / real rates
+Q30,United States,us_real_yield_10y,monetary,any,policy-rate questions
+Q30,United States,us_mortgage_rate,monetary,any,policy-rate questions
+Q30,United States,retail_merchandise_cost,trade,any,retailers' landed cost includes tariffs
+Q30,United States,goods_import_cost,trade,any,consumer goods sourced in Asia
+Q30,United States,autoparts_tariffs,trade,any,Section 232 / USMCA auto tariffs
+Q30,United States,hw_assembly,trade,any,devices assembled abroad
+Q30,United States,apparel_sourcing,trade,any,apparel sourced in Asia
+Q30,United States,steel_import_pressure,trade,any,Section 232 steel tariffs
+Q30,United States,airfreight_de_minimis,trade,any,de minimis exemption for small parcels
+Q30,United States,prof_government_contracts,fiscal,any,shutdowns pause federal contracts
+Q53536,Federal Reserve,us_inflation_expectations,any,any,Fed credibility
+Q53536,Federal Reserve,us_real_yield_10y,any,any,policy path
+Q53536,Federal Reserve,us_mortgage_rate,any,any,policy path
+Q53536,Federal Reserve,gold,any,any,real rates
+Q2666591,Chair of the Federal Reserve,us_inflation_expectations,any,any,Fed credibility
+Q2666591,Chair of the Federal Reserve,us_mortgage_rate,any,any,policy path
+Q148,China,china_gdp,trade;sanctions;instability;credit,any,trade war and domestic stability
+Q148,China,china_pmi,trade;sanctions,any,export orders
+Q148,China,global_trade_volume,trade;sanctions,any,US-China trade
+Q148,China,copper,trade;instability,any,Chinese demand
+Q148,China,soybeans,trade,any,Chinese soybean purchases
+Q148,China,rare_earths,trade;sanctions;conflict,any,Chinese export licensing of rare earths and critical minerals
+Q148,China,vix,conflict,any,great-power conflict
+Q148,China,gold,conflict,any,safe haven
+Q148,China,global_supply_chain_pressure,conflict;trade,any,Asian supply chains
+Q148,China,semi_export_controls,trade;sanctions,any,chip and tool export controls
+Q148,China,semi_china_revenue,trade;sanctions,any,chip sales into China
+Q148,China,hw_assembly,trade;sanctions,any,device assembly in China
+Q148,China,ag_trade_flows,trade,any,grain and oilseed purchases
+Q148,China,lst_china_demand,trade;sanctions,any,"instrument and tools demand, BIOSECURE"
+Q148,China,pharma_api_supply,trade;sanctions,any,Chinese APIs and CDMOs
+Q148,China,ent_china_access,trade;sanctions;diplomacy,any,film and game approvals
+Q148,China,commeq_vendor_restrictions,sanctions,any,Huawei / ZTE restrictions
+Q865,Taiwan,semi_taiwan_supply,conflict;instability,any,leading-edge foundry and packaging concentration
+Q865,Taiwan,semi_foundry_orders,conflict;trade,any,foundry capacity
+Q865,Taiwan,global_supply_chain_pressure,conflict,any,electronics supply chain
+Q865,Taiwan,vix,conflict,any,great-power conflict
+Q865,Taiwan,gold,conflict,any,safe haven
+Q865,Taiwan,marine_war_risk,conflict,any,Taiwan Strait shipping
+Q713418,TSMC,semi_foundry_orders,any,any,the leading foundry
+Q713418,TSMC,semi_taiwan_supply,any,any,the leading foundry
+Q648533,SMIC,semi_export_controls,any,any,Chinese foundry under US controls
+Q182477,NVIDIA,semi_export_controls,trade;sanctions,any,AI chip export licences
+Q182477,NVIDIA,semi_ai_datacenter,any,any,AI accelerator leader
+Q2986369,semiconductor industry,semi_export_controls,any,any,chip policy
+Q2986369,semiconductor industry,semi_china_revenue,any,any,chip policy
+Q55,Netherlands,semi_export_controls,trade;sanctions,any,ASML lithography export licences
+Q884,South Korea,semi_memory_prices,conflict;instability,any,Korean memory makers
+Q423,North Korea,defense_spending,conflict,any,regional rearmament
+Q17,Japan,semi_wafer_cost,conflict,target;party,Japanese photoresists and wafer materials
+Q17,Japan,defense_spending,conflict,any,regional rearmament
+Q17,Japan,autoparts_tariffs,trade,any,Japanese vehicle and parts tariffs
+Q159,Russia,defense_spending,conflict,any,European rearmament
+Q159,Russia,airline_airspace,conflict,any,closed Russian airspace
+Q159,Russia,aluminum,sanctions,any,Russian aluminium
+Q159,Russia,fertilizers,conflict;sanctions,any,"Russian potash, nitrogen and phosphate"
+Q159,Russia,euro_hicp,conflict;sanctions,any,energy prices
+Q159,Russia,euro_gdp,conflict;sanctions,any,energy and confidence
+Q212,Ukraine,defense_spending,conflict,any,European rearmament
+Q212,Ukraine,corn,conflict,target,Ukrainian corn exports
+Q212,Ukraine,euro_gdp,conflict,any,war on Europe's border
+Q184,Belarus,fertilizers,sanctions,any,Belarusian potash
+Q794,Iran,gold,conflict,any,safe haven
+Q794,Iran,vix,conflict,target;party,regional war
+Q794,Iran,airline_airspace,conflict,any,Gulf airspace closures
+Q794,Iran,marine_war_risk,conflict,any,Gulf shipping
+Q794,Iran,midstream_tanker_rates,conflict;sanctions,any,tanker demand and shadow fleet
+Q794,Iran,defense_spending,conflict,any,munitions and air defence
+Q801,Israel,defense_spending,conflict,any,munitions and air defence
+Q801,Israel,airline_airspace,conflict,any,regional airspace closures
+Q801,Israel,gold,conflict,any,safe haven
+Q846,Qatar,midstream_lng_exports,conflict;instability,target;party,Qatari LNG outage lifts US exports
+Q79883,Strait of Hormuz,midstream_tanker_rates,conflict,any,tanker routes
+Q79883,Strait of Hormuz,marine_war_risk,conflict,any,war-risk premiums
+Q79883,Strait of Hormuz,marine_ton_miles,conflict,any,rerouted cargo
+Q79883,Strait of Hormuz,fertilizers,conflict,any,Gulf urea and ammonia exports
+Q899,Suez Canal,marine_container_rates,conflict;trade;instability,any,Asia-Europe route
+Q899,Suez Canal,marine_ton_miles,conflict;trade;instability,any,Cape diversions
+Q899,Suez Canal,global_supply_chain_pressure,conflict;trade;instability,any,delivery times
+Q23406,Red Sea,marine_container_rates,conflict;instability,any,Asia-Europe route
+Q23406,Red Sea,marine_ton_miles,conflict;instability,any,Cape diversions
+Q23406,Red Sea,marine_war_risk,conflict;instability,any,war-risk premiums
+Q23406,Red Sea,global_supply_chain_pressure,conflict;instability,any,delivery times
+Q7350,Panama Canal,marine_container_rates,conflict;trade;instability,any,Asia-US East Coast route
+Q7350,Panama Canal,ag_trade_flows,conflict;trade;instability,any,US grain exports to Asia
+Q7350,Panama Canal,global_supply_chain_pressure,conflict;trade;instability,any,delivery times
+Q166,Black Sea,marine_war_risk,conflict,any,war-risk premiums
+Q166,Black Sea,corn,conflict,any,Black Sea grain corridor
+Q7184,NATO,defense_spending,any,any,alliance spending targets
+Q96,Mexico,autoparts_tariffs,trade,any,USMCA vehicle and parts trade
+Q96,Mexico,medtech_tariffs,trade,any,devices made in Mexico
+Q96,Mexico,hw_assembly,trade,any,Mexican assembly
+Q16,Canada,autoparts_tariffs,trade,any,USMCA vehicle and parts trade
+Q16,Canada,refining_crude_discount,trade,any,Canadian heavy crude for US refiners
+Q16,Canada,aluminum,trade,any,Canadian aluminium
+Q16,Canada,hd_lumber_materials,trade,any,softwood lumber duties
+Q717,Venezuela,refining_crude_discount,conflict;sanctions;instability,any,heavy crude for Gulf Coast refiners
+Q155,Brazil,soybeans,trade,any,Brazilian soybean exports
+Q298,Chile,copper,instability;trade,any,largest copper producer
+Q298,Chile,battery_metals,instability;trade,any,lithium
+Q298,Chile,mining_resource_nationalism,instability;trade,any,royalties and nationalisation
+Q419,Peru,copper,instability,any,mine blockades
+Q419,Peru,mining_resource_nationalism,instability,any,royalties and protests
+Q881,Vietnam,apparel_sourcing,trade,any,apparel and footwear sourcing
+Q881,Vietnam,goods_import_cost,trade,any,furniture and consumer goods
+Q881,Vietnam,hw_assembly,trade,any,electronics assembly
+Q668,India,pharma_api_supply,trade,any,generic drugs and APIs
+Q668,India,apparel_sourcing,trade,any,apparel sourcing
+Q252,Indonesia,battery_metals,trade;instability,any,nickel
+Q252,Indonesia,mining_resource_nationalism,trade;instability,any,ore export bans
+Q974,Democratic Republic of the Congo,battery_metals,conflict;instability;trade,any,cobalt
+Q974,Democratic Republic of the Congo,copper,conflict;instability,any,copper belt
+Q408,Australia,iron_ore,trade,any,iron ore exports to China
+Q458,European Union,euro_gdp,trade,any,EU trade policy
+Q458,European Union,autoparts_tariffs,trade,any,EU vehicle tariffs
+Q458,European Union,pharma_tariffs,trade,any,EU pharmaceutical exports
+Q458,European Union,imedia_regulation,sanctions,any,DMA / DSA fines

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-One-time backfill of hourly price history for geopolitical markets (same scope as the graph:
-graph_build.geopolitical), open and settled, into market_snapshots with source='backfill'. Also
+One-time backfill of hourly price history for in-scope markets (same scope as the graph:
+graph_build.scope — geopolitical or credit-relevant policy), open and settled, into market_snapshots with source='backfill'. Also
 records their terms in market_versions. Re-runnable: markets already backfilled are skipped.
 
-  Kalshi:     every series in KALSHI_CATEGORIES -> events (all statuses) -> hourly candlesticks
+  Kalshi:     every series in the graph's Kalshi categories (graph_build.GRAPH_SOURCES) -> events (all statuses) -> hourly candlesticks
               (markets settled before Kalshi's historical cutoff come from /historical/...)
-  Polymarket: POLY_TAGS events (open + closed) -> CLOB /prices-history for the YES token,
+  Polymarket: events under the graph's Polymarket tags (open + closed) -> CLOB /prices-history for the YES token,
               in 14-day windows (the API's max range at hourly fidelity)
 
 Markets with lifetime volume < BACKFILL_MIN_VOLUME are skipped (too thin for event betas).
@@ -17,10 +17,12 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 import entities, matching
-from collector import (CLOB, KALSHI, KALSHI_CATEGORIES, POLY_TAGS, get, insert, kalshi_record,
-                       load_versions, log, now, num, poly_events, poly_record, run_job,
-                       version_rows, when)
-from graph_build import EXCLUDE_REGEX, geopolitical
+from collector import (CLOB, KALSHI, get, insert, kalshi_record, load_versions, log, now, num, poly_events,
+                       poly_record, run_job, version_rows, when)
+from graph_build import EXCLUDE_REGEX, GRAPH_SOURCES, scope
+
+KALSHI_CATEGORIES = GRAPH_SOURCES["kalshi_core"] | GRAPH_SOURCES["kalshi_scoped"]
+POLY_TAGS = sorted(GRAPH_SOURCES["poly_core"] | GRAPH_SOURCES["poly_scoped"])
 
 MIN_VOLUME = float(os.getenv("BACKFILL_MIN_VOLUME", "1000"))
 HOUR = 3600
@@ -45,10 +47,10 @@ def kalshi_markets(con):
     yield from ((kalshi_record(e, m, ts), False) for e, ts in events for m in e.get("markets") or [])
 
     # Old settled markets are only served by /historical, one request per event: fetch them only
-    # for geopolitical events (judged on the event title, before any market is fetched).
+    # for in-scope events (judged on the event title, before any market is fetched).
     empty = {("kalshi", e["event_ticker"]): (e, ts) for e, ts in events if not e.get("markets")}
     titles = {k: " ".join(filter(None, (e.get("title"), e.get("sub_title")))) for k, (e, _) in empty.items()}
-    keep, _ = entities.discover(con, titles, in_scope=geopolitical)
+    keep, _ = entities.discover(con, titles, in_scope=scope(titles))
     with ThreadPoolExecutor(8) as ex:
         hist = ex.map(lambda k: paged(f"{KALSHI}/historical/markets", "markets", event_ticker=k[1]), keep)
         for k, ms in zip(keep, hist):
@@ -125,11 +127,12 @@ def backfill(con, run_id, errors, stats):
                            "WHERE source = 'backfill'").fetchall())
     versions, todo = load_versions(con), []
     for venue, discover, history in VENUES:
-        try:  # liquid, not yet backfilled, then geopolitical (entity lookups only for these)
+        try:  # liquid, not yet backfilled, then in scope (entity lookups only for these)
             cands = [(r, h) for r, h in discover(con) if (r["volume"] or 0) >= MIN_VOLUME
                      and (venue, r["market_id"]) not in done and not EXCLUDE_REGEX.search(r["text"])]
             questions = {(r["venue"], r["market_id"]): matching.question_text(r["contract"]) for r, _ in cands}
-            keep, _ = entities.discover(con, questions, in_scope=geopolitical)
+            tags = {(r["venue"], r["market_id"]): r["contract"]["tags"] or [] for r, _ in cands}
+            keep, _ = entities.discover(con, questions, in_scope=scope(questions, tags))
             scoped = [(r, h) for r, h in cands if (r["venue"], r["market_id"]) in keep]
         except Exception as err:
             log.exception("%s discovery failed", venue); errors.append(f"{venue} discovery: {err!r}")
@@ -137,7 +140,7 @@ def backfill(con, run_id, errors, stats):
         vers = version_rows([r for r, _ in scoped], versions, run_id)
         con.begin(); insert(con, "market_versions", vers); con.commit()
         todo += [(r, h, history) for r, h in scoped]
-        stats[venue] = dict(candidates=len(cands), geopolitical=len(scoped), new_versions=len(vers))
+        stats[venue] = dict(candidates=len(cands), in_scope=len(scoped), new_versions=len(vers))
         log.info("%s: %s", venue, stats[venue])
 
     def one(item):

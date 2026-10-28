@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Does the graph predict price reactions? A backtest of the structural exposure priors (api.py:
-Graph.exposures_of) against what securities actually did when proposition odds jumped.
+Graph.exposures_of) against what issuers' stocks actually did when proposition odds jumped. Each
+issuer is priced by its primary listing (securities.csv `primary`), so "security" below means that
+stock. (security_betas.py measures securities directly, without the structural priors.)
 
   1. Jumps: days on which a proposition's blended daily probability (last price per market per UTC
      day, averaged over its same_as markets) moved by at least --jump and still held at least half
@@ -36,9 +38,18 @@ from datetime import date, datetime, timezone
 
 import pyarrow as pa
 
-import api
+import csv
+from pathlib import Path
 
-BENCHMARK = "SPY"
+import api
+from prices import BENCHMARKS
+
+BENCHMARK = BENCHMARKS[0]
+
+def reference_tickers():
+    """{issuer node id: its primary listing} from securities.csv."""
+    with open(Path(__file__).parent / "securities.csv") as f:
+        return {f"iss:{r['issuer_id']}": r["ticker"] for r in csv.DictReader(f) if r["issuer_id"] and r["primary"]}
 BANDS = [(0.1, 0.3), (0.3, 0.6), (0.6, 1.01)]
 
 def daily_probs(cur, members, since):
@@ -58,6 +69,19 @@ def daily_probs(cur, members, since):
     for p, d, prob in rows:
         out[p][date.fromisoformat(d)] = prob
     return out
+
+def lasting_jumps(probs, threshold):
+    """{day: {pid: dp}}: days a proposition's daily probability moved by at least `threshold` and
+    still held at least half of that move a day later (thin markets spike and revert)."""
+    jumps = defaultdict(dict)
+    day = lambda d, k: date.fromordinal(d.toordinal() + k)
+    for p, series in probs.items():
+        for d, x in series.items():
+            prev, nxt = series.get(day(d, -1)), series.get(day(d, 1))
+            if prev is None or nxt is None or abs(x - prev) < threshold: continue
+            if (nxt - prev) * (x - prev) > 0 and abs(nxt - prev) >= abs(x - prev) / 2:  # the move held
+                jumps[d][p] = x - prev
+    return jumps
 
 def returns(cur, tickers):
     """{ticker: {trading date: daily return}} from adjusted closes (latest fetch wins)."""
@@ -91,11 +115,13 @@ def main():
     cur.execute("SET TimeZone = 'UTC'")
     now = datetime.now(timezone.utc)
     g = api.Graph(cur, now, now)
-    secs = [i for i, n in g.nodes.items() if n["type"] == "security"]
-    rets = returns(cur, [i[4:] for i in secs])
+    tick = reference_tickers()
+    secs = [i for i, n in g.nodes.items() if n["type"] == "issuer" and i in tick]
+    rets = returns(cur, [BENCHMARK] + [tick[i] for i in secs])
     if BENCHMARK not in rets: sys.exit(f"no prices for the benchmark {BENCHMARK}")
     bench = rets[BENCHMARK]
-    secs = [s for s in secs if s[4:] in rets and s[4:] != BENCHMARK]
+    rets = {s: rets[tick[s]] for s in secs if tick[s] in rets and tick[s] != BENCHMARK}  # by issuer
+    secs = list(rets)
     # exposures are per question; jumps are per rung (proposition), credited to its question
     expo = {s: g.exposures_of(s) for s in secs}
     question_of = {p: q for q in {q for e in expo.values() for q in e} for p, _, _ in g.rungs(q)}
@@ -103,21 +129,14 @@ def main():
     members = {p: [m for m, rel, _ in g.markets(p) if rel in api.BLENDED] for p in props}
     probs = daily_probs(cur, members, args.since)
 
-    jumps = defaultdict(dict)  # day -> {pid: dp}
-    day = lambda d, k: date.fromordinal(d.toordinal() + k)
-    for p, series in probs.items():
-        for d, x in series.items():
-            prev, nxt = series.get(day(d, -1)), series.get(day(d, 1))
-            if prev is None or nxt is None or abs(x - prev) < args.jump: continue
-            if (nxt - prev) * (x - prev) > 0 and abs(nxt - prev) >= abs(x - prev) / 2:  # the move held
-                jumps[d][p] = x - prev
+    jumps = lasting_jumps(probs, args.jump)  # day -> {pid: dp}
 
     # every day's 2-day abnormal return per security, and its standard deviation (for z)
     days = sorted(bench)
     first = min(jumps, default=None)
     windows = {d: days[i:i + 2] for i, d in enumerate(days[:-1]) if first and d >= first}
-    ar = {s: {d: sum(rets[s[4:]][t] - bench[t] for t in w) for d, w in windows.items()
-              if all(t in rets[s[4:]] for t in w)} for s in secs}
+    ar = {s: {d: sum(rets[s][t] - bench[t] for t in w) for d, w in windows.items()
+              if all(t in rets[s] for t in w)} for s in secs}
     sd = {s: math.sqrt(mean([x * x for x in v.values()])) for s, v in ar.items() if len(v) > 20}
 
     rows, jumped = [], defaultdict(set)  # jumped: security -> trading days with a linked jump
@@ -130,7 +149,7 @@ def main():
             hits = {p: expo[s][question_of[p]] for p in moved if question_of[p] in expo[s]}
             score = max((v["score"] for v in hits.values()), default=0.0)
             signed = [v["impact"] * moved[p] for p, v in hits.items() if v["impact"] is not None]
-            rows.append(dict(day=d, security=s[4:], n_jumps=len(moved), score=score,
+            rows.append(dict(day=d, security=tick[s], n_jumps=len(moved), score=score,
                              predicted=sum(signed) if signed else None, abnormal_return=ar[s][t0],
                              z=ar[s][t0] / sd[s]))
             if score >= args.min_score: jumped[s].add(t0)

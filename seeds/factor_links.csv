@@ -1,0 +1,360 @@
+src,dst,sign,rationale
+"# Factor -> factor transmission (analyst priors): src moving up moves dst in the direction of sign (+1 same way, -1 opposite). Macro -> macro, macro -> niche or niche -> niche; ids from seeds/factors.csv and seeds/niche_factors.csv. Written as `drives` edges; not measured."
+brent,wti,1,benchmarks move together
+brent,gasoline,1,crude is most of the pump price
+brent,distillates,1,crude is most of the diesel / jet price
+brent,us_cpi,1,energy weight in CPI
+brent,us_inflation_expectations,1,breakevens track oil
+brent,euro_hicp,1,energy weight in HICP
+natgas_europe,euro_hicp,1,gas and power bills
+lng_asia,natgas_europe,1,LNG competes for the same cargoes
+natgas_europe,fertilizers,1,gas is the nitrogen feedstock
+natgas_us,fertilizers,1,gas is the nitrogen feedstock
+wheat,us_cpi,1,food at home
+corn,us_cpi,1,feed and food prices
+freight,global_supply_chain_pressure,1,shipping cost is part of the index
+global_trade_volume,freight,1,"more cargo, tighter ships"
+global_supply_chain_pressure,us_ppi,1,input delays and costs
+global_supply_chain_pressure,us_cpi,1,goods prices follow with a lag
+us_import_prices,us_cpi,1,imported goods and tariff pass-through
+us_ppi,us_cpi,1,producer costs pass to consumers
+us_wage_growth,us_core_pce,1,services inflation
+us_cpi,rates_us_policy,1,the Fed reacts to inflation
+us_core_pce,rates_us_policy,1,the Fed's target measure
+us_unemployment,rates_us_policy,-1,the Fed eases when unemployment rises
+rates_us_policy,rates_us_10y,1,front end anchors the curve
+rates_us_policy,usd_broad,1,rate differentials
+us_fiscal_deficit,rates_us_10y,1,more Treasury supply
+defense_spending,us_fiscal_deficit,1,spending adds to the deficit
+rates_us_10y,us_mortgage_rate,1,mortgages price off the 10-year
+us_mortgage_rate,us_housing_starts,-1,affordability
+us_mortgage_rate,us_home_prices,-1,affordability
+us_gdp,us_payrolls,1,growth drives hiring
+us_payrolls,us_retail_sales,1,income
+us_consumer_confidence,us_retail_sales,1,willingness to spend
+usd_broad,us_import_prices,-1,a strong dollar cheapens imports
+usd_broad,gold,-1,dollar-priced
+us_real_yield_10y,gold,-1,opportunity cost of holding gold
+vix,credit_us_hy,1,risk-off widens spreads
+china_gdp,copper,1,China is half of copper demand
+china_gdp,iron_ore,1,steel output
+china_pmi,copper,1,industrial demand
+china_gdp,global_gdp,1,share of world growth
+us_gdp,global_gdp,1,share of world growth
+euro_gdp,global_gdp,1,share of world growth
+wti,oilsvc_rig_count,1,drilling follows price
+natgas_us,oilsvc_rig_count,1,gas-directed rigs
+brent,oilsvc_upstream_capex,1,budgets follow price
+wti,oilsvc_upstream_capex,1,budgets follow price
+iron_ore,oilsvc_steel_proppant,1,steel tubulars
+us_wage_growth,oilsvc_labor,1,wages
+brent,ep_realized_oil_price,1,benchmark
+wti,ep_realized_oil_price,1,benchmark
+natgas_us,ep_realized_gas_price,1,Henry Hub
+lng_asia,ep_realized_gas_price,1,LNG-linked contracts
+brent,ep_royalties_taxes,1,windfall taxes and price-linked royalties
+wti,ep_drilling_cost,1,service inflation at high prices
+distillates,refining_crack_spread,1,product price
+gasoline,refining_crack_spread,1,product price
+us_gdp,refining_product_demand,1,"driving, trucking, flying"
+brent,refining_crude_discount,1,Brent-linked crude vs inland / heavy barrels
+wti,refining_crude_discount,-1,narrower WTI discount
+soybeans,refining_rin_cost,1,soybean oil sets biodiesel RIN prices
+wti,midstream_throughput,1,production volumes
+natgas_us,midstream_throughput,1,gas volumes
+lng_asia,midstream_lng_exports,1,export arbitrage
+natgas_europe,midstream_lng_exports,1,export arbitrage
+freight,midstream_tanker_rates,1,shipping tightness
+us_ppi,midstream_tariffs,1,FERC index is PPI-linked
+rates_us_10y,midstream_interest_cost,1,refinancing
+credit_us_hy,midstream_interest_cost,1,spreads
+us_industrial_production,chem_volumes,1,end-market activity
+global_pmi,chem_volumes,1,end-market activity
+china_pmi,chem_volumes,1,end-market activity
+brent,chem_spreads,1,oil-linked product prices vs gas-based US feedstock
+china_ppi,chem_spreads,1,Chinese oversupply depresses prices
+natgas_us,chem_feedstock_cost,1,ethane / gas feedstock
+natgas_europe,chem_feedstock_cost,1,European feedstock and energy
+brent,chem_feedstock_cost,1,naphtha
+natgas_europe,chem_energy_cost,1,European plants
+natgas_us,chem_energy_cost,1,US plants
+fertilizers,fert_nutrient_prices,1,benchmark
+corn,fert_planted_acres,1,corn uses the most nitrogen
+us_industrial_production,gases_volumes,1,customer activity
+natgas_us,gases_power_cost,1,power price
+us_housing_starts,cm_shipments,1,residential construction
+us_ppi,cm_pricing,1,price environment
+distillates,cm_energy_cost,1,haulage
+natgas_us,cm_energy_cost,1,kilns
+us_retail_sales,pkg_volumes,1,consumer goods shipped
+us_industrial_production,pkg_volumes,1,industrial packaging
+us_ppi,pkg_pricing,1,price environment
+aluminum,pkg_resin_metal_cost,1,can sheet
+brent,pkg_resin_metal_cost,1,resin
+natgas_us,pkg_energy_cost,1,mill energy
+copper,mining_commodity_price,1,copper miners
+gold,mining_commodity_price,1,gold miners
+iron_ore,mining_commodity_price,1,iron ore and steel
+aluminum,mining_commodity_price,1,aluminium producers
+rare_earths,mining_commodity_price,1,rare-earth miners
+battery_metals,mining_commodity_price,1,lithium / nickel / cobalt miners
+distillates,mining_energy_cost,1,mine fleets
+distillates,mining_aisc,1,fuel in unit cost
+iron_ore,steel_metal_spread,-1,raw material cost
+usd_broad,steel_import_pressure,1,a strong dollar draws imports
+china_ppi,steel_import_pressure,-1,Chinese deflation exports cheap steel
+defense_spending,ad_defense_budgets,1,budgets
+defense_spending,ad_backlog,1,orders
+defense_spending,ad_foreign_military_sales,1,allied procurement
+global_gdp,ad_aftermarket,1,flight hours
+rare_earths,ad_critical_minerals,1,magnets and minerals
+us_wage_growth,ad_labor,1,wages
+us_housing_starts,bp_housing_activity,1,new construction
+us_home_prices,bp_housing_activity,1,home equity funds remodelling
+us_mortgage_rate,bp_housing_activity,-1,affordability
+rates_us_10y,bp_nonres_construction,-1,financing
+us_ppi,bp_pricing,1,price environment
+copper,bp_material_cost,1,input
+aluminum,bp_material_cost,1,input
+freight,bp_freight,1,rates
+distillates,bp_freight,1,fuel
+us_fiscal_deficit,cm_infra_spending,1,fiscal spending
+lng_asia,ce_energy_projects,1,LNG project FIDs
+us_wage_growth,ce_labor,1,wages
+iron_ore,ce_material_cost,1,steel
+semiconductors,ee_data_center_power,1,AI capex cycle
+copper,ee_copper_steel_cost,1,input
+aluminum,ee_copper_steel_cost,1,input
+us_ism_manufacturing,ind_order_intake,1,new orders
+global_pmi,ind_order_intake,1,new orders
+us_industrial_production,ind_shipments,1,output
+us_industrial_production,ind_factory_utilization,1,output
+us_ppi,ind_pricing,1,price environment
+copper,ind_material_cost,1,input
+aluminum,ind_material_cost,1,input
+iron_ore,ind_material_cost,1,steel
+corn,mach_farm_income,1,crop prices
+soybeans,mach_farm_income,1,crop prices
+wheat,mach_farm_income,1,crop prices
+copper,mach_construction_mining_demand,1,mining capex
+us_housing_starts,mach_construction_mining_demand,1,construction
+iron_ore,mach_steel_cost,1,steel
+us_industrial_production,dist_industrial_demand,1,MRO demand
+us_ppi,dist_price_inflation,1,supplier prices
+distillates,dist_freight,1,fuel
+us_wage_growth,dist_labor,1,wages
+us_gdp,csvc_waste_volumes,1,activity
+us_cpi,csvc_pricing,1,CPI-linked escalators
+distillates,csvc_fuel,1,fuel
+us_wage_growth,csvc_labor,1,wages
+us_payrolls,prof_hiring,1,hiring
+us_unemployment,prof_hiring,-1,slack
+us_fiscal_deficit,prof_government_contracts,1,federal spending
+rates_us_policy,prof_payroll_float,1,interest on client funds
+us_payrolls,prof_payroll_float,1,pays processed
+us_wage_growth,prof_wages,1,wages
+global_trade_volume,airfreight_volumes,1,trade
+us_retail_sales,airfreight_volumes,1,e-commerce parcels
+distillates,airfreight_fuel,1,fuel
+us_wage_growth,airfreight_labor,1,wages
+us_consumer_confidence,airline_load_factor,1,leisure travel
+us_gdp,airline_yield,1,business travel
+global_gdp,airline_international_demand,1,long-haul travel
+brent,airline_jet_fuel,1,crude
+distillates,airline_jet_fuel,1,jet trades with diesel
+us_wage_growth,airline_labor,1,wages
+freight,marine_container_rates,1,rates
+global_supply_chain_pressure,marine_container_rates,1,congestion
+freight,marine_dry_bulk_rates,1,rates
+china_gdp,marine_dry_bulk_rates,1,ore and coal imports
+global_trade_volume,marine_ton_miles,1,cargo
+brent,marine_bunker_fuel,1,fuel
+us_industrial_production,rail_carloads,1,industrial carloads
+global_trade_volume,rail_carloads,1,intermodal imports
+us_ppi,rail_pricing,1,price environment
+distillates,rail_fuel,1,fuel
+us_wage_growth,rail_labor,1,wages
+us_industrial_production,trucking_volumes,1,freight demand
+us_retail_sales,trucking_volumes,1,freight demand
+us_ism_manufacturing,trucking_rates,1,freight cycle
+distillates,trucking_fuel,1,fuel
+us_consumer_confidence,rideshare_trips,1,discretionary trips
+us_unemployment,rideshare_driver_cost,-1,more drivers when jobs are scarce
+us_consumer_confidence,autos_saar,1,big-ticket purchases
+us_payrolls,autos_saar,1,income
+rates_us_policy,autos_saar,-1,auto loan rates
+gasoline,autos_mix,-1,high fuel prices shift buyers from trucks
+iron_ore,autos_commodity_cost,1,steel
+aluminum,autos_commodity_cost,1,aluminium
+copper,autos_commodity_cost,1,copper
+battery_metals,autos_battery_cost,1,cell materials
+rare_earths,autos_rare_earths,1,magnets
+us_wage_growth,autos_labor,1,wages
+china_ppi,autos_china_competition,-1,Chinese deflation = cheaper exports
+autos_saar,autoparts_vehicle_production,1,builds follow sales
+iron_ore,autoparts_metals,1,steel
+aluminum,autoparts_metals,1,aluminium
+us_payrolls,autoparts_aftermarket,1,commuting
+gasoline,autoparts_aftermarket,-1,expensive fuel cuts miles
+us_mortgage_rate,hd_affordability,-1,monthly payment
+us_home_prices,hd_affordability,-1,price
+us_wage_growth,hd_affordability,1,income
+us_housing_starts,hd_home_sales,1,new homes
+us_mortgage_rate,hd_incentives,1,builders buy down rates
+us_home_prices,hd_land_cost,1,land values
+us_wage_growth,hd_construction_labor,1,wages
+us_retail_sales,consumer_electronics_demand,1,spending
+us_consumer_confidence,leisure_discretionary,1,sentiment
+us_retail_sales,leisure_discretionary,1,spending
+us_import_prices,goods_import_cost,1,import prices incl. tariffs
+usd_broad,goods_import_cost,-1,a strong dollar cheapens imports
+freight,goods_import_cost,1,shipping
+us_retail_sales,apparel_wholesale_orders,1,retailer demand
+china_gdp,apparel_china_luxury,1,Chinese incomes
+equity_china,apparel_china_luxury,1,wealth effect
+us_import_prices,apparel_sourcing,1,import prices incl. tariffs
+freight,apparel_sourcing,1,shipping
+us_consumer_confidence,hotel_revpar,1,leisure travel
+us_gdp,hotel_revpar,1,business travel
+us_consumer_confidence,cruise_yields,1,leisure travel
+brent,cruise_fuel,1,fuel
+china_gdp,casino_ggr,1,Macau visitation
+us_retail_sales,restaurant_traffic,1,spending
+us_cpi,restaurant_food_cost,1,food inflation
+wheat,restaurant_food_cost,1,flour
+corn,restaurant_food_cost,1,feed into protein
+us_wage_growth,restaurant_labor,1,wages
+us_retail_sales,retail_same_store_sales,1,spending
+us_consumer_confidence,retail_traffic,1,sentiment
+us_cpi,retail_basket,1,inflation lifts tickets
+us_import_prices,retail_merchandise_cost,1,import prices incl. tariffs
+freight,retail_merchandise_cost,1,inbound freight
+us_consumer_confidence,retail_markdowns,-1,weak demand forces markdowns
+distillates,retail_fulfillment,1,delivery fuel
+us_wage_growth,retail_fulfillment,1,warehouse wages
+us_wage_growth,retail_labor,1,wages
+us_cpi,retail_rent,1,CPI escalators
+us_mortgage_rate,retail_housing_turnover,-1,locked-in owners
+us_cpi,grocery_food_inflation,1,food at home
+wheat,grocery_food_inflation,1,grain
+corn,grocery_food_inflation,1,grain and feed
+us_cpi,bev_price_mix,1,price environment
+aluminum,bev_packaging,1,cans
+brent,bev_packaging,1,PET
+corn,bev_ingredients,1,HFCS
+corn,food_grain_inputs,1,input
+wheat,food_grain_inputs,1,input
+soybeans,food_grain_inputs,1,soy oil and meal
+corn,food_protein_inputs,1,feed
+brent,food_packaging,1,resin and freight
+us_cpi,food_pricing,1,price environment
+global_trade_volume,ag_trade_flows,1,grain trade
+us_cpi,tob_pricing,1,price environment
+brent,hpc_commodity_inputs,1,resins and petrochemicals
+china_gdp,hpc_em_demand,1,Chinese incomes
+usd_broad,hpc_em_demand,-1,translation of overseas sales
+us_cpi,hpc_pricing,1,price environment
+brent,medtech_component_cost,1,resins
+us_import_prices,medtech_tariffs,1,import prices incl. tariffs
+us_import_prices,pharma_tariffs,1,import prices incl. tariffs
+us_wage_growth,provider_labor,1,nursing wages
+us_fiscal_deficit,medicaid_aca_funding,1,federal health spending
+us_unemployment,provider_payer_mix,-1,job losses shift patients off commercial plans
+us_unemployment,managed_care_membership,-1,employer plans
+us_cpi,managed_care_cost_trend,1,medical inflation
+rates_us_10y,biotech_funding,-1,discount rates
+rates_us_policy,biotech_funding,-1,financing conditions
+vix,biotech_funding,-1,risk appetite
+us_fiscal_deficit,lst_academic_funding,1,federal research budgets
+china_gdp,lst_china_demand,1,Chinese research spending
+biotech_funding,lst_biopharma_spend,1,funded biotechs buy tools and CRO services
+rates_us_10y,bank_nim,1,asset yields
+rates_us_policy,bank_funding_cost,1,deposit and wholesale rates
+rates_us_policy,bank_deposit_beta,1,pass-through rises with rates
+rates_us_policy,bank_deposit_growth,-1,deposits leave for money funds
+us_gdp,bank_loan_growth,1,credit demand
+us_unemployment,bank_credit_losses,1,consumer defaults
+credit_us_hy,bank_credit_losses,1,corporate defaults
+rates_us_10y,bank_cre_losses,1,refinancing stress
+reit_cap_rates,bank_cre_losses,1,collateral values
+us_retail_sales,payments_volume,1,spending
+us_cpi,payments_volume,1,nominal spending
+global_gdp,payments_cross_border,1,travel
+usd_broad,payments_cross_border,-1,outbound vs inbound travel mix
+rates_us_policy,cf_funding_cost,1,deposit and ABS rates
+vix,cm_trading_volumes,1,volatility drives trading
+credit_us_hy,cm_ib_fees,-1,wide spreads shut issuance
+vix,cm_ib_fees,-1,volatility delays deals
+equity_us,cm_ib_fees,1,equity issuance and M&A
+equity_us,cm_aum,1,market levels
+equity_us,cm_fund_flows,1,performance chasing
+credit_us_hy,cm_private_markets_fundraising,-1,risk appetite
+rates_us_10y,ins_investment_income,1,reinvestment yields
+us_cpi,ins_claims_severity,1,repair and medical inflation
+us_import_prices,ins_claims_severity,1,tariffs on repair parts
+ins_cat_losses,ins_renewal_rates,1,losses harden pricing
+ins_cat_losses,reins_pricing,1,losses harden pricing
+ins_renewal_rates,ins_broker_organic,1,commissions on premium
+us_payrolls,ins_broker_organic,1,exposure units and benefits
+us_gdp,ins_premium_growth,1,insured exposures
+ins_claims_frequency,ins_loss_ratio,1,claims
+ins_claims_severity,ins_loss_ratio,1,claims
+ins_cat_losses,ins_loss_ratio,1,claims
+ins_loss_ratio,ins_combined_ratio,1,losses
+us_gdp,its_client_budgets,1,IT budgets
+fx_inr,its_offshore_cost,-1,a weaker rupee cuts offshore cost
+us_payrolls,saas_seats,1,white-collar employment
+us_unemployment,saas_seats,-1,layoffs cut seats
+us_gdp,saas_new_customers,1,IT budgets
+semiconductors,saas_ai_cloud_demand,1,AI cycle
+us_import_prices,hw_assembly,1,import prices incl. tariffs
+fx_cny,hw_assembly,-1,a weaker yuan cuts China assembly cost
+china_gdp,hw_china_demand,1,Chinese incomes
+us_consumer_confidence,hw_shipments,1,device upgrades
+semi_memory_prices,hw_memory_cost,1,DRAM / NAND
+semi_ai_datacenter,hw_ai_servers,1,accelerators
+semi_memory_prices,commeq_components,1,memory
+us_industrial_production,elec_industrial_demand,1,industrial electronics
+copper,elec_component_cost,1,input
+hw_shipments,elec_ems_volumes,1,builds
+global_pmi,semi_chip_shipments,1,electronics cycle
+hw_shipments,semi_chip_shipments,1,devices
+saas_ai_cloud_demand,semi_ai_datacenter,1,cloud buyers
+imedia_ai_capex,semi_ai_datacenter,1,hyperscaler capex
+semi_ai_datacenter,semi_product_mix,1,AI parts
+semi_ai_datacenter,semi_memory_prices,1,HBM demand
+semi_foundry_orders,semi_wafer_demand,1,wafer starts
+semi_wafer_demand,semi_fab_utilization,1,utilization
+semi_fab_capex,semieq_wfe,1,tool orders
+semi_subsidies,semi_fab_capex,1,subsidised fabs
+semi_export_controls,semi_china_revenue,-1,lost China sales
+china_gdp,semi_china_revenue,1,Chinese demand
+rare_earths,semi_critical_minerals,1,minerals
+us_cpi,telecom_arpu,1,price increases
+us_import_prices,telecom_handsets,1,handset tariffs
+rates_us_10y,telecom_interest_cost,1,refinancing
+credit_us_ig,telecom_interest_cost,1,spreads
+us_gdp,media_ad_spend,1,ad budgets
+us_retail_sales,media_ad_spend,1,retail advertisers
+media_ad_spend,imedia_ad_pricing,1,demand for impressions
+natgas_us,util_fuel_cost,1,gas generation
+natgas_us,ipp_power_prices,1,gas sets the marginal price
+rates_us_10y,util_interest_cost,1,refinancing
+credit_us_ig,util_interest_cost,1,spreads
+rates_us_10y,util_allowed_roe,1,regulators follow yields (lagged)
+semi_ai_datacenter,util_power_demand,1,data-centre load
+util_capex,util_rate_base,1,capex grows the rate base
+us_cpi,util_tariffs,1,rate cases follow costs
+rates_us_10y,reit_interest_rates,1,cost of debt
+rates_us_10y,reit_cap_rates,1,property yields
+us_real_yield_10y,reit_cap_rates,1,real discount rates
+us_gdp,reit_occupancy,1,tenant demand
+us_cpi,reit_rent,1,escalators
+us_cpi,reit_property_opex,1,"taxes, insurance, wages"
+us_ppi,reit_development_cost,1,construction cost
+semi_ai_datacenter,reit_data_center_demand,1,hyperscaler leasing
+telecom_network_capex,reit_tower_leasing,1,carrier equipment
+global_trade_volume,reit_logistics_demand,1,imports to warehouse
+us_payrolls,reit_office_attendance,1,office jobs
+us_housing_starts,reit_timber_prices,1,lumber demand
+us_mortgage_rate,re_transactions,-1,financing

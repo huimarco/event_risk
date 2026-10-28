@@ -54,6 +54,15 @@ ACTIONS = [(a, FAMILY.get(a, a), k, s, re.compile(p, re.I)) for a, k, s, p in [
     ("trade_agreement", "occurrence", True, r"trade (?:deal|agreement)|tariff agreement"),
     ("tariff_rate", "measure", False, r"tariff rate"),
     ("tariff_change", "occurrence", False, r"tariff"),
+    ("default", "occurrence", False,
+     r"(?<!\bin )\bdefaults? (?:on|before|by|in)\b|\b(?:sovereign|debt|bond) default|\bdefaults?\?|debt restructuring"
+     r"|restructures? (?:its |the )?debt|miss(?:es)? (?:a )?(?:debt|bond|coupon) payment"),
+    ("imf_program", "occurrence", False,
+     r"\bIMF (?:program|programme|loan|bailout|deal|agreement|support|package|staff-level)|\bbailout\b"),
+    ("policy_rate", "measure", False,
+     r"fed(?:eral)? funds|\brate (?:cut|hike|decision)s?\b|\b(?:cuts?|hikes?|raises?) (?:interest )?rates\b"
+     r"|\bFOMC\b|policy rate|\bFed decision"),
+    ("shutdown", "occurrence", False, r"government shutdown|(?:government|federal) (?:shuts? down|shutdown)"),
     ("meet", "occurrence", True, r"\bmeets?\b|\bmeeting\b|\bmet\b|\bsummit\b"),
     ("talk", "occurrence", True, r"\btalks?\b|phone call|\bspeak"),
     ("visit", "occurrence", False, r"\bvisits?\b|\bvisited\b|\btravel(?:s|led)? to\b"),
@@ -151,6 +160,10 @@ EFFECTS = {
     "list_add":        ("sanctions",   0.4, -1, 0),
     "list_remove":     ("sanctions",   0.4, +1, 0),
     "fine":            ("sanctions",   0.2, -1, 0),
+    "default":         ("credit",      0.8, -1, -1),     # sovereign / issuer default or restructuring
+    "imf_program":     ("credit",      0.4, +1, +1),     # IMF programme / bailout: support
+    "policy_rate":     ("monetary",    0.4, 0, 0),       # cut or hike: direction depends on the threshold
+    "shutdown":        ("fiscal",      0.4, -1, -1),     # government shutdown, debt-ceiling standoff
     "tariff_change":   ("trade",       0.5, -1, -0.3),
     "tariff_rate":     ("trade",       0.5, -1, -0.3),   # YES = rate above the threshold
     "ban":             ("trade",       0.3, -1, 0),
@@ -308,11 +321,15 @@ def parse_threshold(m, question):
     if r := re.search(r"\b(\d+) times?\b", q): return ("==", num(r[1]))                      # "strike Yemen 2 times"
     return None
 
+# Read from the question only: rules text mentions rates, defaults and bailouts in passing.
+QUESTION_ONLY = {"default", "imf_program", "policy_rate", "shutdown"}
+
 def find_action(question, head):
     """(action, family, kind, symmetric, verb match). The question wins over the rules; the verb's
     position (question only) splits entities into actors and targets."""
     for src in (question, head):
         for a, f, k, s, rx in ACTIONS:
+            if src is not question and a in QUESTION_ONLY: continue
             if verb := rx.search(src):
                 return a, f, k, s, verb if src is question else None
     return None

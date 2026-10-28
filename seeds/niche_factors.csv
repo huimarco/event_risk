@@ -1,0 +1,375 @@
+factor_id,name,side,earnings_sign,gics,definition
+"# Niche factors: industry revenue / cost / investment drivers (analyst reference data). side = revenue | cost | investment; earnings_sign = +1 if a higher value raises the industry's earnings, -1 if it lowers them; gics = GICS industry (6-digit), industry group (4) or sub-industry (8) codes, ';'-separated (seeds/gics.csv). Macro factors drive them through seeds/factor_links.csv; questions can also link to them directly through seeds/entity_factors.csv."
+oilsvc_rig_count,Drilling rig count,revenue,1,101010,Active oil and gas rigs (Baker Hughes): drilling and completion activity
+oilsvc_upstream_capex,Upstream capital spending,revenue,1,101010,"E&P capital budgets that buy drilling, completion and offshore services"
+oilsvc_pricing,Oilfield service pricing,revenue,1,101010,"Day rates and service pricing (offshore rigs, frac fleets, equipment)"
+oilsvc_utilization,Service fleet utilization,revenue,1,101010,"Share of rigs, frac fleets and vessels working"
+oilsvc_steel_proppant,Steel and proppant costs,cost,-1,101010,"Tubular steel (OCTG), sand and chemicals"
+oilsvc_labor,Oilfield labour cost,cost,-1,101010,Field crew wages and availability
+ep_production_volume,Oil and gas production volume,revenue,1,10102020;10102010,Barrels of oil equivalent produced per day
+ep_realized_oil_price,Realized oil price,revenue,1,10102020;10102010,Price received per barrel after differentials and hedges
+ep_realized_gas_price,Realized gas price,revenue,1,10102020;10102010,Price received per mcf of gas / NGLs after basis differentials
+ep_reserve_additions,Reserve additions,revenue,1,10102020;10102010,Proved reserves added (reserve replacement ratio)
+ep_lifting_cost,Lifting cost per BOE,cost,-1,10102020;10102010,Lease operating expense per barrel of oil equivalent
+ep_decline_rates,Well decline rates,cost,-1,10102020,How fast output from existing wells falls (drilling needed to stand still)
+ep_drilling_cost,Drilling and completion cost,cost,-1,10102020;10102010,"Cost per well (rigs, frac, steel, sand)"
+ep_royalties_taxes,Royalties and production taxes,cost,-1,10102020;10102010,"Royalty rates, severance and windfall taxes, host-government take"
+ep_development_capex,Development capex,investment,-1,10102020;10102010,Capital spending to develop reserves
+refining_crack_spread,Refining crack spread,revenue,1,10102030;10102010,Product prices minus crude cost (3-2-1 crack)
+refining_utilization,Refinery utilization,revenue,1,10102030,Share of refining capacity running
+refining_product_demand,Fuel demand,revenue,1,10102030,"Gasoline, diesel and jet fuel demand"
+refining_crude_discount,Crude feedstock discount,cost,1,10102030,Discount of heavy / sour and Canadian crude to benchmarks: cheaper feedstock for complex refiners
+refining_rin_cost,Renewable fuel compliance cost,cost,-1,10102030,RIN prices and blending obligations (EPA RFS)
+refining_turnarounds,Refinery maintenance,investment,-1,10102030,Turnaround and sustaining capital spending
+midstream_throughput,Pipeline throughput,revenue,1,10102040,"Volumes moved, gathered and processed"
+midstream_tariffs,Pipeline tariffs,revenue,1,10102040,Contracted and regulated tariff rates (FERC index)
+midstream_lng_exports,LNG export volumes,revenue,1,10102040,US LNG liquefaction volumes and export fees
+midstream_tanker_rates,Tanker rates,revenue,1,10102040,Crude and product tanker day rates
+midstream_interest_cost,Midstream financing cost,cost,-1,10102040,Interest on leveraged pipeline balance sheets
+midstream_growth_capex,Pipeline growth capex,investment,-1,10102040,"Capital spending on new pipelines, plants and terminals"
+chem_volumes,Chemical sales volumes,revenue,1,151010,"Volumes into autos, construction, packaging and industry"
+chem_spreads,Chemical product spreads,revenue,1,15101010;15101020;15101050,Product price minus feedstock cost (e.g. polyethylene minus ethane)
+chem_feedstock_cost,Chemical feedstock cost,cost,-1,15101010;15101020;15101050;15101030,"Natural gas, ethane and naphtha used as feedstock"
+chem_energy_cost,Plant energy cost,cost,-1,151010,Fuel and power for plants (European gas especially)
+chem_utilization,Plant operating rates,cost,1,151010,Capacity utilization: higher spreads fixed cost
+fert_nutrient_prices,Fertilizer nutrient prices,revenue,1,15101030,"Potash, nitrogen and phosphate prices"
+fert_planted_acres,Planted acres,revenue,1,15101030,Corn and soybean acres planted (nutrient demand)
+gases_volumes,Industrial gas volumes,revenue,1,15101040,"On-site and merchant gas demand (fabs, steel, chemicals, hydrogen)"
+gases_power_cost,Air-separation power cost,cost,-1,15101040,Electricity for air-separation units (mostly passed through)
+cm_shipments,Aggregates and cement shipments,revenue,1,151020,Tons shipped
+cm_pricing,Aggregates and cement pricing,revenue,1,151020,Price per ton
+cm_infra_spending,Public infrastructure spending,revenue,1,151020;201030,Highway and public works budgets (IIJA)
+cm_energy_cost,Kiln fuel and diesel,cost,-1,151020,Energy for kilns and haulage
+pkg_volumes,Packaging shipments,revenue,1,151030,"Box, can, bottle and flexible packaging volumes"
+pkg_pricing,Containerboard and packaging prices,revenue,1,151030,Containerboard and packaging price increases
+pkg_fiber_cost,Fibre cost,cost,-1,15103020,Recycled fibre (OCC) and wood costs
+pkg_resin_metal_cost,Resin and metal cost,cost,-1,151030,"Polyethylene / PET resin, aluminium sheet and tinplate steel"
+pkg_energy_cost,Mill energy cost,cost,-1,151030,Energy for mills and furnaces
+mining_commodity_price,Realized metal price,revenue,1,151040,"Price received for copper, gold, steel products, rare earths"
+mining_production,Mine production tonnage,revenue,1,151040,Tonnes mined and sold
+mining_ore_grade,Ore grade and recovery,revenue,1,15104020;15104025;15104030;15104040;15104045;15104010,Metal content of ore and plant recovery rate
+mining_energy_cost,Mining energy cost,cost,-1,151040,Diesel and power for mines and smelters
+mining_labor,Mining labour cost,cost,-1,151040,Mine wages and availability
+mining_strip_ratio,Stripping ratio,cost,-1,15104020;15104025;15104030;15104040;15104045,Waste moved per tonne of ore
+mining_aisc,All-in sustaining cost,cost,-1,151040,Cost per unit including sustaining capital
+mining_sustaining_capex,Sustaining capex,investment,-1,151040,Capital to keep mines running
+mining_resource_nationalism,Royalties and export bans,cost,-1,151040,"Host-country royalties, export bans and nationalisation risk (Chile, Indonesia, DRC)"
+steel_metal_spread,Steel metal spread,revenue,1,15104050,Steel price minus scrap / iron ore cost
+steel_import_pressure,Steel import pressure,revenue,-1,15104050,"Import share of the US market, net of Section 232 tariffs"
+ad_defense_budgets,Defence procurement budgets,revenue,1,201010,US DoD and allied procurement and R&D budgets
+ad_backlog,Aerospace and defence backlog,revenue,1,201010,Order backlog and book-to-bill
+ad_aircraft_deliveries,Commercial aircraft deliveries,revenue,1,201010,Boeing / Airbus deliveries and build rates
+ad_aftermarket,Aerospace aftermarket,revenue,1,201010,Flight hours driving spare parts and MRO
+ad_foreign_military_sales,Foreign military sales,revenue,1,201010,Export orders and licences (FMS)
+ad_specialty_metals,Specialty metals cost,cost,-1,201010,"Titanium, nickel alloys, castings and forgings"
+ad_critical_minerals,Critical minerals supply,cost,-1,201010,"Rare-earth magnets, gallium, germanium, antimony (Chinese export controls)"
+ad_supply_chain,Aerospace supply-chain constraints,cost,-1,201010,"Supplier delays (engines, castings, electronics)"
+ad_labor,Aerospace labour cost,cost,-1,201010,Skilled labour wages and strikes
+bp_housing_activity,New construction and remodelling,revenue,1,201020,Residential starts and repair / remodel activity
+bp_nonres_construction,Non-residential construction,revenue,1,201020;201030,"Commercial, industrial and data-centre construction"
+bp_pricing,Building products pricing,revenue,1,201020,Price increases
+bp_material_cost,Building material cost,cost,-1,201020,"Steel, copper, resin, glass and lumber"
+bp_freight,Building products freight,cost,-1,201020,Inbound and outbound freight
+ce_backlog,Engineering backlog,revenue,1,201030,Contracted project backlog
+ce_energy_projects,Energy and power projects,revenue,1,201030;201040,"LNG, power generation, grid and energy-transition projects"
+ce_labor,Craft labour,cost,-1,201030,Craft labour wages and availability (immigration)
+ce_material_cost,Fixed-price material cost,cost,-1,201030,Steel and cement on fixed-price contracts
+ee_grid_capex,Grid capex,revenue,1,201040,Utility transmission and distribution spending
+ee_data_center_power,Data-centre power demand,revenue,1,201040;55101010;55103010;55105010,"Power, cooling and electrical gear for data centres"
+ee_clean_energy_credits,Clean-energy tax credits,revenue,1,201040;55105010;55105020,"IRA production / investment credits for renewables, storage, nuclear"
+ee_copper_steel_cost,Copper and electrical steel cost,cost,-1,201040,"Copper, aluminium and grain-oriented electrical steel"
+ind_order_intake,Industrial order intake,revenue,1,201040;201050;201060,New orders
+ind_backlog,Industrial backlog,revenue,1,201040;201050;201060,Order backlog
+ind_shipments,Industrial shipments,revenue,1,201040;201050;201060,Units shipped
+ind_pricing,Industrial realized pricing,revenue,1,201040;201050;201060,Price realisation net of discounts
+ind_aftermarket,Industrial aftermarket,revenue,1,201050;201060,"Service, parts and aftermarket revenue"
+ind_material_cost,Industrial material cost,cost,-1,201050;201060,"Steel, aluminium, copper, components"
+ind_labor_productivity,Labour productivity,cost,1,201040;201050;201060,Output per hour
+ind_factory_utilization,Factory utilization,cost,1,201040;201050;201060,Capacity utilisation: absorbs fixed cost
+ind_working_capital,Working capital,investment,-1,201050;201060,Inventory and receivables tied up
+mach_farm_income,Farm income,revenue,1,20106015,Crop prices x yields: demand for tractors and combines
+mach_construction_mining_demand,Construction and mining equipment demand,revenue,1,20106010,"Construction activity, mining capex, rental fleets"
+mach_dealer_inventory,Dealer inventory,revenue,-1,20106010;20106015,Dealer destocking cuts factory shipments
+mach_steel_cost,Machinery steel cost,cost,-1,201060,Steel plate and castings
+dist_industrial_demand,MRO and industrial demand,revenue,1,201070,"Maintenance, repair and operations demand"
+dist_price_inflation,Distributor price inflation,revenue,1,201070;255010;30101020,Supplier price increases passed through
+dist_freight,Distribution freight,cost,-1,201070;30101020,Delivery fuel and freight
+dist_labor,Distribution labour,cost,-1,201070;30101020,Warehouse and driver wages
+csvc_waste_volumes,Waste volumes,revenue,1,20201050,Collection and landfill volumes
+csvc_pricing,Service price escalators,revenue,1,202010,CPI-linked contract escalators
+csvc_recycled_commodities,Recycled commodity prices,revenue,1,20201050,"Prices of recovered fibre, plastics and metals"
+csvc_fuel,Fleet fuel,cost,-1,202010,Diesel for collection fleets
+csvc_labor,Service labour cost,cost,-1,202010,Wages
+prof_hiring,Hiring demand,revenue,1,20202010,Job openings and staffing placements
+prof_utilization,Consultant utilization and bill rates,revenue,1,20202020;45102010,Billable utilisation and rates
+prof_government_contracts,Government services contracts,revenue,1,20202020;45102010,Federal consulting and IT services spending
+prof_payroll_float,Payroll volumes and client-fund interest,revenue,1,20202030,Pays processed and interest on client funds
+prof_wages,Professional wages,cost,-1,202020;451020,Consultant and engineer pay
+airfreight_volumes,Parcel and air cargo volumes,revenue,1,203010,"Parcels and air cargo tonnes (e-commerce, trans-Pacific)"
+airfreight_yield,Revenue per package,revenue,1,203010,Revenue per piece / air cargo rates
+airfreight_de_minimis,Cross-border e-commerce rules,revenue,1,203010;255030,De minimis duty exemption for small parcels
+airfreight_fuel,Air and truck fuel,cost,-1,203010,Jet fuel and diesel net of surcharges
+airfreight_labor,Logistics labour,cost,-1,203010,Driver and handler wages
+airline_asm,Available seat miles,revenue,1,203020,Capacity flown (ASM)
+airline_load_factor,Load factor,revenue,1,203020,Share of seats filled
+airline_yield,Passenger yield,revenue,1,203020,Revenue per passenger mile
+airline_ancillary,Ancillary revenue,revenue,1,203020,"Bags, seats, loyalty and co-brand cards"
+airline_international_demand,International travel demand,revenue,1,203020;25301020,Long-haul and inbound international travel
+airline_jet_fuel,Jet fuel cost,cost,-1,203020,Jet fuel per gallon
+airline_casm_ex,Cost per ASM ex fuel,cost,-1,203020,Non-fuel unit cost (CASM-ex)
+airline_labor,Airline labour cost,cost,-1,203020,"Pilot, crew and mechanic contracts"
+airline_maintenance,Aircraft maintenance,cost,-1,203020,Maintenance and engine shop visits
+airline_airspace,Airspace closures and rerouting,cost,-1,203020;203010,"Closed airspace (Russia, Middle East) lengthening routes"
+airline_fleet_capex,Fleet capex,investment,-1,203020,Aircraft purchases and delivery delays
+marine_container_rates,Container freight rates,revenue,1,203030;10102040,Container spot and contract rates
+marine_dry_bulk_rates,Dry-bulk rates,revenue,1,203030,Capesize / Panamax day rates
+marine_ton_miles,Ton-mile demand,revenue,1,203030;10102040,Cargo x distance (rerouting via the Cape lengthens voyages)
+marine_fleet_growth,Fleet supply growth,revenue,-1,203030,Newbuild deliveries vs scrapping
+marine_bunker_fuel,Bunker fuel,cost,-1,203030,Marine fuel cost
+marine_war_risk,War-risk insurance,cost,-1,203030;10102040,"War-risk premiums for the Red Sea, Gulf and Black Sea"
+rail_carloads,Rail carloads and intermodal,revenue,1,20304010,"Carloads and intermodal units (coal, grain, chemicals, imports)"
+rail_pricing,Rail pricing,revenue,1,20304010,Same-store price increases
+rail_fuel,Locomotive fuel,cost,-1,20304010,Diesel
+rail_labor,Rail labour,cost,-1,20304010,Crew wages and headcount
+trucking_volumes,Truck freight volumes,revenue,1,20304030,Truckload and LTL tonnage
+trucking_rates,Truck freight rates,revenue,1,20304030,Contract and spot rates per mile
+trucking_fuel,Truck fuel,cost,-1,20304030,Diesel net of surcharges
+rideshare_trips,Rideshare and delivery trips,revenue,1,20304040,Trips and gross bookings
+rideshare_driver_cost,Driver incentives,cost,-1,20304040,Driver pay and incentives
+autoparts_vehicle_production,Light-vehicle production,revenue,1,251010,"Vehicles built (North America, Europe, China)"
+autoparts_content,Content per vehicle,revenue,1,251010,"Supplier dollar content per vehicle (EV, ADAS)"
+autoparts_aftermarket,Vehicle miles and car-park age,revenue,1,251010;255010;25504050,Miles driven and average vehicle age (aftermarket parts demand)
+autoparts_metals,Auto parts metals cost,cost,-1,251010,"Steel, aluminium, copper and resin"
+autoparts_tariffs,Auto parts tariffs,cost,-1,251010;251020,"Tariffs on imported parts (USMCA, Section 232)"
+autos_saar,Vehicle sales (SAAR),revenue,1,251020,Seasonally adjusted annual vehicle sales
+autos_pricing,Average transaction price,revenue,1,251020,Price per vehicle
+autos_mix,Product mix,revenue,1,251020,Trucks / SUVs / premium share
+autos_incentives,Sales incentives,revenue,-1,251020,Discounts and financing incentives
+autos_ev_credits,EV and emissions credits,revenue,1,251020,EV tax credits and regulatory credit sales
+autos_china_competition,Chinese EV competition,revenue,-1,251020,Chinese EV exports and price cuts
+autos_commodity_cost,Vehicle commodity cost,cost,-1,251020,"Steel, aluminium, copper, precious metals"
+autos_battery_cost,Battery cost,cost,-1,251020,"Battery cells (lithium, nickel, cobalt, graphite)"
+autos_chip_supply,Chip supply,cost,-1,251020;251010,"Semiconductor availability (legacy nodes, Nexperia)"
+autos_rare_earths,Rare-earth magnets,cost,-1,251020;251010,NdFeB magnets for motors (Chinese export licences)
+autos_labor,Auto labour cost,cost,-1,251020,UAW and plant labour contracts
+autos_capex,Auto platform capex,investment,-1,251020,"EV, battery plant and platform investment"
+hd_home_sales,New home sales,revenue,1,25201030;25201020;25201040,New home sales and starts
+hd_affordability,Mortgage affordability,revenue,1,25201030;25504030;25504060,Mortgage payment relative to income
+hd_incentives,Homebuyer incentives,revenue,-1,25201030,Rate buydowns and price cuts
+hd_lumber_materials,Lumber and materials per home,cost,-1,25201030,"Lumber, drywall, concrete, appliances"
+hd_land_cost,Land cost,cost,-1,25201030,Lot and land development cost
+hd_construction_labor,Construction labour,cost,-1,25201030,Trade labour (immigration)
+consumer_electronics_demand,Consumer electronics demand,revenue,1,25201010;25504020,"TVs, cameras, audio and gaming devices"
+leisure_discretionary,Discretionary spending,revenue,1,252020;253020;25504040,Spending on non-essential goods and services
+goods_import_cost,Imported goods cost and tariffs,cost,-1,252020;252030;25201010;25201020;25201040;25201050,Landed cost of goods sourced in Asia incl. tariffs
+apparel_wholesale_orders,Wholesale orders,revenue,1,252030,Orders from retailers
+apparel_china_luxury,Chinese luxury spending,revenue,1,25203010,Mainland and travel-retail luxury demand
+apparel_full_price,Full-price sell-through,revenue,1,252030;25504010,Share sold without markdowns
+apparel_cotton,Cotton and materials,cost,-1,252030,"Cotton, synthetics and leather"
+apparel_sourcing,Asian sourcing cost,cost,-1,252030;25504010,"Factory costs and tariffs in China, Vietnam, Bangladesh, India"
+hotel_revpar,Hotel RevPAR,revenue,1,25301020;601030,Revenue per available room (occupancy x rate)
+cruise_yields,Cruise occupancy and yields,revenue,1,25301020,Load factor and net yield
+cruise_fuel,Cruise fuel,cost,-1,25301020,Marine fuel
+casino_ggr,Gaming revenue,revenue,1,25301010,"Gross gaming revenue (Macau, Las Vegas, online)"
+restaurant_traffic,Restaurant traffic,revenue,1,25301040,Same-store sales and transactions
+restaurant_food_cost,Food and paper cost,cost,-1,25301040,"Beef, chicken, dairy, coffee, packaging"
+restaurant_labor,Restaurant labour,cost,-1,25301040,Hourly wages (minimum-wage laws)
+retail_same_store_sales,Same-store sales,revenue,1,255030;255040;301010,Comparable-store sales growth
+retail_traffic,Customer traffic,revenue,1,255030;255040;301010,Store visits and site sessions
+retail_basket,Average basket,revenue,1,255030;255040;301010,Spend per transaction
+retail_conversion,Conversion,revenue,1,255030;255040,Share of visits that buy
+retail_order_frequency,Order frequency,revenue,1,255030;301010,Orders per customer
+retail_merchandise_cost,Merchandise cost,cost,-1,255030;255040;301010,Landed cost of goods incl. tariffs and freight
+retail_markdowns,Inventory markdowns,cost,-1,255030;255040,Clearance and promotional markdowns
+retail_fulfillment,Fulfillment cost,cost,-1,255030;255040,"Picking, packing and delivery"
+retail_rent,Store rent,cost,-1,255040;301010,Occupancy cost
+retail_labor,Retail labour,cost,-1,255030;255040;301010,Store and warehouse wages
+retail_housing_turnover,Existing home sales,revenue,1,25504030;25504060,Home turnover driving furnishing and improvement spend
+auto_retail_used_prices,Used vehicle prices,revenue,1,25504050,Manheim used vehicle value index
+grocery_food_inflation,Food-at-home inflation,revenue,1,301010,Grocery price inflation
+bev_volumes,Beverage volumes,revenue,1,302010,Cases / litres sold
+bev_price_mix,Beverage price / mix,revenue,1,302010,Price increases and premiumisation
+bev_packaging,Can and bottle cost,cost,-1,302010,Aluminium cans and PET bottles (aluminium tariffs)
+bev_ingredients,Beverage ingredients,cost,-1,302010,"Sugar, HFCS, agave, grain, juice concentrate"
+food_volumes,Packaged food volumes,revenue,1,302020,Units sold
+food_pricing,Packaged food pricing,revenue,1,302020,Price increases
+food_grain_inputs,Grain and soft-commodity inputs,cost,-1,30202030,"Wheat, corn, soy oil, cocoa, coffee"
+food_protein_inputs,Protein inputs,cost,-1,30202030,"Cattle, hogs and chicken"
+food_packaging,Food packaging cost,cost,-1,302020,Packaging and freight
+ag_crush_margins,Crush and processing margins,revenue,1,30202010,Soybean crush and oilseed processing margins
+ag_trade_flows,Grain origination and trade flows,revenue,1,30202010,Volumes originated and exported (China soybean purchases)
+ag_biofuel_policy,Biofuel mandates,revenue,1,30202010;10102030,Renewable fuel volume obligations and 45Z credits
+tob_volumes,Tobacco volumes,revenue,1,302030,Cigarette and nicotine product units
+tob_pricing,Tobacco pricing,revenue,1,302030,Price increases
+tob_excise,Excise taxes,cost,-1,302030,Tobacco excise taxes
+tob_leaf,Leaf tobacco cost,cost,-1,302030,Leaf and materials
+hpc_volumes,Household / personal care volumes,revenue,1,3030,Units sold
+hpc_pricing,Household / personal care pricing,revenue,1,3030,Price increases
+hpc_em_demand,Emerging-market and China demand,revenue,1,3030,Sales in China (incl. travel retail) and EMs
+hpc_commodity_inputs,"Resin, pulp and oil inputs",cost,-1,3030,"Resins, pulp, palm and petrochemical inputs"
+hpc_advertising,Advertising spend,cost,-1,3030,Marketing
+medtech_procedures,Procedure volumes,revenue,1,351010,Surgical and diagnostic procedures
+medtech_hospital_capex,Hospital capital budgets,revenue,1,351010,Capital equipment purchases
+medtech_reimbursement,Device reimbursement,revenue,1,351010,CMS and payer reimbursement rates
+medtech_china_vbp,China volume-based procurement,revenue,-1,351010;352030,Chinese tender price cuts
+medtech_component_cost,Device component cost,cost,-1,351010,"Resins, electronics, sterilisation"
+medtech_tariffs,Imported device and component tariffs,cost,-1,351010;35102010,"Tariffs on goods made in Mexico, China, Europe"
+provider_volumes,Patient volumes,revenue,1,35102015;35102020,"Admissions, visits and procedures"
+provider_payer_mix,Payer mix,revenue,1,35102015;35102020,Commercial vs Medicare / Medicaid share
+provider_labor,Clinical labour,cost,-1,35102015;35102020,Nursing and contract labour
+medicaid_aca_funding,Medicaid and ACA funding,revenue,1,35102015;35102020;35102030,Medicaid budgets and ACA subsidies
+managed_care_membership,Health plan membership,revenue,1,35102030,Members enrolled
+managed_care_premium_rates,Premium and Medicare Advantage rates,revenue,1,35102030,Commercial premiums and CMS MA rates
+managed_care_cost_trend,Medical cost trend,cost,-1,35102030,Utilisation and unit cost (medical loss ratio)
+distributor_drug_volumes,Drug distribution volumes,revenue,1,35102010,"Prescriptions distributed (GLP-1s, specialty)"
+distributor_generic_deflation,Generic drug deflation,revenue,-1,35102010,Generic price declines
+hctech_spend,Health IT spending,revenue,1,351030,Provider and payer IT budgets
+pharma_rx_volumes,Prescription volumes,revenue,1,352010;352020,Scripts written / doses sold
+pharma_net_price,Net drug prices,revenue,1,352010;352020,List price minus rebates
+pharma_launches,Product launches,revenue,1,352010;352020,New drug launches and uptake
+pharma_patent_life,Patent life,revenue,1,352010;352020,Years of exclusivity left (loss-of-exclusivity cliff)
+pharma_pricing_policy,Drug pricing policy,revenue,-1,352010;352020;35102010,"IRA negotiation, most-favoured-nation pricing"
+pharma_approvals,Regulatory approvals,revenue,1,352010;352020,FDA / EMA approvals and timelines
+pharma_rd,R&D and clinical trial spending,cost,-1,352010;352020,Research and trial costs
+pharma_manufacturing,Drug manufacturing cost,cost,-1,352020,"Plant, API and fill-finish cost"
+pharma_tariffs,Pharmaceutical tariffs and onshoring,cost,-1,352020;352010,Section 232 pharma tariffs and US plant investment
+pharma_api_supply,API supply from China and India,cost,-1,352020;35102010,Active-ingredient sourcing and BIOSECURE restrictions
+biotech_funding,Biotech funding conditions,investment,1,352010;352030,Venture and public financing for biotech
+lst_biopharma_spend,Biopharma R&D spend,revenue,1,352030,"Tools, services and CRO demand from drug developers"
+lst_academic_funding,Academic and NIH funding,revenue,1,352030,NIH and university research budgets
+lst_china_demand,China life-science demand,revenue,1,352030,Chinese biopharma and academic instrument demand
+lst_cdmo_orders,Outsourced manufacturing orders,revenue,1,352030,CDMO orders (shift away from Chinese CDMOs)
+bank_loan_growth,Loan balances,revenue,1,401010,Loans outstanding
+bank_deposit_growth,Deposit balances,revenue,1,401010,Deposits
+bank_nim,Net interest margin,revenue,1,401010,Asset yield minus funding cost
+bank_fees,Bank fees,revenue,1,401010,"Card, wealth, advisory and service fees"
+bank_funding_cost,Funding cost,cost,-1,401010,Cost of deposits and wholesale funding
+bank_deposit_beta,Deposit beta,cost,-1,401010,Share of rate changes passed to depositors
+bank_credit_losses,Credit losses,cost,-1,401010;402020,Provisions and net charge-offs
+bank_cre_losses,Commercial real-estate losses,cost,-1,40101015,Office and CRE loan losses
+bank_efficiency,Bank operating cost,cost,-1,401010,Efficiency ratio
+bank_capital_rules,Regulatory capital requirements,cost,-1,401010;40203020,"Basel endgame, stress-test buffers, G-SIB surcharges"
+payments_volume,Payment volumes,revenue,1,40201060,Purchase volume processed
+payments_cross_border,Cross-border volumes,revenue,1,40201060,Cross-border travel and e-commerce payments
+payments_take_rate,Payments take rate,revenue,1,40201060,Revenue per dollar processed
+payments_regulation,Interchange regulation,revenue,-1,40201060;402020,"Interchange caps, routing mandates"
+cf_receivables,Consumer receivables growth,revenue,1,402020,Card and consumer loan balances
+cf_rate_caps,Consumer rate caps,revenue,-1,402020,Proposed credit-card APR caps
+cf_funding_cost,Consumer lender funding cost,cost,-1,402020,Deposit and ABS funding cost
+cm_trading_volumes,Trading volumes and volatility,revenue,1,402030;401010,"Equity, options, FICC volumes"
+cm_ib_fees,Investment banking activity,revenue,1,40203020;401010,"M&A, ECM and DCM issuance"
+cm_aum,Assets under management,revenue,1,40203010,"AUM, driven by market levels and flows"
+cm_fund_flows,Fund flows,revenue,1,40203010,Net inflows
+cm_private_markets_fundraising,Private markets fundraising,revenue,1,40203010,Private credit / equity fundraising and deployment
+cm_fee_pressure,Fee compression,revenue,-1,40203010,"Shift to passive, lower fees"
+cm_data_subscriptions,Exchange and data subscriptions,revenue,1,40203040,"Market data, index licensing and listing fees"
+cm_compensation,Compensation ratio,cost,-1,402030,Pay as share of revenue
+ins_premium_growth,Premium growth,revenue,1,403010,Written premium growth
+ins_policy_count,Policy count,revenue,1,403010,Policies in force
+ins_renewal_rates,Renewal rate changes,revenue,1,403010,Price change on renewals
+ins_investment_income,Investment income,revenue,1,403010,Yield on the float
+ins_claims_frequency,Claims frequency,cost,-1,40301030;40301040;40301050,Claims per policy
+ins_claims_severity,Claims severity,cost,-1,40301030;40301040;40301050,"Cost per claim (repair parts, social inflation)"
+ins_cat_losses,Catastrophe and political-violence losses,cost,-1,40301030;40301040;40301050,"Natural catastrophes, war, political violence, cyber"
+ins_loss_ratio,Loss ratio,cost,-1,403010,Claims / earned premium
+ins_combined_ratio,Combined ratio,cost,-1,40301030;40301040;40301050,Losses plus expenses / premium
+ins_reinsurance_cost,Reinsurance cost,cost,-1,40301030;40301040,Ceded reinsurance pricing
+reins_pricing,Reinsurance pricing,revenue,1,40301050,Rate on line at renewals
+ins_broker_organic,Broker organic growth,revenue,1,40301010,Premium rate increases and exposure units
+ins_mortality,Mortality and morbidity,cost,-1,40301020,Life and health claims experience
+its_client_budgets,Client IT budgets,revenue,1,451020,Enterprise IT services spend
+its_offshore_cost,Offshore delivery cost,cost,-1,45102010,India wage inflation and H-1B visa costs
+internet_infra_traffic,Internet traffic and hosting,revenue,1,45102030,"CDN, hosting and domain traffic"
+saas_arr,Annual recurring revenue,revenue,1,451030,ARR growth
+saas_new_customers,New customers,revenue,1,451030,Customer adds
+saas_nrr,Net revenue retention,revenue,1,451030,Expansion net of churn (NRR)
+saas_seats,Seats,revenue,1,451030,Paid seats (white-collar employment)
+saas_arpu,ARPU,revenue,1,451030,Revenue per user
+saas_ai_cloud_demand,AI and cloud demand,revenue,1,45103020;45102030,Cloud infrastructure and AI services consumption
+saas_cloud_hosting,Cloud hosting cost,cost,-1,451030,Hosting and compute (GPUs)
+saas_cac,Customer acquisition cost,cost,-1,451030,Sales and marketing per new customer
+saas_sales_efficiency,Sales efficiency,cost,1,451030,New ARR per sales dollar
+saas_rd,Software R&D,cost,-1,451030,Engineering spend
+saas_churn,Churn,cost,-1,451030,Customers lost
+saas_sbc,Stock-based compensation,cost,-1,451030,Equity pay
+commeq_carrier_capex,Carrier and cloud networking capex,revenue,1,452010,Telecom and hyperscaler network spend
+commeq_enterprise,Enterprise networking spend,revenue,1,452010,Campus and data-centre networking
+commeq_vendor_restrictions,Restrictions on Chinese vendors,revenue,1,452010,Huawei / ZTE bans opening share to Western vendors
+commeq_components,Networking component cost,cost,-1,452010,"Chips, optics and memory"
+hw_shipments,"PC, phone and server shipments",revenue,1,452020,Units shipped
+hw_asp,Hardware ASP,revenue,1,452020,Average selling price
+hw_ai_servers,AI server demand,revenue,1,452020;452030,GPU servers and storage
+hw_china_demand,China device demand,revenue,1,452020,Chinese smartphone / PC demand and subsidies
+hw_memory_cost,Memory component cost,cost,-1,452020,DRAM and NAND prices
+hw_assembly,Asian assembly cost and tariffs,cost,-1,452020;452030;452010,"Assembly in China, Vietnam, India, Mexico incl. tariffs"
+elec_industrial_demand,Electronics industrial demand,revenue,1,452030,"Industrial, auto and aerospace electronics"
+elec_ems_volumes,EMS build volumes,revenue,1,45203020,Contract manufacturing builds
+elec_component_cost,Electronic component cost,cost,-1,452030,"Passives, chips, connectors, copper"
+elec_labor,Assembly labour,cost,-1,45203020,"Factory labour in China, Mexico, Vietnam"
+semi_chip_shipments,Chip shipments,revenue,1,45301020,Units shipped
+semi_asp,Chip ASP,revenue,1,45301020,Average selling price
+semi_product_mix,Chip product mix,revenue,1,45301020,"Share of high-value parts (AI accelerators, HBM, leading nodes)"
+semi_wafer_demand,Wafer demand,revenue,1,453010,Wafer starts
+semi_foundry_orders,Foundry orders,revenue,1,45301020,Orders placed with foundries
+semi_memory_prices,Memory prices,revenue,1,45301020,DRAM / NAND / HBM contract prices
+semi_ai_datacenter,AI data-centre demand,revenue,1,453010,Accelerator and HBM demand from hyperscalers
+semi_china_revenue,China chip demand,revenue,1,453010,Sales into China
+semi_export_controls,Export controls,revenue,-1,453010,US / Dutch / Japanese controls on chip and tool sales to China
+semieq_wfe,Wafer fab equipment spend,revenue,1,45301010,Fab tool budgets (WFE)
+semi_wafer_cost,Wafer cost,cost,-1,45301020,"Cost per wafer (materials, photoresists, gases)"
+semi_fab_utilization,Fab utilization,cost,1,45301020,Capacity utilisation
+semi_yield,Manufacturing yield,cost,1,45301020,Good dies per wafer
+semi_rd,Chip R&D,cost,-1,453010,Design and process R&D
+semi_taiwan_supply,Taiwan foundry supply risk,cost,-1,453010;452020;452030;251020,Concentration of leading-edge foundry and packaging in Taiwan
+semi_critical_minerals,Chip critical minerals,cost,-1,453010,"Gallium, germanium, neon, rare earths"
+semi_fab_capex,Fab capex,investment,-1,45301020,New fabs and capacity
+semi_subsidies,Chip subsidies,investment,1,453010,CHIPS Act and foreign fab subsidies
+telecom_subscribers,Telecom subscribers,revenue,1,5010;50201030,Postpaid phone and broadband net adds
+telecom_arpu,Telecom ARPU,revenue,1,5010;50201030,Revenue per user
+telecom_churn,Telecom churn,cost,-1,5010;50201030,Subscribers lost
+telecom_handsets,Handset promotions and cost,cost,-1,5010,Device subsidies (handset tariffs)
+telecom_spectrum,Spectrum,investment,-1,5010,Spectrum auction costs
+telecom_network_capex,Network capex,investment,-1,5010;50201030,5G / fibre build
+telecom_interest_cost,Telecom financing cost,cost,-1,5010;50201030,Interest on high leverage
+media_ad_spend,Advertising market,revenue,1,502010;502030,Total ad spend
+media_political_ads,Political advertising,revenue,1,50201020;50201010,Election-cycle ad spend
+media_pay_tv_subs,Pay-TV subscribers,revenue,1,50201030;50201020,Cord-cutting
+media_retrans_fees,Retransmission and affiliate fees,revenue,1,50201020;50201030,Fees per subscriber
+media_content_cost,Programming and sports rights,cost,-1,502010;502020,Content cost
+ent_streaming_subs,Streaming subscribers,revenue,1,50202010,Paid subscribers and price increases
+ent_box_office,Box office,revenue,1,50202010,Theatrical receipts
+ent_china_access,China market access,revenue,1,50202010;50202020,Release approvals and game licences in China
+ent_game_engagement,Game engagement,revenue,1,50202020,Players and in-game spend
+ent_content_spend,Content spend,cost,-1,50202010,Production cost
+imedia_users,Users and engagement,revenue,1,502030,Daily active users and time spent
+imedia_ad_pricing,Ad pricing,revenue,1,502030,Price per impression / click
+imedia_regulation,Platform regulation and fines,cost,-1,502030,"Antitrust remedies, DSA / DMA fines, digital services taxes"
+imedia_tac,Traffic acquisition cost,cost,-1,502030,Payments to distribution partners
+imedia_ai_capex,AI infrastructure capex,investment,-1,502030;45103020,Data centres and GPUs
+util_rate_base,Regulated rate base,revenue,1,5510,Assets earning a regulated return
+util_allowed_roe,Allowed ROE,revenue,1,5510,Return on equity set by regulators
+util_power_demand,Electricity demand,revenue,1,55101010;55103010;55105010,"Load growth (data centres, electrification)"
+util_tariffs,Customer rates,revenue,1,5510,Approved rate increases
+ipp_power_prices,Wholesale power prices,revenue,1,55105010,Spark spreads and capacity prices
+util_fuel_cost,Generation fuel cost,cost,-1,55101010;55103010;55105010;55102010,Gas and coal (mostly passed through)
+util_grid_maintenance,Grid maintenance,cost,-1,5510,O&M
+util_generation_cost,Generation cost,cost,-1,55101010;55103010;55105010,Plant operating cost
+util_liabilities,Wildfire and storm liabilities,cost,-1,55101010;55103010,Liability and restoration costs
+util_interest_cost,Utility financing cost,cost,-1,5510,Interest on regulated debt
+util_capex,Infrastructure capex,investment,-1,5510,Grid and generation investment
+reit_occupancy,Occupancy,revenue,1,6010,Share of space leased
+reit_rent,Rent per square foot,revenue,1,6010,Average rent
+reit_leasing_spreads,Leasing spreads,revenue,1,6010,New vs expiring rent
+reit_noi,Same-property NOI,revenue,1,6010,Net operating income growth
+reit_property_opex,Property opex,cost,-1,6010,"Taxes, insurance, utilities, maintenance"
+reit_maintenance_capex,Maintenance capex,investment,-1,6010,Recurring capital spending
+reit_interest_rates,REIT financing cost,cost,-1,6010;6020,Cost of debt
+reit_cap_rates,Cap rates,investment,-1,6010;6020,Property yields (higher = lower values)
+reit_development_cost,Development cost,investment,-1,6010,Construction cost
+reit_data_center_demand,Data-centre leasing,revenue,1,60108050,Hyperscaler leasing
+reit_tower_leasing,Tower leasing,revenue,1,60108030,Carrier equipment added
+reit_office_attendance,Office attendance,revenue,1,601040,Office utilisation
+reit_logistics_demand,Logistics demand,revenue,1,601025,Warehouse demand from imports and e-commerce
+reit_senior_housing,Senior housing occupancy,revenue,1,601050,Senior housing and medical office demand
+reit_timber_prices,Timber prices,revenue,1,60108040,Sawlog and lumber prices
+re_transactions,Property transaction volumes,revenue,1,602010,Sales and leasing activity

@@ -1,685 +1,664 @@
-qid,entity,ticker,weight,rationale
-"# Analyst priors (0-1 share of exposure), NOT sourced figures - the only hand-written input to the graph, keyed by Wikidata id. Rows marked 'rule:' were generated once from GICS sub-industry / HQ country (2026-10-17) and are editable like any other row."
-Q865,Taiwan,EWT,1.0,country ETF
-Q865,Taiwan,TWD=X,1.0,currency
-Q865,Taiwan,TSM,0.9,domicile; nearly all fab capacity in Taiwan
-Q865,Taiwan,2330.TW,0.9,domicile; nearly all fab capacity in Taiwan
-Q865,Taiwan,2454.TW,0.8,domicile
-Q865,Taiwan,2317.TW,0.6,domicile; large manufacturing in mainland China
-Q865,Taiwan,UMC,0.9,domicile
-Q865,Taiwan,ASX,0.8,domicile
-Q865,Taiwan,NVDA,0.5,leading-edge wafers sourced from TSMC Taiwan
-Q865,Taiwan,AMD,0.5,leading-edge wafers sourced from TSMC Taiwan
-Q865,Taiwan,AVGO,0.4,TSMC-dependent
-Q865,Taiwan,QCOM,0.4,TSMC-dependent
-Q865,Taiwan,AAPL,0.4,TSMC-dependent SoCs
-Q865,Taiwan,SMH,0.5,TSMC weight + fabless dependence
-Q865,Taiwan,SOXX,0.5,TSMC weight + fabless dependence
-Q148,China,FXI,1.0,country ETF
-Q148,China,MCHI,1.0,country ETF
-Q148,China,KWEB,1.0,country ETF
-Q148,China,CNY=X,1.0,currency
-Q148,China,BABA,0.95,domicile
-Q148,China,9988.HK,0.95,domicile
-Q148,China,0700.HK,0.95,domicile
-Q148,China,1810.HK,0.9,domicile
-Q148,China,JD,0.95,domicile
-Q148,China,BIDU,0.95,domicile
-Q148,China,NIO,0.95,domicile
-Q148,China,0981.HK,0.95,domicile
-Q148,China,PDD,0.6,domicile; large US revenue via Temu
-Q148,China,AAPL,0.35,China revenue + assembly
-Q148,China,TSLA,0.3,Shanghai plant + China sales
-Q148,China,NKE,0.25,China revenue + sourcing
-Q148,China,SBUX,0.2,China revenue
-Q148,China,QCOM,0.45,China handset revenue
-Q148,China,NVDA,0.2,China data-center revenue
-Q148,China,AMAT,0.3,China tool revenue
-Q148,China,LRCX,0.35,China tool revenue
-Q148,China,KLAC,0.35,China tool revenue
-Q148,China,ASML,0.25,China tool revenue
-Q148,China,MU,0.2,China revenue
-Q148,China,CAT,0.1,China revenue
-Q148,China,BA,0.2,China aircraft orders
-Q17,Japan,EWJ,1.0,country ETF
-Q17,Japan,JPY=X,1.0,currency
-Q17,Japan,8035.T,0.6,domicile
-Q884,South Korea,EWY,1.0,country ETF
-Q884,South Korea,KRW=X,1.0,currency
-Q884,South Korea,005930.KS,0.8,domicile
-Q884,South Korea,000660.KS,0.8,domicile
-Q8646,Hong Kong,9988.HK,0.5,HK listing
-Q8646,Hong Kong,0700.HK,0.5,HK listing
-Q713418,TSMC,TSM,1.0,issuer
-Q713418,TSMC,2330.TW,1.0,issuer
-Q182477,Nvidia,NVDA,1.0,issuer
-Q648533,Semiconductor Manufacturing International Corporation,0981.HK,1.0,issuer
-Q297879,ASML,ASML,1.0,issuer
-Q1636958,Xiaomi,1810.HK,1.0,issuer
-Q20718,Samsung Electronics,005930.KS,1.0,issuer
-Q66,Boeing,BA,1.0,issuer
-Q2986369,Semiconductor industry,SMH,1.0,sector ETF
-Q2986369,Semiconductor industry,SOXX,1.0,sector ETF
-Q2986369,Semiconductor industry,TSM,1.0,sector member
-Q2986369,Semiconductor industry,NVDA,1.0,sector member
-Q2986369,Semiconductor industry,AMD,1.0,sector member
-Q2986369,Semiconductor industry,AVGO,1.0,sector member
-Q2986369,Semiconductor industry,QCOM,1.0,sector member
-Q2986369,Semiconductor industry,INTC,1.0,sector member
-Q2986369,Semiconductor industry,MU,1.0,sector member
-Q2986369,Semiconductor industry,TXN,1.0,sector member
-Q2986369,Semiconductor industry,ADI,1.0,sector member
-Q2986369,Semiconductor industry,MRVL,1.0,sector member
-Q2986369,Semiconductor industry,NXPI,1.0,sector member
-Q2986369,Semiconductor industry,AMAT,1.0,sector member
-Q2986369,Semiconductor industry,LRCX,1.0,sector member
-Q2986369,Semiconductor industry,KLAC,1.0,sector member
-Q2986369,Semiconductor industry,ASML,1.0,sector member
-Q2986369,Semiconductor industry,8035.T,1.0,sector member
-Q2986369,Semiconductor industry,000660.KS,1.0,sector member
-Q392933,Arms industry,ITA,1.0,sector ETF
-Q392933,Arms industry,LMT,1.0,sector member
-Q392933,Arms industry,RTX,1.0,sector member
-Q392933,Arms industry,NOC,1.0,sector member
-Q392933,Arms industry,GD,1.0,sector member
-Q190444,Rare-earth element,MP,0.9,US rare-earth producer
-Q190444,Rare-earth element,REMX,1.0,rare-earth / strategic metals ETF
-Q51557538,China–United States trade war,AAPL,0.4,tariffs on China-assembled hardware
-Q51557538,China–United States trade war,NKE,0.4,tariffs on Asia-sourced goods
-Q51557538,China–United States trade war,BA,0.4,Chinese aircraft orders
-Q51557538,China–United States trade war,CAT,0.3,
-Q51557538,China–United States trade war,NVDA,0.4,China export licensing
-Q51557538,China–United States trade war,AMD,0.3,China export licensing
-Q51557538,China–United States trade war,AMAT,0.4,tool export controls
-Q51557538,China–United States trade war,LRCX,0.4,tool export controls
-Q51557538,China–United States trade war,KLAC,0.4,tool export controls
-Q51557538,China–United States trade war,QCOM,0.4,China handset revenue
-Q51557538,China–United States trade war,FXI,0.5,
-Q51557538,China–United States trade war,CNY=X,0.5,
-Q392933,Arms industry,AXON,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,BA,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,GE,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,HII,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,HONA,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,HWM,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,LHX,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,TDG,0.9,rule: Aerospace & Defense
-Q392933,Arms industry,TXT,0.9,rule: Aerospace & Defense
-Q23635,Bermuda,ACGL,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q23635,Bermuda,EG,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q16,Canada,APTV,0.3,rule: Automotive Parts & Equipment
-Q16,Canada,F,0.3,rule: Automobile Manufacturers
-Q16,Canada,GM,0.3,rule: Automobile Manufacturers
-Q16,Canada,TSLA,0.3,rule: Automobile Manufacturers
-Q16,Canada,LULU,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q16,Canada,NUE,0.2,rule: Steel
-Q16,Canada,STLD,0.2,rule: Steel
-Q148,China,FCX,0.5,rule: Copper
-Q148,China,LVS,0.5,rule: Casinos & Gaming
-Q148,China,MGM,0.5,rule: Casinos & Gaming
-Q148,China,WYNN,0.5,rule: Casinos & Gaming
-Q148,China,ADI,0.4,rule: Semiconductors
-Q148,China,AMD,0.4,rule: Semiconductors
-Q148,China,ANET,0.4,rule: Communications Equipment
-Q148,China,APH,0.4,rule: Electronic Components
-Q148,China,AVGO,0.4,rule: Semiconductors
-Q148,China,CIEN,0.4,rule: Communications Equipment
-Q148,China,COHR,0.4,rule: Electronic Components
-Q148,China,CSCO,0.4,rule: Communications Equipment
-Q148,China,DELL,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,FFIV,0.4,rule: Communications Equipment
-Q148,China,FLEX,0.4,rule: Electronic Manufacturing Services
-Q148,China,FSLR,0.4,rule: Semiconductors
-Q148,China,GLW,0.4,rule: Electronic Components
-Q148,China,GRMN,0.4,rule: Consumer Electronics
-Q148,China,HPE,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,HPQ,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,INTC,0.4,rule: Semiconductors
-Q148,China,JBL,0.4,rule: Electronic Manufacturing Services
-Q148,China,LITE,0.4,rule: Communications Equipment
-Q148,China,MCHP,0.4,rule: Semiconductors
-Q148,China,MPWR,0.4,rule: Semiconductors
-Q148,China,MRVL,0.4,rule: Semiconductors
-Q148,China,MSI,0.4,rule: Communications Equipment
-Q148,China,NTAP,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,NUE,0.4,rule: Steel
-Q148,China,NXPI,0.4,rule: Semiconductors
-Q148,China,ON,0.4,rule: Semiconductors
-Q148,China,P,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,Q,0.4,rule: Semiconductor Materials & Equipment
-Q148,China,SMCI,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,SNDK,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,STLD,0.4,rule: Steel
-Q148,China,STX,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,SWKS,0.4,rule: Semiconductors
-Q148,China,TEL,0.4,rule: Electronic Manufacturing Services
-Q148,China,TER,0.4,rule: Semiconductor Materials & Equipment
-Q148,China,TXN,0.4,rule: Semiconductors
-Q148,China,WDC,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q148,China,A,0.3,rule: Life Sciences Tools & Services
-Q148,China,ADM,0.3,rule: Agricultural Products & Services
-Q148,China,AMZN,0.3,rule: Broadline Retail
-Q148,China,APTV,0.3,rule: Automotive Parts & Equipment
-Q148,China,AXON,0.3,rule: Aerospace & Defense
-Q148,China,BBY,0.3,rule: Computer & Electronics Retail
-Q148,China,BG,0.3,rule: Agricultural Products & Services
-Q148,China,CDW,0.3,rule: Technology Distributors
-Q148,China,CF,0.3,rule: Fertilizers & Agricultural Chemicals
-Q148,China,CHRW,0.3,rule: Air Freight & Logistics
-Q148,China,COST,0.3,rule: Consumer Staples Merchandise Retail
-Q148,China,CRL,0.3,rule: Life Sciences Tools & Services
-Q148,China,DE,0.3,rule: Agricultural & Farm Machinery
-Q148,China,DECK,0.3,rule: Footwear
-Q148,China,DG,0.3,rule: Consumer Staples Merchandise Retail
-Q148,China,DHR,0.3,rule: Life Sciences Tools & Services
-Q148,China,DLTR,0.3,rule: Consumer Staples Merchandise Retail
-Q148,China,EBAY,0.3,rule: Broadline Retail
-Q148,China,EXPD,0.3,rule: Air Freight & Logistics
-Q148,China,F,0.3,rule: Automobile Manufacturers
-Q148,China,FDX,0.3,rule: Air Freight & Logistics
-Q148,China,GD,0.3,rule: Aerospace & Defense
-Q148,China,GE,0.3,rule: Aerospace & Defense
-Q148,China,GM,0.3,rule: Automobile Manufacturers
-Q148,China,GPC,0.3,rule: Distributors
-Q148,China,HAS,0.3,rule: Leisure Products
-Q148,China,HD,0.3,rule: Home Improvement Retail
-Q148,China,HII,0.3,rule: Aerospace & Defense
-Q148,China,HONA,0.3,rule: Aerospace & Defense
-Q148,China,HWM,0.3,rule: Aerospace & Defense
-Q148,China,ILMN,0.3,rule: Life Sciences Tools & Services
-Q148,China,IQV,0.3,rule: Life Sciences Tools & Services
-Q148,China,LHX,0.3,rule: Aerospace & Defense
-Q148,China,LMT,0.3,rule: Aerospace & Defense
-Q148,China,LOW,0.3,rule: Home Improvement Retail
-Q148,China,LULU,0.3,"rule: Apparel, Accessories & Luxury Goods"
-Q148,China,MOS,0.3,rule: Fertilizers & Agricultural Chemicals
-Q148,China,MTD,0.3,rule: Life Sciences Tools & Services
-Q148,China,NOC,0.3,rule: Aerospace & Defense
-Q148,China,RL,0.3,"rule: Apparel, Accessories & Luxury Goods"
-Q148,China,ROST,0.3,rule: Apparel Retail
-Q148,China,RTX,0.3,rule: Aerospace & Defense
-Q148,China,TDG,0.3,rule: Aerospace & Defense
-Q148,China,TECH,0.3,rule: Life Sciences Tools & Services
-Q148,China,TGT,0.3,rule: Consumer Staples Merchandise Retail
-Q148,China,TJX,0.3,rule: Apparel Retail
-Q148,China,TMO,0.3,rule: Life Sciences Tools & Services
-Q148,China,TPR,0.3,"rule: Apparel, Accessories & Luxury Goods"
-Q148,China,TSCO,0.3,rule: Other Specialty Retail
-Q148,China,TXT,0.3,rule: Aerospace & Defense
-Q148,China,ULTA,0.3,rule: Other Specialty Retail
-Q148,China,UPS,0.3,rule: Air Freight & Logistics
-Q148,China,VYLR,0.3,rule: Agricultural Products & Services
-Q148,China,WAT,0.3,rule: Life Sciences Tools & Services
-Q148,China,WMT,0.3,rule: Consumer Staples Merchandise Retail
-Q148,China,WSM,0.3,rule: Homefurnishing Retail
-Q148,China,BMY,0.2,rule: Pharmaceuticals
-Q148,China,CMI,0.2,rule: Construction Machinery & Heavy Transportation Equipment
-Q148,China,DOW,0.2,rule: Commodity Chemicals
-Q148,China,JNJ,0.2,rule: Pharmaceuticals
-Q148,China,LLY,0.2,rule: Pharmaceuticals
-Q148,China,MRK,0.2,rule: Pharmaceuticals
-Q148,China,PCAR,0.2,rule: Construction Machinery & Heavy Transportation Equipment
-Q148,China,PFE,0.2,rule: Pharmaceuticals
-Q148,China,VTRS,0.2,rule: Pharmaceuticals
-Q148,China,WAB,0.2,rule: Construction Machinery & Heavy Transportation Equipment
-Q148,China,ZTS,0.2,rule: Pharmaceuticals
-Q51557538,China–United States trade war,ADI,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,AVGO,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,FSLR,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,INTC,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,MCHP,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,MPWR,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,MRVL,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,MU,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,NXPI,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,ON,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,Q,0.4,rule: Semiconductor Materials & Equipment
-Q51557538,China–United States trade war,SWKS,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,TER,0.4,rule: Semiconductor Materials & Equipment
-Q51557538,China–United States trade war,TXN,0.4,rule: Semiconductors
-Q51557538,China–United States trade war,ANET,0.3,rule: Communications Equipment
-Q51557538,China–United States trade war,APH,0.3,rule: Electronic Components
-Q51557538,China–United States trade war,CIEN,0.3,rule: Communications Equipment
-Q51557538,China–United States trade war,COHR,0.3,rule: Electronic Components
-Q51557538,China–United States trade war,CSCO,0.3,rule: Communications Equipment
-Q51557538,China–United States trade war,DELL,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,FFIV,0.3,rule: Communications Equipment
-Q51557538,China–United States trade war,FLEX,0.3,rule: Electronic Manufacturing Services
-Q51557538,China–United States trade war,GLW,0.3,rule: Electronic Components
-Q51557538,China–United States trade war,GRMN,0.3,rule: Consumer Electronics
-Q51557538,China–United States trade war,HPE,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,HPQ,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,JBL,0.3,rule: Electronic Manufacturing Services
-Q51557538,China–United States trade war,LITE,0.3,rule: Communications Equipment
-Q51557538,China–United States trade war,MSI,0.3,rule: Communications Equipment
-Q51557538,China–United States trade war,NTAP,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,P,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,SMCI,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,SNDK,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,STX,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q51557538,China–United States trade war,TEL,0.3,rule: Electronic Manufacturing Services
-Q51557538,China–United States trade war,WDC,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q83323,Fertilizer,CF,0.6,rule: Fertilizers & Agricultural Chemicals
-Q83323,Fertilizer,MOS,0.6,rule: Fertilizers & Agricultural Chemicals
-Q897,Gold,NEM,0.9,rule: Gold
-Q794,Iran,APA,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,COP,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,CVX,0.5,rule: Integrated Oil & Gas
-Q794,Iran,DVN,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,EOG,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,EQT,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,EXE,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,FANG,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,OXY,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,TPL,0.5,rule: Oil & Gas Exploration & Production
-Q794,Iran,XOM,0.5,rule: Integrated Oil & Gas
-Q794,Iran,BKR,0.3,rule: Oil & Gas Equipment & Services
-Q794,Iran,HAL,0.3,rule: Oil & Gas Equipment & Services
-Q794,Iran,MPC,0.3,rule: Oil & Gas Refining & Marketing
-Q794,Iran,PSX,0.3,rule: Oil & Gas Refining & Marketing
-Q794,Iran,SLB,0.3,rule: Oil & Gas Equipment & Services
-Q794,Iran,VLO,0.3,rule: Oil & Gas Refining & Marketing
-Q801,Israel,AXON,0.4,rule: Aerospace & Defense
-Q801,Israel,BA,0.4,rule: Aerospace & Defense
-Q801,Israel,GD,0.4,rule: Aerospace & Defense
-Q801,Israel,GE,0.4,rule: Aerospace & Defense
-Q801,Israel,HII,0.4,rule: Aerospace & Defense
-Q801,Israel,HONA,0.4,rule: Aerospace & Defense
-Q801,Israel,HWM,0.4,rule: Aerospace & Defense
-Q801,Israel,LHX,0.4,rule: Aerospace & Defense
-Q801,Israel,LMT,0.4,rule: Aerospace & Defense
-Q801,Israel,NOC,0.4,rule: Aerospace & Defense
-Q801,Israel,RTX,0.4,rule: Aerospace & Defense
-Q801,Israel,TDG,0.4,rule: Aerospace & Defense
-Q801,Israel,TXT,0.4,rule: Aerospace & Defense
-Q14773,Macau,LVS,0.6,rule: Casinos & Gaming
-Q14773,Macau,MGM,0.6,rule: Casinos & Gaming
-Q14773,Macau,WYNN,0.6,rule: Casinos & Gaming
-Q96,Mexico,APTV,0.4,rule: Automotive Parts & Equipment
-Q96,Mexico,F,0.4,rule: Automobile Manufacturers
-Q96,Mexico,GM,0.4,rule: Automobile Manufacturers
-Q96,Mexico,TSLA,0.4,rule: Automobile Manufacturers
-Q7204,Middle East,APA,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,COP,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,CVX,0.4,rule: Integrated Oil & Gas
-Q7204,Middle East,DVN,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,EOG,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,EQT,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,EXE,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,FANG,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,OXY,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,TPL,0.4,rule: Oil & Gas Exploration & Production
-Q7204,Middle East,XOM,0.4,rule: Integrated Oil & Gas
-Q7204,Middle East,BKR,0.24,rule: Oil & Gas Equipment & Services
-Q7204,Middle East,HAL,0.24,rule: Oil & Gas Equipment & Services
-Q7204,Middle East,MPC,0.24,rule: Oil & Gas Refining & Marketing
-Q7204,Middle East,PSX,0.24,rule: Oil & Gas Refining & Marketing
-Q7204,Middle East,SLB,0.24,rule: Oil & Gas Equipment & Services
-Q7204,Middle East,VLO,0.24,rule: Oil & Gas Refining & Marketing
-Q7204,Middle East,DAL,0.2,rule: Passenger Airlines
-Q7204,Middle East,KMI,0.2,rule: Oil & Gas Storage & Transportation
-Q7204,Middle East,LUV,0.2,rule: Passenger Airlines
-Q7204,Middle East,OKE,0.2,rule: Oil & Gas Storage & Transportation
-Q7204,Middle East,TRGP,0.2,rule: Oil & Gas Storage & Transportation
-Q7204,Middle East,UAL,0.2,rule: Passenger Airlines
-Q7204,Middle East,WMB,0.2,rule: Oil & Gas Storage & Transportation
-Q7184,NATO,AXON,0.5,rule: Aerospace & Defense
-Q7184,NATO,BA,0.5,rule: Aerospace & Defense
-Q7184,NATO,GD,0.5,rule: Aerospace & Defense
-Q7184,NATO,GE,0.5,rule: Aerospace & Defense
-Q7184,NATO,HII,0.5,rule: Aerospace & Defense
-Q7184,NATO,HONA,0.5,rule: Aerospace & Defense
-Q7184,NATO,HWM,0.5,rule: Aerospace & Defense
-Q7184,NATO,LHX,0.5,rule: Aerospace & Defense
-Q7184,NATO,LMT,0.5,rule: Aerospace & Defense
-Q7184,NATO,NOC,0.5,rule: Aerospace & Defense
-Q7184,NATO,RTX,0.5,rule: Aerospace & Defense
-Q7184,NATO,TDG,0.5,rule: Aerospace & Defense
-Q7184,NATO,TXT,0.5,rule: Aerospace & Defense
-Q40858,Natural gas,ATO,0.6,rule: Gas Utilities
-Q40858,Natural gas,KMI,0.6,rule: Oil & Gas Storage & Transportation
-Q40858,Natural gas,OKE,0.6,rule: Oil & Gas Storage & Transportation
-Q40858,Natural gas,TRGP,0.6,rule: Oil & Gas Storage & Transportation
-Q40858,Natural gas,WMB,0.6,rule: Oil & Gas Storage & Transportation
-Q40858,Natural gas,APA,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,COP,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,CVX,0.5,rule: Integrated Oil & Gas
-Q40858,Natural gas,DVN,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,EOG,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,EQT,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,EXE,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,FANG,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,OXY,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,TPL,0.5,rule: Oil & Gas Exploration & Production
-Q40858,Natural gas,XOM,0.5,rule: Integrated Oil & Gas
-Q40858,Natural gas,AES,0.4,rule: Independent Power Producers & Energy Traders
-Q40858,Natural gas,NRG,0.4,rule: Independent Power Producers & Energy Traders
-Q40858,Natural gas,AEE,0.3,rule: Multi-Utilities
-Q40858,Natural gas,CMS,0.3,rule: Multi-Utilities
-Q40858,Natural gas,CNP,0.3,rule: Multi-Utilities
-Q40858,Natural gas,D,0.3,rule: Multi-Utilities
-Q40858,Natural gas,DOW,0.3,rule: Commodity Chemicals
-Q40858,Natural gas,DTE,0.3,rule: Multi-Utilities
-Q40858,Natural gas,ED,0.3,rule: Multi-Utilities
-Q40858,Natural gas,NEE,0.3,rule: Multi-Utilities
-Q40858,Natural gas,NI,0.3,rule: Multi-Utilities
-Q40858,Natural gas,PCG,0.3,rule: Multi-Utilities
-Q40858,Natural gas,PNW,0.3,rule: Multi-Utilities
-Q40858,Natural gas,SRE,0.3,rule: Multi-Utilities
-Q40858,Natural gas,XEL,0.3,rule: Multi-Utilities
-Q55,Netherlands,LYB,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q7795,OPEC,APA,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,COP,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,CVX,0.5,rule: Integrated Oil & Gas
-Q7795,OPEC,DVN,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,EOG,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,EQT,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,EXE,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,FANG,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,OXY,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,TPL,0.5,rule: Oil & Gas Exploration & Production
-Q7795,OPEC,XOM,0.5,rule: Integrated Oil & Gas
-Q7795,OPEC,BKR,0.3,rule: Oil & Gas Equipment & Services
-Q7795,OPEC,HAL,0.3,rule: Oil & Gas Equipment & Services
-Q7795,OPEC,MPC,0.3,rule: Oil & Gas Refining & Marketing
-Q7795,OPEC,PSX,0.3,rule: Oil & Gas Refining & Marketing
-Q7795,OPEC,SLB,0.3,rule: Oil & Gas Equipment & Services
-Q7795,OPEC,VLO,0.3,rule: Oil & Gas Refining & Marketing
-Q22656,Petroleum,APA,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,COP,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,CVX,0.9,rule: Integrated Oil & Gas
-Q22656,Petroleum,DVN,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,EOG,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,EQT,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,EXE,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,FANG,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,OXY,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,TPL,0.9,rule: Oil & Gas Exploration & Production
-Q22656,Petroleum,XOM,0.9,rule: Integrated Oil & Gas
-Q22656,Petroleum,BKR,0.7,rule: Oil & Gas Equipment & Services
-Q22656,Petroleum,HAL,0.7,rule: Oil & Gas Equipment & Services
-Q22656,Petroleum,MPC,0.7,rule: Oil & Gas Refining & Marketing
-Q22656,Petroleum,PSX,0.7,rule: Oil & Gas Refining & Marketing
-Q22656,Petroleum,SLB,0.7,rule: Oil & Gas Equipment & Services
-Q22656,Petroleum,VLO,0.7,rule: Oil & Gas Refining & Marketing
-Q22656,Petroleum,KMI,0.6,rule: Oil & Gas Storage & Transportation
-Q22656,Petroleum,OKE,0.6,rule: Oil & Gas Storage & Transportation
-Q22656,Petroleum,TRGP,0.6,rule: Oil & Gas Storage & Transportation
-Q22656,Petroleum,WMB,0.6,rule: Oil & Gas Storage & Transportation
-Q22656,Petroleum,DAL,0.5,rule: Passenger Airlines
-Q22656,Petroleum,LUV,0.5,rule: Passenger Airlines
-Q22656,Petroleum,UAL,0.5,rule: Passenger Airlines
-Q23406,Red Sea,CHRW,0.2,rule: Air Freight & Logistics
-Q23406,Red Sea,EXPD,0.2,rule: Air Freight & Logistics
-Q23406,Red Sea,FDX,0.2,rule: Air Freight & Logistics
-Q23406,Red Sea,UPS,0.2,rule: Air Freight & Logistics
-Q27,Republic of Ireland,ACN,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,ALLE,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,CRH,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,ETN,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,JCI,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,MDT,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,STE,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,STX,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,SW,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,TEL,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q27,Republic of Ireland,TT,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q159,Russia,AXON,0.5,rule: Aerospace & Defense
-Q159,Russia,BA,0.5,rule: Aerospace & Defense
-Q159,Russia,GD,0.5,rule: Aerospace & Defense
-Q159,Russia,GE,0.5,rule: Aerospace & Defense
-Q159,Russia,HII,0.5,rule: Aerospace & Defense
-Q159,Russia,HONA,0.5,rule: Aerospace & Defense
-Q159,Russia,HWM,0.5,rule: Aerospace & Defense
-Q159,Russia,LHX,0.5,rule: Aerospace & Defense
-Q159,Russia,LMT,0.5,rule: Aerospace & Defense
-Q159,Russia,NOC,0.5,rule: Aerospace & Defense
-Q159,Russia,RTX,0.5,rule: Aerospace & Defense
-Q159,Russia,TDG,0.5,rule: Aerospace & Defense
-Q159,Russia,TXT,0.5,rule: Aerospace & Defense
-Q159,Russia,APA,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,CF,0.4,rule: Fertilizers & Agricultural Chemicals
-Q159,Russia,COP,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,CVX,0.4,rule: Integrated Oil & Gas
-Q159,Russia,DVN,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,EOG,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,EQT,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,EXE,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,FANG,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,MOS,0.4,rule: Fertilizers & Agricultural Chemicals
-Q159,Russia,OXY,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,TPL,0.4,rule: Oil & Gas Exploration & Production
-Q159,Russia,XOM,0.4,rule: Integrated Oil & Gas
-Q159,Russia,ADM,0.3,rule: Agricultural Products & Services
-Q159,Russia,BG,0.3,rule: Agricultural Products & Services
-Q159,Russia,VYLR,0.3,rule: Agricultural Products & Services
-Q159,Russia,BKR,0.24,rule: Oil & Gas Equipment & Services
-Q159,Russia,HAL,0.24,rule: Oil & Gas Equipment & Services
-Q159,Russia,MPC,0.24,rule: Oil & Gas Refining & Marketing
-Q159,Russia,PSX,0.24,rule: Oil & Gas Refining & Marketing
-Q159,Russia,SLB,0.24,rule: Oil & Gas Equipment & Services
-Q159,Russia,VLO,0.24,rule: Oil & Gas Refining & Marketing
-Q159,Russia,KMI,0.2,rule: Oil & Gas Storage & Transportation
-Q159,Russia,OKE,0.2,rule: Oil & Gas Storage & Transportation
-Q159,Russia,TRGP,0.2,rule: Oil & Gas Storage & Transportation
-Q159,Russia,WMB,0.2,rule: Oil & Gas Storage & Transportation
-Q851,Saudi Arabia,APA,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,COP,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,CVX,0.4,rule: Integrated Oil & Gas
-Q851,Saudi Arabia,DVN,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,EOG,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,EQT,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,EXE,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,FANG,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,OXY,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,TPL,0.4,rule: Oil & Gas Exploration & Production
-Q851,Saudi Arabia,XOM,0.4,rule: Integrated Oil & Gas
-Q851,Saudi Arabia,BKR,0.24,rule: Oil & Gas Equipment & Services
-Q851,Saudi Arabia,HAL,0.24,rule: Oil & Gas Equipment & Services
-Q851,Saudi Arabia,MPC,0.24,rule: Oil & Gas Refining & Marketing
-Q851,Saudi Arabia,PSX,0.24,rule: Oil & Gas Refining & Marketing
-Q851,Saudi Arabia,SLB,0.24,rule: Oil & Gas Equipment & Services
-Q851,Saudi Arabia,VLO,0.24,rule: Oil & Gas Refining & Marketing
-Q2986369,Semiconductor industry,FSLR,1,rule: Semiconductors
-Q2986369,Semiconductor industry,MCHP,1,rule: Semiconductors
-Q2986369,Semiconductor industry,MPWR,1,rule: Semiconductors
-Q2986369,Semiconductor industry,ON,1,rule: Semiconductors
-Q2986369,Semiconductor industry,Q,1,rule: Semiconductor Materials & Equipment
-Q2986369,Semiconductor industry,SWKS,1,rule: Semiconductors
-Q2986369,Semiconductor industry,TER,1,rule: Semiconductor Materials & Equipment
-Q11006,Soybean,ADM,0.5,rule: Agricultural Products & Services
-Q11006,Soybean,BG,0.5,rule: Agricultural Products & Services
-Q11006,Soybean,VYLR,0.5,rule: Agricultural Products & Services
-Q11006,Soybean,DE,0.3,rule: Agricultural & Farm Machinery
-Q79883,Strait of Hormuz,APA,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,COP,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,CVX,0.5,rule: Integrated Oil & Gas
-Q79883,Strait of Hormuz,DVN,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,EOG,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,EQT,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,EXE,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,FANG,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,OXY,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,TPL,0.5,rule: Oil & Gas Exploration & Production
-Q79883,Strait of Hormuz,XOM,0.5,rule: Integrated Oil & Gas
-Q79883,Strait of Hormuz,BKR,0.3,rule: Oil & Gas Equipment & Services
-Q79883,Strait of Hormuz,HAL,0.3,rule: Oil & Gas Equipment & Services
-Q79883,Strait of Hormuz,MPC,0.3,rule: Oil & Gas Refining & Marketing
-Q79883,Strait of Hormuz,PSX,0.3,rule: Oil & Gas Refining & Marketing
-Q79883,Strait of Hormuz,SLB,0.3,rule: Oil & Gas Equipment & Services
-Q79883,Strait of Hormuz,VLO,0.3,rule: Oil & Gas Refining & Marketing
-Q39,Switzerland,APTV,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q39,Switzerland,CB,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q39,Switzerland,GRMN,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q865,Taiwan,ADI,0.6,rule: Semiconductors
-Q865,Taiwan,FSLR,0.6,rule: Semiconductors
-Q865,Taiwan,INTC,0.6,rule: Semiconductors
-Q865,Taiwan,MCHP,0.6,rule: Semiconductors
-Q865,Taiwan,MPWR,0.6,rule: Semiconductors
-Q865,Taiwan,MRVL,0.6,rule: Semiconductors
-Q865,Taiwan,MU,0.6,rule: Semiconductors
-Q865,Taiwan,NXPI,0.6,rule: Semiconductors
-Q865,Taiwan,ON,0.6,rule: Semiconductors
-Q865,Taiwan,SWKS,0.6,rule: Semiconductors
-Q865,Taiwan,TXN,0.6,rule: Semiconductors
-Q865,Taiwan,AMAT,0.4,rule: Semiconductor Materials & Equipment
-Q865,Taiwan,KLAC,0.4,rule: Semiconductor Materials & Equipment
-Q865,Taiwan,LRCX,0.4,rule: Semiconductor Materials & Equipment
-Q865,Taiwan,Q,0.4,rule: Semiconductor Materials & Equipment
-Q865,Taiwan,TER,0.4,rule: Semiconductor Materials & Equipment
-Q865,Taiwan,ANET,0.3,rule: Communications Equipment
-Q865,Taiwan,APH,0.3,rule: Electronic Components
-Q865,Taiwan,AXON,0.3,rule: Aerospace & Defense
-Q865,Taiwan,BA,0.3,rule: Aerospace & Defense
-Q865,Taiwan,CIEN,0.3,rule: Communications Equipment
-Q865,Taiwan,COHR,0.3,rule: Electronic Components
-Q865,Taiwan,CSCO,0.3,rule: Communications Equipment
-Q865,Taiwan,DELL,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,FFIV,0.3,rule: Communications Equipment
-Q865,Taiwan,FLEX,0.3,rule: Electronic Manufacturing Services
-Q865,Taiwan,GD,0.3,rule: Aerospace & Defense
-Q865,Taiwan,GE,0.3,rule: Aerospace & Defense
-Q865,Taiwan,GLW,0.3,rule: Electronic Components
-Q865,Taiwan,GRMN,0.3,rule: Consumer Electronics
-Q865,Taiwan,HII,0.3,rule: Aerospace & Defense
-Q865,Taiwan,HONA,0.3,rule: Aerospace & Defense
-Q865,Taiwan,HPE,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,HPQ,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,HWM,0.3,rule: Aerospace & Defense
-Q865,Taiwan,JBL,0.3,rule: Electronic Manufacturing Services
-Q865,Taiwan,LHX,0.3,rule: Aerospace & Defense
-Q865,Taiwan,LITE,0.3,rule: Communications Equipment
-Q865,Taiwan,LMT,0.3,rule: Aerospace & Defense
-Q865,Taiwan,MSI,0.3,rule: Communications Equipment
-Q865,Taiwan,NOC,0.3,rule: Aerospace & Defense
-Q865,Taiwan,NTAP,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,P,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,RTX,0.3,rule: Aerospace & Defense
-Q865,Taiwan,SMCI,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,SNDK,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,STX,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q865,Taiwan,TDG,0.3,rule: Aerospace & Defense
-Q865,Taiwan,TEL,0.3,rule: Electronic Manufacturing Services
-Q865,Taiwan,TXT,0.3,rule: Aerospace & Defense
-Q865,Taiwan,WDC,0.3,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,NUE,0.6,rule: Steel
-Q52389,Tariff,STLD,0.6,rule: Steel
-Q52389,Tariff,APTV,0.5,rule: Automotive Parts & Equipment
-Q52389,Tariff,F,0.5,rule: Automobile Manufacturers
-Q52389,Tariff,GM,0.5,rule: Automobile Manufacturers
-Q52389,Tariff,TSLA,0.5,rule: Automobile Manufacturers
-Q52389,Tariff,AAPL,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,AMZN,0.4,rule: Broadline Retail
-Q52389,Tariff,ANET,0.4,rule: Communications Equipment
-Q52389,Tariff,APH,0.4,rule: Electronic Components
-Q52389,Tariff,BBY,0.4,rule: Computer & Electronics Retail
-Q52389,Tariff,CDW,0.4,rule: Technology Distributors
-Q52389,Tariff,CIEN,0.4,rule: Communications Equipment
-Q52389,Tariff,COHR,0.4,rule: Electronic Components
-Q52389,Tariff,COST,0.4,rule: Consumer Staples Merchandise Retail
-Q52389,Tariff,CSCO,0.4,rule: Communications Equipment
-Q52389,Tariff,DECK,0.4,rule: Footwear
-Q52389,Tariff,DELL,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,DG,0.4,rule: Consumer Staples Merchandise Retail
-Q52389,Tariff,DLTR,0.4,rule: Consumer Staples Merchandise Retail
-Q52389,Tariff,EBAY,0.4,rule: Broadline Retail
-Q52389,Tariff,FFIV,0.4,rule: Communications Equipment
-Q52389,Tariff,FLEX,0.4,rule: Electronic Manufacturing Services
-Q52389,Tariff,GLW,0.4,rule: Electronic Components
-Q52389,Tariff,GPC,0.4,rule: Distributors
-Q52389,Tariff,GRMN,0.4,rule: Consumer Electronics
-Q52389,Tariff,HAS,0.4,rule: Leisure Products
-Q52389,Tariff,HD,0.4,rule: Home Improvement Retail
-Q52389,Tariff,HPE,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,HPQ,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,JBL,0.4,rule: Electronic Manufacturing Services
-Q52389,Tariff,LITE,0.4,rule: Communications Equipment
-Q52389,Tariff,LOW,0.4,rule: Home Improvement Retail
-Q52389,Tariff,LULU,0.4,"rule: Apparel, Accessories & Luxury Goods"
-Q52389,Tariff,MSI,0.4,rule: Communications Equipment
-Q52389,Tariff,NKE,0.4,"rule: Apparel, Accessories & Luxury Goods"
-Q52389,Tariff,NTAP,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,P,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,RL,0.4,"rule: Apparel, Accessories & Luxury Goods"
-Q52389,Tariff,ROST,0.4,rule: Apparel Retail
-Q52389,Tariff,SMCI,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,SNDK,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,STX,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,TEL,0.4,rule: Electronic Manufacturing Services
-Q52389,Tariff,TGT,0.4,rule: Consumer Staples Merchandise Retail
-Q52389,Tariff,TJX,0.4,rule: Apparel Retail
-Q52389,Tariff,TPR,0.4,"rule: Apparel, Accessories & Luxury Goods"
-Q52389,Tariff,TSCO,0.4,rule: Other Specialty Retail
-Q52389,Tariff,ULTA,0.4,rule: Other Specialty Retail
-Q52389,Tariff,WDC,0.4,"rule: Technology Hardware, Storage & Peripherals"
-Q52389,Tariff,WMT,0.4,rule: Consumer Staples Merchandise Retail
-Q52389,Tariff,WSM,0.4,rule: Homefurnishing Retail
-Q52389,Tariff,ADM,0.3,rule: Agricultural Products & Services
-Q52389,Tariff,BG,0.3,rule: Agricultural Products & Services
-Q52389,Tariff,BMY,0.3,rule: Pharmaceuticals
-Q52389,Tariff,CAT,0.3,rule: Construction Machinery & Heavy Transportation Equipment
-Q52389,Tariff,CHRW,0.3,rule: Air Freight & Logistics
-Q52389,Tariff,CMI,0.3,rule: Construction Machinery & Heavy Transportation Equipment
-Q52389,Tariff,DE,0.3,rule: Agricultural & Farm Machinery
-Q52389,Tariff,EXPD,0.3,rule: Air Freight & Logistics
-Q52389,Tariff,FCX,0.3,rule: Copper
-Q52389,Tariff,FDX,0.3,rule: Air Freight & Logistics
-Q52389,Tariff,JNJ,0.3,rule: Pharmaceuticals
-Q52389,Tariff,LLY,0.3,rule: Pharmaceuticals
-Q52389,Tariff,MRK,0.3,rule: Pharmaceuticals
-Q52389,Tariff,PCAR,0.3,rule: Construction Machinery & Heavy Transportation Equipment
-Q52389,Tariff,PFE,0.3,rule: Pharmaceuticals
-Q52389,Tariff,UPS,0.3,rule: Air Freight & Logistics
-Q52389,Tariff,VTRS,0.3,rule: Pharmaceuticals
-Q52389,Tariff,VYLR,0.3,rule: Agricultural Products & Services
-Q52389,Tariff,WAB,0.3,rule: Construction Machinery & Heavy Transportation Equipment
-Q52389,Tariff,ZTS,0.3,rule: Pharmaceuticals
-Q52389,Tariff,A,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,CRL,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,DHR,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,ILMN,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,IQV,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,MTD,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,TECH,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,TMO,0.2,rule: Life Sciences Tools & Services
-Q52389,Tariff,WAT,0.2,rule: Life Sciences Tools & Services
-Q212,Ukraine,AXON,0.5,rule: Aerospace & Defense
-Q212,Ukraine,BA,0.5,rule: Aerospace & Defense
-Q212,Ukraine,GD,0.5,rule: Aerospace & Defense
-Q212,Ukraine,GE,0.5,rule: Aerospace & Defense
-Q212,Ukraine,HII,0.5,rule: Aerospace & Defense
-Q212,Ukraine,HONA,0.5,rule: Aerospace & Defense
-Q212,Ukraine,HWM,0.5,rule: Aerospace & Defense
-Q212,Ukraine,LHX,0.5,rule: Aerospace & Defense
-Q212,Ukraine,LMT,0.5,rule: Aerospace & Defense
-Q212,Ukraine,NOC,0.5,rule: Aerospace & Defense
-Q212,Ukraine,RTX,0.5,rule: Aerospace & Defense
-Q212,Ukraine,TDG,0.5,rule: Aerospace & Defense
-Q212,Ukraine,TXT,0.5,rule: Aerospace & Defense
-Q212,Ukraine,ADM,0.3,rule: Agricultural Products & Services
-Q212,Ukraine,BG,0.3,rule: Agricultural Products & Services
-Q212,Ukraine,CF,0.3,rule: Fertilizers & Agricultural Chemicals
-Q212,Ukraine,MOS,0.3,rule: Fertilizers & Agricultural Chemicals
-Q212,Ukraine,VYLR,0.3,rule: Agricultural Products & Services
-Q145,United Kingdom,AMCR,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q145,United Kingdom,AON,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q145,United Kingdom,LIN,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q145,United Kingdom,PNR,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q145,United Kingdom,WTW,0.2,rule: headquartered outside the US (mostly tax domicile)
-Q717,Venezuela,APA,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,COP,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,CVX,0.3,rule: Integrated Oil & Gas
-Q717,Venezuela,DVN,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,EOG,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,EQT,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,EXE,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,FANG,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,OXY,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,TPL,0.3,rule: Oil & Gas Exploration & Production
-Q717,Venezuela,XOM,0.3,rule: Integrated Oil & Gas
-Q717,Venezuela,BKR,0.18,rule: Oil & Gas Equipment & Services
-Q717,Venezuela,HAL,0.18,rule: Oil & Gas Equipment & Services
-Q717,Venezuela,MPC,0.18,rule: Oil & Gas Refining & Marketing
-Q717,Venezuela,PSX,0.18,rule: Oil & Gas Refining & Marketing
-Q717,Venezuela,SLB,0.18,rule: Oil & Gas Equipment & Services
-Q717,Venezuela,VLO,0.18,rule: Oil & Gas Refining & Marketing
+qid,entity,issuer_id,issuer,weight,rationale
+"# Analyst priors (0-1 share of exposure), NOT sourced figures - the only hand-written input to the graph: entity (Wikidata id) -> issuer (issuers.csv issuer_id). Rows marked 'rule:' were generated once from GICS sub-industry / HQ country (2026-10-17) and are editable like any other row. An entity that is itself an issuer links to it automatically (weight 1)."
+Q11006,Soybean,Q1009458,Bunge Global,0.5,rule: Agricultural Products & Services
+Q11006,Soybean,Q496302,Deere & Company,0.3,rule: Agricultural & Farm Machinery
+Q11006,Soybean,Q63197674,Vylor,0.5,rule: Agricultural Products & Services
+Q11006,Soybean,Q632694,Archer Daniels Midland,0.5,rule: Agricultural Products & Services
+Q145,United Kingdom,Q21189883,Willis Towers Watson,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q145,United Kingdom,Q460307,Amcor,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q145,United Kingdom,Q682759,Linde plc,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q145,United Kingdom,Q7165001,Pentair,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q145,United Kingdom,Q739518,Aon plc,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q14773,Macau,Q1506045,Las Vegas Sands,0.6,rule: Casinos & Gaming
+Q14773,Macau,Q2274089,Wynn Resorts,0.6,rule: Casinos & Gaming
+Q14773,Macau,Q568532,MGM Resorts,0.6,rule: Casinos & Gaming
+Q148,China,Q1009458,Bunge Global,0.3,rule: Agricultural Products & Services
+Q148,China,Q101983981,Viatris,0.2,rule: Pharmaceuticals
+Q148,China,Q1023155,CDW Corporation,0.3,rule: Technology Distributors
+Q148,China,Q1046951,Target Corporation,0.3,rule: Consumer Staples Merchandise Retail
+Q148,China,Q1091783,Ciena,0.4,rule: Communications Equipment
+Q148,China,Q1138888,First Solar,0.4,rule: Semiconductors
+Q148,China,Q1140680,Flex Ltd.,0.4,rule: Electronic Manufacturing Services
+Q148,China,Q1155668,NXP Semiconductors,0.4,rule: Semiconductors
+Q148,China,Q1159256,Danaher Corporation,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q1181953,Deckers Brands,0.3,rule: Footwear
+Q148,China,Q1197548,Micron Technology,0.2,China revenue
+Q148,China,Q1285819,TJX Companies,0.3,rule: Apparel Retail
+Q148,China,Q128896,Advanced Micro Devices,0.4,rule: Semiconductors
+Q148,China,Q1322011,Waters Corporation,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q1342041,Lam Research,0.35,China tool revenue
+Q148,China,Q1347782,Marvell Technology,0.4,rule: Semiconductors
+Q148,China,Q1359568,Alibaba Group,0.95,domicile
+Q148,China,Q1373493,Lowe's,0.3,rule: Home Improvement Retail
+Q148,China,Q1384324,Expeditors International,0.3,rule: Air Freight & Logistics
+Q148,China,Q138685636,Qnity Electronics,0.4,rule: Semiconductor Materials & Equipment
+Q148,China,Q138786899,Lumentum,0.4,rule: Communications Equipment
+Q148,China,Q145168,Dollar General,0.3,rule: Consumer Staples Merchandise Retail
+Q148,China,Q1453620,Freeport-McMoRan,0.5,rule: Copper
+Q148,China,Q14772,Baidu,0.95,domicile
+Q148,China,Q1477661,Paccar,0.2,rule: Construction Machinery & Heavy Transportation Equipment
+Q148,China,Q1485061,GE Aerospace,0.3,rule: Aerospace & Defense
+Q148,China,Q1506045,Las Vegas Sands,0.5,rule: Casinos & Gaming
+Q148,China,Q15109887,Coherent Corp.,0.4,rule: Electronic Components
+Q148,China,Q15109925,Tractor Supply,0.3,rule: Other Specialty Retail
+Q148,China,Q1545076,Microchip Technology,0.4,rule: Semiconductors
+Q148,China,Q155026,United Parcel Service,0.3,rule: Air Freight & Logistics
+Q148,China,Q1636958,Xiaomi,0.9,domicile
+Q148,China,Q1641437,Ralph Lauren Corporation,0.3,"rule: Apparel, Accessories & Luxury Goods"
+Q148,China,Q1645081,Nucor,0.4,rule: Steel
+Q148,China,Q1671509,ON Semiconductor,0.4,rule: Semiconductors
+Q148,China,Q173395,Cisco,0.4,rule: Communications Equipment
+Q148,China,Q173476,Cummins,0.2,rule: Construction Machinery & Heavy Transportation Equipment
+Q148,China,Q1817174,Supermicro,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q182477,NVIDIA,0.2,China data-center revenue
+Q148,China,Q193412,Texas Instruments,0.4,rule: Semiconductors
+Q148,China,Q19873469,Bio-Techne,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q19923099,Hewlett Packard Enterprise,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q2068984,"Illumina, Inc.",0.3,rule: Life Sciences Tools & Services
+Q148,China,Q206921,Pfizer,0.2,rule: Pharmaceuticals
+Q148,China,Q2140315,Textron,0.3,rule: Aerospace & Defense
+Q148,China,Q21404084,HP Inc.,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q2171646,Jabil,0.4,rule: Electronic Manufacturing Services
+Q148,China,Q22058448,Monolithic Power Systems,0.4,rule: Semiconductors
+Q148,China,Q2274089,Wynn Resorts,0.5,rule: Casinos & Gaming
+Q148,China,Q2404292,Teradyne,0.4,rule: Semiconductor Materials & Equipment
+Q148,China,Q247489,Merck & Co.,0.2,rule: Pharmaceuticals
+Q148,China,Q248,Intel,0.4,rule: Semiconductors
+Q148,China,Q25104597,Howmet Aerospace,0.3,rule: Aerospace & Defense
+Q148,China,Q2581220,"Williams-Sonoma, Inc.",0.3,rule: Homefurnishing Retail
+Q148,China,Q260833,Sandisk,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q266423,Bristol Myers Squibb,0.2,rule: Pharmaceuticals
+Q148,China,Q27500963,Dell Technologies,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q2861324,Arista Networks,0.4,rule: Communications Equipment
+Q148,China,Q297879,ASML Holding,0.25,China tool revenue
+Q148,China,Q29921278,NIO,0.95,domicile
+Q148,China,Q30291091,L3Harris,0.3,rule: Aerospace & Defense
+Q148,China,Q3029296,"F5, Inc.",0.4,rule: Communications Equipment
+Q148,China,Q305473,IQVIA,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q312,Apple,0.35,China revenue + assembly
+Q148,China,Q329953,Northrop Grumman,0.3,rule: Aerospace & Defense
+Q148,China,Q333718,Johnson & Johnson,0.2,rule: Pharmaceuticals
+Q148,China,Q3442791,Ross Stores,0.3,rule: Apparel Retail
+Q148,China,Q3598926,JD.com,0.95,domicile
+Q148,China,Q37158,Starbucks,0.2,China revenue
+Q148,China,Q3884,Amazon,0.3,rule: Broadline Retail
+Q148,China,Q393762,Agilent Technologies,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q44294,Ford Motor Company,0.3,rule: Automobile Manufacturers
+Q148,China,Q459477,FedEx,0.3,rule: Air Freight & Logistics
+Q148,China,Q459965,Caterpillar,0.1,China revenue
+Q148,China,Q47015652,PDD Holdings,0.6,domicile; large US revenue via Temu
+Q148,China,Q474621,Amphenol,0.4,rule: Electronic Components
+Q148,China,Q478214,Tesla,0.3,Shanghai plant + China sales
+Q148,China,Q483551,Walmart,0.3,rule: Consumer Staples Merchandise Retail
+Q148,China,Q483915,Nike,0.25,China revenue + sourcing
+Q148,China,Q484930,Analog Devices,0.4,rule: Semiconductors
+Q148,China,Q496302,Deere & Company,0.3,rule: Agricultural & Farm Machinery
+Q148,China,Q501476,Hasbro,0.3,rule: Leisure Products
+Q148,China,Q502940,General Dynamics,0.3,rule: Aerospace & Defense
+Q148,China,Q5082076,Charles River Laboratories,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q5289230,Dollar Tree,0.3,rule: Consumer Staples Merchandise Retail
+Q148,China,Q533415,Best Buy,0.3,rule: Computer & Electronics Retail
+Q148,China,Q544847,Qualcomm,0.45,China handset revenue
+Q148,China,Q5533818,Genuine Parts Company,0.3,rule: Distributors
+Q148,China,Q56273715,"Tapestry, Inc.",0.3,"rule: Apparel, Accessories & Luxury Goods"
+Q148,China,Q568532,MGM Resorts,0.5,rule: Casinos & Gaming
+Q148,China,Q58024,eBay Inc.,0.3,rule: Broadline Retail
+Q148,China,Q5842736,Corning Inc.,0.4,rule: Electronic Components
+Q148,China,Q5893992,Honeywell Aerospace,0.3,rule: Aerospace & Defense
+Q148,China,Q621610,Applied Materials,0.3,China tool revenue
+Q148,China,Q624649,KLA,0.35,China tool revenue
+Q148,China,Q63197674,Vylor,0.3,rule: Agricultural Products & Services
+Q148,China,Q632240,Lilly (Eli),0.2,rule: Pharmaceuticals
+Q148,China,Q632694,Archer Daniels Midland,0.3,rule: Agricultural Products & Services
+Q148,China,Q634815,Motorola Solutions,0.4,rule: Communications Equipment
+Q148,China,Q643626,Aptiv,0.3,rule: Automotive Parts & Equipment
+Q148,China,Q643674,Thermo Fisher Scientific,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q648533,SMIC,0.95,domicile
+Q148,China,Q658789,Garmin,0.4,rule: Consumer Electronics
+Q148,China,Q66,Boeing,0.2,China aircraft orders
+Q148,China,Q663452,TE Connectivity,0.4,rule: Electronic Manufacturing Services
+Q148,China,Q6702957,Lululemon Athletica,0.3,"rule: Apparel, Accessories & Luxury Goods"
+Q148,China,Q680186,Mettler Toledo,0.3,rule: Life Sciences Tools & Services
+Q148,China,Q690604,Axon Enterprise,0.3,rule: Aerospace & Defense
+Q148,China,Q705392,Seagate Technology,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q715583,Costco,0.3,rule: Consumer Staples Merchandise Retail
+Q148,China,Q7240,Lockheed Martin,0.3,rule: Aerospace & Defense
+Q148,China,Q7257522,Huntington Ingalls Industries,0.3,rule: Aerospace & Defense
+Q148,China,Q7261135,Everpure,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q727883,NetApp,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q738770,Western Digital,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q148,China,Q741707,Wabtec,0.2,rule: Construction Machinery & Heavy Transportation Equipment
+Q148,China,Q7538146,Skyworks Solutions,0.4,rule: Semiconductors
+Q148,China,Q7605667,Steel Dynamics,0.4,rule: Steel
+Q148,China,Q7752327,Mosaic Company (The),0.3,rule: Fertilizers & Agricultural Chemicals
+Q148,China,Q7833612,TransDigm Group,0.3,rule: Aerospace & Defense
+Q148,China,Q7880076,Ulta Beauty,0.3,rule: Other Specialty Retail
+Q148,China,Q790060,Broadcom,0.4,rule: Semiconductors
+Q148,China,Q8073337,Zoetis,0.2,rule: Pharmaceuticals
+Q148,China,Q81965,General Motors,0.3,rule: Automobile Manufacturers
+Q148,China,Q855639,Dow Inc.,0.2,rule: Commodity Chemicals
+Q148,China,Q860580,Tencent,0.95,domicile
+Q148,China,Q864407,Home Depot (The),0.3,rule: Home Improvement Retail
+Q148,China,Q89368734,RTX,0.3,rule: Aerospace & Defense
+Q148,China,Q905806,CF Industries,0.3,rule: Fertilizers & Agricultural Chemicals
+Q148,China,Q931200,C.H. Robinson,0.3,rule: Air Freight & Logistics
+Q159,Russia,Q1009458,Bunge Global,0.3,rule: Agricultural Products & Services
+Q159,Russia,Q11074156,Oneok,0.2,rule: Oil & Gas Storage & Transportation
+Q159,Russia,Q119991,APA Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q1206980,Devon Energy,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q1275577,EOG Resources,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q1283291,Valero Energy,0.24,rule: Oil & Gas Refining & Marketing
+Q159,Russia,Q1425316,Schlumberger,0.24,rule: Oil & Gas Equipment & Services
+Q159,Russia,Q1485061,GE Aerospace,0.5,rule: Aerospace & Defense
+Q159,Russia,Q156238,ExxonMobil,0.4,rule: Integrated Oil & Gas
+Q159,Russia,Q1656230,Phillips 66,0.24,rule: Oil & Gas Refining & Marketing
+Q159,Russia,Q2013357,Occidental Petroleum,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q2140315,Textron,0.5,rule: Aerospace & Defense
+Q159,Russia,Q214763,ConocoPhillips,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q25104597,Howmet Aerospace,0.5,rule: Aerospace & Defense
+Q159,Russia,Q2962826,Expand Energy,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q30291091,L3Harris,0.5,rule: Aerospace & Defense
+Q159,Russia,Q319642,Chevron Corporation,0.4,rule: Integrated Oil & Gas
+Q159,Russia,Q329953,Northrop Grumman,0.5,rule: Aerospace & Defense
+Q159,Russia,Q458363,Marathon Petroleum,0.24,rule: Oil & Gas Refining & Marketing
+Q159,Russia,Q502940,General Dynamics,0.5,rule: Aerospace & Defense
+Q159,Russia,Q5323987,EQT Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q5893992,Honeywell Aerospace,0.5,rule: Aerospace & Defense
+Q159,Russia,Q63197674,Vylor,0.3,rule: Agricultural Products & Services
+Q159,Russia,Q632694,Archer Daniels Midland,0.3,rule: Agricultural Products & Services
+Q159,Russia,Q65091423,Diamondback Energy,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q656165,Halliburton,0.24,rule: Oil & Gas Equipment & Services
+Q159,Russia,Q66,Boeing,0.5,rule: Aerospace & Defense
+Q159,Russia,Q690604,Axon Enterprise,0.5,rule: Aerospace & Defense
+Q159,Russia,Q7240,Lockheed Martin,0.5,rule: Aerospace & Defense
+Q159,Russia,Q7257522,Huntington Ingalls Industries,0.5,rule: Aerospace & Defense
+Q159,Russia,Q7685824,Targa Resources,0.2,rule: Oil & Gas Storage & Transportation
+Q159,Russia,Q7707900,Texas Pacific Land Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q159,Russia,Q7752327,Mosaic Company (The),0.4,rule: Fertilizers & Agricultural Chemicals
+Q159,Russia,Q7833612,TransDigm Group,0.5,rule: Aerospace & Defense
+Q159,Russia,Q804353,Baker Hughes,0.24,rule: Oil & Gas Equipment & Services
+Q159,Russia,Q89368734,RTX,0.5,rule: Aerospace & Defense
+Q159,Russia,Q905806,CF Industries,0.4,rule: Fertilizers & Agricultural Chemicals
+Q159,Russia,Q930639,Williams Companies,0.2,rule: Oil & Gas Storage & Transportation
+Q159,Russia,Q931032,Kinder Morgan,0.2,rule: Oil & Gas Storage & Transportation
+Q16,Canada,Q1645081,Nucor,0.2,rule: Steel
+Q16,Canada,Q44294,Ford Motor Company,0.3,rule: Automobile Manufacturers
+Q16,Canada,Q478214,Tesla,0.3,rule: Automobile Manufacturers
+Q16,Canada,Q643626,Aptiv,0.3,rule: Automotive Parts & Equipment
+Q16,Canada,Q6702957,Lululemon Athletica,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q16,Canada,Q7605667,Steel Dynamics,0.2,rule: Steel
+Q16,Canada,Q81965,General Motors,0.3,rule: Automobile Manufacturers
+Q1636958,Xiaomi,Q1636958,Xiaomi,1.0,issuer
+Q17,Japan,Q1351484,Tokyo Electron,0.6,domicile
+Q182477,Nvidia,Q182477,NVIDIA,1.0,issuer
+Q190444,Rare-earth element,Q105563992,MP Materials,0.9,US rare-earth producer
+Q20718,Samsung Electronics,Q20718,Samsung Electronics,1.0,issuer
+Q212,Ukraine,Q1009458,Bunge Global,0.3,rule: Agricultural Products & Services
+Q212,Ukraine,Q1485061,GE Aerospace,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q2140315,Textron,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q25104597,Howmet Aerospace,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q30291091,L3Harris,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q329953,Northrop Grumman,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q502940,General Dynamics,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q5893992,Honeywell Aerospace,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q63197674,Vylor,0.3,rule: Agricultural Products & Services
+Q212,Ukraine,Q632694,Archer Daniels Midland,0.3,rule: Agricultural Products & Services
+Q212,Ukraine,Q66,Boeing,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q690604,Axon Enterprise,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q7240,Lockheed Martin,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q7257522,Huntington Ingalls Industries,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q7752327,Mosaic Company (The),0.3,rule: Fertilizers & Agricultural Chemicals
+Q212,Ukraine,Q7833612,TransDigm Group,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q89368734,RTX,0.5,rule: Aerospace & Defense
+Q212,Ukraine,Q905806,CF Industries,0.3,rule: Fertilizers & Agricultural Chemicals
+Q22656,Petroleum,Q11074156,Oneok,0.6,rule: Oil & Gas Storage & Transportation
+Q22656,Petroleum,Q119991,APA Corporation,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q1206980,Devon Energy,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q1275577,EOG Resources,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q1283291,Valero Energy,0.7,rule: Oil & Gas Refining & Marketing
+Q22656,Petroleum,Q1425316,Schlumberger,0.7,rule: Oil & Gas Equipment & Services
+Q22656,Petroleum,Q156238,ExxonMobil,0.9,rule: Integrated Oil & Gas
+Q22656,Petroleum,Q1656230,Phillips 66,0.7,rule: Oil & Gas Refining & Marketing
+Q22656,Petroleum,Q174769,United Airlines Holdings,0.5,rule: Passenger Airlines
+Q22656,Petroleum,Q188920,Delta Air Lines,0.5,rule: Passenger Airlines
+Q22656,Petroleum,Q2013357,Occidental Petroleum,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q214763,ConocoPhillips,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q2962826,Expand Energy,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q319642,Chevron Corporation,0.9,rule: Integrated Oil & Gas
+Q22656,Petroleum,Q458363,Marathon Petroleum,0.7,rule: Oil & Gas Refining & Marketing
+Q22656,Petroleum,Q503308,Southwest Airlines,0.5,rule: Passenger Airlines
+Q22656,Petroleum,Q5323987,EQT Corporation,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q65091423,Diamondback Energy,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q656165,Halliburton,0.7,rule: Oil & Gas Equipment & Services
+Q22656,Petroleum,Q7685824,Targa Resources,0.6,rule: Oil & Gas Storage & Transportation
+Q22656,Petroleum,Q7707900,Texas Pacific Land Corporation,0.9,rule: Oil & Gas Exploration & Production
+Q22656,Petroleum,Q804353,Baker Hughes,0.7,rule: Oil & Gas Equipment & Services
+Q22656,Petroleum,Q930639,Williams Companies,0.6,rule: Oil & Gas Storage & Transportation
+Q22656,Petroleum,Q931032,Kinder Morgan,0.6,rule: Oil & Gas Storage & Transportation
+Q23406,Red Sea,Q1384324,Expeditors International,0.2,rule: Air Freight & Logistics
+Q23406,Red Sea,Q155026,United Parcel Service,0.2,rule: Air Freight & Logistics
+Q23406,Red Sea,Q459477,FedEx,0.2,rule: Air Freight & Logistics
+Q23406,Red Sea,Q931200,C.H. Robinson,0.2,rule: Air Freight & Logistics
+Q23635,Bermuda,Q1381973,Everest Group,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q23635,Bermuda,Q28155430,Arch Capital Group,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q1053299,CRH plc,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q131744111,Trane Technologies,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q1536176,Smurfit Westrock,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q16738121,Allegion,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q338825,Accenture,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q48872,Eaton Corporation,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q642189,Medtronic,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q663452,TE Connectivity,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q667865,Johnson Controls,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q705392,Seagate Technology,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q27,Republic of Ireland,Q80947821,Steris,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q297879,ASML,Q297879,ASML Holding,1.0,issuer
+Q2986369,Semiconductor industry,Q1138888,First Solar,1,rule: Semiconductors
+Q2986369,Semiconductor industry,Q1155668,NXP Semiconductors,1.0,sector member
+Q2986369,Semiconductor industry,Q1197548,Micron Technology,1.0,sector member
+Q2986369,Semiconductor industry,Q128896,Advanced Micro Devices,1.0,sector member
+Q2986369,Semiconductor industry,Q1342041,Lam Research,1.0,sector member
+Q2986369,Semiconductor industry,Q1347782,Marvell Technology,1.0,sector member
+Q2986369,Semiconductor industry,Q1351484,Tokyo Electron,1.0,sector member
+Q2986369,Semiconductor industry,Q138685636,Qnity Electronics,1,rule: Semiconductor Materials & Equipment
+Q2986369,Semiconductor industry,Q1545076,Microchip Technology,1,rule: Semiconductors
+Q2986369,Semiconductor industry,Q1671509,ON Semiconductor,1,rule: Semiconductors
+Q2986369,Semiconductor industry,Q182477,NVIDIA,1.0,sector member
+Q2986369,Semiconductor industry,Q193412,Texas Instruments,1.0,sector member
+Q2986369,Semiconductor industry,Q22058448,Monolithic Power Systems,1,rule: Semiconductors
+Q2986369,Semiconductor industry,Q2404292,Teradyne,1,rule: Semiconductor Materials & Equipment
+Q2986369,Semiconductor industry,Q248,Intel,1.0,sector member
+Q2986369,Semiconductor industry,Q297879,ASML Holding,1.0,sector member
+Q2986369,Semiconductor industry,Q370719,SK hynix,1.0,sector member
+Q2986369,Semiconductor industry,Q484930,Analog Devices,1.0,sector member
+Q2986369,Semiconductor industry,Q544847,Qualcomm,1.0,sector member
+Q2986369,Semiconductor industry,Q621610,Applied Materials,1.0,sector member
+Q2986369,Semiconductor industry,Q624649,KLA,1.0,sector member
+Q2986369,Semiconductor industry,Q713418,Taiwan Semiconductor Manufacturing (TSMC),1.0,sector member
+Q2986369,Semiconductor industry,Q7538146,Skyworks Solutions,1,rule: Semiconductors
+Q2986369,Semiconductor industry,Q790060,Broadcom,1.0,sector member
+Q39,Switzerland,Q1089060,Chubb Limited,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q39,Switzerland,Q643626,Aptiv,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q39,Switzerland,Q658789,Garmin,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q392933,Arms industry,Q1485061,GE Aerospace,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q2140315,Textron,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q25104597,Howmet Aerospace,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q30291091,L3Harris,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q329953,Northrop Grumman,1.0,sector member
+Q392933,Arms industry,Q502940,General Dynamics,1.0,sector member
+Q392933,Arms industry,Q5893992,Honeywell Aerospace,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q66,Boeing,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q690604,Axon Enterprise,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q7240,Lockheed Martin,1.0,sector member
+Q392933,Arms industry,Q7257522,Huntington Ingalls Industries,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q7833612,TransDigm Group,0.9,rule: Aerospace & Defense
+Q392933,Arms industry,Q89368734,RTX,1.0,sector member
+Q40858,Natural gas,Q1053560,CenterPoint Energy,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q11074156,Oneok,0.6,rule: Oil & Gas Storage & Transportation
+Q40858,Natural gas,Q1127536,Consolidated Edison,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q119991,APA Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q1206980,Devon Energy,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q1275577,EOG Resources,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q1486956,Xcel Energy,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q156238,ExxonMobil,0.5,rule: Integrated Oil & Gas
+Q40858,Natural gas,Q1815011,PG&E Corporation,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q1984481,NiSource,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q2013357,Occidental Petroleum,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q214763,ConocoPhillips,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q26110522,Pinnacle West Capital,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q291508,AES Corporation,0.4,rule: Independent Power Producers & Energy Traders
+Q40858,Natural gas,Q2962826,Expand Energy,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q319642,Chevron Corporation,0.5,rule: Integrated Oil & Gas
+Q40858,Natural gas,Q462984,Ameren,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q4817084,Atmos Energy,0.6,rule: Gas Utilities
+Q40858,Natural gas,Q5013012,CMS Energy,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q5206232,DTE Energy,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q5323987,EQT Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q65091423,Diamondback Energy,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q677464,Dominion Energy,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q6955139,NRG Energy,0.4,rule: Independent Power Producers & Energy Traders
+Q40858,Natural gas,Q7449804,Sempra,0.3,rule: Multi-Utilities
+Q40858,Natural gas,Q7685824,Targa Resources,0.6,rule: Oil & Gas Storage & Transportation
+Q40858,Natural gas,Q7707900,Texas Pacific Land Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q40858,Natural gas,Q855639,Dow Inc.,0.3,rule: Commodity Chemicals
+Q40858,Natural gas,Q930639,Williams Companies,0.6,rule: Oil & Gas Storage & Transportation
+Q40858,Natural gas,Q931032,Kinder Morgan,0.6,rule: Oil & Gas Storage & Transportation
+Q40858,Natural gas,Q967868,NextEra Energy,0.3,rule: Multi-Utilities
+Q51557538,China–United States trade war,Q1091783,Ciena,0.3,rule: Communications Equipment
+Q51557538,China–United States trade war,Q1138888,First Solar,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q1140680,Flex Ltd.,0.3,rule: Electronic Manufacturing Services
+Q51557538,China–United States trade war,Q1155668,NXP Semiconductors,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q1197548,Micron Technology,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q128896,Advanced Micro Devices,0.3,China export licensing
+Q51557538,China–United States trade war,Q1342041,Lam Research,0.4,tool export controls
+Q51557538,China–United States trade war,Q1347782,Marvell Technology,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q138685636,Qnity Electronics,0.4,rule: Semiconductor Materials & Equipment
+Q51557538,China–United States trade war,Q138786899,Lumentum,0.3,rule: Communications Equipment
+Q51557538,China–United States trade war,Q15109887,Coherent Corp.,0.3,rule: Electronic Components
+Q51557538,China–United States trade war,Q1545076,Microchip Technology,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q1671509,ON Semiconductor,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q173395,Cisco,0.3,rule: Communications Equipment
+Q51557538,China–United States trade war,Q1817174,Supermicro,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q182477,NVIDIA,0.4,China export licensing
+Q51557538,China–United States trade war,Q193412,Texas Instruments,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q19923099,Hewlett Packard Enterprise,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q21404084,HP Inc.,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q2171646,Jabil,0.3,rule: Electronic Manufacturing Services
+Q51557538,China–United States trade war,Q22058448,Monolithic Power Systems,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q2404292,Teradyne,0.4,rule: Semiconductor Materials & Equipment
+Q51557538,China–United States trade war,Q248,Intel,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q260833,Sandisk,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q27500963,Dell Technologies,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q2861324,Arista Networks,0.3,rule: Communications Equipment
+Q51557538,China–United States trade war,Q3029296,"F5, Inc.",0.3,rule: Communications Equipment
+Q51557538,China–United States trade war,Q312,Apple,0.4,tariffs on China-assembled hardware
+Q51557538,China–United States trade war,Q459965,Caterpillar,0.3,
+Q51557538,China–United States trade war,Q474621,Amphenol,0.3,rule: Electronic Components
+Q51557538,China–United States trade war,Q483915,Nike,0.4,tariffs on Asia-sourced goods
+Q51557538,China–United States trade war,Q484930,Analog Devices,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q544847,Qualcomm,0.4,China handset revenue
+Q51557538,China–United States trade war,Q5842736,Corning Inc.,0.3,rule: Electronic Components
+Q51557538,China–United States trade war,Q621610,Applied Materials,0.4,tool export controls
+Q51557538,China–United States trade war,Q624649,KLA,0.4,tool export controls
+Q51557538,China–United States trade war,Q634815,Motorola Solutions,0.3,rule: Communications Equipment
+Q51557538,China–United States trade war,Q658789,Garmin,0.3,rule: Consumer Electronics
+Q51557538,China–United States trade war,Q66,Boeing,0.4,Chinese aircraft orders
+Q51557538,China–United States trade war,Q663452,TE Connectivity,0.3,rule: Electronic Manufacturing Services
+Q51557538,China–United States trade war,Q705392,Seagate Technology,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q7261135,Everpure,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q727883,NetApp,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q738770,Western Digital,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q51557538,China–United States trade war,Q7538146,Skyworks Solutions,0.4,rule: Semiconductors
+Q51557538,China–United States trade war,Q790060,Broadcom,0.4,rule: Semiconductors
+Q52389,Tariff,Q1009458,Bunge Global,0.3,rule: Agricultural Products & Services
+Q52389,Tariff,Q101983981,Viatris,0.3,rule: Pharmaceuticals
+Q52389,Tariff,Q1023155,CDW Corporation,0.4,rule: Technology Distributors
+Q52389,Tariff,Q1046951,Target Corporation,0.4,rule: Consumer Staples Merchandise Retail
+Q52389,Tariff,Q1091783,Ciena,0.4,rule: Communications Equipment
+Q52389,Tariff,Q1140680,Flex Ltd.,0.4,rule: Electronic Manufacturing Services
+Q52389,Tariff,Q1159256,Danaher Corporation,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q1181953,Deckers Brands,0.4,rule: Footwear
+Q52389,Tariff,Q1285819,TJX Companies,0.4,rule: Apparel Retail
+Q52389,Tariff,Q1322011,Waters Corporation,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q1373493,Lowe's,0.4,rule: Home Improvement Retail
+Q52389,Tariff,Q1384324,Expeditors International,0.3,rule: Air Freight & Logistics
+Q52389,Tariff,Q138786899,Lumentum,0.4,rule: Communications Equipment
+Q52389,Tariff,Q145168,Dollar General,0.4,rule: Consumer Staples Merchandise Retail
+Q52389,Tariff,Q1453620,Freeport-McMoRan,0.3,rule: Copper
+Q52389,Tariff,Q1477661,Paccar,0.3,rule: Construction Machinery & Heavy Transportation Equipment
+Q52389,Tariff,Q15109887,Coherent Corp.,0.4,rule: Electronic Components
+Q52389,Tariff,Q15109925,Tractor Supply,0.4,rule: Other Specialty Retail
+Q52389,Tariff,Q155026,United Parcel Service,0.3,rule: Air Freight & Logistics
+Q52389,Tariff,Q1641437,Ralph Lauren Corporation,0.4,"rule: Apparel, Accessories & Luxury Goods"
+Q52389,Tariff,Q1645081,Nucor,0.6,rule: Steel
+Q52389,Tariff,Q173395,Cisco,0.4,rule: Communications Equipment
+Q52389,Tariff,Q173476,Cummins,0.3,rule: Construction Machinery & Heavy Transportation Equipment
+Q52389,Tariff,Q1817174,Supermicro,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q19873469,Bio-Techne,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q19923099,Hewlett Packard Enterprise,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q2068984,"Illumina, Inc.",0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q206921,Pfizer,0.3,rule: Pharmaceuticals
+Q52389,Tariff,Q21404084,HP Inc.,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q2171646,Jabil,0.4,rule: Electronic Manufacturing Services
+Q52389,Tariff,Q247489,Merck & Co.,0.3,rule: Pharmaceuticals
+Q52389,Tariff,Q2581220,"Williams-Sonoma, Inc.",0.4,rule: Homefurnishing Retail
+Q52389,Tariff,Q260833,Sandisk,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q266423,Bristol Myers Squibb,0.3,rule: Pharmaceuticals
+Q52389,Tariff,Q27500963,Dell Technologies,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q2861324,Arista Networks,0.4,rule: Communications Equipment
+Q52389,Tariff,Q3029296,"F5, Inc.",0.4,rule: Communications Equipment
+Q52389,Tariff,Q305473,IQVIA,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q312,Apple,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q333718,Johnson & Johnson,0.3,rule: Pharmaceuticals
+Q52389,Tariff,Q3442791,Ross Stores,0.4,rule: Apparel Retail
+Q52389,Tariff,Q3884,Amazon,0.4,rule: Broadline Retail
+Q52389,Tariff,Q393762,Agilent Technologies,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q44294,Ford Motor Company,0.5,rule: Automobile Manufacturers
+Q52389,Tariff,Q459477,FedEx,0.3,rule: Air Freight & Logistics
+Q52389,Tariff,Q459965,Caterpillar,0.3,rule: Construction Machinery & Heavy Transportation Equipment
+Q52389,Tariff,Q474621,Amphenol,0.4,rule: Electronic Components
+Q52389,Tariff,Q478214,Tesla,0.5,rule: Automobile Manufacturers
+Q52389,Tariff,Q483551,Walmart,0.4,rule: Consumer Staples Merchandise Retail
+Q52389,Tariff,Q483915,Nike,0.4,"rule: Apparel, Accessories & Luxury Goods"
+Q52389,Tariff,Q496302,Deere & Company,0.3,rule: Agricultural & Farm Machinery
+Q52389,Tariff,Q501476,Hasbro,0.4,rule: Leisure Products
+Q52389,Tariff,Q5082076,Charles River Laboratories,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q5289230,Dollar Tree,0.4,rule: Consumer Staples Merchandise Retail
+Q52389,Tariff,Q533415,Best Buy,0.4,rule: Computer & Electronics Retail
+Q52389,Tariff,Q5533818,Genuine Parts Company,0.4,rule: Distributors
+Q52389,Tariff,Q56273715,"Tapestry, Inc.",0.4,"rule: Apparel, Accessories & Luxury Goods"
+Q52389,Tariff,Q58024,eBay Inc.,0.4,rule: Broadline Retail
+Q52389,Tariff,Q5842736,Corning Inc.,0.4,rule: Electronic Components
+Q52389,Tariff,Q63197674,Vylor,0.3,rule: Agricultural Products & Services
+Q52389,Tariff,Q632240,Lilly (Eli),0.3,rule: Pharmaceuticals
+Q52389,Tariff,Q632694,Archer Daniels Midland,0.3,rule: Agricultural Products & Services
+Q52389,Tariff,Q634815,Motorola Solutions,0.4,rule: Communications Equipment
+Q52389,Tariff,Q643626,Aptiv,0.5,rule: Automotive Parts & Equipment
+Q52389,Tariff,Q643674,Thermo Fisher Scientific,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q658789,Garmin,0.4,rule: Consumer Electronics
+Q52389,Tariff,Q663452,TE Connectivity,0.4,rule: Electronic Manufacturing Services
+Q52389,Tariff,Q6702957,Lululemon Athletica,0.4,"rule: Apparel, Accessories & Luxury Goods"
+Q52389,Tariff,Q680186,Mettler Toledo,0.2,rule: Life Sciences Tools & Services
+Q52389,Tariff,Q705392,Seagate Technology,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q715583,Costco,0.4,rule: Consumer Staples Merchandise Retail
+Q52389,Tariff,Q7261135,Everpure,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q727883,NetApp,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q738770,Western Digital,0.4,"rule: Technology Hardware, Storage & Peripherals"
+Q52389,Tariff,Q741707,Wabtec,0.3,rule: Construction Machinery & Heavy Transportation Equipment
+Q52389,Tariff,Q7605667,Steel Dynamics,0.6,rule: Steel
+Q52389,Tariff,Q7880076,Ulta Beauty,0.4,rule: Other Specialty Retail
+Q52389,Tariff,Q8073337,Zoetis,0.3,rule: Pharmaceuticals
+Q52389,Tariff,Q81965,General Motors,0.5,rule: Automobile Manufacturers
+Q52389,Tariff,Q864407,Home Depot (The),0.4,rule: Home Improvement Retail
+Q52389,Tariff,Q931200,C.H. Robinson,0.3,rule: Air Freight & Logistics
+Q55,Netherlands,Q899255,LyondellBasell,0.2,rule: headquartered outside the US (mostly tax domicile)
+Q648533,Semiconductor Manufacturing International Corporation,Q648533,SMIC,1.0,issuer
+Q66,Boeing,Q66,Boeing,1.0,issuer
+Q713418,TSMC,Q713418,Taiwan Semiconductor Manufacturing (TSMC),1.0,issuer
+Q717,Venezuela,Q119991,APA Corporation,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q1206980,Devon Energy,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q1275577,EOG Resources,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q1283291,Valero Energy,0.18,rule: Oil & Gas Refining & Marketing
+Q717,Venezuela,Q1425316,Schlumberger,0.18,rule: Oil & Gas Equipment & Services
+Q717,Venezuela,Q156238,ExxonMobil,0.3,rule: Integrated Oil & Gas
+Q717,Venezuela,Q1656230,Phillips 66,0.18,rule: Oil & Gas Refining & Marketing
+Q717,Venezuela,Q2013357,Occidental Petroleum,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q214763,ConocoPhillips,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q2962826,Expand Energy,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q319642,Chevron Corporation,0.3,rule: Integrated Oil & Gas
+Q717,Venezuela,Q458363,Marathon Petroleum,0.18,rule: Oil & Gas Refining & Marketing
+Q717,Venezuela,Q5323987,EQT Corporation,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q65091423,Diamondback Energy,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q656165,Halliburton,0.18,rule: Oil & Gas Equipment & Services
+Q717,Venezuela,Q7707900,Texas Pacific Land Corporation,0.3,rule: Oil & Gas Exploration & Production
+Q717,Venezuela,Q804353,Baker Hughes,0.18,rule: Oil & Gas Equipment & Services
+Q7184,NATO,Q1485061,GE Aerospace,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q2140315,Textron,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q25104597,Howmet Aerospace,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q30291091,L3Harris,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q329953,Northrop Grumman,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q502940,General Dynamics,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q5893992,Honeywell Aerospace,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q66,Boeing,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q690604,Axon Enterprise,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q7240,Lockheed Martin,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q7257522,Huntington Ingalls Industries,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q7833612,TransDigm Group,0.5,rule: Aerospace & Defense
+Q7184,NATO,Q89368734,RTX,0.5,rule: Aerospace & Defense
+Q7204,Middle East,Q11074156,Oneok,0.2,rule: Oil & Gas Storage & Transportation
+Q7204,Middle East,Q119991,APA Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q1206980,Devon Energy,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q1275577,EOG Resources,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q1283291,Valero Energy,0.24,rule: Oil & Gas Refining & Marketing
+Q7204,Middle East,Q1425316,Schlumberger,0.24,rule: Oil & Gas Equipment & Services
+Q7204,Middle East,Q156238,ExxonMobil,0.4,rule: Integrated Oil & Gas
+Q7204,Middle East,Q1656230,Phillips 66,0.24,rule: Oil & Gas Refining & Marketing
+Q7204,Middle East,Q174769,United Airlines Holdings,0.2,rule: Passenger Airlines
+Q7204,Middle East,Q188920,Delta Air Lines,0.2,rule: Passenger Airlines
+Q7204,Middle East,Q2013357,Occidental Petroleum,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q214763,ConocoPhillips,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q2962826,Expand Energy,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q319642,Chevron Corporation,0.4,rule: Integrated Oil & Gas
+Q7204,Middle East,Q458363,Marathon Petroleum,0.24,rule: Oil & Gas Refining & Marketing
+Q7204,Middle East,Q503308,Southwest Airlines,0.2,rule: Passenger Airlines
+Q7204,Middle East,Q5323987,EQT Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q65091423,Diamondback Energy,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q656165,Halliburton,0.24,rule: Oil & Gas Equipment & Services
+Q7204,Middle East,Q7685824,Targa Resources,0.2,rule: Oil & Gas Storage & Transportation
+Q7204,Middle East,Q7707900,Texas Pacific Land Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q7204,Middle East,Q804353,Baker Hughes,0.24,rule: Oil & Gas Equipment & Services
+Q7204,Middle East,Q930639,Williams Companies,0.2,rule: Oil & Gas Storage & Transportation
+Q7204,Middle East,Q931032,Kinder Morgan,0.2,rule: Oil & Gas Storage & Transportation
+Q7795,OPEC,Q119991,APA Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q1206980,Devon Energy,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q1275577,EOG Resources,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q1283291,Valero Energy,0.3,rule: Oil & Gas Refining & Marketing
+Q7795,OPEC,Q1425316,Schlumberger,0.3,rule: Oil & Gas Equipment & Services
+Q7795,OPEC,Q156238,ExxonMobil,0.5,rule: Integrated Oil & Gas
+Q7795,OPEC,Q1656230,Phillips 66,0.3,rule: Oil & Gas Refining & Marketing
+Q7795,OPEC,Q2013357,Occidental Petroleum,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q214763,ConocoPhillips,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q2962826,Expand Energy,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q319642,Chevron Corporation,0.5,rule: Integrated Oil & Gas
+Q7795,OPEC,Q458363,Marathon Petroleum,0.3,rule: Oil & Gas Refining & Marketing
+Q7795,OPEC,Q5323987,EQT Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q65091423,Diamondback Energy,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q656165,Halliburton,0.3,rule: Oil & Gas Equipment & Services
+Q7795,OPEC,Q7707900,Texas Pacific Land Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q7795,OPEC,Q804353,Baker Hughes,0.3,rule: Oil & Gas Equipment & Services
+Q794,Iran,Q119991,APA Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q1206980,Devon Energy,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q1275577,EOG Resources,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q1283291,Valero Energy,0.3,rule: Oil & Gas Refining & Marketing
+Q794,Iran,Q1425316,Schlumberger,0.3,rule: Oil & Gas Equipment & Services
+Q794,Iran,Q156238,ExxonMobil,0.5,rule: Integrated Oil & Gas
+Q794,Iran,Q1656230,Phillips 66,0.3,rule: Oil & Gas Refining & Marketing
+Q794,Iran,Q2013357,Occidental Petroleum,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q214763,ConocoPhillips,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q2962826,Expand Energy,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q319642,Chevron Corporation,0.5,rule: Integrated Oil & Gas
+Q794,Iran,Q458363,Marathon Petroleum,0.3,rule: Oil & Gas Refining & Marketing
+Q794,Iran,Q5323987,EQT Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q65091423,Diamondback Energy,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q656165,Halliburton,0.3,rule: Oil & Gas Equipment & Services
+Q794,Iran,Q7707900,Texas Pacific Land Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q794,Iran,Q804353,Baker Hughes,0.3,rule: Oil & Gas Equipment & Services
+Q79883,Strait of Hormuz,Q119991,APA Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q1206980,Devon Energy,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q1275577,EOG Resources,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q1283291,Valero Energy,0.3,rule: Oil & Gas Refining & Marketing
+Q79883,Strait of Hormuz,Q1425316,Schlumberger,0.3,rule: Oil & Gas Equipment & Services
+Q79883,Strait of Hormuz,Q156238,ExxonMobil,0.5,rule: Integrated Oil & Gas
+Q79883,Strait of Hormuz,Q1656230,Phillips 66,0.3,rule: Oil & Gas Refining & Marketing
+Q79883,Strait of Hormuz,Q2013357,Occidental Petroleum,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q214763,ConocoPhillips,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q2962826,Expand Energy,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q319642,Chevron Corporation,0.5,rule: Integrated Oil & Gas
+Q79883,Strait of Hormuz,Q458363,Marathon Petroleum,0.3,rule: Oil & Gas Refining & Marketing
+Q79883,Strait of Hormuz,Q5323987,EQT Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q65091423,Diamondback Energy,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q656165,Halliburton,0.3,rule: Oil & Gas Equipment & Services
+Q79883,Strait of Hormuz,Q7707900,Texas Pacific Land Corporation,0.5,rule: Oil & Gas Exploration & Production
+Q79883,Strait of Hormuz,Q804353,Baker Hughes,0.3,rule: Oil & Gas Equipment & Services
+Q801,Israel,Q1485061,GE Aerospace,0.4,rule: Aerospace & Defense
+Q801,Israel,Q2140315,Textron,0.4,rule: Aerospace & Defense
+Q801,Israel,Q25104597,Howmet Aerospace,0.4,rule: Aerospace & Defense
+Q801,Israel,Q30291091,L3Harris,0.4,rule: Aerospace & Defense
+Q801,Israel,Q329953,Northrop Grumman,0.4,rule: Aerospace & Defense
+Q801,Israel,Q502940,General Dynamics,0.4,rule: Aerospace & Defense
+Q801,Israel,Q5893992,Honeywell Aerospace,0.4,rule: Aerospace & Defense
+Q801,Israel,Q66,Boeing,0.4,rule: Aerospace & Defense
+Q801,Israel,Q690604,Axon Enterprise,0.4,rule: Aerospace & Defense
+Q801,Israel,Q7240,Lockheed Martin,0.4,rule: Aerospace & Defense
+Q801,Israel,Q7257522,Huntington Ingalls Industries,0.4,rule: Aerospace & Defense
+Q801,Israel,Q7833612,TransDigm Group,0.4,rule: Aerospace & Defense
+Q801,Israel,Q89368734,RTX,0.4,rule: Aerospace & Defense
+Q83323,Fertilizer,Q7752327,Mosaic Company (The),0.6,rule: Fertilizers & Agricultural Chemicals
+Q83323,Fertilizer,Q905806,CF Industries,0.6,rule: Fertilizers & Agricultural Chemicals
+Q851,Saudi Arabia,Q119991,APA Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q1206980,Devon Energy,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q1275577,EOG Resources,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q1283291,Valero Energy,0.24,rule: Oil & Gas Refining & Marketing
+Q851,Saudi Arabia,Q1425316,Schlumberger,0.24,rule: Oil & Gas Equipment & Services
+Q851,Saudi Arabia,Q156238,ExxonMobil,0.4,rule: Integrated Oil & Gas
+Q851,Saudi Arabia,Q1656230,Phillips 66,0.24,rule: Oil & Gas Refining & Marketing
+Q851,Saudi Arabia,Q2013357,Occidental Petroleum,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q214763,ConocoPhillips,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q2962826,Expand Energy,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q319642,Chevron Corporation,0.4,rule: Integrated Oil & Gas
+Q851,Saudi Arabia,Q458363,Marathon Petroleum,0.24,rule: Oil & Gas Refining & Marketing
+Q851,Saudi Arabia,Q5323987,EQT Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q65091423,Diamondback Energy,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q656165,Halliburton,0.24,rule: Oil & Gas Equipment & Services
+Q851,Saudi Arabia,Q7707900,Texas Pacific Land Corporation,0.4,rule: Oil & Gas Exploration & Production
+Q851,Saudi Arabia,Q804353,Baker Hughes,0.24,rule: Oil & Gas Equipment & Services
+Q8646,Hong Kong,Q1359568,Alibaba Group,0.5,HK listing
+Q8646,Hong Kong,Q860580,Tencent,0.5,HK listing
+Q865,Taiwan,Q1091783,Ciena,0.3,rule: Communications Equipment
+Q865,Taiwan,Q1138888,First Solar,0.6,rule: Semiconductors
+Q865,Taiwan,Q1140680,Flex Ltd.,0.3,rule: Electronic Manufacturing Services
+Q865,Taiwan,Q1155668,NXP Semiconductors,0.6,rule: Semiconductors
+Q865,Taiwan,Q1197548,Micron Technology,0.6,rule: Semiconductors
+Q865,Taiwan,Q128896,Advanced Micro Devices,0.5,leading-edge wafers sourced from TSMC Taiwan
+Q865,Taiwan,Q1342041,Lam Research,0.4,rule: Semiconductor Materials & Equipment
+Q865,Taiwan,Q1347782,Marvell Technology,0.6,rule: Semiconductors
+Q865,Taiwan,Q138685636,Qnity Electronics,0.4,rule: Semiconductor Materials & Equipment
+Q865,Taiwan,Q138786899,Lumentum,0.3,rule: Communications Equipment
+Q865,Taiwan,Q143616,United Microelectronics (UMC),0.9,domicile
+Q865,Taiwan,Q1485061,GE Aerospace,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q15109887,Coherent Corp.,0.3,rule: Electronic Components
+Q865,Taiwan,Q1545076,Microchip Technology,0.6,rule: Semiconductors
+Q865,Taiwan,Q1671509,ON Semiconductor,0.6,rule: Semiconductors
+Q865,Taiwan,Q173395,Cisco,0.3,rule: Communications Equipment
+Q865,Taiwan,Q1817174,Supermicro,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q182477,NVIDIA,0.5,leading-edge wafers sourced from TSMC Taiwan
+Q865,Taiwan,Q193412,Texas Instruments,0.6,rule: Semiconductors
+Q865,Taiwan,Q19923099,Hewlett Packard Enterprise,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q2140315,Textron,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q21404084,HP Inc.,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q2171646,Jabil,0.3,rule: Electronic Manufacturing Services
+Q865,Taiwan,Q22058448,Monolithic Power Systems,0.6,rule: Semiconductors
+Q865,Taiwan,Q2404292,Teradyne,0.4,rule: Semiconductor Materials & Equipment
+Q865,Taiwan,Q248,Intel,0.6,rule: Semiconductors
+Q865,Taiwan,Q25054159,ASE Technology,0.8,domicile
+Q865,Taiwan,Q25104597,Howmet Aerospace,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q260833,Sandisk,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q27500963,Dell Technologies,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q2861324,Arista Networks,0.3,rule: Communications Equipment
+Q865,Taiwan,Q30291091,L3Harris,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q3029296,"F5, Inc.",0.3,rule: Communications Equipment
+Q865,Taiwan,Q312,Apple,0.4,TSMC-dependent SoCs
+Q865,Taiwan,Q329953,Northrop Grumman,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q463094,Hon Hai Precision (Foxconn),0.6,domicile; large manufacturing in mainland China
+Q865,Taiwan,Q474621,Amphenol,0.3,rule: Electronic Components
+Q865,Taiwan,Q484930,Analog Devices,0.6,rule: Semiconductors
+Q865,Taiwan,Q502940,General Dynamics,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q544847,Qualcomm,0.4,TSMC-dependent
+Q865,Taiwan,Q5842736,Corning Inc.,0.3,rule: Electronic Components
+Q865,Taiwan,Q5893992,Honeywell Aerospace,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q621610,Applied Materials,0.4,rule: Semiconductor Materials & Equipment
+Q865,Taiwan,Q624649,KLA,0.4,rule: Semiconductor Materials & Equipment
+Q865,Taiwan,Q634815,Motorola Solutions,0.3,rule: Communications Equipment
+Q865,Taiwan,Q658789,Garmin,0.3,rule: Consumer Electronics
+Q865,Taiwan,Q66,Boeing,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q663452,TE Connectivity,0.3,rule: Electronic Manufacturing Services
+Q865,Taiwan,Q690604,Axon Enterprise,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q699848,MediaTek,0.8,domicile
+Q865,Taiwan,Q705392,Seagate Technology,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q713418,Taiwan Semiconductor Manufacturing (TSMC),0.9,domicile; nearly all fab capacity in Taiwan
+Q865,Taiwan,Q7240,Lockheed Martin,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q7257522,Huntington Ingalls Industries,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q7261135,Everpure,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q727883,NetApp,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q738770,Western Digital,0.3,"rule: Technology Hardware, Storage & Peripherals"
+Q865,Taiwan,Q7538146,Skyworks Solutions,0.6,rule: Semiconductors
+Q865,Taiwan,Q7833612,TransDigm Group,0.3,rule: Aerospace & Defense
+Q865,Taiwan,Q790060,Broadcom,0.4,TSMC-dependent
+Q865,Taiwan,Q89368734,RTX,0.3,rule: Aerospace & Defense
+Q884,South Korea,Q20718,Samsung Electronics,0.8,domicile
+Q884,South Korea,Q370719,SK hynix,0.8,domicile
+Q897,Gold,Q1785405,Newmont,0.9,rule: Gold
+Q96,Mexico,Q44294,Ford Motor Company,0.4,rule: Automobile Manufacturers
+Q96,Mexico,Q478214,Tesla,0.4,rule: Automobile Manufacturers
+Q96,Mexico,Q643626,Aptiv,0.4,rule: Automotive Parts & Equipment
+Q96,Mexico,Q81965,General Motors,0.4,rule: Automobile Manufacturers

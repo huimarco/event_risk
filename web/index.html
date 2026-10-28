@@ -12,7 +12,7 @@
     color-scheme: light;
     --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
     --hairline: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10); --hover: rgba(11,11,11,0.04);
-    --question: #2a78d6; --entity: #eb6834; --security: #1baf7a;
+    --question: #2a78d6; --entity: #eb6834; --issuer: #1baf7a; --security: #1baf7a;
     /* Propositions (a question's rungs) and markets are the inputs behind questions, not peer
        categories: no fourth hue passes all-pairs against slots 1-3, so they are neutral grey,
        told apart by shape (small dot / triangle) and labels. */
@@ -23,7 +23,7 @@
       color-scheme: dark;
       --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
       --hairline: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10); --hover: rgba(255,255,255,0.05);
-      --question: #3987e5; --entity: #d95926; --security: #199e70;
+      --question: #3987e5; --entity: #d95926; --issuer: #199e70; --security: #199e70;
     }
   }
   * { box-sizing: border-box; }
@@ -46,7 +46,7 @@
   .caption[hidden] { display: none; }
   aside, section { min-height: 0; overflow: auto; }
   aside { display: flex; flex-direction: column; }
-  .tabs { display: flex; gap: 2px; padding: 10px 8px 0; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 2px; padding: 10px 8px 0; }
   .tabs button { border: 0; background: none; color: var(--ink-2); padding: 6px 6px; border-radius: 6px; cursor: pointer; font-size: 13px; }
   .tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; background: var(--hover); }
   #search { margin: 10px 12px; }
@@ -59,8 +59,11 @@
   .swatch.question { background: var(--question); border-radius: 50%; }
   .swatch.proposition { background: var(--proposition); border-radius: 50%; transform: scale(.7); }
   .swatch.entity { background: var(--entity); transform: rotate(45deg) scale(.85); }
-  .swatch.security { background: var(--security); border-radius: 2px; }
+  .swatch.issuer { background: var(--issuer); border-radius: 2px; }
+  .swatch.security { background: var(--issuer); border-radius: 50%; }
   .swatch.factor { background: var(--ink-2); clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); }
+  .swatch.niche { background: var(--muted); clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); transform: scale(.8); }
+  .swatch.industry { background: var(--ink-2); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
   .swatch.market { background: var(--market); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   #canvas-wrap { position: relative; background: var(--surface); }
   #graph { position: absolute; inset: 0; }
@@ -119,9 +122,67 @@
   .doc .endpoint { margin: 22px 0 6px; font: 600 13px ui-monospace, Menlo, monospace; color: var(--ink); }
   .doc .endpoint span { color: var(--question); margin-right: 8px; }
   body.api main, body.api .explore-only, body.api #about { display: none; }
+  body.research main, body.research .explore-only, body.research #about { display: none; }
+  #research { display: none; min-height: 0; grid-template-columns: var(--rleft, 300px) 1fr; }
+  body.research #research { display: grid; }
+  #rs-controls { border-right: 1px solid var(--hairline); padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow: auto; }
+  #rs-controls label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--ink-2); }
+  #rs-controls label[hidden] { display: none; }
+  #rs-controls .row2 { display: flex; gap: 6px; }
+  #rs-controls .row2 > * { flex: 1; min-width: 0; }
+  #rs-factors { list-style: none; margin: 0; padding: 0; border: 1px solid var(--hairline); border-radius: 6px; max-height: 38vh; overflow: auto; }
+  #rs-factors li { padding: 5px 8px; cursor: pointer; display: flex; justify-content: space-between; gap: 6px; font-size: 13px; }
+  #rs-factors li:hover { background: var(--hover); }
+  #rs-factors li[aria-current="true"] { background: var(--hover); font-weight: 600; }
+  #rs-factors li .tag { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  #rs-results { overflow: auto; padding: 16px 24px 48px; }
+  #rs-results > section { overflow: visible; border-bottom: 1px solid var(--hairline); padding: 14px 0 18px; }
+  #rs-results h2 { font-size: 20px; margin: 4px 0; } #rs-results h3 { font-size: 15px; margin: 0 0 8px; }
+  #rs-results h4 { font-size: 13px; margin: 12px 0 6px; }
+  .ev { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 9px; border: 1px solid var(--axis); color: var(--ink-2); white-space: nowrap; }
+  .ev.estimated { border-style: dashed; } .ev.qualitative { border-style: dotted; } .ev.definition { background: var(--hover); }
+  .rs-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .rs-table th { text-align: left; color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; padding: 4px 8px 4px 0; border-bottom: 1px solid var(--hairline); }
+  .rs-table td { padding: 4px 8px 4px 0; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  .rs-table td.n, .rs-table th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .rs-table tr.click { cursor: pointer; } .rs-table tr.click:hover { background: var(--hover); }
+  .rs-kv { display: grid; grid-template-columns: 170px 1fr; gap: 3px 12px; font-size: 13px; }
+  .rs-kv dt { color: var(--muted); } .rs-kv dd { margin: 0; }
+  .rs-stats { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 8px 0; }
+  .rs-stats div { display: flex; flex-direction: column; } .rs-stats b { font-size: 16px; font-variant-numeric: tabular-nums; }
+  .rs-stats span { font-size: 11px; color: var(--muted); }
+  .rs-chart { position: relative; } .rs-chart svg { display: block; width: 100%; }
+  .rs-chart .grid line { stroke: var(--hairline); } .rs-chart text { fill: var(--muted); font-size: 11px; }
+  .rs-tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--ring); border-radius: 6px;
+            padding: 4px 8px; font-size: 12px; white-space: nowrap; box-shadow: 0 1px 4px var(--ring); }
+  .rs-path { font-size: 12.5px; margin: 3px 0; line-height: 1.7; } .rs-path .arr { color: var(--muted); margin: 0 2px; }
+  .rs-q { padding: 10px 0; border-top: 1px solid var(--hairline); }
+  .rs-actions { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; } .rs-actions button { font-size: 12px; padding: 2px 8px; cursor: pointer; }
+  .rs-empty { color: var(--muted); font-size: 13px; }
+  .rs-nav { position: sticky; top: -16px; z-index: 3; display: flex; flex-wrap: wrap; gap: 4px; margin: -16px -24px 4px; padding: 10px 24px;
+            background: var(--page); border-bottom: 1px solid var(--hairline); }
+  .rs-nav a { font-size: 12.5px; color: var(--ink-2); text-decoration: none; padding: 3px 9px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; }
+  .rs-nav a:hover { background: var(--hover); color: var(--ink); }
+  .rs-num { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; font-size: 11px;
+            font-weight: 600; background: var(--hover); border: 1px solid var(--axis); color: var(--ink-2); margin-right: 6px; }
+  .rs-nav .rs-num { margin-right: 0; }
+  .rs-head h3 { display: flex; align-items: center; gap: 6px; } .rs-head h3 .rs-num { margin-right: 2px; }
+  .rs-ask { margin: 0 0 10px; color: var(--ink-2); font-size: 13px; }
+  #rs-results > section { scroll-margin-top: 48px; }
+  .rs-tiles { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+  .rs-tiles > div { display: flex; flex-direction: column; gap: 1px; padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 8px; background: var(--surface); min-width: 120px; }
+  .rs-tiles span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .rs-tiles b { font-size: 15px; font-variant-numeric: tabular-nums; } .rs-tiles em { font-style: normal; font-size: 11px; color: var(--muted); }
+  .rs-tiles .ev { align-self: flex-start; margin-top: 2px; }
+  details.rs-more { margin: 4px 0 8px; font-size: 12.5px; color: var(--ink-2); } details.rs-more > summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+  details.rs-more p, details.rs-more dl, details.rs-more ul { margin: 6px 0 0; }
+  details.rs-q { border-top: 1px solid var(--hairline); padding: 6px 0; } details.rs-q > summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; list-style-position: outside; }
+  .rs-qname { font-weight: 600; } .rs-qmeta { font-size: 12.5px; color: var(--ink-2); }
+  .rs-qbody { padding: 4px 0 6px 16px; }
+  .rs-warn { font-size: 12.5px; color: var(--ink-2); border-left: 3px solid var(--axis); padding: 4px 10px; margin: 8px 0; }
   #api { display: none; overflow: auto; }
   body.api #api { display: block; }
-  .up { color: var(--security); } .down { color: var(--entity); }
+  .up { color: var(--issuer); } .down { color: var(--entity); }
   #status { margin: 10px 12px 0; } #status[hidden] { display: none; }
   .kv { display: grid; grid-template-columns: 90px 1fr; gap: 2px 10px; font-size: 13px; }
   .kv dt { color: var(--muted); } .kv dd { margin: 0; color: var(--ink-2); }
@@ -141,17 +202,20 @@
     <button role="tab" data-view="explore" aria-selected="true">Explore</button>
     <button role="tab" data-view="about" class="secret">How it works</button>
     <button role="tab" data-view="api" class="secret">Excel &amp; API</button>
+    <button role="tab" data-view="research" class="secret">Factor research</button>
   </nav>
   <label class="explore-only">Depth <select id="depth"><option selected>1</option><option>2</option></select></label>
 </header>
 <main>
   <aside>
     <div class="tabs" role="tablist">
-      <button role="tab" data-tab="markets" title="Venue markets by how they fared in cross-venue matching">Markets</button>
-      <button role="tab" data-tab="questions" aria-selected="true">Questions</button>
-      <button role="tab" data-tab="entities">Entities</button>
-      <button role="tab" data-tab="factors" title="Market factors (equity indices, currencies, commodities, rates) that questions are relevant to">Factors</button>
-      <button role="tab" data-tab="securities">Securities</button>
+      <button role="tab" data-tab="markets" title="Events (contracts): venue markets on Kalshi and Polymarket, by how they fared in cross-venue matching">Events</button>
+      <button role="tab" data-tab="questions" aria-selected="true" title="Questions (canonical events): one real-world question across venues, deadlines and thresholds">Questions</button>
+      <button role="tab" data-tab="entities" title="Countries, people, organisations and concepts the questions involve">Entities</button>
+      <button role="tab" data-tab="macro" title="Macro factors: market prices (equities, FX, commodities, rates, credit) and economic indicators (inflation, CPI, GDP, jobs)">Macro factors</button>
+      <button role="tab" data-tab="niche" title="Niche factors: an industry's revenue and cost drivers (load factor, jet fuel, NIM, wafer demand…)">Niche factors</button>
+      <button role="tab" data-tab="issuers" title="Companies and other borrowers exposed to entities">Issuers</button>
+      <button role="tab" data-tab="industries" title="GICS industries: niche factors drive them, issuers are classified in them">GICS industries</button>
     </div>
     <select id="status" hidden aria-label="Match status">
       <option value="unparsed" selected>Unparsed — event type not recognised</option>
@@ -170,8 +234,11 @@
     <div class="legend">
       <span><i class="swatch question"></i>Question</span>
       <span><i class="swatch entity"></i>Entity</span>
+      <span><i class="swatch issuer"></i>Issuer</span>
       <span><i class="swatch security"></i>Security</span>
-      <span><i class="swatch factor"></i>Factor</span>
+      <span><i class="swatch factor"></i>Macro factor</span>
+      <span><i class="swatch niche"></i>Niche factor</span>
+      <span><i class="swatch industry"></i>GICS industry</span>
       <span><i class="swatch proposition"></i>Rung</span>
       <span><i class="swatch market"></i>Market</span>
       <span><i class="dash"></i>Logical link</span>
@@ -187,14 +254,15 @@
   <p>Prediction markets such as Kalshi and Polymarket put a price on questions like <em>"Will China invade Taiwan by the end of 2027?"</em>.
     A price of 9¢ for a contract that pays $1 if the answer is yes means traders collectively put the odds at about 9%.
     This project collects those odds for every geopolitical market, works out which markets are really the same question,
-    connects each question to the countries, people and organisations it involves, and from there to stocks, ETFs and currencies.</p>
+    connects each question to the countries, people and organisations it involves, and from there to macro factors (credit spreads, currencies, oil, inflation, GDP),
+    the niche factors that drive each industry's revenue and costs (airline load factor, jet fuel, bank margins, wafer demand), GICS industries, and the issuers — companies and other borrowers — exposed to them.</p>
 
   <h3>Why it matters</h3>
   <ul>
     <li><strong>Geopolitical risk is usually described, not measured.</strong> Research notes say a conflict is "a risk"; they rarely say how likely it is today,
       whether that changed this week, or which holdings it touches. Prediction markets supply the missing number — a probability, updated continuously, with money behind it.</li>
     <li><strong>The odds are scattered and hard to use.</strong> The same question is listed on several venues in different wording; thousands of contracts
-      expire, get renamed or vanish. Nobody links them to securities. This project does the cleaning, matching and linking.</li>
+      expire, get renamed or vanish. Nobody links them to portfolios. This project does the cleaning, matching and linking.</li>
     <li><strong>The history can't be rebuilt later.</strong> Venues keep only part of their past prices and none of their past contract terms. Everything here is
       stored as it was known at each moment, so past days can be replayed later — essential for testing whether the signal would have helped.</li>
   </ul>
@@ -204,26 +272,31 @@
   <h3>How it is used</h3>
   <table>
     <tr><th>Who</th><th>Question</th><th>Where</th></tr>
-    <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Questions tab (sorted by 24h move) · Securities tab</td></tr>
-    <tr><td>Portfolio manager</td><td>"Which events matter for TSMC, and would they push it up or down?"</td><td>Securities tab</td></tr>
+    <tr><td>Risk desk</td><td>"What geopolitical events moved most today, and do we hold anything exposed?"</td><td>Questions tab (sorted by 24h move) · Macro factors tab · Issuers tab</td></tr>
+    <tr><td>Portfolio manager</td><td>"Which events matter for TSMC, and would they help or hurt it?"</td><td>Issuers tab</td></tr>
     <tr><td>Analyst</td><td>"Everything that involves Iran, and how the odds connect"</td><td>Entities tab · the network view</td></tr>
+    <tr><td>Sector analyst</td><td>"Which events hit airlines' costs, and through what?"</td><td>GICS industries tab · Niche factors tab</td></tr>
     <tr><td>Quant</td><td>"How has this probability moved over the last month?"</td><td>The API · <code>HISTORY</code> in Excel</td></tr>
   </table>
   <p>Everything in the explorer is also available in Excel and through the API — see the <a href="#" data-open="api">Excel &amp; API</a> tab for a five-minute setup guide.</p>
-  <p>A worked example: selecting <strong>TSM</strong> shows <em>"Will China invade Taiwan?"</em> near the top —
-    ▼ impact −1.46, odds 9.5% by the end of 2027. The path reads: the question <em>involves</em> Taiwan as the <em>target</em> of an invasion (adverse for Taiwan) → TSM is
-    exposed to Taiwan (its fabs are there) → so a YES pushes TSM down. A ceasefire question would show the opposite sign for a defense contractor like Lockheed Martin.</p>
+  <p>A worked example: selecting the issuer <strong>TSMC</strong> shows <em>"Will China invade Taiwan?"</em> near the top —
+    ▼ impact −1.46, odds 9.5% by the end of 2027. The path reads: the question <em>involves</em> Taiwan as the <em>target</em> of an invasion (adverse for Taiwan) → TSMC is
+    exposed to Taiwan (its fabs are there) → so a YES is adverse for TSMC; the measured sensitivity of each TSMC listing (TSM, 2330.TW) shows how much its shares actually moved on past jumps in those odds. A ceasefire question would show the opposite sign for a defense contractor like Lockheed Martin.</p>
 
   <h3>The pipeline at a glance</h3>
   <div class="flow">
-    <div class="step"><b><i class="swatch market"></i>Market</b><span>one contract on Kalshi or Polymarket</span></div><span class="arrow">→</span>
-    <div class="step"><b><i class="swatch proposition"></i>Proposition</b><span>one bet, merged across venues</span></div><span class="arrow">→</span>
-    <div class="step"><b><i class="swatch question"></i>Question</b><span>all deadlines / thresholds of one bet</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch market"></i>Event</b><span>a contract on Kalshi or Polymarket</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch question"></i>Question</b><span>the canonical event: one bet across venues, deadlines, thresholds</span></div><span class="arrow">→</span>
     <div class="step"><b><i class="swatch entity"></i>Entity</b><span>country, person, organisation, concept</span></div><span class="arrow">→</span>
-    <div class="step"><b><i class="swatch security"></i>Security</b><span>stock, ETF, currency</span></div>
+    <div class="step"><b><i class="swatch factor"></i>Macro factor</b><span>oil, FX, rates, credit, inflation, GDP</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch niche"></i>Niche factor</b><span>an industry's revenue / cost driver</span></div><span class="arrow">→</span>
+    <div class="step"><b><i class="swatch issuer"></i>Issuer</b><span>company or other borrower (its securities hang off it)</span></div><span class="arrow">↔</span>
+    <div class="step"><b><i class="swatch industry"></i>GICS industry</b><span>niche factors drive it; issuers belong to it</span></div>
   </div>
+  <p class="note">Two routes lead from a question to an issuer: through the <em>entities</em> it is exposed to (Taiwan → TSMC), and through <em>factors</em>:
+    question → macro factor → niche factor → the issuer's GICS industry (Hormuz closure → Brent → jet fuel cost → Passenger Airlines → Delta).</p>
   <p>Coverage: about 10,900 geopolitical markets, grouped into about 4,800 questions (around 2,000 trading at any time), linked to 1,450 entities and
-    543 securities (the S&amp;P 500 plus Asian chipmakers, country ETFs and currencies). Everything is produced by algorithms from public data — no AI models — except the analyst estimates marked below.</p>
+    517 issuers (S&amp;P 500 companies plus Asian chipmakers and tech; add your own borrowers in issuers.csv). Everything is produced by algorithms from public data — no AI models — except the analyst estimates marked below.</p>
 
   <h3>Step 1 · Collect the markets</h3>
   <p>Kalshi's world and politics markets and Polymarket's geopolitics section are read several times a day: prices (bid, ask, last trade), open interest,
@@ -251,7 +324,7 @@
     <tr><td><span class="tag">unmatched</span></td><td>Read fine, but no other market asks exactly this — the usual case, since venues rarely list identical questions.</td></tr>
     <tr><td><span class="tag">unparsed</span></td><td>The type of event isn't recognised, so it can't be compared with other markets (about one market in eight). It still appears as its own question.</td></tr>
   </table>
-  <p>The <strong>Markets</strong> tab lists every market by outcome, with its parsed signature and the reason each near miss was rejected. Decisions can be reviewed and overridden by hand.
+  <p>The <strong>Events</strong> tab lists every market (contract) by outcome, with its parsed signature and the reason each near miss was rejected. Decisions can be reviewed and overridden by hand.
     Two markets from the same venue with different deadlines are never merged, even when each matches a third market from the other venue.</p>
 
   <h3>Step 2b · Propositions → questions: one row per real-world question</h3>
@@ -265,7 +338,7 @@
     <li><strong>The rungs form a curve</strong>: 2.1% by end-2026, 5.5% by mid-2027, 9.5% by end-2027 for a Chinese invasion of Taiwan.</li>
     <li><strong>The headline probability</strong> is the most-traded live rung (24-hour volume, then open interest) — the one with the most money behind it.</li>
     <li><strong>Live or closed:</strong> a rung is live if it traded in the last 7 days; a question is live while any rung is. Closed rungs stay visible as history.</li>
-    <li><strong>Entities and securities attach to questions</strong>, once, instead of to each rung.</li>
+    <li><strong>Entities, issuers and factors attach to questions</strong>, once, instead of to each rung.</li>
   </ul>
 
   <h3>Step 3 · Questions → entities: who and what is involved</h3>
@@ -284,35 +357,51 @@
   <p>Example: Putin–Xi Jinping 0.66, China–Taiwan 0.56. Links need at least 10 articles mentioning both and a score of 0.25 or more. Concepts are kept only if specific
     (mentioned in under 1% of articles) and related to the question's actors — "tariff" yes, "company" no.</p>
 
-  <h3>Step 4 · Entities → securities</h3>
-  <p>Which securities depend on which entities — Taiwan → TSM, Strait of Hormuz → oil producers — is the one <strong>hand-written input</strong>: analyst estimates
+  <h3>Step 4 · Entities → issuers</h3>
+  <p>The graph stops at the <strong>issuer</strong>: the company or borrower, not its individual bonds, loans or shares — you already map issuers to the instruments you hold.
+    Each issuer's listed <strong>securities</strong> are linked to it as reference data, and how much each security actually moves with a question is
+    <strong>measured from prices</strong>, not assumed (see Securities in the API docs). Which issuers depend on which entities — Taiwan → TSMC, Strait of Hormuz → oil producers — is the one <strong>hand-written input</strong>: analyst estimates
     (0–1) based on each company's industry and headquarters. A second small table says which industries
     <em>gain</em> when things get worse on a channel: defense contractors from conflict, oil producers from supply disruption. Everything else suffers with the entity it depends on.</p>
+
+  <h3>Step 4b · Questions → macro factors → niche factors → GICS industries</h3>
+  <p>The second route works through what moves companies' earnings rather than who they depend on. It is written by hand for now — analyst priors, not measured:</p>
+  <ul>
+    <li><strong>Macro factors</strong> (about 90): market prices measured every day — equity indices, currencies, Brent, gas, metals, grains, freight, Treasury yields, credit spreads, the VIX,
+      inflation breakevens — and economic indicators released monthly or quarterly (CPI, core PCE, GDP, payrolls, PMIs, housing starts, trade volumes), which are linked but not measured.
+      A question links to one by rule: "the US raises tariffs" → US CPI, import prices, GDP; "Iran is struck" → Brent.</li>
+    <li><strong>Niche factors</strong> (about 370): each industry's revenue, cost and investment drivers — for airlines available seat miles, load factor, yield, jet fuel, cost per seat mile;
+      for banks loan growth, net interest margin, deposit beta, credit losses; for chipmakers shipments, ASPs, wafer demand, foundry orders, fab utilization, export controls.
+      Each says whether a higher value helps or hurts earnings.</li>
+    <li><strong>Transmission</strong> (about 360 signed links): macro factors drive niche factors (Brent ↑ → jet fuel ↑; mortgage rates ↑ → housing affordability ↓), and niche factors drive
+      <strong>GICS industries</strong> (jet fuel ↑ hurts Passenger Airlines). Issuers sit in their GICS sub-industry, so an issuer's detail lists what drives its earnings.</li>
+  </ul>
+  <p>Where a question's move in a macro factor has been measured (factor sensitivities, see Factors in the API docs), the industry view also shows which way earnings would go on a YES.</p>
 
   <h3>Step 5 · Direction and size of impact</h3>
   <p>Each question's link to an entity records what a YES means for it. The event type sets a <strong>channel</strong> (conflict, trade, sanctions, instability, diplomacy),
     a <strong>severity</strong> (an invasion 1.0, a missile test 0.4, a meeting 0.2) and a <strong>direction</strong> by role: an invasion is adverse for the target
     and somewhat adverse for the invader; a ceasefire or trade deal is favourable for both; a negated or reversed question ("…ends", "…lifted") flips it.
-    A security's exposure to a question adds up every path through the graph:</p>
+    An issuer's exposure to a question adds up every path through the graph:</p>
   <div class="formula">path strength = severity × role weight × pass-through × exposure weight<br>
-    path sign = direction for the entity × how the security responds on that channel<br>
+    path sign = direction for the entity × how the issuer is affected on that channel<br>
     <b>impact</b> = Σ sign × strength over all paths · <b>relevance</b> = 1 − Π(1 − strength) · <b>risk</b> = |impact| × √(p (1 − p))<br>
     pass-through = 1 for the entity itself, 0.5 × relatedness for a linked entity (one hop)</div>
   <p>Risk is highest for questions near 50% — a 99% event has little left to move.</p>
 
   <h3>How to read the impact numbers</h3>
-  <p>Impact is an <strong>estimate from the graph's logic</strong> — which entities a question involves, and how each security depends on them — in relative units,
+  <p>Impact is an <strong>estimate from the graph's logic</strong> — which entities a question involves, and how each issuer depends on them — in relative units,
     not percentage returns. It is <strong>not measured from price history</strong>, and tests against past price moves have not yet confirmed it.
-    Use it to see <em>which</em> questions matter for a security and in <em>which direction</em>, not as a forecast of how much it will move.</p>
+    Use it to see <em>which</em> questions matter for an issuer and in <em>which direction</em>, not as a forecast of how much its securities will move.</p>
 
   <h3>Numbers you will see</h3>
   <table>
     <tr><td>Probability</td><td>For a rung (proposition): the latest price of its markets, averaged (weighted by open interest when available); only same-bet markets are averaged.
       For a question: its headline rung — the most-traded live one.</td></tr>
     <tr><td>24h change</td><td>Probability now minus 24 hours earlier, in points.</td></tr>
-    <tr><td>Relevance</td><td>How strongly a security is connected to a question, 0–1, combining every path.</td></tr>
-    <tr><td>Impact</td><td>Signed: ▲ expected to rise if the event happens, ▼ to fall; "direction unknown" when the event type has no direction. A prior, not a measured beta.</td></tr>
-    <tr><td>Risk</td><td>|impact| × √(p(1−p)): how much the question can still move the security at today's odds.</td></tr>
+    <tr><td>Relevance</td><td>How strongly an issuer is connected to a question, 0–1, combining every path.</td></tr>
+    <tr><td>Impact</td><td>Signed: ▲ the issuer is expected to benefit if the event happens, ▼ to suffer; "direction unknown" when the event type has no direction. A prior, not a measured beta.</td></tr>
+    <tr><td>Risk</td><td>|impact| × √(p(1−p)): how much the question can still move the issuer at today's odds.</td></tr>
   </table>
 
   <h3>Data and updates</h3>
@@ -320,14 +409,14 @@
     <tr><td>Markets</td><td>Kalshi and Polymarket — prices updated several times a day, with hourly history back to 2021</td></tr>
     <tr><td>Connections</td><td>Updated when new markets are listed or their terms change; price moves never alter them. Every change is kept, so past views stay exact</td></tr>
     <tr><td>Entities</td><td>Wikipedia and Wikidata, refreshed monthly</td></tr>
-    <tr><td>Security prices</td><td>Daily closing prices</td></tr>
+    <tr><td>Factor prices</td><td>Daily closes: equity indices, FX and commodities (Yahoo), credit spreads and yields (FRED)</td></tr>
   </table>
 
   <h3>Limitations</h3>
   <ul>
-    <li>Which securities depend on which entities, and how they respond, are analyst estimates rather than sourced figures.</li>
+    <li>Which issuers depend on which entities, and how they are affected, are analyst estimates rather than sourced figures.</li>
     <li>Direction of impact comes from the type of event; questions whose event type isn't recognised show relevance but no direction.</li>
-    <li>Coverage of securities is deepest for US–China, Taiwan and semiconductors; questions about other regions may have few linked securities.</li>
+    <li>Issuer coverage is deepest for US–China, Taiwan and semiconductors; questions about other regions may have few linked issuers — use factors for those.</li>
     <li>Prices on prediction markets can be thin: a small trade can move a quiet market, so check volume before reading much into a jump.</li>
   </ul>
 </article></section>
@@ -376,6 +465,13 @@
     <tr><td><code>=ER.RUNGS(A2)</code></td><td>Every deadline of that question with its own probability — for example by June, by December, by next year — and each one's id.</td></tr>
     <tr><td><code>=ER.CONTRACTS(A2)</code></td><td>The actual Kalshi and Polymarket contracts behind it: venue, wording, price, trading volume and the full rules.</td></tr>
     <tr><td><code>=ER.HISTORY(A2)</code></td><td>The probability day by day over the last 30 days. Format the first column as a date.</td></tr>
+    <tr><td><code>=ER.CURVE(A2)</code></td><td>For a question with deadlines: the chance in each period, the chance in that period if it hasn't happened yet, and the yearly rate — like a default curve.</td></tr>
+    <tr><td><code>=ER.PROB_BY(A2, B2)</code></td><td>The chance it happens by the date in B2 — for example before a bond in your portfolio matures.</td></tr>
+    <tr><td><code>=ER.FACTORS(A2)</code></td><td>The markets the question moves (oil, credit spreads, currencies, …) and by how much: per +1.0 of probability, and if it resolved YES or NO today. Units are % or bp.</td></tr>
+    <tr><td><code>=ER.FACTOR("credit_us_hy")</code></td><td>A factor's latest level (here the US high-yield spread, in %). Add <em>"units"</em>, <em>"name"</em> or <em>"series"</em> for details.</td></tr>
+    <tr><td><code>=ER.SENSITIVITY(A2, "brent")</code></td><td>How much one factor moves per +1.0 of the question's probability.</td></tr>
+    <tr><td><code>=ER.STRESS(A2, D2:D10, E2:E10)</code></td><td>Your P&amp;L if the question resolved YES now: factor ids in D, your P&amp;L per 1% (or per 1 bp) of each factor in E. Add <em>"no"</em> for the NO case.
+      Your numbers stay in Excel. The panel's <em>Stress sheet</em> button builds this layout for a question.</td></tr>
   </table>
   <p><strong>Which probability does a question give?</strong> A question like "Will China invade Taiwan?" has several deadlines (by 2026, by 2027, …).
     Its probability is the <em>headline</em> deadline: the one with the most trading in the last 24 hours. The headline can switch as trading moves,
@@ -388,7 +484,7 @@
     <tr><td><code>#NAME?</code></td><td>The add-in hasn't started yet: click the Event Risk button on the Home tab once. If it stays, close Excel completely and open it again.</td></tr>
     <tr><td><code>#BUSY!</code></td><td>The numbers are loading — wait a few seconds.</td></tr>
     <tr><td><code>#SPILL!</code></td><td>A table formula needs empty cells below and to the right. Clear them or move the formula.</td></tr>
-    <tr><td><code>#N/A</code></td><td>Point at the cell to read why — usually the id or ticker isn't recognised. Check it's typed exactly as shown in the panel.</td></tr>
+    <tr><td><code>#N/A</code></td><td>Point at the cell to read why — usually the id isn't recognised. Check it's typed exactly as shown in the panel.</td></tr>
     <tr><td>"missing or invalid API key"</td><td>Enter your key in the panel's API key box, click <em>Save</em>, then <em>Refresh all Event Risk formulas</em>.</td></tr>
     <tr><td>"cannot reach the Event Risk API"</td><td>Check this page opens in a browser on the same computer. If it doesn't, your network may be blocking it — ask your IT team.</td></tr>
     <tr><td>The installer says it didn't finish</td><td>Same as above: check this page opens on the same computer, then run the installer again.</td></tr>
@@ -428,7 +524,7 @@ New-ItemProperty -Path $k -Name "eeb823d5-3150-4ee3-a983-57ef26e13f0b" -Value "C
   <h3>Basics</h3>
   <table>
     <tr><td>Authentication</td><td>If the server has API keys configured, send yours in the <code>X-API-Key</code> header. A missing or wrong key returns <code>401</code>.</td></tr>
-    <tr><td>IDs</td><td>Questions <code>q:polymarket:253889</code> · propositions (rungs) <code>prop:polymarket:665270</code> · entities <code>wd:Q865</code> (Wikidata id; Taiwan) · securities <code>sec:TSM</code> · markets <code>mkt:kalshi:KXTAIWANLVL4-29JAN01</code>. Get them from the list endpoints.</td></tr>
+    <tr><td>IDs</td><td>Questions <code>q:polymarket:253889</code> · propositions (rungs) <code>prop:polymarket:665270</code> · entities <code>wd:Q865</code> (Wikidata id; Taiwan) · issuers <code>iss:Q713418</code> (TSMC) · markets <code>mkt:kalshi:KXTAIWANLVL4-29JAN01</code>. Get them from the list endpoints.</td></tr>
     <tr><td>Probabilities</td><td>0–1. <code>prob</code> is the blended price of a proposition's markets; <code>change_24h</code> is in probability units (0.05 = 5 points).</td></tr>
     <tr><td>Live only</td><td>Every question and proposition has <code>status</code> = <code>live</code> (priced in the last 7 days) or <code>closed</code>. List endpoints return live items unless <code>include_closed=true</code>.</td></tr>
     <tr><td>Errors</td><td><code>401</code> bad key · <code>404</code> id not found · <code>422</code> invalid parameter.</td></tr>
@@ -450,7 +546,19 @@ for p in top["propositions"]:
     { "id": "q:polymarket:253889", "name": "Will China invade Taiwan?", "kind": "deadlines", "n_rungs": 8, "n_live": 3,
       "status": "live", "prob": 0.095, "change_24h": 0.0, "headline": { "id": "prop:polymarket:…", "name": "…by December 31, 2027?" } } ] }</pre>
   <div class="endpoint"><span>GET</span>/questions/{id}</div>
-  <p>One question: every rung (window, threshold, probability, 24h change, status, 24h volume) and the entities it involves, with role and direction.</p>
+  <p>One question: every rung (window, threshold, probability, 24h change, status, 24h volume), the entities it involves, with role and direction,
+    its <code>factors</code> with their measured <code>sensitivity</code> (see Factors), and <code>coherence</code>: <code>ok</code> plus any <code>violations</code>,
+    rung pairs whose prices break the ladder's logic by more than 2 points (P(by later) ≥ P(by earlier); P(&gt; higher) ≤ P(&gt; lower)).</p>
+  <div class="endpoint"><span>GET</span>/questions/{id}/curve</div>
+  <p>A deadline question as a term structure, for setting event risk against a bond's maturity or a CDS curve. Per live deadline after today:
+    <code>prob</code> (blended price), <code>fitted</code> (made monotone by isotonic regression), <code>period_prob</code> (chance in that period),
+    <code>conditional_prob</code> (the same, given it hasn't happened before: a per-period hazard) and <code>hazard_annual</code>.
+    Params: <code>date</code> → <code>prob_by</code> = P(event by that date), hazard constant within each period; <code>extrapolate=true</code> extends the last hazard past the last deadline.</p>
+<pre>{ "points": [ { "deadline": "2026-12-31", "prob": 0.031, "fitted": 0.031, "period_prob": 0.031, "conditional_prob": 0.031, "hazard_annual": 0.18 },
+              { "deadline": "2027-12-31", "prob": 0.095, "fitted": 0.095, "period_prob": 0.064, "conditional_prob": 0.066, "hazard_annual": 0.068 } ],
+  "prob_by": { "date": "2027-06-30", "prob": 0.063, "extrapolated": false } }</pre>
+  <div class="endpoint"><span>GET</span>/review/ladders</div>
+  <p>Live multi-rung questions whose rung prices contradict the ladder, largest gap first: each is a wrong grouping or a mispricing.</p>
   <div class="endpoint"><span>GET</span>/questions/{id}/contracts</div>
   <p>Every venue contract behind the question's live rungs (latest deadline first): <code>id</code>, <code>rung</code>, <code>venue</code>, <code>name</code>,
     <code>relation</code> (<code>same_as</code> = blended into the rung's probability, <code>near_equivalent</code> = similar terms, kept separate), <code>prob</code>,
@@ -475,7 +583,7 @@ for p in top["propositions"]:
 
   <h3>Graph</h3>
   <div class="endpoint"><span>GET</span>/graph/{node_id}</div>
-  <p>The neighbourhood of any question, proposition, market, entity or security, for visualisation: <code>nodes</code> (id, type, name, depth, prob) and
+  <p>The neighbourhood of any question, proposition, market, entity, issuer, factor (macro or niche; node <code>layer</code>) or GICS industry (<code>gics:</code>), for visualisation: <code>nodes</code> (id, type, name, depth, prob) and
     <code>edges</code> (src, dst, type, weight, provenance, note). Params: <code>depth</code> (1–3), <code>fanout</code> (strongest links kept per node).</p>
 
   <div class="endpoint"><span>GET</span>/propositions/{id}/graph</div>
@@ -483,34 +591,103 @@ for p in top["propositions"]:
 
   <h3>Factors</h3>
   <div class="endpoint"><span>GET</span>/factors</div>
-  <p>The factor catalog (34 factors across five families: <code>country_equity</code> · <code>fx</code> · <code>commodity</code> · <code>rates</code> · <code>industry</code>) with how many questions are relevant to each.
-    Param: <code>family</code> to filter by family. Each row: <code>id</code>, <code>name</code>, <code>family</code>, <code>definition</code>, <code>n_questions</code>, <code>n_live_questions</code>.</p>
+  <p>The factor catalog in two layers: <code>macro</code> (about 90: <code>country_equity</code> · <code>fx</code> · <code>commodity</code> · <code>rates</code> · <code>credit</code> · <code>industry</code> ·
+    <code>inflation</code> · <code>growth</code> · <code>labour</code> · <code>consumer</code> · <code>housing</code> · <code>trade</code> · <code>fiscal</code> · <code>volatility</code>) and <code>niche</code>
+    (about 370 industry drivers; family = <code>revenue</code> · <code>cost</code> · <code>investment</code>, plus <code>earnings_sign</code> and the <code>gics</code> codes they apply to), with how many questions are relevant to each.
+    Params: <code>layer</code>, <code>family</code>. Each row: <code>id</code>, <code>name</code>, <code>layer</code>, <code>family</code>, <code>definition</code>, <code>series</code> (where the level comes from:
+    <code>yahoo:BZ=F</code>, <code>fred:BAMLH0A0HYM2</code>), <code>units</code> (<code>%</code> = percent change, <code>bp</code> = basis points), <code>level</code>, <code>level_date</code>,
+    <code>n_questions</code>, <code>n_live_questions</code>, <code>n_measured</code> (links with measured events), <code>n_drives</code>, <code>n_driven_by</code>, <code>n_industries</code>.
+    Economic indicators (CPI, GDP…) have no <code>series</code>: they are released monthly or quarterly, too slowly for the daily measurement.</p>
 
   <div class="endpoint"><span>GET</span>/factors/{id}</div>
-  <p>One factor — e.g. <code>brent</code>, <code>freight</code>, <code>equity_taiwan</code> — with every question relevant to it (live first, then by 24h volume) and the
-    paths that link each: question → entity [→ its country] → factor, with channel and role at each hop.</p>
+  <p>One factor — e.g. <code>credit_us_hy</code>, <code>brent</code>, <code>equity_taiwan</code> — with its latest level, every question relevant to it (live first, then by 24h volume),
+    the paths that link each (question → entity [→ its country] → factor, with channel and role) and its <code>sensitivity</code>:
+    <code>beta</code> = the factor's move per +1.0 of the question's probability in the factor's units (<code>per_10pts</code> = per 10 points), <code>se</code>,
+    <code>move_if_yes</code> / <code>move_if_no</code> = the move if it resolved now, <code>n_events</code> and the <code>events</code> it was measured on.
+    <code>pooled</code> gives, per channel, the typical move per +1.0 of <em>adverse</em> probability across questions. Param: <code>limit</code>.
+    Transmission: <code>drives</code> / <code>driven_by</code> (other factors, <code>sign</code> +1 = same direction, with a rationale) and <code>industries</code> (GICS industries whose earnings it
+    moves — directly for a niche factor, <code>via</code> a niche factor for a macro one; <code>sign</code> = effect on earnings if the factor rises).</p>
+  <p class="note">How it is measured (factor_betas.py): the factor's two-day move after each day a question's odds jumped ≥ 5 points and held, regressed on the jump,
+    then shrunk toward questions sharing the factor and channel (empirical Bayes). A question with no jumps gets the pooled estimate. Jump days also carry other news, and
+    ICE credit spreads on FRED start in late 2023.</p>
+  <div class="endpoint"><span>GET</span>/factors/{id}/history</div>
+  <p>Daily factor levels (default: the last year). Params: <code>start</code>, <code>end</code>. Spreads and yields are in percent.</p>
+
+  <h3>Factor research</h3>
+  <p>What the <strong>Factor research</strong> tab uses. Every link and number carries <code>evidence</code>: <code>definition</code> (reference data) ·
+    <code>observed</code> (captured prices / levels) · <code>qualitative</code> (rule, transmission or analyst-assessed link, not measured) · <code>estimated</code>
+    (regression; in-sample association, not causal) · <code>validated</code> (none exist yet).</p>
+  <div class="endpoint"><span>GET</span>/factors/{id}/securities</div>
+  <p>Securities with a measured loading on the factor (latest <code>security_betas.py</code> run), |t| first: <code>beta</code> (weekly % move per unit weekly factor move,
+    controlling for the market), <code>se</code>, <code>ci_low</code> / <code>ci_high</code> (95%), <code>t</code>, <code>p</code>, <code>q</code> (Benjamini–Hochberg across the run), <code>n_weeks</code>;
+    <code>spec</code> and <code>run</code>. Params: <code>min_abs_t</code>, <code>limit</code>. A factor without a price series returns none, with a note.</p>
+  <div class="endpoint"><span>GET</span>/securities/{ticker}/regression</div>
+  <p>A joint regression of the security's weekly returns on the market plus the chosen factors (<code>factor=rates_us_10y&amp;factor=brent</code>), with the same estimator as the stored loadings,
+    computed now and not stored: coefficients with se, 95% CI, t, p, the stored single-factor beta for comparison, R², adjusted R², residual SD, weeks and window; <code>missing</code> lists factors without enough data.</p>
+  <div class="endpoint"><span>GET</span>/markets/{id}/history</div>
+  <p>Captured snapshots of one contract (default: last 30 days): ts, price and <code>price_rule</code> (mid if the spread ≤ 10¢, else last trade), bid, ask, last, volume, open interest, tier
+    (<code>backfill</code> = rebuilt from venue history later). Params: <code>start</code>, <code>end</code>, <code>limit</code>. <code>/factors/{id}/history</code> points now also carry
+    <code>fetched_at</code>, <code>n_vintages</code> and <code>source</code>; <code>/securities/{ticker}</code> loadings carry the CI, p and q.</p>
+
+  <h3>GICS industries</h3>
+  <div class="endpoint"><span>GET</span>/industries</div>
+  <p>The 74 GICS industries (id <code>gics:453010</code>, <code>code</code>, <code>name</code>, <code>sector</code>, <code>industry_group</code>) with <code>n_issuers</code> and <code>n_factors</code> (niche drivers). Param: <code>sector</code>.</p>
+  <div class="endpoint"><span>GET</span>/industries/{code}</div>
+  <p>One industry (<code>453010</code>, <code>gics:453010</code> or a sub-industry code): <code>sub_industries</code>, <code>issuers</code>, <code>drivers</code> (niche factors with <code>side</code>, <code>sign</code>,
+    the <code>sub_industries</code> they apply to and the factors <code>driven_by</code>) and the <code>questions</code> that reach it through those factors (live first; <code>via</code> = the connecting factors).
+    <code>/questions/{id}</code> has the reverse view: <code>industries</code> with the paths question → factor [→ niche factor] → industry.</p>
+
+  <h3>Calibration</h3>
+  <div class="endpoint"><span>GET</span>/calibration</div>
+  <p>How often a price came true: binary markets that resolved yes/no, priced <code>horizon</code> days before resolution (1, 7, 30 or 90; default 7).
+    Per probability bin: mean price vs share resolved YES; <code>brier</code> score and <code>brier_skill</code> (vs always predicting the base rate); the same
+    <code>by_venue</code> and <code>by_liquidity</code> (open interest or 24h volume then). Params: <code>horizon</code>, <code>venue</code>, <code>scope</code> = <code>graph</code>
+    (markets in the graph, default) · <code>all</code>, <code>bins</code>. The sample covers markets the collector saw resolve.</p>
 
   <h3>Entities</h3>
   <div class="endpoint"><span>GET</span>/entities</div>
   <p>All entities, optionally <code>type</code> = <code>person</code> · <code>country</code> · <code>organisation_or_place</code> · <code>concept</code>, with how many questions involve each (<code>n_questions</code>).</p>
 
   <div class="endpoint"><span>GET</span>/entities/{id}</div>
-  <p>One entity — by id (<code>wd:Q794</code>) or name (<code>Iran</code>) — with its Wikidata description and Wikipedia link, questions involving it (live first), linked entities (with relation and strength), and securities exposed to it.</p>
+  <p>One entity — by id (<code>wd:Q794</code>) or name (<code>Iran</code>) — with its Wikidata description and Wikipedia link, questions involving it (live first), linked entities (with relation and strength), and issuers exposed to it.</p>
 
-  <h3>Securities</h3>
-  <div class="endpoint"><span>GET</span>/securities</div>
-  <p>All securities (ticker, name, asset class, country, sector, index) and how many exposure links each has.</p>
+  <h3>Issuers</h3>
+  <p>Issuers are companies and other borrowers. Ids are Wikidata ids (<code>iss:Q713418</code> = TSMC) or <code>iss:local:…</code> for borrowers without one.
+    An issuer's listed securities hang off it (<code>issued</code>); its exposure to questions below comes from entity paths (a structural prior).</p>
+  <div class="endpoint"><span>GET</span>/issuers</div>
+  <p>All issuers (id, name, Wikidata id, country, sector, sub-industry, headquarters, LEI, index) and how many exposure links each has. Param: <code>q</code> (name search).</p>
+  <div class="endpoint"><span>GET</span>/issuers/{id}</div>
+  <p>One issuer — by id (<code>iss:Q713418</code>, <code>Q713418</code>) or exact name — with its <code>securities</code>, its GICS <code>industry</code> (with sub-industry), the niche factors
+    that drive its sub-industry's earnings (<code>drivers</code>, each with the macro factors behind it) and the entities it is exposed to (weight, rationale, per-channel signs).</p>
 
-  <div class="endpoint"><span>GET</span>/securities/{ticker}/exposures</div>
-  <p>Questions a security is exposed to, summed over every path through the graph: <code>score</code> (relevance 0–1), <code>impact</code>
+  <div class="endpoint"><span>GET</span>/issuers/{id}/exposures</div>
+  <p>Questions an issuer is exposed to, summed over every path through the graph: <code>score</code> (relevance 0–1), <code>impact</code>
     (signed; &gt; 0 = expected to rise if the event happens; <code>null</code> when no path has a known direction), <code>direction</code> (up · down · unknown),
     <code>risk</code> (|impact| × √(p(1−p))) and the three strongest <code>paths</code> with their channel and sign.
     Params: <code>sort</code> = <code>score</code> (default) · <code>impact</code> · <code>risk</code>, <code>min_score</code> (default 0.1), <code>limit</code>, <code>include_closed</code>.</p>
-<pre>{ "security": { "id": "sec:TSM", "name": "Taiwan Semiconductor (ADR)" },
+<pre>{ "issuer": { "id": "iss:Q713418", "name": "Taiwan Semiconductor Manufacturing (TSMC)" },
   "exposures": [ { "id": "q:polymarket:253889", "name": "Will China invade Taiwan?",
                    "prob": 0.095, "score": 0.95, "impact": -1.46, "direction": "down", "risk": 0.43, "n_paths": 4,
-                   "path": [ {"id": "prop:polymarket:567621"}, {"id": "wd:Q865", "name": "Taiwan"}, {"id": "sec:TSM"} ],
+                   "path": [ {"id": "prop:polymarket:567621"}, {"id": "wd:Q865", "name": "Taiwan"}, {"id": "iss:Q713418"} ],
                    "paths": [ { "strength": 0.9, "sign": -1.0, "channel": "conflict", "role": "target", "nodes": [ … ] } ] } ] }</pre>
+
+  <h3>Securities (measured)</h3>
+  <p>How much a security moves with a factor or a question is <strong>measured from prices</strong> (security_betas.py), not written down:
+    weekly factor loadings controlling for the market, and per question a <em>factor-implied</em> move (the question's measured factor moves × the security's joint loadings)
+    and a <em>direct</em> market-adjusted two-day move on the question's jump days, shrunk toward the implied one. A pair is measured when the security loads
+    significantly (|t| ≥ 3) on one of the question's factors, or when an entity path reaches its issuer (<code>found_by</code> = factor · structural · both).</p>
+  <div class="endpoint"><span>GET</span>/securities</div>
+  <p>All securities (ticker, name, asset class, country, issuer — none for funds) with how many questions have a measured sensitivity. Param: <code>q</code>.</p>
+  <div class="endpoint"><span>GET</span>/securities/{ticker}</div>
+  <p>One security: its issuer and factor <code>loadings</code> (weekly % move per 1% or 1 bp of the factor, with <code>t</code> and weeks; significant first).</p>
+  <div class="endpoint"><span>GET</span>/securities/{ticker}/exposures</div>
+  <p>Questions it moves with: <code>sensitivity</code> (% per +1.0 of probability, <code>per_10pts</code>, <code>move_if_yes</code> / <code>move_if_no</code>, <code>implied</code>,
+    <code>direct</code> and <code>n_events</code>, <code>found_by</code>), <code>risk</code> = |beta| × √(p(1−p)), and the structural <code>path</code> if there is one.
+    Params: <code>sort</code> = <code>risk</code> · <code>move</code> · <code>evidence</code>, <code>min_events</code>, <code>limit</code>, <code>include_closed</code>.
+    <code>/questions/{id}</code> lists the 15 securities that move most with it.</p>
+<pre>{ "security": { "id": "sec:000660.KS", "name": "SK hynix" }, "issuer": { "id": "iss:Q370719" },
+  "exposures": [ { "name": "China x Taiwan military clash?", "prob": 0.037,
+                   "sensitivity": { "per_10pts": -3.3, "move_if_yes": -31.8, "implied": -27.5, "direct": -131.1, "n_events": 2, "found_by": "both" } } ] }</pre>
 
   <h3>Markets (match review)</h3>
   <div class="endpoint"><span>GET</span>/markets</div>
@@ -519,13 +696,31 @@ for p in top["propositions"]:
   <div class="endpoint"><span>GET</span>/markets/{id}</div>
   <p>One venue contract: its terms (latest version: <code>title</code>, <code>subtitle</code>, <code>event_title</code>, <code>rules</code>, <code>rules_secondary</code>, <code>resolution_sources</code>, <code>outcomes</code>),
     <code>prob</code>, <code>volume_24h</code>, <code>open_interest</code>, <code>updated</code>, <code>status</code>, its match status, parsed contract signature, parser issues,
-    nearest rejected candidates with the reason for each, and its proposition.</p>
+    nearest rejected candidates with the reason for each, its proposition, and <code>resolution</code> (<code>result</code> yes · no · void · scalar,
+    <code>settlement_value</code>, <code>resolved_at</code>) once it has ended.</p>
 
   <h3>Other</h3>
   <div class="endpoint"><span>GET</span>/health</div>
   <p>Service status and when data was last collected successfully.</p>
-  <p class="note">Impact is a structural prior in graph units, not a measured beta. Security prices come from Yahoo Finance for research use.</p>
+  <p class="note">Impact is a structural prior in graph units, not a measured beta. Factor prices come from Yahoo Finance and FRED, for research use.</p>
 </article></section>
+<section id="research">
+  <aside id="rs-controls" aria-label="Research controls">
+    <label>Factor<input id="rs-search" type="search" placeholder="Search factors (yield, Brent, jet fuel…)"></label>
+    <label>Category<select id="rs-category"></select></label>
+    <ul id="rs-factors"></ul>
+    <label>History from / to<span class="row2"><input id="rs-start" type="date"><input id="rs-end" type="date"></span></label>
+    <div class="rs-actions" id="rs-presets"><button data-years="1">1Y</button><button data-years="3">3Y</button><button data-years="5">5Y</button><button data-years="0">Max</button></div>
+    <label>Security ticker<span class="row2"><input id="rs-ticker" placeholder="e.g. DAL, TSM, XOM"><button id="rs-ticker-go">Research</button></span></label>
+    <label>Regression specification<select id="rs-spec">
+      <option value="stored">Market + one factor (stored, latest run)</option>
+      <option value="joint">Market + selected factors (joint, computed now)</option></select></label>
+    <label id="rs-joint-wrap" hidden>Factors in the joint model<select id="rs-joint" multiple size="7"></select>
+      <span class="note">Cmd/Ctrl-click to pick several. Only factors with an observed series can be estimated.</span></label>
+    <p class="note">Data calls use the explorer's API key (kept in this browser).</p>
+  </aside>
+  <div id="rs-results"><p class="rs-empty">Pick a factor on the left — or enter a ticker — to start.</p></div>
+</section>
 <script>
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -533,13 +728,16 @@ const pct = p => p == null ? "–" : `${(p * 100).toFixed(1)}%`;
 const move = d => d == null ? "" : `${d > 0 ? "▲" : d < 0 ? "▼" : "•"} ${Math.abs(d * 100).toFixed(1)} pts`;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 const typeOf = id => id.startsWith("q:") ? "question" : id.startsWith("prop:") ? "proposition"
-                   : id.startsWith("factor:") ? "factor" : id.startsWith("sec:") ? "security" : id.startsWith("mkt:") ? "market" : "entity";
+                   : id.startsWith("factor:") ? "factor" : id.startsWith("gics:") ? "industry" : id.startsWith("iss:") ? "issuer" : id.startsWith("sec:") ? "security" : id.startsWith("mkt:") ? "market" : "entity";
 const fmtThreshold = t => !t ? "" : t[0] === "between" ? `${t[1][0]}–${t[1][1]}` : `${t[0]} ${t[1]}`;
 const fmtWindow = w => !w ? "—" : w[0] === w[1] ? w[1] : `by ${w[1]}`;
 const arrow = (d, text) => `<span class="${d === "up" ? "up" : d === "down" ? "down" : ""}">${d === "up" ? "▲" : d === "down" ? "▼" : "?"} ${text}</span>`;
 const signWord = s => s == null ? "direction unknown" : s > 0 ? "favourable" : "adverse";
 const LOGICAL = new Set(["implies", "mutex", "near_equivalent"]);
+const DIRECTED = new Set(["implies", "drives", "driver_of"]);
 const state = { tab: "questions", items: [], selected: null };
+const TAB_KIND = { markets: "market", questions: "question", entities: "entity", macro: "factor", niche: "niche", issuers: "issuer", industries: "industry" };
+const SIDES = ["revenue", "cost", "investment"];
 
 async function api(path, params = {}) {
   const q = new URLSearchParams(Object.entries(params)
@@ -563,15 +761,18 @@ async function loadList() {
   }
   const data = t === "questions" ? (await api("/questions", { limit: 300, q })).questions
              : t === "entities" ? (await api("/entities")).sort((a, b) => b.n_live_questions - a.n_live_questions || b.n_questions - a.n_questions)
-             : t === "factors" ? (await api("/factors")).map(f => ({ ...f, id: `factor:${f.id}` }))
-                 .sort((a, b) => b.n_live_questions - a.n_live_questions || b.n_questions - a.n_questions)
-             : (await api("/securities")).sort((a, b) => b.n_exposures - a.n_exposures);
+             : t === "macro" ? (await api("/factors", { layer: "macro" })).map(f => ({ ...f, id: `factor:${f.id}` }))
+                 .sort((a, b) => b.n_live_questions - a.n_live_questions || b.n_questions - a.n_questions || b.n_industries - a.n_industries)
+             : t === "niche" ? (await api("/factors", { layer: "niche" })).map(f => ({ ...f, id: `factor:${f.id}` }))
+                 .sort((a, b) => a.gics[0].localeCompare(b.gics[0]) || SIDES.indexOf(a.side) - SIDES.indexOf(b.side))
+             : t === "industries" ? (await api("/industries")).sort((a, b) => a.code.localeCompare(b.code))
+             : (await api("/issuers")).sort((a, b) => b.n_exposures - a.n_exposures);
   state.items = data;
   renderList();
 }
 function renderList() {
   const q = $("#search").value.toLowerCase();
-  const kind = state.tab.slice(0, -1).replace("entitie", "entity");
+  const kind = TAB_KIND[state.tab];
   if (kind === "market") {
     const c = state.counts || {};
     $("#list").innerHTML = `<li class="note" style="display:block;cursor:default">${["unmatched", "unparsed", "linked", "merged"]
@@ -581,11 +782,13 @@ function renderList() {
         <span class="num">${esc(x.venue)}<br><span class="tag">${esc(x.match)}</span></span></li>`).join("");
     return;
   }
-  $("#list").innerHTML = state.items.filter(x => x.name.toLowerCase().includes(q) || (x.ticker || "").toLowerCase().includes(q))
+  $("#list").innerHTML = state.items.filter(x => x.name.toLowerCase().includes(q))
     .slice(0, 300).map(x => `<li data-id="${esc(x.id)}" ${x.id === state.selected ? 'aria-current="true"' : ""}>
-      <i class="swatch ${kind}"></i><span class="name">${esc(x.ticker ? `${x.ticker} · ${x.name}` : x.name)}</span>
+      <i class="swatch ${kind}"></i><span class="name">${esc(x.name)}</span>
       <span class="num">${kind === "question" ? `${pct(x.prob)}<br>${x.n_rungs > 1 ? `${x.n_rungs} rungs` : move(x.change_24h)}`
-                        : kind === "entity" || kind === "factor" ? `${x.n_live_questions} live<br>${x.n_questions} total` : `${x.n_exposures} links`}</span></li>`).join("");
+                        : kind === "entity" || kind === "factor" ? `${x.n_live_questions} live<br>${x.n_questions} total`
+                        : kind === "niche" ? `${esc(x.side)}<br>${x.n_industries} ind.`
+                        : kind === "industry" ? `${x.n_issuers} issuers<br>${x.n_factors} drivers` : `${x.n_exposures} links`}</span></li>`).join("");
 }
 
 // ── graph ────────────────────────────────────────────────────────────────────
@@ -604,9 +807,11 @@ async function drawGraph(id) {
   const depth = +$("#depth").value + (typeOf(id) === "market" ? 1 : 0);
   const g = await api(`/graph/${encodeURIComponent(id)}`, { depth, fanout: SHOWN });
   const surface = css("--surface"), ink = css("--ink"), muted = css("--muted");
-  const shape = { question: "dot", proposition: "dot", entity: "diamond", security: "square", market: "triangle", factor: "hexagon" };
+  const shape = { question: "dot", proposition: "dot", entity: "diamond", issuer: "square", security: "triangleDown", market: "triangle",
+                  factor: "hexagon", niche: "hexagon", industry: "star" };
+  const colorVar = { factor: "--ink-2", niche: "--muted", industry: "--ink-2" };
   const nodes = g.nodes.map(n => {
-    const t = n.type, color = css(t === "factor" ? "--ink-2" : `--${t}`), root = n.id === g.root;
+    const t = n.type === "factor" && n.layer === "niche" ? "niche" : n.type, color = css(colorVar[t] || `--${t}`), root = n.id === g.root;
     // label the selected node and its direct neighbours; farther nodes show their name on hover
     const short = n.name.length > 42 ? n.name.slice(0, 40) + "…" : n.name;
     const label = n.depth > 1 && !root ? undefined : t === "market" ? `${n.venue} · ${short}` : short;
@@ -614,13 +819,13 @@ async function drawGraph(id) {
       color: { background: color, border: root ? ink : surface, highlight: { background: color, border: ink },
                hover: { background: color, border: ink } },
       font: { color: ink, strokeWidth: 3, strokeColor: surface, bold: root },
-      title: `${n.name}\n${t === "proposition" ? "rung" : t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.family ? ` · ${n.family}` : ""}${n.status ? ` · ${n.status}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
+      title: `${n.name}\n${t === "proposition" ? "rung" : t === "factor" ? "macro factor" : t === "niche" ? "niche factor" : t === "industry" ? "GICS industry" : t}${n.entity_type ? ` · ${n.entity_type}` : ""}${n.family ? ` · ${n.family}` : ""}${n.status ? ` · ${n.status}` : ""}${n.prob != null ? `\n${pct(n.prob)} ${move(n.change_24h)}` : ""}` };
   });
   // hairline links: thin, light and translucent so dense hubs stay legible; hover highlights
   const edges = g.edges.map(e => ({ from: e.src, to: e.dst, width: 0.5 + Math.min(e.weight ?? 0.3, 1),
-    dashes: LOGICAL.has(e.type), arrows: e.type === "implies" ? { to: { enabled: true, scaleFactor: .4 } } : undefined,
+    dashes: LOGICAL.has(e.type), arrows: DIRECTED.has(e.type) ? { to: { enabled: true, scaleFactor: .4 } } : undefined,
     color: { color: css("--axis"), highlight: css("--ink-2"), hover: css("--ink-2"), opacity: 0.5 },
-    title: `${e.type}${e.weight != null ? ` · ${e.weight.toFixed(2)}` : ""}${e.note ? `\n${e.note}` : ""}\n${e.provenance}` }));
+    title: `${e.type}${e.weight != null ? ` · ${e.weight.toFixed(2)}` : ""}${e.sign != null && !e.weight ? ` · ${e.sign > 0 ? "+" : "−"}` : ""}${e.note ? `\n${e.note}` : ""}\n${e.provenance}` }));
   const shown = g.nodes.filter(n => n.depth === 1 && n.type === "question").length, total = (g.totals || {}).question || 0;
   $("#caption").hidden = total <= shown;
   $("#caption").textContent = `Showing ${shown} of ${total} questions — live first, most traded first`;
@@ -640,9 +845,41 @@ function questionList(qs) {
   return `<h3>Top live questions (${Math.min(SHOWN, live.length)} of ${live.length} live · ${qs.length} total)</h3>
     ${live.slice(0, SHOWN).map(row).join("") || '<p class="note">No live questions.</p>'}`;
 }
-const factorPath = p => `${p.nodes.map(n => esc(n.name)).join(" → ")} (${esc(p.channel)}${p.role ? `, ${esc(p.role)}` : ""}) — ${esc(p.rationale)}`;
+const factorPath = p => p.channel === "curated" ? `analyst: ${esc(p.rationale)}${p.sign ? ` (YES ${p.sign > 0 ? "▲" : "▼"})` : ""}`
+  : `${p.nodes.map(n => esc(n.name)).join(" → ")} (${esc(p.channel)}${p.role ? `, ${esc(p.role)}` : ""}) — ${esc(p.rationale)}`;
+// A measured sensitivity: factor move per +10 pts of probability and if the question resolved now.
+const num = (v, d = 2) => v == null ? "–" : (v >= 0 ? "+" : "") + v.toFixed(d);
+const sensText = (s, units) => s ? `${num(s.per_10pts)} ${esc(units || "")} per +10 pts · if YES ${num(s.move_if_yes)} · if NO ${num(s.move_if_no)}`
+  + ` · ${s.n_events ? `${s.n_events} event${s.n_events > 1 ? "s" : ""}` : "pooled only"}` : "not measured yet";
 const factorList = fs => fs && fs.length ? `<h3>Relevant factors</h3>${fs.map(f => `<div class="row">${go(`factor:${f.id}`, f.name)}
+  <div class="meta">${sensText(f.sensitivity, f.units)}</div>
   <div class="meta">${esc(f.family)} · ${factorPath(f.paths[0])}${f.paths.length > 1 ? ` · ${f.paths.length} paths` : ""}</div></div>`).join("")}` : "";
+// transmission: + / − = the target moves the same / opposite way; earnings arrows for industries
+const signArrow = (sign, what = "") => sign == null ? "?" : arrow(sign > 0 ? "up" : "down", what);
+const layerName = f => f.layer === "niche" ? `niche · ${f.family}` : `macro · ${f.family}`;
+const driveList = (title, xs, note) => xs && xs.length ? `<h3>${title}</h3>${xs.map(x => `<div class="row">${go(`factor:${x.factor.id}`, x.factor.name)}
+  <div class="meta">${x.sign > 0 ? "same direction (+)" : "opposite direction (−)"} · ${esc(layerName(x.factor))} — ${esc(x.rationale || "")}</div></div>`).join("")}${note || ""}` : "";
+const industryRows = xs => xs.map(x => `<div class="row">${go(x.industry.id, `${x.industry.code} · ${x.industry.name}`)}
+  <div class="meta">${signArrow(x.sign, `earnings if it rises`)} · ${esc(x.side || "")}${x.via ? ` · via ${go(`factor:${x.via.id}`, x.via.name)}` : ""}${x.sub_industries ? ` · sub-industries ${esc(x.sub_industries.join(", "))}` : ""}</div></div>`).join("");
+const driverRows = ds => ds.map(d => `<div class="row">${go(`factor:${d.factor.id}`, d.factor.name)}
+  <div class="meta">${esc(d.side)} · ${signArrow(d.sign, d.sign > 0 ? "higher helps earnings" : "higher hurts earnings")}</div>
+  ${d.driven_by && d.driven_by.length ? `<div class="meta">driven by ${d.driven_by.map(x => `${go(`factor:${x.factor.id}`, x.factor.name)} (${x.sign > 0 ? "+" : "−"})`).join(", ")}</div>` : ""}</div>`).join("");
+const viaRows = qs => qs.map(q => `<div class="row">${go(q.id, q.name)}<div class="meta">${pct(q.prob)} ${move(q.change_24h)}${q.status === "closed" ? " · closed" : ""} · via ${q.via.map(f => f.id ? go(`factor:${f.id}`, f.name) : esc(f.name)).join(", ")}</div>
+  ${q.curated ? `<div class="meta">analyst: ${q.curated.sign ? `${q.curated.sign > 0 ? "▲" : "▼"} ` : ""}${esc(q.curated.rationale || "")}</div>` : ""}</div>`).join("");
+const secText = s => `${num(s.per_10pts)}% per +10 pts · if YES ${num(s.move_if_yes)}% · implied ${num(s.implied == null ? null : s.implied / 10)}`
+  + ` · direct ${s.n_events ? `${num(s.direct / 10)} (${s.n_events} events)` : "no events"} · found by ${esc(s.found_by)}`;
+const coherenceNote = c => c && !c.ok ? `<p class="note">⚠ Rung prices break the ladder's logic: ${c.violations.slice(0, 3).map(v => esc(v.detail)).join("; ")}.
+  Either the rungs aren't one question or a rung is mispriced.</p>` : "";
+async function curveTable(id) {
+  const c = await api(`/questions/${encodeURIComponent(id)}/curve`);
+  if (!c.points.length) return "";
+  return `<h3>Term structure</h3><table class="rungs"><tr><th>Period to</th><th class="n">By then</th><th class="n">In period</th><th class="n">If not before</th><th class="n">Hazard / yr</th></tr>
+    ${c.points.map(p => `<tr><td>${esc(p.deadline)}</td><td class="n">${pct(p.fitted)}</td><td class="n">${pct(p.period_prob)}</td>
+      <td class="n">${pct(p.conditional_prob)}</td><td class="n">${pct(p.hazard_annual)}</td></tr>`).join("")}</table>
+    ${c.event === "ends" ? `<p class="note">This question asks whether a state lasts, so the curve is of it <b>ending</b> (1 − price).</p>` : ""}
+    <p class="note">From live deadline rungs, made monotone (P(by later) ≥ P(by earlier)). "If not before" is the chance in that period
+    given it hasn't happened yet; the hazard is that rate per year. ER.PROB_BY gives the probability by any date, e.g. a bond's maturity.</p>`;
+}
 async function drawDetail(id) {
   const t = typeOf(id), el = $("#detail");
   const involves = es => es.map(e => `<div class="row">${go(e.id, e.name)}
@@ -659,7 +896,15 @@ async function drawDetail(id) {
         <td>${go(r.id, x.kind === "thresholds" ? fmtThreshold(r.threshold) || r.name : fmtWindow(r.window))}${r.status === "closed" ? " · closed" : ""}</td>
         <td class="n">${pct(r.prob)}</td><td class="n">${r.change_24h != null ? move(r.change_24h) : ""}</td>
         <td class="n">${r.volume_24h != null ? Math.round(r.volume_24h).toLocaleString() : ""}</td></tr>`).join("")}</table>
-      <h3>Involves</h3>${involves(x.entities)}${factorList(x.factors)}`;
+      ${coherenceNote(x.coherence)}${x.kind === "deadlines" && x.n_live > 1 ? await curveTable(id) : ""}
+      <h3>Involves</h3>${involves(x.entities)}${factorList(x.factors)}
+      ${x.affects && x.affects.length ? `<h3>Industries and issuers it affects (analyst assessment)</h3>${x.affects.map(a => `<div class="row">${go(a.id, a.name)}
+        <div class="meta">${a.type === "industry" ? "GICS industry" : "issuer"} · ${a.sign ? arrow(a.sign > 0 ? "up" : "down", "if YES") : "direction unclear"} · ${esc(a.rationale || "")}</div></div>`).join("")}` : ""}
+      ${x.industries && x.industries.length ? `<h3>GICS industries reached through its factors</h3>${x.industries.map(r => `<div class="row">${go(r.industry.id, `${r.industry.code} · ${r.industry.name}`)}
+        <div class="meta">${r.paths.slice(0, 3).map(p => `${esc(p.factor.name)}${p.via ? ` → ${esc(p.via.name)}` : ""} (${esc(p.side)}${p.if_yes != null ? `, YES ${p.if_yes > 0 ? "▲" : "▼"} earnings` : ""})`).join(" · ")}${r.n_paths > 3 ? ` · ${r.n_paths} paths` : ""}</div></div>`).join("")}
+        <p class="note">Question → factor links are rules; factor → industry transmission is an analyst prior (seeds/factor_links.csv, seeds/niche_factors.csv). ▲/▼ appears where the question's factor move has been measured.</p>` : ""}
+      ${x.securities && x.securities.length ? `<h3>Securities that move most (measured)</h3>${x.securities.map(r => `<div class="row">${go(r.id, `${r.ticker || ""} · ${r.name}`)}
+        <div class="meta">${secText(r.sensitivity)}</div></div>`).join("")}` : ""}`;
   } else if (t === "proposition") {
     const p = await api(`/propositions/${encodeURIComponent(id)}`);
     el.innerHTML = `<div class="kind">Rung · ${esc((p.venues || []).join(", "))} · ${esc(p.status)}</div><h2>${esc(p.name)}</h2>
@@ -679,27 +924,72 @@ async function drawDetail(id) {
       ${questionList(e.questions)}
       <h3>Linked entities</h3>${e.links.slice(0, 15).map(l => `<div class="row">${go(l.entity.id, l.entity.name)}
         <div class="meta">${esc(l.relation)} · ${l.weight != null ? l.weight.toFixed(2) : "–"}</div></div>`).join("") || '<p class="note">None</p>'}
-      ${e.exposures.length ? `<h3>Exposed securities</h3>${e.exposures.map(x => `<div class="row">${go(x.security.id, x.security.name)}
+      ${e.exposures.length ? `<h3>Exposed issuers</h3>${e.exposures.map(x => `<div class="row">${go(x.issuer.id, x.issuer.name)}
         <div class="meta">${x.weight.toFixed(2)} · ${esc(x.rationale || "")}</div></div>`).join("")}` : ""}`;
   } else if (t === "factor") {
     const f = await api(`/factors/${encodeURIComponent(id.slice(7))}`);
-    const live = f.questions.filter(q => q.status === "live");
-    el.innerHTML = `<div class="kind">Factor · ${esc(f.family)}</div><h2>${esc(f.name)}</h2><p class="meta">${esc(f.definition)}</p>
-      <h3>Relevant questions (${live.length} live · ${f.questions.length} total)</h3>
+    const live = f.questions.filter(q => q.status === "live"), niche = f.layer === "niche";
+    el.innerHTML = `<div class="kind">${niche ? "Niche factor" : "Macro factor"} · ${esc(f.family)}${f.units ? ` · moves in ${esc(f.units)}` : ""}</div><h2>${esc(f.name)}</h2><p class="meta">${esc(f.definition)}</p>
+      ${niche ? `<p class="meta">${esc(f.side)} driver · ${signArrow(f.earnings_sign, f.earnings_sign > 0 ? "higher helps earnings" : "higher hurts earnings")}</p>` : ""}
+      ${driveList("Driven by", f.driven_by)}${driveList("Drives", f.drives)}
+      ${f.industries.length ? `<h3>${niche ? "Industries it drives" : "Industries it reaches (through niche factors)"}</h3>${industryRows(f.industries.slice(0, 40))}
+        ${f.industries.length > 40 ? `<p class="note">${f.industries.length - 40} more paths.</p>` : ""}` : ""}
+      ${f.level != null ? `<p class="meta">Latest ${esc(f.series || "")}: ${f.level.toLocaleString()} (${esc(f.level_date)})</p>` : ""}
+      ${f.pooled.length ? `<h3>Typical move per +10 pts of adverse probability</h3>${f.pooled.map(p => `<div class="row">${esc(p.channel || "unknown channel")}
+        <div class="meta">${num(p.beta_adverse / 10)} ${esc(p.units)} (± ${(p.se / 10).toFixed(2)}; spread across questions ${(p.tau / 10).toFixed(2)})</div></div>`).join("")}` : ""}
+      <h3>${niche ? "Questions linked directly" : "Relevant questions"} (${live.length} live · ${f.questions.length} total)</h3>
       ${f.questions.slice(0, 50).map(q => `<div class="row">${go(q.id, q.name)}
         <div class="meta">${pct(q.prob)} ${move(q.change_24h)}${q.status === "closed" ? " · closed" : ""}</div>
+        <div class="meta">${sensText(q.sensitivity, f.units)}</div>
         <div class="meta">${factorPath(q.paths[0])}${q.paths.length > 1 ? ` · ${q.paths.length} paths` : ""}</div></div>`).join("")
-        || '<p class="note">No questions linked.</p>'}
-      <p class="note">Qualitative links only: a question is relevant to a factor, with no loading or sign. Rules are analyst priors in seeds/entity_factors.csv.</p>`;
-  } else if (t === "security") {
-    const ticker = id.slice(4), x = await api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 25, sort: "risk" });
-    el.innerHTML = `<div class="kind">Security · ${esc(ticker)}</div><h2>${esc(x.security.name)}</h2>
+        || `<p class="note">${niche ? "No questions linked directly; see the questions reaching it through the factors that drive it." : "No questions linked."}</p>`}
+      ${f.indirect_questions && f.indirect_questions.length ? `<h3>Questions reaching it through the factors that drive it (${f.indirect_questions.filter(q => q.status === "live").length} live)</h3>${viaRows(f.indirect_questions)}` : ""}
+      <p class="note">Links are rules (analyst priors in seeds/entity_factors.csv). Moves are measured: the factor's two-day move on days the
+      question's odds jumped, per +1.0 of probability, shrunk toward questions on the same channel (factor_betas.py). Jump days also carry other news.</p>`;
+  } else if (t === "industry") {
+    const x = await api(`/industries/${encodeURIComponent(id)}`);
+    const live = x.questions.filter(q => q.status === "live"), bySide = side => x.drivers.filter(d => d.side === side);
+    el.innerHTML = `<div class="kind">GICS industry · ${esc(x.code)} · ${esc(x.sector)} · ${esc(x.industry_group)}</div><h2>${esc(x.name)}</h2>
+      <p class="meta">Sub-industries: ${(x.sub_industries || []).map(c => `${esc(c.code)} ${esc(c.name)}`).join(" · ")}</p>
+      ${SIDES.map(side => bySide(side).length ? `<h3>${side[0].toUpperCase() + side.slice(1)} drivers</h3>${driverRows(bySide(side))}` : "").join("")}
+      <h3>Questions that reach it (${live.length} live · ${x.n_questions} total)</h3>
+      ${viaRows(live.slice(0, SHOWN))
+        || '<p class="note">No live questions reach it yet.</p>'}
+      <h3>Issuers (${x.issuers.length})</h3>${x.issuers.map(i => `<div class="row">${go(i.id, i.name)}<div class="meta">${esc(i.sub_industry || "")}</div></div>`).join("")
+        || '<p class="note">No issuers classified here.</p>'}
+      <p class="note">GICS codes and the drivers are hand-written reference data (seeds/gics.csv, seeds/niche_factors.csv); a question reaches the industry when it is
+      relevant to one of these drivers or to a macro factor driving one.</p>`;
+  } else if (t === "issuer") {
+    const [x, info] = await Promise.all([api(`/issuers/${encodeURIComponent(id)}/exposures`, { limit: 25, sort: "risk" }),
+                                         api(`/issuers/${encodeURIComponent(id)}`)]);
+    el.innerHTML = `<div class="kind">Issuer · ${esc([info.country, info.sector, info.sub_industry].filter(Boolean).join(" · "))}</div><h2>${esc(x.issuer.name)}</h2>
+      ${info.qid ? `<p class="meta">${esc(info.qid)}</p>` : ""}
+      ${info.industry ? `<p class="meta">GICS ${go(info.industry.id, `${info.industry.code} · ${info.industry.name}`)} · ${esc(info.industry.sub_industry_code)} ${esc(info.industry.sub_industry)}</p>` : ""}
+      ${info.securities.length ? `<h3>Securities</h3>${info.securities.map(x => `<div class="row">${go(x.id, `${x.ticker} · ${x.name}`)}</div>`).join("")}` : ""}
       <h3>Questions that move it most</h3>${x.exposures.map(r => `<div class="row">${go(r.id, r.name)}
         <div class="meta">${arrow(r.direction, r.impact != null ? `impact ${r.impact > 0 ? "+" : ""}${r.impact.toFixed(2)}` : "direction unknown")}
           · ${pct(r.prob)} · relevance ${r.score.toFixed(2)}</div>
         <div class="meta">via ${esc(r.paths[0].nodes.slice(1, -1).map(p => p.name).join(" → "))}${r.paths[0].channel ? ` (${esc(r.paths[0].channel)})` : ""}${r.n_paths > 1 ? ` · ${r.n_paths} paths` : ""}</div></div>`).join("")
         || '<p class="note">No live questions linked.</p>'}
-      <p class="note">Ranked by risk = |impact| × √(p(1−p)). Impact is a structural prior in graph units (▲ = expected to rise if the event happens), not a measured beta.</p>`;
+      <p class="note">Ranked by risk = |impact| × √(p(1−p)). Impact is a structural prior in graph units (▲ = the issuer is expected to benefit if the event happens), not a measured beta.</p>
+      ${info.industry_questions && info.industry_questions.length ? `<h3>Questions reaching it through its industry's drivers</h3>${viaRows(info.industry_questions)}
+        <p class="note">Question → factor → niche factor → its GICS sub-industry: hand-written transmission, no size attached.</p>` : ""}
+      ${info.drivers && info.drivers.length ? `<h3>What drives its earnings (${esc(info.industry.sub_industry)})</h3>${driverRows(info.drivers)}` : ""}`;
+  } else if (t === "security") {
+    const ticker = id.slice(4);
+    const [x, info] = await Promise.all([api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 25, sort: "risk" }),
+                                         api(`/securities/${encodeURIComponent(ticker)}`)]);
+    const sig = info.loadings.filter(l => l.significant);
+    el.innerHTML = `<div class="kind">Security · ${esc(ticker)} · ${esc(info.asset_class || "")}</div><h2>${esc(info.name)}</h2>
+      ${info.issuer ? `<p class="meta">Issued by ${go(info.issuer.id, info.issuer.name)}</p>` : '<p class="meta">A fund: no single issuer.</p>'}
+      <h3>Factor loadings (weekly, controlling for the market)</h3>${sig.slice(0, 10).map(l => `<div class="row">${go(`factor:${l.factor.id}`, l.factor.name)}
+        <div class="meta">${num(l.beta)} % per ${l.factor.units === "bp" ? "bp" : "1%"} · t ${l.t.toFixed(1)} · ${l.n_weeks} weeks</div></div>`).join("") || '<p class="note">None significant (|t| ≥ 3), or not measured yet.</p>'}
+      <h3>Questions it moves with (measured)</h3>${x.exposures.map(r => `<div class="row">${go(r.id, r.name)}
+        <div class="meta">${pct(r.prob)} · ${secText(r.sensitivity)}</div>
+        ${r.path ? `<div class="meta">also via ${esc(r.path.slice(1, -1).map(p => p.name).join(" → "))}</div>` : ""}</div>`).join("")
+        || '<p class="note">No live questions measured.</p>'}
+      <p class="note">Measured from prices (security_betas.py): <em>implied</em> = the question's measured factor moves × this security's joint factor loadings;
+      <em>direct</em> = its market-adjusted two-day move on days the question's odds jumped; the headline number shrinks direct toward implied. Units: % per +10 points of probability.</p>`;
   } else if (t === "market") {
     const m = await api(`/markets/${encodeURIComponent(id)}`), s = m.signature || {};
     const why = {
@@ -779,6 +1069,8 @@ document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
   document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
   document.body.classList.toggle("about", b.dataset.view === "about");
   document.body.classList.toggle("api", b.dataset.view === "api");
+  document.body.classList.toggle("research", b.dataset.view === "research");
+  if (b.dataset.view === "research") Research.open();
   if (b.dataset.view === "explore") network.redraw();
 });
 // hidden views: five quick clicks on the title toggles them (remembered per browser)
@@ -815,6 +1107,411 @@ $("#depth").onchange = () => state.selected && drawGraph(state.selected);
 document.querySelectorAll("#api .base, #api pre").forEach(el => el.innerHTML = el.innerHTML.replaceAll("BASE", location.origin));
 document.querySelector("#api .base-link").href = `${location.origin}/docs`;
 loadList().catch(err => $("#list").innerHTML = `<li>${esc(err.message)}</li>`);
+</script>
+<script>
+// ── Factor research ────────────────────────────────────────────────────────────
+// Start from a factor and research backward: its definition and observed history, the securities
+// with a measured loading on it, the questions whose odds it has moved with, and the graph links to
+// events and contracts. Every number carries its evidence category, from the API.
+const Research = (() => {
+  const st = { factors: [], factor: null, f: null, hist: null, secs: null, paths: null, ticker: null, opened: false, seq: { f: 0, h: 0, s: 0 } };
+  // only the latest request of each kind may render: a slow earlier response is dropped
+  const ticket = k => { const n = ++st.seq[k]; return () => n === st.seq[k]; };
+  const EV_LABEL = { definition: "definition", observed: "observed", qualitative: "qualitative link", estimated: "estimated", validated: "validated" };
+  const EV_TEXT = {
+    definition: "Reference data: a definition, classification or source record",
+    observed: "Observed data: a captured price or level",
+    qualitative: "Qualitative / analyst-proposed link (rule, transmission prior or curated assessment); not measured",
+    estimated: "Statistically estimated association (regression); not a validated causal impact",
+    validated: "Validated event-specific impact estimate" };
+  const ev = k => k ? `<span class="ev ${esc(k)}" title="${esc(EV_TEXT[k] || "")}">${esc(EV_LABEL[k] || k)}</span>` : "";
+  const fmt = (v, d = 2) => v == null || Number.isNaN(v) ? "–" : Number(v).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+  const sgn = (v, d = 2) => v == null || Number.isNaN(v) ? "–" : (v > 0 ? "+" : "") + fmt(v, d);
+  const pval = p => p == null ? "–" : p < 0.0001 ? "<0.0001" : fmt(p, 4);
+  const ago = iso => { if (!iso) return "–"; const h = (Date.now() - Date.parse(iso)) / 36e5;
+    return h < 1 ? `${Math.max(1, Math.round(h * 60))} min ago` : h < 48 ? `${Math.round(h)} h ago` : `${Math.round(h / 24)} d ago`; };
+  const R = () => $("#rs-results");
+  const fgo = (id, text) => `<span class="link" data-rs-factor="${esc(id)}">${esc(text)}</span>`;
+  const tgo = (t, text) => `<span class="link" data-rs-ticker="${esc(t)}">${esc(text || t)}</span>`;
+  const qgo = (id, text) => `<span class="link" data-rs-question="${esc(id)}">${esc(text)}</span>`;
+  // a numbered section header: title, evidence badge, one line saying what it answers
+  const head = (n, title, ask, evk) => `<div class="rs-head"><h3><span class="rs-num">${n}</span>${title} ${ev(evk)}</h3><p class="rs-ask">${ask}</p></div>`;
+  const SECTIONS = [["rs-overview", "Overview"], ["rs-history", "History"], ["rs-secs", "Securities"], ["rs-qmoves", "Question moves"],
+                    ["rs-security", "Regression"], ["rs-reliability", "Reliability"]];
+
+  // ── CSV export: a metadata header (ids, units, model, provenance, limits), then the rows ──
+  function csv(name, meta, cols, rows) {
+    const q = v => v == null ? "" : /[",\n#]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+    const lines = [...Object.entries(meta).map(([k, v]) => `# ${k}: ${String(v ?? "").replace(/\n/g, " ")}`),
+                   cols.join(","), ...rows.map(r => cols.map(c => q(r[c])).join(","))];
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
+    a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  const LIMITS = "Research use only. Yahoo / FRED data are unofficial and unlicensed for redistribution. Fetch times are when this project captured a value (mostly a retrospective backfill), not what investors saw at the time.";
+
+  // ── line chart: one series, 2px line, recessive axes, crosshair + tooltip ──
+  function lineChart(el, pts, { y, label, tipFmt }) {
+    el.innerHTML = "";
+    if (pts.length < 2) { el.innerHTML = '<p class="rs-empty">Not enough observations in this range to draw a chart.</p>'; return; }
+    const W = Math.max(320, el.clientWidth || 640), H = 220, m = { l: 52, r: 12, t: 10, b: 24 };
+    const xs = pts.map(p => Date.parse(p.t)), ys = pts.map(y);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs);
+    let y0 = Math.min(...ys), y1 = Math.max(...ys); if (y0 === y1) { y0 -= 1; y1 += 1; }
+    const pad = (y1 - y0) * 0.06; y0 -= pad; y1 += pad;
+    const X = v => m.l + (v - x0) / (x1 - x0 || 1) * (W - m.l - m.r), Y = v => m.t + (1 - (v - y0) / (y1 - y0)) * (H - m.t - m.b);
+    const yt = Array.from({ length: 5 }, (_, i) => y0 + (y1 - y0) * i / 4);
+    const span = (x1 - x0) / 864e5, xt = Array.from({ length: 5 }, (_, i) => x0 + (x1 - x0) * i / 4);
+    const xl = v => new Date(v).toLocaleDateString(undefined, span > 400 ? { year: "numeric", month: "short" } : { month: "short", day: "numeric" });
+    // break the line where observations are more than 10 days apart: gaps stay visible, nothing is filled
+    let d = "", prev = null;
+    pts.forEach((p, i) => { const gap = prev != null && xs[i] - prev > 10 * 864e5; d += `${!d || gap ? "M" : "L"}${X(xs[i]).toFixed(1)},${Y(ys[i]).toFixed(1)}`; prev = xs[i]; });
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">
+      <g class="grid">${yt.map(v => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"/>`).join("")}</g>
+      ${yt.map(v => `<text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${fmt(v, Math.abs(y1 - y0) < 5 ? 2 : 0)}</text>`).join("")}
+      ${xt.map(v => `<text x="${X(v)}" y="${H - 6}" text-anchor="middle">${esc(xl(v))}</text>`).join("")}
+      <path d="${d}" fill="none" stroke="var(--question)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <line class="xh" y1="${m.t}" y2="${H - m.b}" stroke="var(--axis)" visibility="hidden"/>
+      <circle class="dot" r="4" fill="var(--question)" stroke="var(--surface)" stroke-width="2" visibility="hidden"/>
+      <rect x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${H - m.t - m.b}" fill="transparent"/></svg><div class="rs-tip" hidden></div>`;
+    const svg = el.querySelector("svg"), tip = el.querySelector(".rs-tip"), xh = svg.querySelector(".xh"), dot = svg.querySelector(".dot");
+    svg.addEventListener("mousemove", e => {
+      const r = svg.getBoundingClientRect(), vx = (e.clientX - r.left) * W / r.width;
+      const tx = x0 + (vx - m.l) / (W - m.l - m.r) * (x1 - x0);
+      let lo = 0, hi = xs.length - 1; while (hi - lo > 1) { const mid = (lo + hi) >> 1; xs[mid] < tx ? lo = mid : hi = mid; }
+      const i = Math.abs(xs[lo] - tx) < Math.abs(xs[hi] - tx) ? lo : hi;
+      xh.setAttribute("x1", X(xs[i])); xh.setAttribute("x2", X(xs[i])); xh.setAttribute("visibility", "visible");
+      dot.setAttribute("cx", X(xs[i])); dot.setAttribute("cy", Y(ys[i])); dot.setAttribute("visibility", "visible");
+      tip.hidden = false; tip.innerHTML = tipFmt(pts[i]);
+      const px = X(xs[i]) * r.width / W; tip.style.left = `${Math.min(px + 12, r.width - tip.offsetWidth - 4)}px`; tip.style.top = "4px";
+    });
+    svg.addEventListener("mouseleave", () => { tip.hidden = true; xh.setAttribute("visibility", "hidden"); dot.setAttribute("visibility", "hidden"); });
+  }
+
+  // ── factor list (left) ──
+  async function loadFactors() {
+    st.factors = await api("/factors");
+    const fams = [...new Set(st.factors.map(f => `${f.layer}:${f.family}`))].sort();
+    $("#rs-category").innerHTML = `<option value="">All categories (${st.factors.length})</option>
+      <option value="measured">Has an observed series</option>
+      <optgroup label="Macro factors">${fams.filter(x => x.startsWith("macro:")).map(x => `<option value="${esc(x)}">${esc(x.slice(6))}</option>`).join("")}</optgroup>
+      <optgroup label="Niche factors (industry drivers)">${fams.filter(x => x.startsWith("niche:")).map(x => `<option value="${esc(x)}">${esc(x.slice(6))}</option>`).join("")}</optgroup>`;
+    $("#rs-joint").innerHTML = st.factors.filter(f => f.history).sort((a, b) => a.name.localeCompare(b.name))
+      .map(f => `<option value="${esc(f.id)}">${esc(f.name)}</option>`).join("");
+    renderFactors();
+  }
+  function renderFactors() {
+    const q = $("#rs-search").value.trim().toLowerCase(), c = $("#rs-category").value;
+    const list = st.factors.filter(f => (!q || `${f.name} ${f.id} ${f.definition}`.toLowerCase().includes(q))
+      && (!c || (c === "measured" ? f.history : `${f.layer}:${f.family}` === c)))
+      .sort((a, b) => (b.layer === "macro") - (a.layer === "macro") || !!b.history - !!a.history || a.name.localeCompare(b.name));
+    $("#rs-factors").innerHTML = list.slice(0, 400).map(f => `<li data-id="${esc(f.id)}" ${st.factor === f.id ? 'aria-current="true"' : ""}>
+      <span>${esc(f.name)}</span><span class="tag">${f.history ? "series" : "definition"} · ${esc(f.layer)}</span></li>`).join("")
+      || '<li class="rs-empty">No factor matches.</li>';
+  }
+
+  // ── one factor: the unified research page ──
+  async function openFactor(id) {
+    st.factor = id; renderFactors();
+    const current = ticket("f");
+    R().innerHTML = '<p class="rs-empty">Loading…</p>';
+    const [f, secs] = await Promise.all([api(`/factors/${encodeURIComponent(id)}`, { limit: 500 }),
+      api(`/factors/${encodeURIComponent(id)}/securities`, { limit: 300 })]);
+    if (!current()) return;
+    st.f = f; st.secs = secs;
+    const info = (st.factors.find(x => x.id === id) || {}).history;
+    R().innerHTML = `<nav class="rs-nav" aria-label="Sections">${SECTIONS.map(([sid, t], i) => `<a href="#${sid}" data-jump="${sid}"><span class="rs-num">${i + 1}</span>${t}</a>`).join("")}</nav>
+      ${SECTIONS.map(([sid]) => `<section id="${sid}"></section>`).join("")}`;
+    renderOverview(f, info); renderSecurities(); renderQuestionMoves(); renderReliability();
+    $("#rs-security").innerHTML = head(5, "Regression for one security", "How does one security move with this and other factors? Click a ticker in section 3, or enter one on the left.", "estimated")
+      + '<p class="rs-empty">No security selected.</p>';
+    await loadHistory();
+    if (st.ticker) openSecurity(st.ticker, false);
+  }
+  function renderOverview(f, info) {
+    const measured = !!f.series;
+    $("#rs-overview").innerHTML = `<div class="kind">${f.layer === "niche" ? "Niche factor · industry driver" : "Macro factor"} · ${esc(f.family)}</div>
+      <h2>${esc(f.name)}</h2><p class="rs-ask">${esc(f.definition)}</p>
+      <div class="rs-tiles">
+        <div><span>Type</span><b>${measured ? "Observed series" : "Definition only"}</b>${ev(measured ? "observed" : "definition")}</div>
+        <div><span>Units of a move</span><b>${f.units ? esc(f.units === "%" ? "% (log return)" : "bp (level change)") : "–"}</b></div>
+        <div><span>Source</span><b>${measured ? esc(f.series) : "none"}</b></div>
+        <div><span>History</span><b>${info ? `${esc(info.first_date)} → ${esc(info.last_date)}` : "none"}</b>${info ? `<em>${info.n_obs.toLocaleString()} dates · captured ${esc(ago(info.last_fetched_at))}</em>` : ""}</div>
+        ${f.layer === "niche" ? `<div><span>Earnings effect</span><b>${esc(f.side)} · higher is ${f.earnings_sign > 0 ? "good" : "bad"}</b>${ev("qualitative")}</div>` : ""}
+      </div>
+      <dl class="rs-kv">
+        <dt>Drives ${ev("qualitative")}</dt><dd>${(f.drives || []).slice(0, 10).map(x => fgo(x.factor.id, x.factor.name)).join(", ") || "–"}</dd>
+        <dt>Driven by ${ev("qualitative")}</dt><dd>${(f.driven_by || []).slice(0, 10).map(x => fgo(x.factor.id, x.factor.name)).join(", ") || "–"}</dd>
+        <dt>Industries reached ${ev("qualitative")}</dt><dd>${[...new Map((f.industries || []).map(x => [x.industry.id, x.industry])).values()].slice(0, 10).map(i => esc(i.name)).join(", ") || "–"}</dd>
+      </dl>
+      <div class="rs-actions"><button data-copy="${esc(f.id)}">Copy id ${esc(f.id)}</button><button data-explore="factor:${esc(f.id)}">Open in graph explorer</button></div>`;
+  }
+
+  // ── 2. history: stats, chart, table, CSV ──
+  async function loadHistory() {
+    const f = st.f, el = $("#rs-history");
+    el.innerHTML = head(2, "Historical observations", "What has this factor actually done? Daily levels as captured; nothing interpolated.", f.series ? "observed" : "definition") + '<div class="rs-body"></div>';
+    const body = el.querySelector(".rs-body");
+    if (!f.series) { body.innerHTML = `<p class="rs-warn">No observed series — ${esc(f.name)} is a definition, so there is no chart, statistics or regression for it.</p>`; return; }
+    const info = (st.factors.find(x => x.id === f.id) || {}).history;
+    if (!$("#rs-start").value && info) setRange(3);
+    const current = ticket("h");
+    const h = await api(`/factors/${encodeURIComponent(f.id)}/history`, { start: $("#rs-start").value || undefined, end: $("#rs-end").value || undefined });
+    if (!current() || st.f !== f || !body.isConnected) return;
+    st.hist = h;
+    const pts = h.points.filter(p => p.level != null);
+    if (!pts.length) { body.innerHTML = '<p class="rs-warn">No stored observations in this date range.</p>'; return; }
+    const bp = f.units === "bp", n = pts.length, last = pts[n - 1], prev = pts[n - 2];
+    const moves = pts.slice(1).map((p, i) => bp ? (p.level - pts[i].level) * 100 : (pts[i].level > 0 && p.level > 0 ? 100 * Math.log(p.level / pts[i].level) : null)).filter(v => v != null);
+    const mean = moves.reduce((a, b) => a + b, 0) / (moves.length || 1);
+    const sd = moves.length > 1 ? Math.sqrt(moves.reduce((a, b) => a + (b - mean) ** 2, 0) / (moves.length - 1)) : null;
+    const lv = pts.map(p => p.level), unit = bp ? "bp" : "%";
+    const chg = prev ? (bp ? `${sgn((last.level - prev.level) * 100, 1)} bp` : prev.level > 0 ? `${sgn(100 * (last.level / prev.level - 1), 2)}%` : "–") : "–";
+    body.innerHTML = `<div class="rs-tiles">
+        <div><span>Latest · ${esc(last.date)}</span><b>${fmt(last.level, 4)}</b></div>
+        <div><span>Previous · ${esc(prev ? prev.date : "")}</span><b>${prev ? fmt(prev.level, 4) : "–"}</b></div>
+        <div><span>Change</span><b>${prev ? sgn(last.level - prev.level, 4) : "–"}</b><em>${esc(chg)}</em></div>
+        <div><span>Volatility (annualised)</span><b>${moves.length >= 20 && sd != null ? fmt(sd * Math.sqrt(252), 2) + " " + unit : "–"}</b><em>${moves.length < 20 ? "needs ≥ 20 obs" : "of daily moves"}</em></div>
+        <div><span>Range in window</span><b>${fmt(Math.min(...lv), 2)} – ${fmt(Math.max(...lv), 2)}</b></div>
+        <div><span>Observations</span><b>${n.toLocaleString()}</b></div></div>
+      <div class="rs-chart"></div>
+      <div class="rs-actions"><button class="rs-hist-csv" id="rs-hist-csv">Download CSV</button><button class="rs-hist-tbl">Show data table</button></div>
+      <details class="rs-more"><summary>About this data</summary><p>Source ${esc(h.series)}. The level shown per date is the latest download (vintage); ${pts.filter(p => p.n_vintages > 1).length} dates have more than one vintage.
+        The line breaks across gaps of more than 10 days. Last captured ${esc(ago(last.fetched_at))}: a retrospective download, not proof of what was knowable on each date.</p></details>
+      <div class="rs-hist-table" hidden></div>`;
+    lineChart(body.querySelector(".rs-chart"), pts.map(p => ({ ...p, t: p.date })), { y: p => p.level, label: `${f.name} level`,
+      tipFmt: p => `<b>${esc(p.date)}</b> · ${fmt(p.level, 4)}<br><span class="meta">${esc(p.source)} · captured ${esc((p.fetched_at || "").slice(0, 10))}</span>` });
+    body.querySelector(".rs-hist-csv").onclick = () => csv(`${f.id}_history.csv`, { factor_id: f.id, name: f.name, series: h.series, units_of_move: f.units, evidence: "observed",
+        range: `${h.start} to ${h.end}`, note: "level per date = latest vintage; fetched_at = when this project captured it", limitations: LIMITS },
+      ["date", "level", "source", "fetched_at", "first_fetched_at", "n_vintages"], pts);
+    body.querySelector(".rs-hist-tbl").onclick = () => { const t = body.querySelector(".rs-hist-table"); t.hidden = !t.hidden;
+      t.innerHTML = `<table class="rs-table"><tr><th>Date</th><th class="n">Level</th><th>Source</th><th>Captured</th><th class="n">Vintages</th></tr>
+        ${pts.slice().reverse().slice(0, 400).map(p => `<tr><td>${esc(p.date)}</td><td class="n">${fmt(p.level, 4)}</td><td>${esc(p.source)}</td><td>${esc(p.fetched_at)}</td><td class="n">${p.n_vintages}</td></tr>`).join("")}</table>
+        ${pts.length > 400 ? `<p class="note">Latest 400 of ${pts.length} rows; the CSV has all.</p>` : ""}`; };
+  }
+
+  // ── 3. securities with a measured loading (security vs factor regression) ──
+  function renderSecurities() {
+    const s = st.secs, el = $("#rs-secs"), onlySig = el.dataset.all !== "1", u = st.f.units === "bp" ? "1 bp" : "1%";
+    const h = head(3, "Securities exposed to it", `Which stocks move with this factor? Each stock's weekly return regressed on the S&P 500 and this factor. β = the stock's % move per ${u} factor move.`, "estimated");
+    if (!s.measured) { el.innerHTML = h + `<p class="rs-warn">${esc(s.note)}</p>`; return; }
+    const sig = s.securities.filter(r => r.significant), rows = (onlySig ? sig : s.securities).slice(0, onlySig ? 50 : 300);
+    el.innerHTML = h + `<div class="rs-tiles">
+        <div><span>Measured securities</span><b>${s.count}</b></div><div><span>With |t| ≥ 3</span><b>${sig.length}</b></div>
+        <div><span>Window</span><b>156 weeks</b><em>weekly returns</em></div><div><span>Model run</span><b>${esc(((s.run || {}).computed_at || "–").slice(0, 10))}</b></div></div>
+      <details class="rs-more"><summary>Model details</summary><dl class="rs-kv">
+        <dt>Model</dt><dd>${esc(s.spec.name)}</dd><dt>Dependent</dt><dd>${esc(s.spec.dependent)}</dd>
+        <dt>Regressors</dt><dd>${esc(s.spec.regressors.join(" + "))}</dd><dt>Estimator</dt><dd>${esc(s.spec.estimator)}</dd>
+        <dt>Window</dt><dd>${esc(s.spec.window)}</dd><dt>q (BH)</dt><dd>Benjamini–Hochberg adjusted p across ${((s.run || {}).n_tests || 0).toLocaleString()} loadings in the run</dd>
+        <dt>Out of sample</dt><dd>${esc(s.spec.out_of_sample)}</dd><dt>Validation</dt><dd>${esc(s.spec.validation)}</dd>
+        <dt>Run id</dt><dd>${esc((s.run || {}).run_id || "–")} · ${esc((s.run || {}).computed_at || "–")}</dd></dl></details>
+      <div class="rs-actions"><button class="rs-secs-toggle" id="rs-secs-toggle">${onlySig ? `Show all ${s.count}` : "Only |t| ≥ 3"}</button><button class="rs-secs-csv" id="rs-secs-csv">Download CSV</button>
+        <span class="note">${onlySig ? `Top ${rows.length} by |t|` : `All ${rows.length} by |t|`} · click a row for its regression (section 5)</span></div>
+      ${rows.length ? `<table class="rs-table"><tr><th>Ticker</th><th>Name</th><th>Issuer</th><th class="n">β</th><th class="n">95% CI</th><th class="n">t</th><th class="n">q</th><th class="n">Weeks</th></tr>
+        ${rows.map(r => `<tr class="click" data-rs-ticker="${esc(r.security.ticker)}"><td><b>${esc(r.security.ticker)}</b></td><td>${esc(r.security.name)}</td><td>${esc(r.issuer ? r.issuer.name : "fund")}</td>
+          <td class="n">${sgn(r.beta, 3)}</td><td class="n">${sgn(r.ci_low, 3)} … ${sgn(r.ci_high, 3)}</td><td class="n">${fmt(r.t, 1)}</td><td class="n">${pval(r.q)}</td><td class="n">${r.n_weeks}</td></tr>`).join("")}</table>`
+        : `<p class="rs-empty">No security has |t| ≥ 3 on this factor.</p>`}`;
+    el.querySelector(".rs-secs-toggle").onclick = () => { el.dataset.all = onlySig ? "1" : "0"; renderSecurities(); };
+    el.querySelector(".rs-secs-csv").onclick = () => csv(`${st.f.id}_securities.csv`, { factor_id: st.f.id, factor: st.f.name, factor_units: st.f.units, model: s.spec.name,
+        model_run: (s.run || {}).run_id, computed_at: (s.run || {}).computed_at, estimator: s.spec.estimator, window: s.spec.window, evidence: "estimated (in-sample statistical association; not causal)", limitations: LIMITS },
+      ["ticker", "security_id", "name", "issuer_id", "issuer", "beta", "se", "ci_low", "ci_high", "t", "p", "q", "n_weeks", "significant"],
+      s.securities.map(r => ({ ...r, ticker: r.security.ticker, security_id: r.security.id, name: r.security.name, issuer_id: r.issuer && r.issuer.id, issuer: r.issuer && r.issuer.name })));
+  }
+
+  // ── 4. question vs factor: how the factor moved when a question's odds jumped ──
+  function renderQuestionMoves() {
+    const f = st.f, el = $("#rs-qmoves"), u = f.units || "";
+    const h = head(4, "How it moved when question odds jumped", `Prediction markets → this factor. On days a question's odds jumped ≥ 5 pts (and held), the factor's 2-day move, scaled to +10 pts of odds.`, "estimated");
+    if (!f.series) { el.innerHTML = h + '<p class="rs-warn">No observed series, so no question moves can be measured for this factor.</p>'; return; }
+    const all = (f.questions || []).filter(q => q.sensitivity);
+    const own = all.filter(q => q.sensitivity.n_events).sort((a, b) => (a.status !== "live") - (b.status !== "live") || Math.abs(b.sensitivity.per_10pts) - Math.abs(a.sensitivity.per_10pts));
+    const pooled = (f.pooled || []);
+    el.innerHTML = h + `<div class="rs-tiles">
+        <div><span>Linked questions</span><b>${(f.questions || []).length}</b></div>
+        <div><span>Measured on own jump days</span><b>${own.length}</b></div>
+        ${pooled.slice(0, 3).map(p => `<div><span>Typical, ${esc(p.channel || "unknown")} channel</span><b>${sgn(p.beta_adverse / 10, 3)} ${esc(p.units)}</b><em>per +10 pts adverse · ± ${fmt(p.se / 10, 3)}</em></div>`).join("")}</div>
+      <details class="rs-more"><summary>Method</summary><p>factor_betas.py: for each question linked to this factor, find days its odds moved ≥ 5 points and at least half the move held the next day;
+        take the factor's move over the next two trading days; regress it on the jump (through the origin) — the "own estimate". The headline move shrinks it toward the typical move of questions on the same channel (the tiles above), more so when it rests on few jump days.
+        "Move if YES" = the move if the question resolved YES from today's odds. Jump days also carry other news: an association, not a validated causal impact.</p></details>
+      <div class="rs-actions"><button class="rs-qm-csv">Download CSV</button><span class="note">${own.length > 40 ? `Top 40 of ${own.length} by size, live first` : ""}</span></div>
+      ${own.length ? `<table class="rs-table"><tr><th>Question</th><th class="n">Odds</th><th class="n">Move per +10 pts</th><th class="n">± se</th><th class="n">Own estimate (unshrunk)</th><th class="n">If YES now</th><th class="n">Jump days</th><th>Status</th></tr>
+        ${own.slice(0, 40).map(q => { const s = q.sensitivity; return `<tr><td>${qgo(q.id, q.name)}</td><td class="n">${pct(q.prob)}</td>
+          <td class="n"><b>${sgn(s.per_10pts, 3)} ${esc(u)}</b></td><td class="n">${s.se != null ? fmt(s.se / 10, 3) : "–"}</td>
+          <td class="n">${s.own_beta != null ? `${sgn(s.own_beta / 10, 3)} ± ${fmt((s.own_se ?? NaN) / 10, 3)}` : "–"}</td><td class="n">${sgn(s.move_if_yes, 2)}</td>
+          <td class="n">${s.n_events}</td><td>${esc(q.status)}</td></tr>`; }).join("")}</table>`
+        : '<p class="rs-empty">No linked question has jump days to measure yet.</p>'}`;
+    el.querySelector(".rs-qm-csv").onclick = () => csv(`${f.id}_question_moves.csv`, { factor_id: f.id, factor: f.name, units: u, method: "factor 2-day move on question jump days (>= 5 pts held), per +1.0 probability, shrunk to channel pool (factor_betas.py)",
+        evidence: "estimated (association around jumps; not causal)", limitations: LIMITS },
+      ["question_id", "question", "status", "prob", "beta", "se", "per_10pts", "move_if_yes", "move_if_no", "n_events", "channel", "pooled_beta"],
+      all.map(q => ({ question_id: q.id, question: q.name, status: q.status, prob: q.prob, ...q.sensitivity })));
+  }
+
+  // ── 6. reliability ──
+  function renderReliability() {
+    $("#rs-reliability").innerHTML = head(6, "How reliable is the evidence?", "What each label means, where it is used here, and what is missing.")
+      + `<table class="rs-table"><tr><th>Label</th><th>Meaning</th><th>Used for</th></tr>
+        ${[["definition", "Overview (1), issuer ↔ security"], ["observed", "Factor history (2), contract prices (question drill-down)"],
+           ["qualitative", "Drives / driven by / industries (1)"], ["estimated", "Security regressions (3, 5), question moves (4)"],
+           ["validated", "Nothing yet"]].map(([k, w]) => `<tr><td>${ev(k)}</td><td>${esc(EV_TEXT[k])}</td><td>${esc(w)}</td></tr>`).join("")}</table>
+      <p class="rs-warn">${esc(st.secs.validated_impacts || "")}</p>
+      <details class="rs-more"><summary>Limitations</summary><ul class="note">
+        <li>Regressions are in-sample (about 3 years of weekly data); nothing is tested out of sample.</li>
+        <li>Today's graph is applied to past dates: links are not point-in-time.</li>
+        <li>Monthly / quarterly indicators (CPI, GDP, payrolls…) and niche factors have no stored series, so nothing is estimated on them.</li>
+        <li>${esc(LIMITS)}</li></ul></details>
+      <p class="note">Excel: <code>=ER.FACTOR("${esc(st.f.id)}")</code> latest level · <code>=ER.SENSITIVITY(question_id, "${esc(st.f.id)}")</code> measured question move.</p>`;
+  }
+
+  // ── 5. one security: loadings (stored) or a joint fit, explained; questions it moves with ──
+  async function openSecurity(ticker, scroll = true) {
+    ticker = ticker.trim().toUpperCase(); if (!ticker) return;
+    $("#rs-ticker").value = ticker;
+    if (!$("#rs-security")) { R().innerHTML = '<section id="rs-security"></section>'; }
+    const el = $("#rs-security"), spec = $("#rs-spec").value;
+    const h = head(5, `Regression for one security · ${esc(ticker)}`, spec === "joint" ? "One regression of this stock on the S&P 500 plus the factors picked on the left, fitted jointly."
+      : "Separate regressions of this stock on the S&P 500 plus one factor at a time (the stored model).", "estimated");
+    el.innerHTML = h + '<p class="rs-empty">Loading…</p>';
+    if (scroll) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const current = ticket("s");
+    let info;
+    try { info = await api(`/securities/${encodeURIComponent(ticker)}`); }
+    catch (e) { el.innerHTML = h + `<p class="rs-warn">${esc(ticker)} is not in the securities list (securities.csv).</p>`; return; }
+    st.ticker = ticker;   // remembered (and reopened with the next factor) only once it exists
+    let reg = null;
+    if (spec === "joint") {
+      const fs = [...$("#rs-joint").selectedOptions].map(o => o.value);
+      if (!fs.length && st.f && st.f.series) fs.push(st.f.id);
+      if (fs.length) reg = await api(`/securities/${encodeURIComponent(ticker)}/regression`, { factor: fs });
+    }
+    const exp = await api(`/securities/${encodeURIComponent(ticker)}/exposures`, { limit: 10, sort: "risk" }).catch(() => ({ exposures: [] }));
+    if (!current() || !el.isConnected) return;
+    const explain = c => {
+      const u = c.factor.units === "bp" ? "1 bp" : "1%";
+      return c.factor.id === "equity_us" ? `S&P 500 +1% → ${esc(ticker)} ${sgn(c.beta, 2)}%`
+        : `${esc(c.factor.name)} +${u} → ${esc(ticker)} ${sgn(c.beta, 3)}% (95%: ${sgn(c.ci_low, 3)} to ${sgn(c.ci_high, 3)})`;
+    };
+    const loadRows = (info.loadings || []).filter(l => st.f && l.factor.id === st.f.id || l.significant).slice(0, 25);
+    el.innerHTML = h + `<div class="rs-tiles">
+        <div><span>Security</span><b>${esc(info.name)}</b><em>${esc(info.asset_class || "")} · ${esc(info.country || "")}</em></div>
+        <div><span>Issuer</span><b>${info.issuer ? esc(info.issuer.name) : "fund"}</b></div>
+        ${spec === "joint" && reg && reg.fit ? `<div><span>R² · adj. R²</span><b>${fmt(reg.fit.r2, 3)} · ${fmt(reg.fit.adj_r2, 3)}</b></div>
+          <div><span>Residual SD (weekly)</span><b>${fmt(reg.fit.resid_sd, 2)}%</b></div><div><span>Sample</span><b>${reg.fit.n_weeks} weeks</b><em>${esc(reg.fit.window.join(" → "))}</em></div>`
+          : `<div><span>Loadings estimated</span><b>${(info.loadings || []).length}</b></div><div><span>Model run</span><b>${esc(((info.run || {}).computed_at || "–").slice(0, 10))}</b></div>`}</div>
+      ${spec === "joint" ? jointHtml(reg, explain) : (loadRows.length ? `<table class="rs-table"><tr><th>Factor</th><th class="n">β</th><th class="n">95% CI</th><th class="n">t</th><th class="n">p</th><th class="n">q</th><th class="n">Weeks</th><th>Reading (weekly, market held fixed)</th></tr>
+          ${loadRows.map(l => `<tr><td>${fgo(l.factor.id, l.factor.name)}</td><td class="n">${sgn(l.beta, 3)}</td><td class="n">${sgn(l.ci_low, 3)} … ${sgn(l.ci_high, 3)}</td><td class="n">${fmt(l.t, 1)}</td>
+            <td class="n">${pval(l.p)}</td><td class="n">${l.factor.id === "equity_us" ? "n/a" : pval(l.q)}</td><td class="n">${l.n_weeks}</td><td class="meta">${explain(l)}</td></tr>`).join("")}</table>
+          <p class="note">Shown: the selected factor and every loading with |t| ≥ 3. Switch the specification on the left to fit several factors jointly.</p>`
+          : '<p class="rs-empty">No stored loadings for this security (fewer than 52 weeks of prices, or not run yet).</p>')}
+      <p class="rs-warn">Historical, in-sample statistical associations — not causal event impacts, and not validated out of sample.</p>
+      <div class="rs-actions"><button class="rs-sec-csv" id="rs-sec-csv">Download CSV</button><button data-explore="${esc(info.id)}">Open in graph explorer</button></div>
+      <h4>Questions this stock moved with ${ev("estimated")} <span class="meta">— % move per +10 pts of the question's odds</span></h4>
+      ${(exp.exposures || []).length ? `<table class="rs-table"><tr><th>Question</th><th class="n">Odds</th><th class="n">Move per +10 pts</th><th class="n">Factor-implied</th><th class="n">Direct (jump days)</th><th>Found by</th></tr>
+        ${exp.exposures.map(r => { const s = r.sensitivity; return `<tr><td>${qgo(r.id, r.name)}</td><td class="n">${pct(r.prob)}</td><td class="n"><b>${sgn(s.per_10pts, 2)}%</b></td>
+          <td class="n">${sgn(s.implied == null ? null : s.implied / 10, 2)}%</td><td class="n">${s.n_events ? `${sgn(s.direct / 10, 2)}% · ${s.n_events} d` : "no events"}</td><td>${esc(s.found_by)}</td></tr>`; }).join("")}</table>`
+        : '<p class="rs-empty">No measured question sensitivities for this security.</p>'}
+      <div id="rs-drill"></div>`;
+    el.querySelector(".rs-sec-csv").onclick = () => {
+      const meta = { ticker, security_id: info.id, name: info.name, issuer_id: info.issuer && info.issuer.id, model: spec === "joint" ? JOINT.name : STORED.name,
+        model_run: spec === "joint" ? "computed on request (not stored)" : (info.run || {}).run_id, computed_at: spec === "joint" ? new Date().toISOString() : (info.run || {}).computed_at,
+        window: spec === "joint" && reg && reg.fit ? reg.fit.window.join(" to ") : STORED.window, evidence: "estimated (in-sample statistical association; not causal)", limitations: LIMITS };
+      const rows = spec === "joint" ? ((reg && reg.fit && reg.fit.coefficients) || []) : (info.loadings || []);
+      if (spec === "joint" && reg && reg.fit) Object.assign(meta, { r2: reg.fit.r2, adj_r2: reg.fit.adj_r2, resid_sd: reg.fit.resid_sd, n_weeks: reg.fit.n_weeks });
+      csv(`${ticker}_${spec}_regression.csv`, meta, ["factor_id", "factor", "factor_units", "beta", "se", "ci_low", "ci_high", "t", "p", "q", "n_weeks"],
+        rows.map(r => ({ ...r, factor_id: r.factor.id, factor: r.factor.name, factor_units: r.factor.units, n_weeks: r.n_weeks ?? (reg && reg.fit && reg.fit.n_weeks) })));
+    };
+  }
+  const STORED = { name: "Market + one factor (stored, latest security_betas run)", window: "last 156 weeks before the run; at least 52" };
+  const JOINT = { name: "Market + selected factors (joint OLS, computed on request)" };
+  function jointHtml(reg, explain) {
+    if (!reg) return '<p class="rs-empty">Pick one or more factors for the joint model on the left (a factor with an observed series).</p>';
+    const miss = reg.missing.length ? `<p class="rs-warn">Left out: ${reg.missing.map(m => `${esc(m.factor.name)} (${esc(m.reason)})`).join("; ")}.</p>` : "";
+    if (!reg.fit) return miss + `<p class="rs-warn">${esc(reg.note)}</p>`;
+    const f = reg.fit;
+    return `${miss}<table class="rs-table"><tr><th>Regressor</th><th class="n">β</th><th class="n">95% CI</th><th class="n">t</th><th class="n">p</th><th class="n">β alone (stored)</th><th>Reading (weekly, others held fixed)</th></tr>
+        ${f.coefficients.map(c => `<tr><td>${fgo(c.factor.id, c.factor.name)}</td><td class="n">${sgn(c.beta, 3)}</td><td class="n">${sgn(c.ci_low, 3)} … ${sgn(c.ci_high, 3)}</td>
+          <td class="n">${fmt(c.t, 1)}</td><td class="n">${pval(c.p)}</td><td class="n">${c.stored ? sgn(c.stored.beta, 3) : "–"}</td><td class="meta">${explain(c)}</td></tr>`).join("")}</table>
+      <details class="rs-more"><summary>Model details</summary><dl class="rs-kv"><dt>Model</dt><dd>${esc(reg.spec.name)}</dd><dt>Dependent</dt><dd>${esc(reg.spec.dependent)}</dd>
+        <dt>Estimator</dt><dd>${esc(reg.spec.estimator)}</dd><dt>Computed by</dt><dd>${esc(reg.spec.source)}</dd>
+        <dt>p-values</dt><dd>per coefficient, not adjusted; Bonferroni would compare p with 0.05 / ${f.coefficients.length - 1 || 1}</dd></dl></details>`;
+  }
+
+  // ── drill-down: a question's contracts, a contract's terms and captured prices ──
+  async function openQuestion(id) {
+    const host = $("#rs-drill") || (() => { const d = document.createElement("section"); d.id = "rs-drill";
+      const after = $("#rs-qmoves"); after ? after.after(d) : R().prepend(d); return d; })();
+    host.innerHTML = '<p class="rs-empty">Loading…</p>'; host.scrollIntoView({ behavior: "smooth", block: "start" });
+    const q = await api(`/questions/${encodeURIComponent(id)}`);
+    const c = await api(`/questions/${encodeURIComponent(id)}/contracts`, { include_closed: true });
+    host.innerHTML = `<div class="rs-head"><h3>Question · ${esc(q.name)}</h3><p class="rs-ask">${pct(q.prob)} · ${esc(q.status)} · click a contract for its prices and rules</p></div>
+      <div class="rs-actions"><button data-explore="${esc(id)}">Open in graph explorer</button><button data-copy="${esc(id)}">Copy id</button></div>
+      <dl class="rs-kv"><dt>Factors linked</dt><dd>${(q.factors || []).map(f => fgo(f.id, f.name)).join(", ") || "none"}</dd></dl>
+      <table class="rs-table"><tr><th>Venue</th><th>Contract</th><th>Rung</th><th class="n">YES</th><th>Observed</th></tr>
+        ${(c.contracts || []).slice(0, 40).map(x => `<tr class="click" data-rs-market="${esc(x.id)}"><td>${esc(x.venue)}</td><td>${esc(x.name)}</td><td>${esc(x.rung ? x.rung.name : "")}</td>
+          <td class="n">${x.prob != null ? fmt(100 * x.prob, 1) + "¢" : "–"}</td><td>${esc(ago(x.updated))}</td></tr>`).join("")}</table>
+      <div id="rs-market"></div>`;
+  }
+  async function openMarket(id) {
+    let host = $("#rs-market");
+    if (!host) { host = document.createElement("div"); host.id = "rs-market"; R().prepend(host); }
+    host.innerHTML = '<p class="rs-empty">Loading…</p>';
+    const [m, h] = await Promise.all([api(`/markets/${encodeURIComponent(id)}`), api(`/markets/${encodeURIComponent(id)}/history`)]);
+    const pts = h.points.filter(p => p.price != null), last = pts[pts.length - 1], prev = pts[pts.length - 2];
+    const c = v => fmt(100 * (v ?? NaN), 1);
+    host.innerHTML = `<h4>Contract · ${esc(m.venue)} ${esc(m.market_id || h.native_id)} ${ev("observed")}</h4>
+      <div class="rs-tiles">
+        <div><span>YES price</span><b>${last ? c(last.price) + "¢" : "–"}</b><em>${last ? esc(last.price_rule) : ""}</em></div>
+        <div><span>Bid / ask / last</span><b>${last ? `${c(last.yes_bid)} / ${c(last.yes_ask)} / ${c(last.last)}` : "–"}</b></div>
+        <div><span>Previous capture</span><b>${prev ? c(prev.price) + "¢" : "–"}</b><em>${prev ? `${esc(prev.price_rule)} · ${esc(ago(prev.ts))}` : ""}</em></div>
+        <div><span>Change</span><b>${last && prev ? sgn(100 * (last.price - prev.price), 1) + " pts" : "–"}</b></div>
+        <div><span>Observed</span><b>${last ? esc(ago(last.ts)) : "none in 30 d"}</b><em>${last ? `${esc(last.tier)} · ${esc(last.status)}` : ""}</em></div></div>
+      ${last && prev && (last.price_rule !== "mid" || prev.price_rule !== "mid") ? '<p class="rs-warn">A last-trade price on a wide or missing spread is involved: the change may reflect illiquidity, not new information.</p>' : ""}
+      <dl class="rs-kv"><dt>Question</dt><dd>${esc(m.title || m.name)}</dd><dt>Match</dt><dd>${esc(m.match || "")}</dd><dt>Closes</dt><dd>${esc(m.close_time || "–")}</dd>
+        <dt>Resolution</dt><dd>${m.resolution ? `${esc(m.resolution.result)} (${esc(m.resolution.resolved_at)})` : "no resolution recorded"}</dd>
+        <dt>Resolution sources</dt><dd>${esc((m.resolution_sources || []).join(", ") || "–")}</dd></dl>
+      <div class="rs-chart" id="rs-mkt-chart"></div>
+      <details class="rs-more"><summary>About these prices</summary><p>${pts.length} captured snapshots in the last 30 days. Price = mid if the spread ≤ 10¢, else last trade;
+        <code>backfill</code> rows were rebuilt from venue history later, not captured live. Gaps are not filled. The price is for this contract under its rules — not the probability of a broader event.</p></details>
+      <details class="rs-more"><summary>Resolution rules</summary><p>${esc(m.rules || "–")}</p>${m.rules_secondary ? `<p>${esc(m.rules_secondary)}</p>` : ""}</details>
+      <div class="rs-actions"><button class="rs-mkt-csv" id="rs-mkt-csv">Download CSV</button><button data-explore="${esc(id)}">Open in graph explorer</button></div>`;
+    lineChart(host.querySelector("#rs-mkt-chart"), pts.map(p => ({ ...p, t: p.ts, y: 100 * p.price })), { y: p => p.y, label: "YES price (cents)",
+      tipFmt: p => `<b>${esc(p.ts.replace("T", " ").slice(0, 16))}</b> · ${fmt(p.y, 1)}¢<br><span class="meta">${esc(p.tier)} · bid ${c(p.yes_bid)} ask ${c(p.yes_ask)}</span>` });
+    host.querySelector(".rs-mkt-csv").onclick = () => csv(`${id.replace(/[:]/g, "_")}_history.csv`, { market_id: id, venue: m.venue, native_id: m.market_id, question: m.title || m.name,
+        evidence: "observed captured snapshots", price_rule: "mid if spread <= 0.10 else last", note: "YES price of this contract; not the probability of a broader event", limitations: LIMITS },
+      ["ts", "price", "price_rule", "yes_bid", "yes_ask", "last", "volume_24h", "open_interest", "tier", "status"], pts);
+  }
+  function setRange(years) {
+    const info = st.f && (st.factors.find(x => x.id === st.f.id) || {}).history;
+    const end = info ? info.last_date : new Date().toISOString().slice(0, 10);
+    const s = new Date(end); s.setFullYear(s.getFullYear() - years);
+    $("#rs-end").value = end; $("#rs-start").value = years ? s.toISOString().slice(0, 10) : (info ? info.first_date : "");
+  }
+
+  // ── wiring ──
+  function wire() {
+    $("#rs-search").oninput = renderFactors; $("#rs-category").onchange = renderFactors;
+    $("#rs-factors").onclick = e => { const li = e.target.closest("li[data-id]"); if (li) openFactor(li.dataset.id).catch(fail); };
+    $("#rs-presets").onclick = e => { const b = e.target.closest("button"); if (b && st.f) { setRange(+b.dataset.years); loadHistory().catch(fail); } };
+    $("#rs-start").onchange = $("#rs-end").onchange = () => st.f && loadHistory().catch(fail);
+    $("#rs-ticker-go").onclick = () => openSecurity($("#rs-ticker").value).catch(fail);
+    $("#rs-ticker").onkeydown = e => { if (e.key === "Enter") openSecurity($("#rs-ticker").value).catch(fail); };
+    $("#rs-spec").onchange = () => { $("#rs-joint-wrap").hidden = $("#rs-spec").value !== "joint"; if (st.ticker) openSecurity(st.ticker, false).catch(fail); };
+    $("#rs-joint").onchange = () => st.ticker && $("#rs-spec").value === "joint" && openSecurity(st.ticker, false).catch(fail);
+    R().onclick = e => {
+      const j = e.target.closest("[data-jump]");
+      if (j) { e.preventDefault(); const s = document.getElementById(j.dataset.jump); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+      const t = e.target.closest("[data-rs-factor],[data-rs-ticker],[data-rs-question],[data-rs-market],[data-explore],[data-copy]");
+      if (!t) return;
+      if (t.dataset.rsFactor) openFactor(t.dataset.rsFactor).catch(fail);
+      else if (t.dataset.rsTicker) openSecurity(t.dataset.rsTicker).catch(fail);
+      else if (t.dataset.rsQuestion) openQuestion(t.dataset.rsQuestion).catch(fail);
+      else if (t.dataset.rsMarket) openMarket(t.dataset.rsMarket).catch(fail);
+      else if (t.dataset.explore) { document.querySelector('nav button[data-view="explore"]').click(); select(t.dataset.explore); }
+      else if (t.dataset.copy) navigator.clipboard.writeText(t.dataset.copy).catch(() => prompt("Copy this:", t.dataset.copy));
+    };
+  }
+  const fail = err => { R().insertAdjacentHTML("afterbegin", `<p class="rs-warn">${esc(err.message)}</p>`); };
+  return { open() { if (st.opened) return; st.opened = true; wire(); loadFactors().catch(fail); } };
+})();
 </script>
 </body>
 </html>

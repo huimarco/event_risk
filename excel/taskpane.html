@@ -33,6 +33,13 @@
 <div class="muted">Click a result to add a live row at the selected cell: id, name, probability, 24h change, and the rung the probability comes from.</div>
 <ul id="results"></ul>
 
+<h2>Stress sheet</h2>
+<div class="row"><input id="stressId" placeholder="question id (q:…), or select a cell holding one"><button id="stress">Insert</button></div>
+<div class="muted">Adds a sheet with the question's factors and how much each moves if it resolves YES or NO now. Type your
+holdings' loadings (P&amp;L per 1% of a % factor, per 1 bp of a bp factor) in the yellow column: P&amp;L is computed in the
+workbook, and holdings never leave it.</div>
+<div id="stressMsg" class="muted"></div>
+
 <h2>Refresh</h2>
 <div class="row"><button id="refresh" class="secondary">Refresh all Event Risk formulas</button></div>
 <div id="health" class="muted"></div>
@@ -52,6 +59,12 @@
   <dt><code>=ER.RUNGS(question_id)</code></dt><dd>A question's ladder: every deadline / threshold, with rung ids.</dd>
   <dt><code>=ER.CONTRACTS(id)</code></dt><dd>The Kalshi / Polymarket contracts behind it, with their rules.</dd>
   <dt><code>=ER.HISTORY(id, [start], [end], [interval])</code></dt><dd>Probability over time (daily by default).</dd>
+  <dt><code>=ER.CURVE(question_id)</code></dt><dd>A deadline question as a term structure: probability per period, conditional on not before, annualized hazard.</dd>
+  <dt><code>=ER.PROB_BY(question_id, date, [extrapolate])</code></dt><dd>P(event by a date), e.g. a bond's maturity.</dd>
+  <dt><code>=ER.FACTORS(id)</code></dt><dd>Factors the question moves, with the measured move per +1.0 probability and if it resolves YES / NO.</dd>
+  <dt><code>=ER.FACTOR(factor_id, [field])</code></dt><dd>A factor's latest level (e.g. credit_us_hy in %), or name, units, series.</dd>
+  <dt><code>=ER.SENSITIVITY(id, factor_id)</code></dt><dd>Factor move per +1.0 of probability, in % or bp.</dd>
+  <dt><code>=ER.STRESS(id, factor_ids, loadings, ["yes"|"no"])</code></dt><dd>Σ loading × factor move if it resolves: your P&amp;L, computed in Excel.</dd>
 </dl>
 <p class="muted">Ids: q:… question, prop:… one rung (one deadline or threshold), mkt:… one venue contract.
 A question's probability is its <b>headline rung</b>: the live rung with the most trading in the last 24h. It can switch
@@ -104,6 +117,59 @@ async function insertRow(id) {
   });
 }
 
+// A sheet for one question: its factors (ids written once), live sensitivity formulas, a yellow
+// loadings column for the user's own numbers, P&L per factor and totals. For a deadline question
+// also P(event by a date) for a maturity the user types in.
+async function insertStress() {
+  const msg = $("stressMsg");
+  try {
+    let id = $("stressId").value.trim();
+    if (!id) await Excel.run(async ctx => {
+      const c = ctx.workbook.getActiveCell(); c.load("values"); await ctx.sync();
+      id = String(c.values[0][0] || "").trim();
+    });
+    if (!id.startsWith("q:") && !id.startsWith("prop:")) throw new Error("enter a question id (q:…) or select a cell holding one");
+    const r = await EventRisk.request(`/${id.startsWith("q:") ? "questions" : "propositions"}/${encodeURIComponent(id)}`, {});
+    if (!r.factors.length) throw new Error("this question isn't linked to any factor");
+    await Excel.run(async ctx => {
+      const sheets = ctx.workbook.worksheets; sheets.load("items/name"); await ctx.sync();
+      const taken = new Set(sheets.items.map(w => w.name));
+      let name = "Stress", i = 2;
+      while (taken.has(name)) name = `Stress ${i++}`;
+      const ws = sheets.add(name);
+      ws.getRange("A1:B4").formulas = [["Question", id], ["Name", `=${NS}.NAME(B1)`], ["Probability", `=${NS}.PROB(B1)`],
+                                      ["P(by date)", ""]];
+      ws.getRange("B3").numberFormat = [["0.0%"]];
+      if (r.kind === "deadlines") {
+        ws.getRange("C4:D4").formulas = [["← type a date in B4 (e.g. a maturity)", `=IF(B4="","",${NS}.PROB_BY(B1,B4,TRUE))`]];
+        ws.getRange("B4").format.fill.color = "#FFF2CC";
+        ws.getRange("D4").numberFormat = [["0.0%"]];
+      } else ws.getRange("C4").values = [["(deadline questions only)"]];
+      const head = [["Factor", "Name", "Units", "Level", "Move if YES", "Move if NO", "Your loading", "P&L if YES", "P&L if NO", "Events measured"]];
+      ws.getRange("A6:J6").values = head;
+      ws.getRange("A6:J6").format.font.bold = true;
+      const n = r.factors.length, last = 6 + n;
+      ws.getRange(`A7:J${last}`).formulas = r.factors.map((f, k) => {
+        const row = 7 + k;
+        return [f.id, f.name, f.units || "", `=IFERROR(${NS}.FACTOR(A${row}),"")`,
+                `=IFERROR(${NS}.SENSITIVITY($B$1,A${row})*(1-$B$3),"")`, `=IFERROR(-${NS}.SENSITIVITY($B$1,A${row})*$B$3,"")`, "",
+                `=IF(OR(G${row}="",E${row}=""),"",G${row}*E${row})`, `=IF(OR(G${row}="",F${row}=""),"",G${row}*F${row})`,
+                f.sensitivity ? f.sensitivity.n_events : 0];
+      });
+      ws.getRange(`G7:G${last}`).format.fill.color = "#FFF2CC";
+      ws.getRange(`E7:F${last}`).numberFormat = Array(n).fill(["0.00", "0.00"]);
+      ws.getRange(`A${last + 1}:I${last + 1}`).formulas = [["Total", "", "", "", "", "", "", `=SUM(H7:H${last})`, `=SUM(I7:I${last})`]];
+      ws.getRange(`A${last + 1}:I${last + 1}`).format.font.bold = true;
+      ws.getRange("A:J").format.autofitColumns();  // before the notes below, so they don't widen column A
+      ws.getRange(`A${last + 3}:A${last + 4}`).values = [["Moves are in the factor's units: % = percent change, bp = basis points. Estimated from past jumps in this question's odds (shrunk toward similar questions); 0 events = the pooled estimate only."],
+                                                        ["Loadings and P&L stay in this workbook: nothing is sent to the Event Risk API."]];
+      ws.activate();
+      await ctx.sync();
+    });
+    show(msg, "Sheet added. Type loadings in the yellow column.");
+  } catch (e) { show(msg, e.message, true); }
+}
+
 async function refresh() {
   EventRisk.clearCache();
   await Excel.run(async ctx => { ctx.workbook.application.calculate(Excel.CalculationType.full); await ctx.sync(); });
@@ -131,6 +197,7 @@ Office.onReady(() => {
   $("q").onkeydown = e => { if (e.key === "Enter") search(); };
   $("refresh").onclick = refresh;
   $("saveKey").onclick = saveKey;
+  $("stress").onclick = insertStress;
   health();
 });
 </script>

@@ -208,6 +208,153 @@
           "optional": true
         }
       ]
+    },
+    {
+      "id": "CURVE",
+      "name": "CURVE",
+      "description": "Spills a deadline question's term structure: per deadline, the probability by then (market and monotone fit), the probability in that period, the same conditional on not before, and the annualized hazard rate.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "question_id",
+          "description": "Question id (q:...) of a deadline question.",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "PROB_BY",
+      "name": "PROB_BY",
+      "description": "Probability the event happens by a date (e.g. before a bond matures), from a deadline question's fitted curve.",
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "question_id",
+          "description": "Question id (q:...) of a deadline question.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "date",
+          "description": "The date, e.g. a maturity date cell.",
+          "type": "any",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "extrapolate",
+          "description": "Optional: TRUE to extend the last period's hazard past the last deadline.",
+          "type": "boolean",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "FACTORS",
+      "name": "FACTORS",
+      "description": "Spills the factors a question is relevant to with the measured sensitivity: factor move per +1.0 of probability (beta, in the factor's units % or bp), standard error, per 10 points, move if it resolved YES / NO now, events measured, latest level.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Question (q:...) or proposition (prop:...) id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "FACTOR",
+      "name": "FACTOR",
+      "description": "A factor's latest level (default) or a field: level, level_date, name, family, units, series, definition.",
+      "result": {
+        "type": "any",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "factor_id",
+          "description": "Factor id, e.g. credit_us_hy or brent.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "field",
+          "description": "Optional field. Default level.",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "SENSITIVITY",
+      "name": "SENSITIVITY",
+      "description": "Factor move per +1.0 of the question's probability (shrunk estimate), in the factor's units (% or bp).",
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Question (q:...) or proposition (prop:...) id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "factor_id",
+          "description": "Factor id, e.g. credit_us_hy.",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "STRESS",
+      "name": "STRESS",
+      "description": "P&L if the question resolved now: sum of loading x factor move if YES (or NO). Loadings = your P&L per 1% (or per 1 bp) of each factor; computed in Excel, never sent anywhere.",
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Question (q:...) or proposition (prop:...) id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "factor_ids",
+          "description": "Range of factor ids.",
+          "type": "any",
+          "dimensionality": "matrix"
+        },
+        {
+          "name": "loadings",
+          "description": "Range of loadings, same size: P&L per 1% or per 1 bp of each factor.",
+          "type": "any",
+          "dimensionality": "matrix"
+        },
+        {
+          "name": "outcome",
+          "description": "Optional: \"yes\" (default) or \"no\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
     }
   ]
 }

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 Build the knowledge graph from collected contract terms, Wikipedia / Wikidata, and the curated
-inputs (entity -> security exposures and their channel signs) into graph_nodes / graph_edges. Bitemporal and append-only: each run diffs the desired graph against
+inputs (entity -> issuer exposures and their channel signs) into graph_nodes / graph_edges. Bitemporal and append-only: each run diffs the desired graph against
 the current one and records only changes (new or changed -> 'assert', gone -> 'retract').
 
-Nodes: market, proposition, question, entity, security, factor
+Nodes: market, proposition, question, entity, issuer, security, factor
 Edges:
   market -> proposition       same_as           markets with matching contract signatures
                                                 (matching.py) form one proposition
@@ -27,17 +27,33 @@ Edges:
                                                 (factors.py, seeds/entity_factors.csv)
   entity -> entity            citizen_of, ...   Wikidata statements between entities
                               related           Wikipedia co-occurrence (entities.py)
-  entity -> security          exposure          seeds/exposures.csv — analyst priors until event
-                                                betas; per-channel signs (which securities gain
-                                                from escalation) from seeds/channel_signs.csv
+  entity -> issuer            exposure          seeds/exposures.csv — analyst priors until event
+                                                betas; per-channel signs (which issuers gain
+                                                from escalation) from seeds/channel_signs.csv;
+                                                plus entity -> the same company as issuer
+                                                (weight 1) when the issuer is itself an entity
+  issuer -> security          issued            securities.csv: which issuer issued each ticker
+                                                (reference data). How much a security moves with
+                                                a question or factor is measured, not stored here:
+                                                security_betas.py -> security_loadings /
+                                                security_betas, attached by the API
 Human overrides of market matches (seeds/match_overrides.csv) always win over the algorithm.
 Market nodes carry their match outcome (merged / linked / unmatched / unparsed, with the parsed
 signature, parser issues and the nearest rejected candidates) for the review tab in the web app.
 
-Scope: geopolitical markets (minus EXCLUDE_REGEX noise). Polymarket's geopolitics tag is the
-venue's own classification; a Kalshi World/Politics market is geopolitical when it involves a
-foreign state actor — a country other than the US, or a person/organisation belonging to one
-(Wikidata parents) — so "Trump visits China" is in and "Senate confirms X" is out.
+Candidates (GRAPH_SOURCES): the collector stores far more markets than the graph uses. The graph
+reads its core sources (Kalshi World / Politics, Polymarket geopolitics) and, for events that
+have traded at least SCOPED_MIN_VOLUME, its scoped sources (Kalshi Elections / Economics;
+Polymarket world, world-elections, tariffs, fed-rates, economic-policy). Widening the graph means
+adding a source here (and a theme to scope()), not collecting more.
+
+Scope (scope()): geopolitical and credit-relevant policy markets (minus EXCLUDE_REGEX noise).
+Polymarket's geopolitics tag is the venue's own classification; any other market is in scope when
+it involves a foreign state actor — a country other than the US, or a person/organisation
+belonging to one (Wikidata parents) — so "Trump visits China" is in and "Senate confirms X" is out,
+or when its question is about a policy topic that moves credit and rates (POLICY_REGEX: Fed rates,
+defaults and restructurings, IMF programmes, government shutdowns, debt ceilings, tariffs,
+sanctions), US-only or not. The collector applies the same test to its extra categories and tags.
 
 Runs after every collect, but only does work when its inputs changed: a new market, new contract
 terms, an edited seed file, or new graph code. Otherwise it exits without touching the graph.
@@ -69,6 +85,17 @@ EXCLUDE_REGEX = re.compile(r"what will .* say|shake hands|nobel|pope|covid|birth
 DATE_SUBTITLE = re.compile(r"^(before|by)\b|^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.? \d", re.I)
 GREATER, LESS = {"greater", "greater_or_equal"}, {"less", "less_or_equal"}
 HOME = "Q30"  # United States: involving only the US is domestic politics
+# Which collected markets the graph considers: Kalshi by category (stored as the market's tag;
+# markets collected before 2026-10-27 have none and came from the core categories), Polymarket by
+# event tag. Scoped sources also need SCOPED_MIN_VOLUME traded across the event (drops US House,
+# provincial and mayoral races) — and every candidate must still pass scope().
+GRAPH_SOURCES = dict(kalshi_core={"World", "Politics"}, kalshi_scoped={"Elections", "Economics"},
+                     poly_core={"geopolitics"}, poly_scoped={"world", "world-elections", "tariffs", "fed-rates", "economic-policy"})
+SCOPED_MIN_VOLUME = 25000  # $ lifetime volume across the event
+# Policy topics that move credit and rates: in scope even when only the US is involved.
+POLICY_REGEX = re.compile(r"fed(?:eral)? funds|\bFOMC\b|\bFed\b.*\brates?\b|\brate (?:cut|hike)s?\b|\bFed decision"
+                          r"|\bdefaults?\b|debt restructuring|\bIMF\b|\bbailout\b|government shutdown"
+                          r"|debt (?:ceiling|limit)|\btariff|\bsanction", re.I)
 PRICE_LOOKUP_BATCH = 5000  # (market, time) requests per query; one huge ASOF join times out on MotherDuck
 REFRESH_KINDS = {"wikidata": {"entity"}, "relatedness": {"mentions", "comentions", "df"}}  # wiki_cache kinds
 
@@ -92,9 +119,33 @@ def edge(src, dst, edge_type, valid_from, weight=1.0, confidence=1.0, provenance
 def market_id(m):
     return f"mkt:{m['venue']}:{m['market_id']}"
 
+CANDIDATE_SQL = """(venue = 'kalshi' AND (tags IS NULL OR list_has_any(from_json(tags, '["VARCHAR"]'), $kc)))
+                  OR (venue = 'polymarket' AND list_has_any(from_json(tags, '["VARCHAR"]'), $pc))"""
+
+def source_params():
+    g = GRAPH_SOURCES
+    return dict(kc=sorted(g["kalshi_core"] | g["kalshi_scoped"]), pc=sorted(g["poly_core"] | g["poly_scoped"]))
+
+def source_class(m):
+    """core | scoped | None for a market, from its venue tags (GRAPH_SOURCES)."""
+    tags = set(json.loads(m["tags"])) if m["tags"] else None
+    g = GRAPH_SOURCES
+    if m["venue"] == "kalshi":
+        return "core" if tags is None or tags & g["kalshi_core"] else "scoped" if tags & g["kalshi_scoped"] else None
+    return "core" if tags and tags & g["poly_core"] else "scoped" if tags and tags & g["poly_scoped"] else None
+
 def load_markets(con):
-    """Latest terms of candidate markets (geopolitical scope is decided after entity discovery),
-    when each was first listed, and when it first had a price. Timestamps naive UTC."""
+    """Latest terms of candidate markets (GRAPH_SOURCES; geopolitical scope is decided after entity
+    discovery), when each was first listed, and when it first had a price. Scoped sources keep only
+    events that have traded SCOPED_MIN_VOLUME (latest lifetime volume per market, summed). Timestamps
+    naive UTC."""
+    event_volume = defaultdict(float)
+    for venue, event_id, v in con.execute(f"""
+        SELECT l.venue, l.event_id, s.volume FROM v_market_latest l
+        JOIN (SELECT venue, market_id, arg_max(volume, ts) AS volume FROM market_snapshots
+              WHERE volume IS NOT NULL GROUP BY ALL) s USING (venue, market_id)
+        WHERE {CANDIDATE_SQL}""", source_params()).fetchall():
+        event_volume[(venue, event_id)] += v or 0
     cur = con.execute("""
         SELECT venue, market_id, event_id, series_id, event_title, title, subtitle, rules_primary,
                neg_risk, strike_type, floor_strike, cap_strike, tags::VARCHAR AS tags,
@@ -106,11 +157,14 @@ def load_markets(con):
           USING (venue, market_id)
         LEFT JOIN (SELECT venue, market_id, min(ts) AS priced_at FROM v_market_prob WHERE prob IS NOT NULL GROUP BY ALL)
           USING (venue, market_id)
-        ORDER BY venue, market_id""")  # fixed order, so every derived note and choice is reproducible
+        WHERE """ + CANDIDATE_SQL + """
+        ORDER BY venue, market_id""", source_params())  # fixed order, so every derived note and choice is reproducible
     cols = [d[0] for d in cur.description]
     out = []
     for row in cur.fetchall():
         m = dict(zip(cols, row))
+        cls = source_class(m)
+        if not cls or (cls == "scoped" and event_volume[(m["venue"], m["event_id"])] < SCOPED_MIN_VOLUME): continue
         for k in ("open_time", "close_time", "first_seen_at", "listed_at", "priced_at"):
             m[k] = utc(m[k])
         m["text"] = " ".join(str(m[k]) for k in ("series_id", "event_title", "title", "subtitle", "tags") if m[k])
@@ -145,26 +199,41 @@ def prices_at(con):
     return lookup
 
 def fingerprint(con):
-    """Everything the graph is built from: market terms, seed files and the graph code."""
-    n, last = con.execute("SELECT count(*), max(first_seen_at)::VARCHAR FROM market_versions").fetchone()
+    """Everything the graph is built from: candidate markets' terms (GRAPH_SOURCES; markets the
+    graph never reads don't trigger a rebuild), seed files and the graph code."""
+    n, last = con.execute(f"SELECT count(*), max(first_seen_at)::VARCHAR FROM market_versions WHERE {CANDIDATE_SQL}",
+                          source_params()).fetchone()
     h = hashlib.sha256()
-    for f in sorted([*SEEDS.glob("*.csv"), ROOT / "securities.csv",
+    for f in sorted([*SEEDS.glob("*.csv"), ROOT / "issuers.csv", ROOT / "securities.csv",
                      *(ROOT / m for m in ("graph_build.py", "matching.py", "entities.py", "factors.py"))]):
         h.update(f.name.encode() + f.read_bytes())
-    return f"{n}|{last}|{h.hexdigest()[:16]}"
+    # turning Wikipedia fetching on rebuilds, so lookups skipped while it was off get made
+    return f"{n}|{last}|{h.hexdigest()[:16]}|wiki={'on' if entities.WIKI_FETCH else 'off'}"
 
 def geopolitical(key, actors, ents):
-    """Polymarket markets come from its geopolitics tag; others need a foreign state actor: one
-    with a country, none of which is the US (so dual-citizen Musk is domestic)."""
-    return key[0] == "polymarket" or any(
-        (cs := entities.countries_of(a[3:], ents)) and HOME not in cs for a in actors)
+    """A foreign state actor: one with a country, none of which is the US (so dual-citizen Musk is
+    domestic)."""
+    return any((cs := entities.countries_of(a[3:], ents)) and HOME not in cs for a in actors)
+
+def scope(texts, tags=None):
+    """in_scope(key, actor ids, ents) for entities.discover over {key: text}: Polymarket's
+    geopolitics tag, a policy topic (POLICY_REGEX) in the text, or a foreign state actor.
+    tags = {key: [tag slugs]}; without it every Polymarket market counts as tagged (callers that
+    only sweep the geopolitics tag)."""
+    def in_scope(key, actors, ents):
+        if key[0] == "polymarket" and tags is None: return True
+        if key[0] == "polymarket" and "geopolitics" in tags.get(key, ()): return True
+        return bool(POLICY_REGEX.search(texts.get(key) or "")) or geopolitical(key, actors, ents)
+    return in_scope
 
 def discover(con, markets):
     """Entities for the geopolitical markets among these (plus entities carrying exposures),
     from Wikipedia / Wikidata. ents.mentions has exactly the in-scope markets."""
     questions = {(m["venue"], m["market_id"]): matching.question_text(m) for m in markets}
+    tags = {(m["venue"], m["market_id"]): json.loads(m["tags"]) if m["tags"] and m["venue"] == "polymarket" else []
+            for m in markets}
     return entities.build(con, questions, extra_qids={r["qid"] for r in seed("exposures.csv")},
-                          in_scope=geopolitical)
+                          in_scope=scope(questions, tags))
 
 def in_scope(markets, ents):
     return [m for m in markets if (m["venue"], m["market_id"]) in ents.mentions]
@@ -226,15 +295,18 @@ def group(markets, relations, sigs):
         for k in ks: prop_of[k] = f"prop:{anchor[0]}:{anchor[1]}"
     return prop_of
 
-def channel_signs(secs):
-    """{ticker: {channel: sign}} for the exceptions in seeds/channel_signs.csv (default +1: an
-    adverse event for an exposed entity hurts the security). A ticker row beats a sub-industry row."""
+def channel_signs(issuers):
+    """{issuer_id: {channel: sign}} for the exceptions in seeds/channel_signs.csv (default +1: an
+    adverse event for an exposed entity hurts the issuer). An issuer row beats a sub-industry row."""
     rows = seed("channel_signs.csv")
     by_match = defaultdict(dict)
     for r in rows:
         by_match[r["match"]][r["channel"]] = float(r["sign"])
-    return {s["ticker"]: by_match.get(s.get("sub_industry") or "", {}) | by_match.get(s["ticker"], {})
-            for s in secs if s["ticker"] in by_match or (s.get("sub_industry") or "") in by_match}
+    return {i["issuer_id"]: by_match.get(i.get("sub_industry") or "", {}) | by_match.get(i["issuer_id"], {})
+            for i in issuers if i["issuer_id"] in by_match or (i.get("sub_industry") or "") in by_match}
+
+def issuer_node_id(issuer_id):
+    return f"iss:{issuer_id}"
 
 def readable(text, ents):
     """Matcher notes name entities by Wikidata id ("entities: Q22686 vs Q58132"); show names."""
@@ -366,25 +438,16 @@ def build(markets, prices, ents):
                 if ta < tb:
                     add_e(edge(a, b, "implies", start(a, b), ladder="date", event_id=event_id))
 
-    # entities, securities, curated links and exposures
-    # entities (discovered from the markets), securities, and the links between them
+    # entities (discovered from the markets), issuers, and the links between them
     for eid, e in ents.entities.items():
         add_n(node(eid, "entity", e["name"], REFERENCE_VALID_FROM, entity_type=e["type"], qid=e["qid"],
                    description=e["description"], wikipedia=e["title"]))
-    with open(ROOT / "securities.csv") as f:
-        secs = list(csv.DictReader(f))
-    for s in secs:
-        add_n(node(f"sec:{s['ticker']}", "security", s["name"], REFERENCE_VALID_FROM, ticker=s["ticker"],
-                   **{k: s.get(k) or None for k in ("asset_class", "country", "role", "sector",
-                                                   "sub_industry", "issuer_qid", "index")}))
-    signs = channel_signs(secs)
+    issuers, i_nodes, i_edges = issuer_layer(set(ents.entities))
+    for n in i_nodes: add_n(n)
+    for e in i_edges: add_e(e)
     for a, b, kind, w in ents.links:
         add_e(edge(a, b, kind, REFERENCE_VALID_FROM, weight=w or 0.0, confidence=0.9 if kind != "related" else 0.6,
                    provenance="wikidata" if kind != "related" else "wikipedia_cooccurrence"))
-    for r in seed("exposures.csv"):
-        add_e(edge(f"wd:{r['qid']}", f"sec:{r['ticker']}", "exposure", REFERENCE_VALID_FROM,
-                   weight=float(r["weight"]), confidence=0.3, provenance="analyst_prior",
-                   note=r["rationale"] or None, sign=1.0, channel_signs=signs.get(r["ticker"], {})))
 
     # propositions -> questions (ladders), then question -> entity
     listed = lambda m: (m["open_time"] or m["first_seen_at"] or REFERENCE_VALID_FROM, m["venue"], m["market_id"])
@@ -418,30 +481,109 @@ def build(markets, prices, ents):
                        confidence=0.8 if mt["named"] else 0.6, provenance="wikipedia_link",
                        matched=mt["surface"], role=role, action=sig.action, channel=channel))
 
-    # question -> factor (factors.py): rules over each question's involves edges
-    import factors  # here, not at the top: factors reads seeds through this module
+    # factors, GICS industries and their links (factor_layer)
     citizen_of = defaultdict(list)
     for a, b, kind, _ in ents.links:
         if kind == "citizen_of": citizen_of[a].append(b)
-    for fid, f in factors.CATALOG.items():
-        add_n(node(f"factor:{fid}", "factor", f["name"], REFERENCE_VALID_FROM, family=f["family"],
-                   definition=f["definition"]))
     involved = defaultdict(list)
     for e in edges.values():
         if e["edge_type"] == "involves":
             a = e["attrs"]
             involved[e["src_id"]].append((e["dst_id"], a.get("role"), a.get("action"), a.get("channel")))
-    for qid, inv in involved.items():
-        for fid, paths in sorted(factors.derive(inv, citizen_of).items()):
-            add_e(edge(qid, f"factor:{fid}", "relevant_to", nodes[qid]["valid_from"], weight=None, confidence=0.3,
-                       provenance="analyst_prior", paths=paths,
-                       note="; ".join(dict.fromkeys(" -> ".join(nodes[x]["name"] for x in p["nodes"]) + f" ({p['channel']})"
-                                                    for p in paths))))
+    f_nodes, f_edges = factor_layer(issuers, involved, citizen_of, lambda x: nodes[x]["name"],
+                                    lambda q: nodes[q]["valid_from"] if q in nodes else False)
+    for n in f_nodes: add_n(n)
+    for e in f_edges: add_e(e)
 
     dangling = [e for e in edges.values() if e["src_id"] not in nodes or e["dst_id"] not in nodes]
     for e in dangling:
         log.warning("dropping edge with unknown endpoint: %s", e["edge_id"])
         del edges[e["edge_id"]]
+    return nodes, edges
+
+def issuer_layer(entity_ids):
+    """Issuers (issuers.csv), securities (securities.csv) and their edges: entity -> issuer
+    `exposure` (seeds/exposures.csv, plus weight 1 from an entity that is the issuer itself) and
+    issuer -> security `issued`. entity_ids = the graph's entity node ids. Returns (issuers rows,
+    nodes, edges)."""
+    nodes, edges = [], {}
+    with open(ROOT / "issuers.csv") as f:
+        issuers = list(csv.DictReader(f))
+    for i in issuers:  # reference_ticker stays out of the graph: it is only for backtests
+        nodes.append(node(issuer_node_id(i["issuer_id"]), "issuer", i["name"], REFERENCE_VALID_FROM,
+                          qid=None if i["issuer_id"].startswith("local:") else i["issuer_id"],
+                          **{k: i.get(k) or None for k in ("country", "sector", "sub_industry", "headquarters", "lei", "index")}))
+    signs = channel_signs(issuers)
+    add = lambda e: edges.setdefault(e["edge_id"], e)
+    for r in seed("exposures.csv"):
+        add(edge(f"wd:{r['qid']}", issuer_node_id(r["issuer_id"]), "exposure", REFERENCE_VALID_FROM,
+                 weight=float(r["weight"]), confidence=0.3, provenance="analyst_prior",
+                 note=r["rationale"] or None, sign=1.0, channel_signs=signs.get(r["issuer_id"], {})))
+    with open(ROOT / "securities.csv") as f:
+        for x in csv.DictReader(f):
+            nodes.append(node(f"sec:{x['ticker']}", "security", x["name"], REFERENCE_VALID_FROM, ticker=x["ticker"],
+                              **{k: x.get(k) or None for k in ("asset_class", "country", "index")}, primary=bool(x["primary"])))
+            if x["issuer_id"]:
+                add(edge(issuer_node_id(x["issuer_id"]), f"sec:{x['ticker']}", "issued", REFERENCE_VALID_FROM,
+                         provenance="reference"))
+    for i in issuers:  # an entity that is itself the issuer (TSMC mentioned in a question -> TSMC the issuer)
+        src, dst = f"wd:{i['issuer_id']}", issuer_node_id(i["issuer_id"])
+        if src in entity_ids:
+            add(edge(src, dst, "exposure", REFERENCE_VALID_FROM, weight=1.0, confidence=1.0, provenance="rule",
+                     note="the issuer itself", sign=1.0, channel_signs=signs.get(i["issuer_id"], {})))
+    return issuers, nodes, list(edges.values())
+
+def factor_layer(issuers, involved, citizen_of, name_of, start_of):
+    """Factor nodes (macro and niche), GICS industry nodes and their edges, from the seeds:
+    factor -> factor `drives`, niche factor -> industry `driver_of`, issuer -> industry
+    `classified_as`, question -> factor `relevant_to` (factors.derive over each question's involves
+    edges, plus curated rows of seeds/question_links.csv) and question -> industry / issuer `affects`
+    (curated only). Curated factor links join a rule link as an extra path (channel "curated", sign =
+    what YES means for the factor) or stand alone with provenance "curated". involved = {question id: [(entity id, role, action, channel)]}, citizen_of = {entity id:
+    [country ids]}, name_of(node id) / start_of(question id) from the rest of the graph (start_of
+    returns False for a question not in it). Returns (nodes, edges)."""
+    import factors  # here, not at the top: factors reads seeds through this module
+    nodes, edges = [], []
+    for fid, f in factors.CATALOG.items():
+        nodes.append(node(f"factor:{fid}", "factor", f["name"], REFERENCE_VALID_FROM, layer=f["layer"], family=f["family"],
+                          definition=f["definition"], **({"side": f["side"], "earnings_sign": f["earnings_sign"]} if f["layer"] == "niche" else {})))
+    for src, dst, sign, why in factors.LINKS:
+        edges.append(edge(f"factor:{src}", f"factor:{dst}", "drives", REFERENCE_VALID_FROM, weight=None, confidence=0.3,
+                          provenance="analyst_prior", note=why, sign=float(sign)))
+    for code, ind in factors.INDUSTRIES.items():
+        nodes.append(node(f"gics:{code}", "industry", ind["name"], REFERENCE_VALID_FROM, code=code, industry_group=ind["industry_group"],
+                          sector=ind["sector"], sub_industries=ind["sub_industries"]))
+    for fid, f in factors.CATALOG.items():
+        for code, subs in factors.industries_of(fid).items():
+            edges.append(edge(f"factor:{fid}", f"gics:{code}", "driver_of", REFERENCE_VALID_FROM, weight=None, confidence=0.3,
+                              provenance="analyst_prior", sign=float(f["earnings_sign"]), side=f["side"], sub_industries=subs))
+    for i in issuers:
+        sub = factors.SUB_BY_NAME.get(i.get("sub_industry") or "")
+        if sub:
+            edges.append(edge(issuer_node_id(i["issuer_id"]), f"gics:{sub['industry_code']}", "classified_as", REFERENCE_VALID_FROM,
+                              provenance="reference", sub_industry=sub["sub_industry"], sub_industry_code=sub["sub_industry_code"]))
+    curated = defaultdict(list)  # (question, factor) -> curated paths
+    issuer_ids = {issuer_node_id(i["issuer_id"]) for i in issuers}
+    for r in factors.QUESTION_LINKS:
+        q, kind, target, sign = r["question_id"], r["target_type"], r["target_id"], int(r["sign"] or 0) or None
+        if start_of(q) is False: continue   # question not in this graph
+        if kind == "factor":
+            curated[(q, target)].append(dict(nodes=[], role=None, channel="curated", sign=sign, rationale=r["rationale"]))
+        else:
+            dst = f"gics:{target}" if kind == "industry" else issuer_node_id(target)
+            if kind == "issuer" and dst not in issuer_ids: continue
+            edges.append(edge(q, dst, "affects", start_of(q), weight=None, confidence=0.5, provenance="curated",
+                              note=r["rationale"], sign=float(sign) if sign else None))
+    for qid, inv in sorted(involved.items()):
+        for fid, paths in sorted(factors.derive(inv, citizen_of).items()):
+            paths += curated.pop((qid, fid), [])
+            edges.append(edge(qid, f"factor:{fid}", "relevant_to", start_of(qid), weight=None, confidence=0.3,
+                              provenance="analyst_prior", paths=paths,
+                              note="; ".join(dict.fromkeys((" -> ".join(name_of(x) for x in p["nodes"]) or p["rationale"]) + f" ({p['channel']})"
+                                                           for p in paths))))
+    for (qid, fid), paths in sorted(curated.items()):
+        edges.append(edge(qid, f"factor:{fid}", "relevant_to", start_of(qid), weight=None, confidence=0.5,
+                          provenance="curated", paths=paths, note="; ".join(p["rationale"] for p in paths)))
     return nodes, edges
 
 # ── diff + write ──────────────────────────────────────────────────────────────
@@ -487,7 +629,7 @@ def graph(con, run_id, errors, stats):
     insert(con, "graph_nodes", node_rows)
     insert(con, "graph_edges", edge_rows)
     con.commit()
-    stats |= {"inputs": inputs, "nodes": Counter(n["node_type"] for n in nodes.values()),
+    stats |= {"inputs": inputs, "wiki_not_looked_up": dict(entities.SKIPPED), "nodes": Counter(n["node_type"] for n in nodes.values()),
               "edges": Counter(e["edge_type"] for e in edges.values()),
               "node_changes": len(node_rows), "edge_changes": len(edge_rows)}
     return True
@@ -520,6 +662,8 @@ if __name__ == "__main__":
         what = sys.argv[sys.argv.index("--refresh") + 1:][:1]
         if not what or what[0] not in REFRESH_KINDS:
             sys.exit(f"usage: graph_build.py --refresh {{{'|'.join(REFRESH_KINDS)}}}")
+        if not entities.WIKI_FETCH:
+            sys.exit("--refresh re-fetches from Wikipedia / Wikidata: set WIKI_FETCH=1 to allow it")
         entities.REFRESH |= REFRESH_KINDS[what[0]]
         sys.exit(run_job("graph", graph))
     else:

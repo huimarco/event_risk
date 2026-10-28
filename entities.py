@@ -23,7 +23,7 @@ Every lookup is cached in MotherDuck (wiki_cache), so each phrase, entity and pa
 Refreshing a kind (REFRESH, set by `graph_build.py --refresh`) re-fetches it and appends the new
 values; the latest row wins and old values stay as history.
 """
-import json, math, re
+import json, math, os, re, time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
@@ -37,6 +37,12 @@ CONCEPT_MAX_DF = 0.01      # single lowercase words: concept if in < 1% of artic
 MIN_RELATEDNESS = 0.25     # keep entity <-> entity links at or above this
 MIN_COOCCURRENCE = 10      # ... and only with at least this many articles mentioning both
 REFRESH = set()            # cache kinds to re-fetch this run, e.g. {"entity"}
+# Wikipedia / Wikidata are only contacted when WIKI_FETCH=1 (decision 2026-10-28: off until the
+# user turns it back on). Off, lookups are answered from wiki_cache alone: a phrase or pair never
+# looked up counts as unknown (no article, no co-occurrence) and is NOT cached, so it gets looked up
+# once fetching is on again. SKIPPED counts those per kind, for the run's stats.
+WIKI_FETCH = os.getenv("WIKI_FETCH", "0") == "1"
+SKIPPED = {}
 _refreshed = {}            # kind -> keys already re-fetched this run
 # Wikidata statements kept as typed links between entities.
 PROPERTIES = {"P27": "citizen_of", "P17": "country", "P749": "parent_org", "P127": "owned_by",
@@ -66,6 +72,10 @@ def cached(con, kind, keys, fetch, batch=50, workers=1):
         have = {k: v for k, v in have.items() if k in done}
         done.update(keys)
     missing = [k for k in keys if k not in have]
+    if missing and not WIKI_FETCH:
+        SKIPPED[kind] = SKIPPED.get(kind, 0) + len(missing)
+        log.info("wiki %-10s %5d cached, %d not looked up (WIKI_FETCH off)", kind, len(have), len(missing))
+        return have | {k: None for k in missing}
     if missing: log.info("wiki %-10s %5d cached, fetching %d", kind, len(have), len(missing))
     new = {}
     with ThreadPoolExecutor(workers) as ex:  # saved batch by batch, so an interrupted run keeps its progress
@@ -75,12 +85,22 @@ def cached(con, kind, keys, fetch, batch=50, workers=1):
             new |= got
     return have | {k: new.get(k) for k in missing}
 
-def wiki(params, url=WIKI):
-    return get(url, dict(params, format="json", formatversion=2), headers=UA)
+def wiki(params, url=WIKI, tries=5):
+    """MediaWiki API call. Errors come back as HTTP 200 with an "error" body (rate limits, search
+    backend timeouts): retried with backoff, then raised with the API's own message."""
+    if not WIKI_FETCH: raise RuntimeError("Wikipedia / Wikidata fetching is off: set WIKI_FETCH=1 to allow it")
+    for i in range(tries):
+        d = get(url, dict(params, format="json", formatversion=2), headers=UA)
+        if "error" not in d: return d
+        log.warning("wiki error %s (try %d/%d)", d["error"].get("code"), i + 1, tries)
+        time.sleep(2 ** i)
+    raise RuntimeError(f"wiki API error: {d['error']}")
 
 def total_articles(con):
-    return cached(con, "meta", ["articles"], lambda _: {"articles": wiki(dict(
+    n = cached(con, "meta", ["articles"], lambda _: {"articles": wiki(dict(
         action="query", meta="siteinfo", siprop="statistics"))["query"]["statistics"]["articles"]})["articles"]
+    if n is None: raise RuntimeError("wiki_cache has no article count yet: run once with WIKI_FETCH=1")
+    return n
 
 # ── phrase -> article ─────────────────────────────────────────────────────────
 def fetch_titles(phrases):
@@ -178,6 +198,7 @@ def link(con, questions):
 
 def fetch_demonyms(words):
     """Countries whose Wikidata demonym (P1549) is the word: "Chinese" -> China. None if not exactly one."""
+    if not WIKI_FETCH: raise RuntimeError("Wikipedia / Wikidata fetching is off: set WIKI_FETCH=1 to allow it")
     values = " ".join(f'"{w}"@en' for w in words)
     rows = get(SPARQL, dict(format="json", query=f"""
         SELECT ?d ?c ?title WHERE {{ VALUES ?d {{ {values} }} ?c wdt:P1549 ?d ; wdt:P297 [] .
@@ -283,7 +304,7 @@ def discover(con, questions, in_scope=None):
 
 def build(con, questions, extra_qids=(), in_scope=None):
     """Entities for `questions` ({market key: question text}) that `in_scope` keeps, plus
-    `extra_qids` (e.g. entities that carry security exposures), their parents, and the links
+    `extra_qids` (e.g. entities that carry issuer exposures), their parents, and the links
     between all of them. `mentions` holds only in-scope questions."""
     node = lambda q: f"wd:{q}"
     mentions, found = discover(con, questions, in_scope)

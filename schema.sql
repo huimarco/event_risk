@@ -23,14 +23,59 @@ CREATE TABLE IF NOT EXISTS market_versions (
 --   source = 'backfill': backfill.py hourly history; ts = end of the hour; status NULL.
 --     Kalshi rows have bid/ask/last/OI/volume_24h; Polymarket rows only have `last`
 --     (the venue's historical price series).
+--   source = 'hourly' / 'daily': the same, for markets in less-traded events, snapshotted less
+--     often (collector.tier); 'realtime' rows come every run. All sources feed v_market_prob.
+--   volume = the market's lifetime $ volume (collector rows from 2026-10-27; NULL before).
 CREATE TABLE IF NOT EXISTS market_snapshots (
   source VARCHAR, run_id VARCHAR, ts TIMESTAMPTZ, venue VARCHAR, market_id VARCHAR, status VARCHAR,
   yes_bid DOUBLE, yes_ask DOUBLE, last DOUBLE, volume_24h DOUBLE, open_interest DOUBLE);
+ALTER TABLE market_snapshots ADD COLUMN IF NOT EXISTS volume DOUBLE;
 
 -- Daily security prices (prices.py). `date` is the exchange-local trading date.
 CREATE TABLE IF NOT EXISTS security_prices (
   ticker VARCHAR, date DATE, close DOUBLE, adj_close DOUBLE, volume DOUBLE, currency VARCHAR,
   source VARCHAR, fetched_at TIMESTAMPTZ, run_id VARCHAR);
+
+-- How each market ended (collector.py): one row when a market is first seen final. Calibration
+-- (api.py /calibration) needs these, and they can't be backfilled once venues stop serving old
+-- markets.
+--   result = yes | no | void (cancelled, or settled at a split price) | scalar (settled at another value)
+--   settlement_value = payout of the YES / first outcome in dollars (0-1)
+CREATE TABLE IF NOT EXISTS market_resolutions (
+  venue VARCHAR, market_id VARCHAR, status VARCHAR, result VARCHAR, settlement_value DOUBLE,
+  resolved_at TIMESTAMPTZ, observed_at TIMESTAMPTZ, run_id VARCHAR);
+
+-- Daily factor levels (prices.py) for the factors in seeds/factors.csv that have a `series`:
+-- index / FX / futures closes from Yahoo, credit spreads and yields from FRED (in percent).
+-- `date` is the source's own date (exchange-local for Yahoo, US for FRED). Latest fetch wins.
+CREATE TABLE IF NOT EXISTS factor_prices (
+  factor_id VARCHAR, series VARCHAR, date DATE, level DOUBLE, source VARCHAR,
+  fetched_at TIMESTAMPTZ, run_id VARCHAR);
+
+-- Measured question -> factor sensitivities (factor_betas.py), one full set per run; read the
+-- latest run. beta = factor move (units: % for prices, bp for spreads / yields) per +1.0 change
+-- in the question's probability; shrunk_* = empirical-Bayes estimate pooled across questions
+-- with the same factor and channel (see factor_betas.py).
+CREATE TABLE IF NOT EXISTS factor_betas (
+  run_id VARCHAR, computed_at TIMESTAMPTZ, question_id VARCHAR, factor_id VARCHAR, channel VARCHAR,
+  orientation DOUBLE, n_events INTEGER, beta DOUBLE, se DOUBLE, pooled_beta DOUBLE, pooled_se DOUBLE,
+  tau DOUBLE, shrunk_beta DOUBLE, shrunk_se DOUBLE, units VARCHAR, events JSON);
+
+-- Measured factor -> security loadings (security_betas.py), one full set per run; read the latest.
+-- beta = the security's weekly % move per unit weekly move of the factor (% or bp), controlling for
+-- the market (factor equity_us); for equity_us itself, the market beta.
+CREATE TABLE IF NOT EXISTS security_loadings (
+  run_id VARCHAR, computed_at TIMESTAMPTZ, ticker VARCHAR, factor_id VARCHAR,
+  beta DOUBLE, se DOUBLE, t DOUBLE, n_weeks INTEGER);
+
+-- Measured question -> security sensitivities (security_betas.py), % move of the security per +1.0
+-- of the question's probability: implied (via the question's factor moves x the security's joint
+-- factor loadings), beta / se (direct, market-adjusted, on the question's jump days), shrunk
+-- (direct shrunk toward implied). source = factor | structural | both (how the pair was found).
+CREATE TABLE IF NOT EXISTS security_betas (
+  run_id VARCHAR, computed_at TIMESTAMPTZ, question_id VARCHAR, ticker VARCHAR, source VARCHAR,
+  implied DOUBLE, implied_factors JSON, n_events INTEGER, beta DOUBLE, se DOUBLE, tau DOUBLE,
+  shrunk DOUBLE, shrunk_se DOUBLE, units VARCHAR, events JSON);
 
 -- Wikipedia / Wikidata lookups (entities.py), fetched once per key. Latest row per (kind, key) wins.
 --   kind = title (phrase -> article), df (word -> share of articles containing it),
