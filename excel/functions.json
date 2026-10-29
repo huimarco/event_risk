@@ -36,6 +36,20 @@
           "type": "string",
           "dimensionality": "scalar",
           "optional": true
+        },
+        {
+          "name": "factor",
+          "description": "Optional factor id, e.g. \"brent\" or \"credit_us_hy\": only questions linked to this factor.",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "industry",
+          "description": "Optional GICS industry code, e.g. \"453010\" (Semiconductors): only questions reachable via that industry's niche factors. Get codes from ER.INDUSTRIES.",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
         }
       ]
     },
@@ -276,7 +290,7 @@
     {
       "id": "FACTOR",
       "name": "FACTOR",
-      "description": "A factor's latest level (default) or a field: level, level_date, name, family, units, series, definition.",
+      "description": "A factor's latest level (default) or a field: level, level_date, name, layer (macro|niche), family, units, series, definition.",
       "result": {
         "type": "any",
         "dimensionality": "scalar"
@@ -351,6 +365,214 @@
           "name": "outcome",
           "description": "Optional: \"yes\" (default) or \"no\".",
           "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "INDUSTRIES",
+      "name": "INDUSTRIES",
+      "description": "Spills GICS industries (id, name, code, sector, industry_group, n_issuers, n_factors). Use the code in ER.QUESTIONS industry filter or ER.ISSUERS to find issuers in a sector.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "description": "Optional name or sector fragment, e.g. \"Semiconductor\" or \"Energy\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "sector",
+          "description": "Optional exact GICS sector name, e.g. \"Information Technology\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "ISSUERS",
+      "name": "ISSUERS",
+      "description": "Spills a table of issuers (id, name, country, sector, sub_industry, n_exposures). Optionally filter by name fragment. Use the id in ER.EXPOSURES.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "description": "Optional name fragment, e.g. \"Samsung\" or \"Taiwan\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "EXPOSURES",
+      "name": "EXPOSURES",
+      "description": "Spills an issuer's event exposures: question id, name, prob, 24h change, score (relevance 0-1), impact (signed: + = issuer benefits if YES), direction and risk (|impact| × √(p(1−p))). Sorted by risk by default.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "issuer_id",
+          "description": "Issuer id from ER.ISSUERS, e.g. iss:Q713418.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 50.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "sort",
+          "description": "Optional: \"risk\" (default), \"score\" or \"impact\".",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "SECURITIES",
+      "name": "SECURITIES",
+      "description": "Spills the top securities with a measured sensitivity to a question: ticker, name, issuer, beta (% move per +1.0 probability), move if YES/NO at the current price, and number of events measured.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "Question (q:...) or proposition (prop:...) id.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 15.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "LOADINGS",
+      "name": "LOADINGS",
+      "description": "Spills a security's factor loadings: factor id, name, units, beta (weekly % move per unit factor move, controlling for the market), se, t-stat and whether |t| ≥ 3. Rows with |t| ≥ 3 listed first.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "ticker",
+          "description": "Security ticker, e.g. TSM or AAPL.",
+          "type": "string",
+          "dimensionality": "scalar"
+        }
+      ]
+    },
+    {
+      "id": "SECURITY_EXPOSURES",
+      "name": "SECURITY_EXPOSURES",
+      "description": "Spills the questions a security moves with (measured betas): question id, name, prob, 24h change, beta, move if YES/NO, risk and found_by (factor / structural / both).",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "ticker",
+          "description": "Security ticker, e.g. TSM.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 50.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "sort",
+          "description": "Optional: \"risk\" (default), \"move\" (|beta|) or \"evidence\" (n_events).",
+          "type": "string",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "FACTOR_SECURITIES",
+      "name": "FACTOR_SECURITIES",
+      "description": "Spills securities with a measured loading on a factor, largest |t| first: ticker, name, issuer, units, beta, se, t-stat, significant (|t| ≥ 3).",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "factor_id",
+          "description": "Factor id, e.g. brent or credit_us_hy.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "limit",
+          "description": "Optional max rows. Default 50.",
+          "type": "number",
+          "dimensionality": "scalar",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "FACTOR_HISTORY",
+      "name": "FACTOR_HISTORY",
+      "description": "Spills daily levels of a factor (date, level) in its units (% for indices and FX, bp for credit spreads and yields). Default: the last year.",
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      },
+      "parameters": [
+        {
+          "name": "factor_id",
+          "description": "Factor id, e.g. brent or equity_us.",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "start",
+          "description": "Optional start date. Default one year before end.",
+          "type": "any",
+          "dimensionality": "scalar",
+          "optional": true
+        },
+        {
+          "name": "end",
+          "description": "Optional end date. Default today.",
+          "type": "any",
           "dimensionality": "scalar",
           "optional": true
         }

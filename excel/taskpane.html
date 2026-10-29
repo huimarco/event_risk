@@ -17,14 +17,19 @@
   .row { display: flex; gap: 6px; margin-top: 6px; }
   .row input { flex: 1; }
   .muted { color: #6b7785; font-size: 12px; }
-  .err { color: #b42318; }
+  .err { color: #b42318; font-size: 12px; }
   ul { list-style: none; padding: 0; margin: 6px 0 0; }
   li { padding: 6px; border-bottom: 1px solid #eef1f4; cursor: pointer; }
   li:hover { background: #f3f6fa; }
   li .meta { display: flex; justify-content: space-between; color: #6b7785; font-size: 12px; margin-top: 2px; }
   .up { color: #067647; } .down { color: #b42318; }
   code { font: 12px Consolas, monospace; background: #f3f6fa; padding: 0 3px; }
-  dl { margin: 0; } dt { margin-top: 6px; } dd { margin: 0 0 0 8px; color: #6b7785; font-size: 12px; }
+  dl { margin: 0; }
+  dt { margin-top: 8px; }
+  dd { margin: 0 0 0 8px; color: #6b7785; font-size: 12px; }
+  .fn-group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9aa5b1;
+               margin: 14px 0 4px; border-top: 1px solid #eef1f4; padding-top: 8px; }
+  .fn-group:first-child { border-top: none; margin-top: 0; }
 </style>
 </head>
 <body>
@@ -33,12 +38,22 @@
 <div class="muted">Click a result to add a live row at the selected cell: id, name, probability, 24h change, and the rung the probability comes from.</div>
 <ul id="results"></ul>
 
+<h2>Find an issuer</h2>
+<div class="row"><input id="issuerQ" placeholder="e.g. Samsung, TSMC, ExxonMobil"><button id="issuerSearch">Search</button></div>
+<div class="muted">Click a result to insert <code>=ER.EXPOSURES(…)</code> at the active cell — the question-level event risk table for that holding.</div>
+<ul id="issuerResults"></ul>
+
 <h2>Stress sheet</h2>
 <div class="row"><input id="stressId" placeholder="question id (q:…), or select a cell holding one"><button id="stress">Insert</button></div>
 <div class="muted">Adds a sheet with the question's factors and how much each moves if it resolves YES or NO now. Type your
 holdings' loadings (P&amp;L per 1% of a % factor, per 1 bp of a bp factor) in the yellow column: P&amp;L is computed in the
 workbook, and holdings never leave it.</div>
 <div id="stressMsg" class="muted"></div>
+
+<h2>Exposure sheet</h2>
+<div class="row"><input id="exposureId" placeholder="issuer id (iss:…), or select a cell holding one"><button id="exposure">Insert</button></div>
+<div class="muted">Adds a sheet with the issuer's event exposures — every live question it is exposed to, sorted by risk, with score, signed impact and direction.</div>
+<div id="exposureMsg" class="muted"></div>
 
 <h2>Refresh</h2>
 <div class="row"><button id="refresh" class="secondary">Refresh all Event Risk formulas</button></div>
@@ -50,7 +65,9 @@ workbook, and holdings never leave it.</div>
 
 <h2>Functions</h2>
 <dl>
-  <dt><code>=ER.QUESTIONS([query], [limit], [sort], [entity])</code></dt><dd>Search questions; the first column is the id the other functions take.</dd>
+  <div class="fn-group">Questions</div>
+  <dt><code>=ER.QUESTIONS([query], [limit], [sort], [entity], [factor], [industry])</code></dt>
+  <dd>Search questions. Filter by entity name ("Iran"), factor id ("brent"), or GICS industry code ("453010"). First column is the id other functions take.</dd>
   <dt><code>=ER.ENTITY(name, [limit])</code></dt><dd>Questions involving a country, person or organisation, e.g. "Iran".</dd>
   <dt><code>=ER.PROB(id)</code></dt><dd>Probability, 0–1.</dd>
   <dt><code>=ER.CHANGE(id)</code></dt><dd>24h change in probability.</dd>
@@ -59,16 +76,27 @@ workbook, and holdings never leave it.</div>
   <dt><code>=ER.RUNGS(question_id)</code></dt><dd>A question's ladder: every deadline / threshold, with rung ids.</dd>
   <dt><code>=ER.CONTRACTS(id)</code></dt><dd>The Kalshi / Polymarket contracts behind it, with their rules.</dd>
   <dt><code>=ER.HISTORY(id, [start], [end], [interval])</code></dt><dd>Probability over time (daily by default).</dd>
-  <dt><code>=ER.CURVE(question_id)</code></dt><dd>A deadline question as a term structure: probability per period, conditional on not before, annualized hazard.</dd>
+  <dt><code>=ER.CURVE(question_id)</code></dt><dd>Term structure: probability per period, conditional hazard and annualized hazard rate.</dd>
   <dt><code>=ER.PROB_BY(question_id, date, [extrapolate])</code></dt><dd>P(event by a date), e.g. a bond's maturity.</dd>
+
+  <div class="fn-group">Factors</div>
   <dt><code>=ER.FACTORS(id)</code></dt><dd>Factors the question moves, with the measured move per +1.0 probability and if it resolves YES / NO.</dd>
-  <dt><code>=ER.FACTOR(factor_id, [field])</code></dt><dd>A factor's latest level (e.g. credit_us_hy in %), or name, units, series.</dd>
+  <dt><code>=ER.FACTOR(factor_id, [field])</code></dt><dd>A factor's latest level (default), or name, layer (macro|niche), family, units, series, definition.</dd>
+  <dt><code>=ER.FACTOR_HISTORY(factor_id, [start], [end])</code></dt><dd>Daily levels of a factor (date, level in % or bp). Default: last year.</dd>
   <dt><code>=ER.SENSITIVITY(id, factor_id)</code></dt><dd>Factor move per +1.0 of probability, in % or bp.</dd>
   <dt><code>=ER.STRESS(id, factor_ids, loadings, ["yes"|"no"])</code></dt><dd>Σ loading × factor move if it resolves: your P&amp;L, computed in Excel.</dd>
+  <dt><code>=ER.FACTOR_SECURITIES(factor_id, [limit])</code></dt><dd>Securities with a measured loading on a factor, largest |t| first.</dd>
+
+  <div class="fn-group">Issuers &amp; Securities</div>
+  <dt><code>=ER.INDUSTRIES([query], [sector])</code></dt><dd>GICS industry table with 6-digit codes. Use a code in ER.QUESTIONS industry filter.</dd>
+  <dt><code>=ER.ISSUERS([query], [limit])</code></dt><dd>Search issuers by name. First column is the id for ER.EXPOSURES.</dd>
+  <dt><code>=ER.EXPOSURES(issuer_id, [limit], [sort])</code></dt><dd>Questions the issuer is exposed to: prob, score, signed impact, direction and risk. Sort: risk (default), score, impact.</dd>
+  <dt><code>=ER.SECURITIES(question_id, [limit])</code></dt><dd>Securities with a measured beta to a question: ticker, beta, move if YES/NO.</dd>
+  <dt><code>=ER.LOADINGS(ticker)</code></dt><dd>A security's factor loadings: beta, se, t-stat. |t| ≥ 3 rows first.</dd>
+  <dt><code>=ER.SECURITY_EXPOSURES(ticker, [limit], [sort])</code></dt><dd>Questions a security moves with: beta, move if YES/NO, risk, found_by. Sort: risk, move, evidence.</dd>
 </dl>
-<p class="muted">Ids: q:… question, prop:… one rung (one deadline or threshold), mkt:… one venue contract.
-A question's probability is its <b>headline rung</b>: the live rung with the most trading in the last 24h. It can switch
-as trading moves; use a rung id from RUNGS to track one deadline over time.</p>
+<p class="muted">Ids: <b>q:…</b> question &nbsp;·&nbsp; <b>prop:…</b> one rung &nbsp;·&nbsp; <b>mkt:…</b> one venue contract &nbsp;·&nbsp; <b>iss:…</b> issuer.<br>
+A question's probability is its <b>headline rung</b>: the live rung with the most trading in the last 24h. Use a rung id from RUNGS to track one deadline over time.</p>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -78,6 +106,8 @@ const pct = v => v === null || v === undefined ? "–" : (100 * v).toFixed(1) + 
 const pts = v => v === null || v === undefined ? "" : (v >= 0 ? "+" : "") + (100 * v).toFixed(1) + " pts";
 
 function show(el, text, isError) { el.textContent = text; el.className = isError ? "err" : "muted"; }
+
+// ── Question search ──────────────────────────────────────────────────────────
 
 async function search() {
   const list = $("results");
@@ -91,8 +121,7 @@ async function search() {
       li.innerHTML = `<div></div><div class="meta"><span>${pct(p.prob)}</span>
         <span class="${p.change_24h > 0 ? "up" : p.change_24h < 0 ? "down" : ""}">${pts(p.change_24h)}</span></div>`;
       li.firstChild.textContent = p.name;
-      li.title = `${p.id}
-Headline: ${p.headline ? p.headline.name : "–"}`;
+      li.title = `${p.id}\nHeadline: ${p.headline ? p.headline.name : "–"}`;
       li.onclick = () => insertRow(p.id);
       list.appendChild(li);
     }
@@ -117,9 +146,41 @@ async function insertRow(id) {
   });
 }
 
-// A sheet for one question: its factors (ids written once), live sensitivity formulas, a yellow
-// loadings column for the user's own numbers, P&L per factor and totals. For a deadline question
-// also P(event by a date) for a maturity the user types in.
+// ── Issuer search ────────────────────────────────────────────────────────────
+
+async function searchIssuers() {
+  const list = $("issuerResults");
+  list.innerHTML = "<li class='muted'>Searching…</li>";
+  try {
+    const r = await EventRisk.request("/issuers", { q: $("issuerQ").value.trim() || undefined });
+    const top = r.sort((a, b) => (b.n_exposures || 0) - (a.n_exposures || 0)).slice(0, 25);
+    list.innerHTML = "";
+    if (!top.length) list.innerHTML = "<li class='muted'>No issuers match.</li>";
+    for (const iss of top) {
+      const li = document.createElement("li");
+      li.innerHTML = `<div></div><div class="meta"><span>${iss.country || ""}</span><span>${iss.sector || ""}</span></div>`;
+      li.firstChild.textContent = iss.name;
+      li.title = iss.id;
+      li.onclick = () => insertExposuresFormula(iss.id);
+      list.appendChild(li);
+    }
+  } catch (e) {
+    list.innerHTML = "";
+    const li = document.createElement("li"); li.className = "err"; li.textContent = e.message; list.appendChild(li);
+  }
+}
+
+// Writes =ER.EXPOSURES("iss:…") at the active cell as a spill formula.
+async function insertExposuresFormula(id) {
+  await Excel.run(async ctx => {
+    const cell = ctx.workbook.getActiveCell();
+    cell.formulas = [[`=${NS}.EXPOSURES("${id}", 50, "risk")`]];
+    await ctx.sync();
+  });
+}
+
+// ── Stress sheet ─────────────────────────────────────────────────────────────
+
 async function insertStress() {
   const msg = $("stressMsg");
   try {
@@ -160,7 +221,7 @@ async function insertStress() {
       ws.getRange(`E7:F${last}`).numberFormat = Array(n).fill(["0.00", "0.00"]);
       ws.getRange(`A${last + 1}:I${last + 1}`).formulas = [["Total", "", "", "", "", "", "", `=SUM(H7:H${last})`, `=SUM(I7:I${last})`]];
       ws.getRange(`A${last + 1}:I${last + 1}`).format.font.bold = true;
-      ws.getRange("A:J").format.autofitColumns();  // before the notes below, so they don't widen column A
+      ws.getRange("A:J").format.autofitColumns();
       ws.getRange(`A${last + 3}:A${last + 4}`).values = [["Moves are in the factor's units: % = percent change, bp = basis points. Estimated from past jumps in this question's odds (shrunk toward similar questions); 0 events = the pooled estimate only."],
                                                         ["Loadings and P&L stay in this workbook: nothing is sent to the Event Risk API."]];
       ws.activate();
@@ -169,6 +230,54 @@ async function insertStress() {
     show(msg, "Sheet added. Type loadings in the yellow column.");
   } catch (e) { show(msg, e.message, true); }
 }
+
+// ── Exposure sheet ───────────────────────────────────────────────────────────
+
+async function insertExposureSheet() {
+  const msg = $("exposureMsg");
+  try {
+    let id = $("exposureId").value.trim();
+    if (!id) await Excel.run(async ctx => {
+      const c = ctx.workbook.getActiveCell(); c.load("values"); await ctx.sync();
+      id = String(c.values[0][0] || "").trim();
+    });
+    if (!id) throw new Error("enter an issuer id (iss:…) or select a cell holding one");
+
+    const r = await EventRisk.request(`/issuers/${encodeURIComponent(id)}`, {});
+
+    await Excel.run(async ctx => {
+      const sheets = ctx.workbook.worksheets; sheets.load("items/name"); await ctx.sync();
+      const taken = new Set(sheets.items.map(w => w.name));
+      const base = r.name.slice(0, 28);
+      let sheetName = base, i = 2;
+      while (taken.has(sheetName)) sheetName = `${base.slice(0, 26)} ${i++}`;
+      const ws = sheets.add(sheetName);
+
+      ws.getRange("A1:B4").values = [
+        ["Issuer", r.id],
+        ["Name", r.name],
+        ["Country", r.country || ""],
+        ["Sector / sub-industry", r.sub_industry ? `${r.sector} — ${r.sub_industry}` : (r.sector || "")],
+      ];
+      ws.getRange("A1:A4").format.font.bold = true;
+
+      ws.getRange("A6").values = [["Event exposures — live questions, sorted by risk  (|impact| × √(p(1−p)))"]];
+      ws.getRange("A6").format.font.bold = true;
+      ws.getRange("A6").format.font.italic = true;
+
+      // Spill the EXPOSURES formula; headers come from the function itself.
+      ws.getRange("A7").formulas = [[`=${NS}.EXPOSURES("${r.id}", 100, "risk")`]];
+
+      ws.getRange("A:H").format.autofitColumns();
+      ws.getRange(`A${ws.getRange("A7").getEntireColumn().address}`);  // just trigger autofit
+      ws.activate();
+      await ctx.sync();
+    });
+    show(msg, "Sheet added.");
+  } catch (e) { show(msg, e.message, true); }
+}
+
+// ── Refresh / health / key ───────────────────────────────────────────────────
 
 async function refresh() {
   EventRisk.clearCache();
@@ -195,9 +304,12 @@ Office.onReady(() => {
   $("key").value = localStorage.getItem("apiKey") || "";
   $("search").onclick = search;
   $("q").onkeydown = e => { if (e.key === "Enter") search(); };
+  $("issuerSearch").onclick = searchIssuers;
+  $("issuerQ").onkeydown = e => { if (e.key === "Enter") searchIssuers(); };
   $("refresh").onclick = refresh;
   $("saveKey").onclick = saveKey;
   $("stress").onclick = insertStress;
+  $("exposure").onclick = insertExposureSheet;
   health();
 });
 </script>

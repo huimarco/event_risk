@@ -428,6 +428,8 @@ def health(cur=Depends(db)):
 @app.get("/questions")
 def list_questions(q: str | None = Query(None, description="Substring of the question name"),
                    entity: str | None = Query(None, description="Only questions involving this entity (id or name, e.g. Iran)"),
+                   factor: str | None = Query(None, description="Only questions linked to this factor (id, e.g. brent)"),
+                   industry: str | None = Query(None, description="Only questions reaching this GICS industry via its niche factors (6-digit code or gics:… id)"),
                    sort: str = Query("move", pattern="^(move|prob|name)$"),
                    limit: int = Query(50, le=500), include_closed: bool = IncludeClosed,
                    cur=Depends(db)):
@@ -437,9 +439,28 @@ def list_questions(q: str | None = Query(None, description="Substring of the que
     g = graph(cur)
     if entity:
         entity = g.entity(entity) or g.get(entity, "entity")["id"]  # unknown -> 404
+    factor_node = f"factor:{factor.removeprefix('factor:')}" if factor else None
+    if factor_node and factor_node not in g.nodes:
+        raise HTTPException(404, f"factor {factor} not found")
+    # industry filter: questions linked to niche factors that drive the industry, or curated affects edges
+    industry_qids = None
+    if industry:
+        ind_code = industry.removeprefix("gics:")
+        nid = f"gics:{ind_code if len(ind_code) != 8 else ind_code[:6]}"
+        if nid not in g.nodes or g.nodes[nid]["type"] != "industry":
+            raise HTTPException(404, f"industry {industry} not found")
+        industry_qids = set()
+        for d in g.inc[nid]:
+            if d["type"] == "driver_of":
+                for e in g.inc[d["src"]]:
+                    if e["type"] == "relevant_to": industry_qids.add(e["src"])
+            elif d["type"] == "affects":
+                industry_qids.add(d["src"])
     qids = [i for i, n in g.nodes.items() if n["type"] == "question"
             and (not q or q.lower() in n["name"].lower())
-            and (not entity or any(e["dst"] == entity for e in g.out[i] if e["type"] == "involves"))]
+            and (not entity or any(e["dst"] == entity for e in g.out[i] if e["type"] == "involves"))
+            and (not factor_node or any(e["dst"] == factor_node for e in g.out[i] if e["type"] == "relevant_to"))
+            and (industry_qids is None or i in industry_qids)]
     qp = question_probs(cur, g, qids, at)
     rows = [question_summary(g, x, qp) for x in qids if include_closed or qp[x]["status"] == "live"]
     return dict(as_of=at, count=len(rows), questions=sorted(rows, key=SORTS[sort])[:limit])

@@ -124,8 +124,8 @@ async function field(id, fieldName) {
   return typeof v === "string" ? v.slice(0, 32767) : v;   // Excel's cell text limit
 }
 
-async function questions(query, limit, sort, entity) {
-  const r = await request("/questions", { q: query, limit: limit || 20, sort: sort || "move", entity });
+async function questions(query, limit, sort, entity, factor, industry) {
+  const r = await request("/questions", { q: query, limit: limit || 20, sort: sort || "move", entity, factor, industry });
   return [["id", "name", "prob", "change_24h", "rungs", "headline"],
           ...r.questions.map(q => [q.id, q.name, blank(q.prob), blank(q.change_24h), q.n_rungs,
                                    q.headline ? q.headline.name : ""])];
@@ -219,7 +219,7 @@ async function factorsOf(id) {
 }
 
 // FACTOR(factor_id, [field]): the factor's latest level (default) or one catalog field.
-const FACTOR_FIELDS = ["level", "level_date", "name", "family", "units", "series", "definition"];
+const FACTOR_FIELDS = ["level", "level_date", "name", "layer", "family", "units", "series", "definition"];
 async function factor(id, fieldName) {
   const f = String(fieldName ?? "level").trim().toLowerCase() || "level";
   if (!FACTOR_FIELDS.includes(f)) throw fail(`unknown field "${fieldName}"; one of: ${FACTOR_FIELDS.join(", ")}`,
@@ -263,6 +263,101 @@ async function stress(id, factorIds, loadings, outcome) {
   return total;
 }
 
+// INDUSTRIES([query], [sector]): browse GICS industries to find codes for ER.QUESTIONS industry filter.
+// Returns id (gics:XXXXXX), name, code, sector, industry_group, n_issuers, n_factors.
+async function industries(query, sector) {
+  const r = await request("/industries", { sector: sector || undefined });
+  const rows = query ? r.filter(x => x.name.toLowerCase().includes(String(query).toLowerCase())
+                                  || (x.sector || "").toLowerCase().includes(String(query).toLowerCase())) : r;
+  if (!rows.length) throw fail("no industries found");
+  return [["id", "name", "code", "sector", "industry_group", "n_issuers", "n_factors"],
+          ...rows.map(x => [x.id, x.name, x.code, x.sector || "", x.industry_group || "", x.n_issuers, x.n_factors])];
+}
+
+// ISSUERS([query], [limit]): search issuers by name fragment; returns id, name, country, sector,
+// sub-industry and number of entity exposures. Use the id column in ER.EXPOSURES.
+async function issuers(query, limit) {
+  const r = await request("/issuers", { q: query || undefined });
+  const rows = limit ? r.slice(0, Number(limit)) : r;
+  if (!rows.length) throw fail("no issuers found");
+  return [["id", "name", "country", "sector", "sub_industry", "n_exposures"],
+          ...rows.map(x => [x.id, x.name, blank(x.country), blank(x.sector), blank(x.sub_industry), x.n_exposures])];
+}
+
+// EXPOSURES(issuer_id, [limit], [sort]): questions the issuer is exposed to, sorted by risk
+// (|impact| × √(p(1−p))). score = relevance 0–1; impact = signed (+ = issuer benefits if YES);
+// risk = uncertainty-weighted impact. issuer_id from ER.ISSUERS or the web (iss:Q...).
+async function exposures(issuerId, limit, sort) {
+  const r = await request(`/issuers/${encodeURIComponent(String(issuerId).trim())}/exposures`,
+                          { limit: limit || 50, sort: sort || "risk" });
+  if (!r.exposures.length) throw fail("no exposures found");
+  return [["question_id", "name", "prob", "change_24h", "score", "impact", "direction", "risk"],
+          ...r.exposures.map(e => [e.id, e.name, blank(e.prob), blank(e.change_24h),
+                                   e.score, blank(e.impact), e.direction || "", blank(e.risk)])];
+}
+
+// SECURITIES(question_id, [limit]): top securities with a measured sensitivity to a question
+// (from security_betas.py). beta = % move per +1.0 probability; move_if_yes/no = at the current price.
+async function securities(id, limit) {
+  if (kindOf(id) === "market") throw fail("SECURITIES takes a q: or prop: id", CustomFunctions.ErrorCode.invalidValue);
+  const r = await record(id);
+  const rows = (r.securities || []).slice(0, limit || 15);
+  if (!rows.length) throw fail("no measured securities for this question");
+  return [["ticker", "name", "issuer", "beta", "move_if_yes", "move_if_no", "n_events"],
+          ...rows.map(s => {
+            const sens = s.sensitivity || {};
+            return [s.ticker, s.name, s.issuer ? s.issuer.name : "",
+                    blank(sens.beta), blank(sens.move_if_yes), blank(sens.move_if_no), blank(sens.n_events)];
+          })];
+}
+
+// LOADINGS(ticker): a security's factor loadings — weekly % move per unit factor move, controlling
+// for the market (security_betas.py, 156-week window). |t| ≥ 3 rows listed first.
+async function loadings(ticker) {
+  const r = await request(`/securities/${encodeURIComponent(String(ticker).trim())}`, {});
+  if (!r.loadings || !r.loadings.length) throw fail("no factor loadings for this security");
+  return [["factor_id", "factor_name", "units", "beta", "se", "t", "significant"],
+          ...r.loadings.map(l => [l.factor.id, l.factor.name, l.factor.units || "",
+                                  blank(l.beta), blank(l.se), blank(l.t), l.significant])];
+}
+
+// SECURITY_EXPOSURES(ticker, [limit], [sort]): questions a security moves with (measured betas).
+// sort: "risk" (default), "move" (|beta|), or "evidence" (n_events). found_by = factor/structural/both.
+async function securityExposures(ticker, limit, sort) {
+  const r = await request(`/securities/${encodeURIComponent(String(ticker).trim())}/exposures`,
+                          { limit: limit || 50, sort: sort || "risk" });
+  if (!r.exposures || !r.exposures.length) throw fail("no measured exposures for this security");
+  return [["question_id", "name", "prob", "change_24h", "beta", "move_if_yes", "move_if_no", "risk", "found_by"],
+          ...r.exposures.map(e => {
+            const s = e.sensitivity || {};
+            return [e.id, e.name, blank(e.prob), blank(e.change_24h), blank(s.beta),
+                    blank(s.move_if_yes), blank(s.move_if_no), blank(e.risk), s.found_by || ""];
+          })];
+}
+
+// FACTOR_SECURITIES(factor_id, [limit]): securities with a measured loading on a factor, |t| first.
+// beta = weekly % move per 1% (or 1 bp) factor move, controlling for the market.
+async function factorSecurities(factorId, limit) {
+  const fid = String(factorId ?? "").trim().replace(/^factor:/, "");
+  const r = await request(`/factors/${encodeURIComponent(fid)}/securities`, { limit: limit || 50 });
+  if (!r.securities || !r.securities.length) throw fail(r.note || "no measured loadings for this factor");
+  return [["ticker", "name", "issuer", "units", "beta", "se", "t", "significant"],
+          ...r.securities.map(s => [s.security.ticker || s.security.name, s.security.name,
+                                    s.issuer ? s.issuer.name : "", r.factor.units || "",
+                                    blank(s.beta), blank(s.se), blank(s.t), s.significant])];
+}
+
+// FACTOR_HISTORY(factor_id, [start], [end]): daily levels of a factor (default: last year).
+// Returns date and level in the factor's units (% for indices/FX, bp for credit spreads).
+async function factorHistory(factorId, start, end) {
+  const fid = String(factorId ?? "").trim().replace(/^factor:/, "");
+  const from = isoTime(start), to = isoTime(end);
+  const r = await request(`/factors/${encodeURIComponent(fid)}/history`,
+                          { start: from ? from.slice(0, 10) : undefined, end: to ? to.slice(0, 10) : undefined });
+  if (!r.points || !r.points.length) throw fail(r.note || "no price history for this factor");
+  return [["date", "level"], ...r.points.map(p => [excelDate(p.date), p.level])];
+}
+
 CustomFunctions.associate("QUESTIONS", questions);
 CustomFunctions.associate("ENTITY", entity);
 CustomFunctions.associate("PROB", prob);
@@ -278,6 +373,14 @@ CustomFunctions.associate("FACTORS", factorsOf);
 CustomFunctions.associate("FACTOR", factor);
 CustomFunctions.associate("SENSITIVITY", sensitivity);
 CustomFunctions.associate("STRESS", stress);
+CustomFunctions.associate("INDUSTRIES", industries);
+CustomFunctions.associate("ISSUERS", issuers);
+CustomFunctions.associate("EXPOSURES", exposures);
+CustomFunctions.associate("SECURITIES", securities);
+CustomFunctions.associate("LOADINGS", loadings);
+CustomFunctions.associate("SECURITY_EXPOSURES", securityExposures);
+CustomFunctions.associate("FACTOR_SECURITIES", factorSecurities);
+CustomFunctions.associate("FACTOR_HISTORY", factorHistory);
 
 // Shared with the task pane.
 window.EventRisk = { request, clearCache: () => cache.clear() };
