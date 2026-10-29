@@ -73,8 +73,10 @@ def security_rows(con, run_id, errors):
     return tickers, rows
 
 def factor_rows(con, run_id, errors):
-    last = dict(con.execute("SELECT factor_id, max(date) FROM factor_prices GROUP BY 1").fetchall())
     series, rows, fetched_at = factor_series(), [], now()
+    # per factor *and series*: a factor switched to a new series loads that series' full history
+    last = {f: d for f, s, d in con.execute("SELECT factor_id, series, max(date) FROM factor_prices GROUP BY 1, 2").fetchall()
+            if series.get(f) == s}
     for f, s in series.items():
         source, _, sid = s.partition(":")
         since = since_after(last.get(f))

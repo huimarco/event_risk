@@ -646,17 +646,17 @@ q:kalshi:KXNEXTCHANCELLOR-27-WSTR,factor,fx_gbp,0,New Chancellor shifts fiscal s
 q:kalshi:KXNEXTCHANCELLOR-27-YCOO,factor,equity_uk,0,UK fiscal policy change
 q:kalshi:KXNEXTCHANCELLOR-27-YCOO,factor,fx_gbp,0,New Chancellor shifts fiscal stance
 q:kalshi:KXNEXTECBPRES-28JAN01-FPAN,factor,fx_eur,-1,Dovish tilt weakens euro
-q:kalshi:KXNEXTECBPRES-28JAN01-FPAN,factor,rates_ecb_policy,-1,Dovish ECB president
+q:kalshi:KXNEXTECBPRES-28JAN01-FPAN,factor,rates_ecb_policy,1,Dovish ECB president (sign flipped 2026-10-28: factor is now a bond price)
 q:kalshi:KXNEXTECBPRES-28JAN01-JNAG,factor,euro_hicp,-1,Tighter stance lowers inflation path
 q:kalshi:KXNEXTECBPRES-28JAN01-JNAG,factor,fx_eur,1,Hawkish ECB supports euro
-q:kalshi:KXNEXTECBPRES-28JAN01-JNAG,factor,rates_ecb_policy,1,Hawkish ECB chief tilts rates higher
+q:kalshi:KXNEXTECBPRES-28JAN01-JNAG,factor,rates_ecb_policy,-1,Hawkish ECB chief tilts rates higher (sign flipped 2026-10-28: factor is now a bond price)
 q:kalshi:KXNEXTECBPRES-28JAN01-KKNO,factor,euro_hicp,-1,Tighter stance lowers inflation path
 q:kalshi:KXNEXTECBPRES-28JAN01-KKNO,factor,fx_eur,1,Hawkish ECB supports euro
-q:kalshi:KXNEXTECBPRES-28JAN01-KKNO,factor,rates_ecb_policy,1,Hawkish ECB chief tilts rates higher
+q:kalshi:KXNEXTECBPRES-28JAN01-KKNO,factor,rates_ecb_policy,-1,Hawkish ECB chief tilts rates higher (sign flipped 2026-10-28: factor is now a bond price)
 q:kalshi:KXNEXTECBPRES-28JAN01-NCAL,factor,fx_eur,-1,Dovish ECB weakens euro
-q:kalshi:KXNEXTECBPRES-28JAN01-NCAL,factor,rates_ecb_policy,-1,Dovish ECB chief tilts rates lower
+q:kalshi:KXNEXTECBPRES-28JAN01-NCAL,factor,rates_ecb_policy,1,Dovish ECB chief tilts rates lower (sign flipped 2026-10-28: factor is now a bond price)
 q:kalshi:KXNEXTECBPRES-28JAN01-OREH,factor,fx_eur,-1,Dovish ECB weakens euro
-q:kalshi:KXNEXTECBPRES-28JAN01-OREH,factor,rates_ecb_policy,-1,Dovish Rehn ECB presidency lowers rate path
+q:kalshi:KXNEXTECBPRES-28JAN01-OREH,factor,rates_ecb_policy,1,Dovish Rehn ECB presidency lowers rate path (sign flipped 2026-10-28: factor is now a bond price)
 q:kalshi:KXNEXTNATOSECGEN-99-KKAL,factor,ad_defense_budgets,1,Hawkish NATO chief pushes procurement
 q:kalshi:KXNEXTNATOSECGEN-99-KKAL,factor,defense_spending,1,Hawkish NATO chief pushes budgets
 q:kalshi:KXNEXTROMANIAPM-45JAN01-DVEL,factor,credit_em_emea,-1,IMF economist PM signals consolidation

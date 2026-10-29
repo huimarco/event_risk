@@ -1,0 +1,98 @@
+theme_id,issuer_id,issuer_name,weight,rationale
+"# Hand-made theme -> issuer exposures (2026-10-28): theme:<id> -> iss:<issuer_id> `exposure` edges (weight = how directly the issuer's earnings ride the theme; analyst priors). The S&P 500 has no UK / continental European property or hotel companies, so re_uk / re_europe / hosp_uk / hosp_europe reach issuers only through US companies' foreign operations, weakly."
+data_centers,Q851641,Equinix,1.0,Data-centre REIT
+data_centers,Q5275969,Digital Realty,1.0,Data-centre REIT
+data_centers,Q5370909,Vertiv,0.9,Data-centre power and cooling
+data_centers,Q48872,Eaton Corporation,0.6,Electrical gear for data centres
+data_centers,Q7268886,Quanta Services,0.6,Grid and data-centre construction
+data_centers,Q5151691,Comfort Systems USA,0.6,Data-centre mechanical contracting
+data_centers,Q5370289,Emcor,0.5,Data-centre construction
+data_centers,Q259195,Constellation Energy,0.7,Power contracts with hyperscalers
+data_centers,Q104158381,Vistra Corp.,0.7,Power for data centres
+data_centers,Q6955139,NRG Energy,0.5,Power for data centres
+data_centers,Q677464,Dominion Energy,0.6,Virginia data-centre load
+data_centers,Q464092,American Electric Power,0.5,Data-centre load growth
+data_centers,Q2304693,Southern Company,0.4,Data-centre load growth
+data_centers,Q1673079,Iron Mountain,0.5,Data-centre segment
+data_centers,Q29526078,Bloom Energy,0.6,On-site power for data centres
+data_centers,Q2861324,Arista Networks,0.5,Data-centre networking
+data_centers,Q182477,NVIDIA,0.6,Data-centre revenue line
+data_centers,Q1817174,Supermicro,0.6,Data-centre servers
+ai_infrastructure,Q182477,NVIDIA,1.0,AI accelerators
+ai_infrastructure,Q128896,Advanced Micro Devices,0.8,AI accelerators
+ai_infrastructure,Q790060,Broadcom,0.8,Custom AI chips and networking
+ai_infrastructure,Q1347782,Marvell Technology,0.7,Custom AI silicon
+ai_infrastructure,Q1197548,Micron Technology,0.7,HBM memory
+ai_infrastructure,Q370719,SK hynix,0.8,HBM memory
+ai_infrastructure,Q713418,Taiwan Semiconductor Manufacturing (TSMC),0.9,Leading-edge foundry for AI chips
+ai_infrastructure,Q297879,ASML Holding,0.6,Lithography for AI chips
+ai_infrastructure,Q2861324,Arista Networks,0.6,AI networking
+ai_infrastructure,Q1817174,Supermicro,0.7,AI servers
+ai_infrastructure,Q27500963,Dell Technologies,0.5,AI servers
+ai_infrastructure,Q5370909,Vertiv,0.6,AI data-centre power
+ai_infrastructure,Q2283,Microsoft,0.5,Hyperscaler AI capex
+ai_infrastructure,Q20800404,Alphabet,0.5,Hyperscaler AI capex
+ai_infrastructure,Q3884,Amazon,0.5,Hyperscaler AI capex
+ai_infrastructure,Q380,Meta Platforms,0.5,AI capex
+ai_infrastructure,Q19900,Oracle Corporation,0.6,AI cloud capacity
+ai_infrastructure,Q621610,Applied Materials,0.5,Chip equipment
+ai_infrastructure,Q1342041,Lam Research,0.5,Chip equipment
+re_us,Q16983765,Prologis,0.8,Industrial REIT
+re_us,Q2287759,Simon Property Group,0.7,Retail REIT
+re_us,Q7301386,Realty Income,0.7,Net-lease REIT
+re_us,Q1156045,Public Storage,0.6,Self-storage REIT
+re_us,Q20486917,Welltower,0.6,Health-care REIT
+re_us,Q85769855,Invitation Homes,0.8,Single-family rental REIT
+re_us,Q5025803,Camden Property Trust,0.7,Multifamily REIT
+re_us,Q27988239,Mid-America Apartment Communities,0.7,Multifamily REIT
+re_us,Q27964091,Essex Property Trust,0.7,Multifamily REIT
+re_us,Q4844439,"BXP, Inc.",0.8,Office REIT
+re_us,Q48739877,Alexandria Real Estate Equities,0.7,Office and lab REIT
+re_us,Q1023013,CBRE Group,0.8,Property services
+re_us,Q16988748,CoStar Group,0.5,Property data
+re_us,Q5203782,D. R. Horton,0.9,Homebuilder
+re_us,Q16981175,Lennar,0.9,Homebuilder
+re_us,Q7259716,PulteGroup,0.9,Homebuilder
+re_us,Q6955706,"NVR, Inc.",0.8,Homebuilder
+re_us,Q864407,Home Depot (The),0.5,Housing turnover
+re_us,Q1373493,Lowe's,0.5,Housing turnover
+re_us,Q6410043,Kimco Realty,0.6,Retail REIT
+re_us,Q27988152,Federal Realty Investment Trust,0.6,Retail REIT
+re_uk,Q1023013,CBRE Group,0.3,UK property services
+re_uk,Q16983765,Prologis,0.2,UK logistics portfolio
+re_europe,Q1023013,CBRE Group,0.3,European property services
+re_europe,Q16983765,Prologis,0.3,European logistics portfolio
+hosp_us,Q1141173,Marriott International,1.0,Hotels
+hosp_us,Q1057464,Hilton Worldwide,1.0,Hotels
+hosp_us,Q1630559,Host Hotels & Resorts,1.0,Hotel REIT
+hosp_us,Q63327,Airbnb,0.8,Lodging marketplace
+hosp_us,Q18674747,Booking Holdings,0.6,Online travel
+hosp_us,Q8085893,Expedia Group,0.8,Online travel
+hosp_us,Q568532,MGM Resorts,0.9,Las Vegas casinos
+hosp_us,Q1506045,Las Vegas Sands,0.5,Casinos (Asia-heavy)
+hosp_us,Q2274089,Wynn Resorts,0.7,Casinos
+hosp_us,Q1044059,Carnival Corporation,0.7,Cruise
+hosp_us,Q427881,Royal Caribbean Group,0.7,Cruise
+hosp_us,Q60767471,Norwegian Cruise Line Holdings,0.7,Cruise
+hosp_us,Q742196,Darden Restaurants,0.7,Restaurants
+hosp_us,Q38076,McDonald's,0.4,Restaurants
+hosp_us,Q37158,Starbucks,0.5,Restaurants
+hosp_us,Q465751,Chipotle Mexican Grill,0.6,Restaurants
+hosp_us,Q188920,Delta Air Lines,0.7,Air travel
+hosp_us,Q174769,United Airlines Holdings,0.7,Air travel
+hosp_us,Q503308,Southwest Airlines,0.8,Domestic air travel
+hosp_uk,Q1141173,Marriott International,0.3,UK hotels
+hosp_uk,Q1057464,Hilton Worldwide,0.3,UK hotels
+hosp_uk,Q18674747,Booking Holdings,0.3,UK online travel
+hosp_uk,Q1044059,Carnival Corporation,0.3,UK cruise brands
+hosp_uk,Q8085893,Expedia Group,0.2,UK travel
+hosp_uk,Q63327,Airbnb,0.2,UK lodging
+hosp_europe,Q18674747,Booking Holdings,0.7,Europe-heavy online travel
+hosp_europe,Q63327,Airbnb,0.4,European lodging
+hosp_europe,Q1141173,Marriott International,0.3,European hotels
+hosp_europe,Q1057464,Hilton Worldwide,0.3,European hotels
+hosp_europe,Q427881,Royal Caribbean Group,0.4,Mediterranean cruise
+hosp_europe,Q1044059,Carnival Corporation,0.4,European cruise brands
+hosp_europe,Q60767471,Norwegian Cruise Line Holdings,0.3,Mediterranean cruise
+hosp_europe,Q8085893,Expedia Group,0.2,European travel
+ai_infrastructure,Q624649,KLA,0.4,Chip equipment

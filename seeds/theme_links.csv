@@ -1,0 +1,1873 @@
+market,theme_id,sign,strength,rationale,source
+"# Market -> theme links (2026-10-28, one reasoning pass by request; not semantic): market = venue:market_id. source event = a venue event judged as a whole (every one of its markets listed), question = a live graph question judged on second-order economics (its anchor market). sign = what YES means for the theme (1 good, -1 bad, 0 mixed), strength 3 first-order / 2 material / 1 marginal. Every market listed here is pulled into the graph whatever its category or volume (graph_build.THEME_MARKETS)."
+kalshi:KXA100MAX-26DEC31-1.390,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-1.540,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-1.690,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-1.840,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-1.990,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-2.140,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-2.290,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-2.440,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXA100MAX-26DEC31-2.590,ai_infrastructure,0,3,A100 rental price level; direction depends on rung,event
+kalshi:KXAIBIOSECURITY-26SEP-27JAN01,ai_infrastructure,-1,1,AI safety law adds compliance constraints,event
+kalshi:KXAIBIOSECURITY-26SEP-27JUL01,ai_infrastructure,-1,1,AI safety law adds compliance constraints,event
+kalshi:KXAIBIOSECURITY-26SEP-28JAN01,ai_infrastructure,-1,1,AI safety law adds compliance constraints,event
+kalshi:KXAIDUTYOFCARE-26SEP-27JAN01,ai_infrastructure,-1,1,AI duty of care law adds liability constraints,event
+kalshi:KXAIDUTYOFCARE-26SEP-27JUL01,ai_infrastructure,-1,1,AI duty of care law adds liability constraints,event
+kalshi:KXAIDUTYOFCARE-26SEP-28JAN01,ai_infrastructure,-1,1,AI duty of care law adds liability constraints,event
+kalshi:KXAIINCIDENTREPORT-26SEP-27JAN01,ai_infrastructure,-1,1,AI incident reporting law adds compliance burden,event
+kalshi:KXAIINCIDENTREPORT-26SEP-27JUL01,ai_infrastructure,-1,1,AI incident reporting law adds compliance burden,event
+kalshi:KXAIINCIDENTREPORT-26SEP-28JAN01,ai_infrastructure,-1,1,AI incident reporting law adds compliance burden,event
+kalshi:KXAIKILLSWITCH-26SEP-27JAN01,ai_infrastructure,-1,1,Kill switch law constrains AI deployment,event
+kalshi:KXAIKILLSWITCH-26SEP-27JUL01,ai_infrastructure,-1,1,Kill switch law constrains AI deployment,event
+kalshi:KXAIKILLSWITCH-26SEP-28JAN01,ai_infrastructure,-1,1,Kill switch law constrains AI deployment,event
+kalshi:KXAILEGISLATION-27-JAN01,ai_infrastructure,-1,2,LLM restrictions law constrains AI build-out,event
+kalshi:KXAISAFETYAUDIT-26SEP-27JAN01,ai_infrastructure,-1,1,Mandatory safety audits add friction,event
+kalshi:KXAISAFETYAUDIT-26SEP-27JUL01,ai_infrastructure,-1,1,Mandatory safety audits add friction,event
+kalshi:KXAISAFETYAUDIT-26SEP-28JAN01,ai_infrastructure,-1,1,Mandatory safety audits add friction,event
+kalshi:KXAZDATACENTERS-26DEC31-T162,ai_infrastructure,1,1,Arizona data-center count reflects compute build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T166,ai_infrastructure,1,1,Arizona data-center count reflects compute build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T172,ai_infrastructure,1,1,Arizona data-center count reflects compute build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T180,ai_infrastructure,1,1,Arizona data-center count reflects compute build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T188,ai_infrastructure,1,1,Arizona data-center count reflects compute build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T196,ai_infrastructure,1,1,Arizona data-center count reflects compute build-out,event
+kalshi:KXAZSEMIJOBS-27JUN04-T24431,ai_infrastructure,1,1,Arizona chip manufacturing employment growth,event
+kalshi:KXB200MAX-26DEC31-10.070,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-10.370,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-10.670,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-10.970,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-11.270,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-11.570,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-11.870,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-12.170,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-12.470,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-12.770,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-13.070,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-13.370,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-13.670,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-13.970,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-7.370,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-7.670,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-7.970,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-8.270,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-8.570,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-8.870,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-9.170,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-9.470,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXB200MAX-26DEC31-9.770,ai_infrastructure,0,3,B200 rental price level; direction depends on rung,event
+kalshi:KXBILLS-AIRP,ai_infrastructure,-1,2,Chip export location-verification and review laws constrain sales,event
+kalshi:KXBILLS-DJTB,ai_infrastructure,-1,2,Chip export location-verification and review laws constrain sales,event
+kalshi:KXBILLS-FAKES,ai_infrastructure,-1,2,Chip export location-verification and review laws constrain sales,event
+kalshi:KXCADATACENTERS-26DEC31-T300,ai_infrastructure,1,1,California data-center count reflects compute build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T305,ai_infrastructure,1,1,California data-center count reflects compute build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T315,ai_infrastructure,1,1,California data-center count reflects compute build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T325,ai_infrastructure,1,1,California data-center count reflects compute build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T340,ai_infrastructure,1,1,California data-center count reflects compute build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T355,ai_infrastructure,1,1,California data-center count reflects compute build-out,event
+kalshi:KXCHINADATACENTER-26AUG-27APR01,ai_infrastructure,-1,1,Restricts supply chain for AI networking gear,event
+kalshi:KXCHINADATACENTER-26AUG-27JAN01,ai_infrastructure,-1,2,Supply restriction on AI networking components,question
+kalshi:KXCHINAEUV-30-27JAN01,ai_infrastructure,0,2,China EUV erodes incumbent chip toolmakers moat,question
+kalshi:KXCHINAEUV-30-28JAN01,ai_infrastructure,-1,1,China EUV erodes Western chip equipment moat,event
+kalshi:KXCHINAEUV-30-29JAN01,ai_infrastructure,-1,1,China EUV erodes Western chip equipment moat,event
+kalshi:KXCHINAEUV-30-30JAN01,ai_infrastructure,-1,1,China EUV erodes Western chip equipment moat,event
+kalshi:KXDATACENTCON-26NOV02-T77.5,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTCON-26NOV02-T80.0,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTCON-26NOV02-T82.5,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTCON-26NOV02-T85.0,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTCON-26NOV02-T87.5,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTCON-26NOV02-T90.0,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTCON-26NOV02-T92.5,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTCON-26NOV02-T95.0,ai_infrastructure,1,2,Data center capex reflects AI compute demand,event
+kalshi:KXDATACENTER-30,ai_infrastructure,1,2,AI-related nuclear power deal,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012-26DEC01,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012-27FEB01,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012-27MAR01,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+kalshi:KXDCMORATORIUMLAW-27JAN01,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+kalshi:KXDCMORATORIUMLAW-27JAN01-27JUL01,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+kalshi:KXDCMORATORIUMLAW-27JAN01-28JAN01,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-AK,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-AL,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-AR,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-AZ,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-CA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-CO,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-CT,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-DE,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-FL,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-GA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-HI,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-IA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-ID,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-IL,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-IN,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-KS,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-KY,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-LA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-MA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-MD,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-ME,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-MI,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-MN,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-MO,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-MS,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-MT,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-NC,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-ND,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-NE,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-NH,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-NJ,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-NM,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-NV,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-OH,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-OK,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-OR,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-PA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-RI,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-SC,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-SD,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-TN,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-UT,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-VA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-VT,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-WA,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-WI,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-WV,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXDCMORATORIUMSTATES-28-WY,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T112,ai_infrastructure,1,1,Florida data-center count reflects compute build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T115,ai_infrastructure,1,1,Florida data-center count reflects compute build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T120,ai_infrastructure,1,1,Florida data-center count reflects compute build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T125,ai_infrastructure,1,1,Florida data-center count reflects compute build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T132,ai_infrastructure,1,1,Florida data-center count reflects compute build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T140,ai_infrastructure,1,1,Florida data-center count reflects compute build-out,event
+kalshi:KXFTACOUNTRIES-27-CHI,ai_infrastructure,1,1,Trade deal eases chip frictions,question
+kalshi:KXFTACOUNTRIES-27-TAI,ai_infrastructure,1,1,Taiwan trade deal supports chip supply chain,question
+kalshi:KXFTAPRC-29,ai_infrastructure,1,2,US-China trade deal eases chip frictions,question
+kalshi:KXGADATACENTERS-26DEC31-T280,ai_infrastructure,1,1,Georgia data-center count reflects compute build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T290,ai_infrastructure,1,1,Georgia data-center count reflects compute build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T300,ai_infrastructure,1,1,Georgia data-center count reflects compute build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T310,ai_infrastructure,1,1,Georgia data-center count reflects compute build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T325,ai_infrastructure,1,1,Georgia data-center count reflects compute build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T340,ai_infrastructure,1,1,Georgia data-center count reflects compute build-out,event
+kalshi:KXGPURULE-26,ai_infrastructure,1,3,Loosening GPU export controls expands chip sales,event
+kalshi:KXH100MAX-26DEC31-3.230,ai_infrastructure,0,3,H100 rental price level; direction depends on rung,event
+kalshi:KXH100MAX-26DEC31-3.380,ai_infrastructure,0,3,H100 rental price level; direction depends on rung,event
+kalshi:KXH100MAX-26DEC31-3.530,ai_infrastructure,0,3,H100 rental price level; direction depends on rung,event
+kalshi:KXH100MAX-26DEC31-3.680,ai_infrastructure,0,3,H100 rental price level; direction depends on rung,event
+kalshi:KXH100MAX-26DEC31-3.830,ai_infrastructure,0,3,H100 rental price level; direction depends on rung,event
+kalshi:KXH100MAX-26DEC31-3.980,ai_infrastructure,0,3,H100 rental price level; direction depends on rung,event
+kalshi:KXH200CHINA-27-BEF,ai_infrastructure,1,2,H200 deliveries to China add Nvidia revenue,event
+kalshi:KXH200MAX-26DEC31-5.790,ai_infrastructure,0,3,H200 rental price level; direction depends on rung,event
+kalshi:KXH200MAX-26DEC31-6.090,ai_infrastructure,0,3,H200 rental price level; direction depends on rung,event
+kalshi:KXH200MAX-26DEC31-6.390,ai_infrastructure,0,3,H200 rental price level; direction depends on rung,event
+kalshi:KXH200MAX-26DEC31-6.690,ai_infrastructure,0,3,H200 rental price level; direction depends on rung,event
+kalshi:KXIPOANTHROPIC-DATE-26DEC01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-26NOV01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-26NOV16,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-26OCT01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-26OCT10,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-26OCT17,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-26OCT24,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-26SEP01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-27APR01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-27FEB01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-27JAN01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOANTHROPIC-DATE-27MAR01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-26DEC01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-26NOV01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-26OCT01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-26SEP01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-27APR01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-27FEB01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-27JAN01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-27JUN01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-27MAR01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXIPOOPENAI-27MAY01,ai_infrastructure,1,2,IPO funds frontier lab compute spending,event
+kalshi:KXKIMIBAN-27-27JAN01,ai_infrastructure,0,1,US ban on Chinese model shifts AI compute demand,question
+kalshi:KXLOCALLAW-ILPOWER-27MAY01,ai_infrastructure,-1,1,State rules constrain AI compute siting,event
+kalshi:KXLOCALLAW-MEDATA-28JAN01,ai_infrastructure,-1,1,State restriction constrains AI compute siting,event
+kalshi:KXLOCALLAW-TNAIWATER-27AUG01,ai_infrastructure,-1,1,State rules constrain AI compute siting,event
+kalshi:KXLOCALLAW-VADATA-27AUG01,ai_infrastructure,-1,1,State rules constrain AI compute siting,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL2,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL3,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL4,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL5,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL6,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL7,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL8,ai_infrastructure,-1,2,Moratoriums constrain AI compute build-out,event
+kalshi:KXNEWTARIFFS-26OCT-NOV01,ai_infrastructure,-1,1,Tariffs raise chip and equipment costs,question
+kalshi:KXNVIDIAGROQFINE-26SEP-27JAN01,ai_infrastructure,-1,1,DOJ fine on Nvidia Groq deal,event
+kalshi:KXNYAIBILL-27JAN01,ai_infrastructure,-1,1,AI chatbot liability law adds constraints,event
+kalshi:KXNYDATACENTERS-26DEC31-T136,ai_infrastructure,1,1,New York data-center count reflects compute build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T138,ai_infrastructure,1,1,New York data-center count reflects compute build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T142,ai_infrastructure,1,1,New York data-center count reflects compute build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T146,ai_infrastructure,1,1,New York data-center count reflects compute build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T152,ai_infrastructure,1,1,New York data-center count reflects compute build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T160,ai_infrastructure,1,1,New York data-center count reflects compute build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T245,ai_infrastructure,1,1,Ohio data-center count reflects compute build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T255,ai_infrastructure,1,1,Ohio data-center count reflects compute build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T265,ai_infrastructure,1,1,Ohio data-center count reflects compute build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T275,ai_infrastructure,1,1,Ohio data-center count reflects compute build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T290,ai_infrastructure,1,1,Ohio data-center count reflects compute build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T305,ai_infrastructure,1,1,Ohio data-center count reflects compute build-out,event
+kalshi:KXORSEMICONEMP-27MAR31-T26400,ai_infrastructure,1,1,Oregon chip manufacturing employment growth,event
+kalshi:KXPADATACENTERS-26DEC31B-T215,ai_infrastructure,1,1,Pennsylvania data-center count reflects compute build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T220,ai_infrastructure,1,1,Pennsylvania data-center count reflects compute build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T225,ai_infrastructure,1,1,Pennsylvania data-center count reflects compute build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T230,ai_infrastructure,1,1,Pennsylvania data-center count reflects compute build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T235,ai_infrastructure,1,1,Pennsylvania data-center count reflects compute build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T240,ai_infrastructure,1,1,Pennsylvania data-center count reflects compute build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T245,ai_infrastructure,1,1,Pennsylvania data-center count reflects compute build-out,event
+kalshi:KXRATEPAYERLAW-26SEP-27JUL01,ai_infrastructure,-1,1,Power-cost rules constrain AI compute siting,event
+kalshi:KXRATEPAYERLAW-26SEP-YES,ai_infrastructure,-1,1,Power-cost rules constrain AI compute siting,event
+kalshi:KXRECOGROC-29-27,ai_infrastructure,-1,2,Recognizing ROC risks Chinese retaliation on chips,question
+kalshi:KXRTX5090MAX-26DEC31-1.460,ai_infrastructure,0,2,RTX 5090 rental price level; direction depends on rung,event
+kalshi:KXRTX5090MAX-26DEC31-1.610,ai_infrastructure,0,2,RTX 5090 rental price level; direction depends on rung,event
+kalshi:KXRTX5090MAX-26DEC31-1.760,ai_infrastructure,0,2,RTX 5090 rental price level; direction depends on rung,event
+kalshi:KXRTX5090MAX-26DEC31-1.910,ai_infrastructure,0,2,RTX 5090 rental price level; direction depends on rung,event
+kalshi:KXRTX5090MAX-26DEC31-2.060,ai_infrastructure,0,2,RTX 5090 rental price level; direction depends on rung,event
+kalshi:KXRTX5090MAX-26DEC31-2.210,ai_infrastructure,0,2,RTX 5090 rental price level; direction depends on rung,event
+kalshi:KXSEMIPRODH-26-10,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-12,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-14,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-16,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-18,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-20,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-22,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-24,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSEMIPRODH-26-8,ai_infrastructure,1,1,US chip production growth supports compute supply chain,event
+kalshi:KXSPACEDATACENTER-26-28JAN01,ai_infrastructure,1,1,Orbital compute adds new AI capacity,event
+kalshi:KXSPACEDATACENTER-26-29JAN01,ai_infrastructure,1,1,Orbital compute adds new AI capacity,event
+kalshi:KXSPACEDATACENTER-26-30JAN01,ai_infrastructure,1,1,Orbital compute adds new AI capacity,event
+kalshi:KXSPACEDATACENTER-26-31JAN01,ai_infrastructure,1,1,Orbital compute adds new AI capacity,event
+kalshi:KXSPACEDATACENTER-26-33JAN01,ai_infrastructure,1,1,Orbital compute adds new AI capacity,event
+kalshi:KXSPACEDATACENTER-26-35JAN01,ai_infrastructure,1,1,Orbital compute adds new AI capacity,event
+kalshi:KXSTATELAW-27-CEAR,ai_infrastructure,-1,1,State AI laws add compliance constraints,event
+kalshi:KXTAIWANLVL4-27JAN01,ai_infrastructure,-1,2,Taiwan tension threatens chip supply chain,question
+kalshi:KXTARIFFRATEPRC-27JAN01-10,ai_infrastructure,-1,2,Higher China tariffs raise chip and hardware costs,question
+kalshi:KXTARIFFSECTOR-27JAN01-MINE,ai_infrastructure,-1,1,Critical mineral tariffs raise chip input costs,question
+kalshi:KXTARIFFSEMI-25-DEC31,ai_infrastructure,-1,2,Semiconductor tariffs raise chip and compute costs,event
+kalshi:KXTRUMPMEETM-26OCT01-XJIN,ai_infrastructure,1,1,US-China engagement eases chip export tension,question
+kalshi:KXTRUMPXIPUTIN-28JAN01-27JAN01,ai_infrastructure,1,1,US-China engagement eases chip export tension,question
+kalshi:KXTXDATACENTERS-26DEC31-T540,ai_infrastructure,1,1,Texas data-center count reflects compute build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T560,ai_infrastructure,1,1,Texas data-center count reflects compute build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T580,ai_infrastructure,1,1,Texas data-center count reflects compute build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T600,ai_infrastructure,1,1,Texas data-center count reflects compute build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T625,ai_infrastructure,1,1,Texas data-center count reflects compute build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T650,ai_infrastructure,1,1,Texas data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T4800,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T4900,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5000,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5100,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5200,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5300,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5400,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5500,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5600,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5700,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5800,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5900,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T6000,ai_infrastructure,1,2,US data-center count reflects compute build-out,event
+kalshi:KXUSAIREGULATOR-28JAN01-27JAN01,ai_infrastructure,-1,1,National AI regulator adds oversight constraints,event
+kalshi:KXUSAIREGULATOR-28JAN01-27JUL01,ai_infrastructure,-1,1,National AI regulator adds oversight constraints,event
+kalshi:KXUSAIREGULATOR-28JAN01-28JAN01,ai_infrastructure,-1,1,National AI regulator adds oversight constraints,event
+kalshi:KXUSDCCAPACITY-27MAR05-T45.0,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T47.5,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T50.0,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T52.5,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T55.0,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T57.5,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T60.0,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T62.5,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXUSDCCAPACITY-27MAR05-T65.0,ai_infrastructure,1,2,Data center capacity reflects AI compute supply,event
+kalshi:KXVADATACENTERS-26DEC31-T680,ai_infrastructure,1,1,Virginia data-center count reflects compute build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T700,ai_infrastructure,1,1,Virginia data-center count reflects compute build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T725,ai_infrastructure,1,1,Virginia data-center count reflects compute build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T750,ai_infrastructure,1,1,Virginia data-center count reflects compute build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T775,ai_infrastructure,1,1,Virginia data-center count reflects compute build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T800,ai_infrastructure,1,1,Virginia data-center count reflects compute build-out,event
+kalshi:WRECSS-26-PRC,ai_infrastructure,-1,1,China recession weakens tech demand,question
+polymarket:1176221,ai_infrastructure,1,2,US-Taiwan deal supports chip supply chain,question
+polymarket:1179940,ai_infrastructure,-1,3,Taiwan chip supply disruption hits AI hardware,question
+polymarket:1294378,ai_infrastructure,1,2,OpenAI trillion valuation funds compute spending,event
+polymarket:1298648,ai_infrastructure,1,2,Higher OpenAI IPO cap funds compute spending,event
+polymarket:1298649,ai_infrastructure,1,2,Higher OpenAI IPO cap funds compute spending,event
+polymarket:1298657,ai_infrastructure,1,2,Higher OpenAI IPO cap funds compute spending,event
+polymarket:1298658,ai_infrastructure,1,2,Higher OpenAI IPO cap funds compute spending,event
+polymarket:1298659,ai_infrastructure,1,2,Higher OpenAI IPO cap funds compute spending,event
+polymarket:1323317,ai_infrastructure,0,1,Government stakes in AI and chip firms; mixed effect,event
+polymarket:1323320,ai_infrastructure,0,1,Government stakes in AI and chip firms; mixed effect,event
+polymarket:1323328,ai_infrastructure,0,1,Government stakes in AI and chip firms; mixed effect,event
+polymarket:1328014,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:1328015,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:1328016,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:1328017,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:1328018,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:1328019,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:1328020,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:1345229,ai_infrastructure,0,2,OpenAI IPO cap brackets; direction depends on rung,event
+polymarket:1345230,ai_infrastructure,0,2,OpenAI IPO cap brackets; direction depends on rung,event
+polymarket:1345231,ai_infrastructure,0,2,OpenAI IPO cap brackets; direction depends on rung,event
+polymarket:1345232,ai_infrastructure,0,2,OpenAI IPO cap brackets; direction depends on rung,event
+polymarket:1345233,ai_infrastructure,0,2,OpenAI IPO cap brackets; direction depends on rung,event
+polymarket:1345234,ai_infrastructure,0,2,OpenAI IPO cap brackets; direction depends on rung,event
+polymarket:1345235,ai_infrastructure,0,2,OpenAI IPO cap brackets; direction depends on rung,event
+polymarket:1426253,ai_infrastructure,-1,2,AI-chip export licensing restricts chip sales,event
+polymarket:1426263,ai_infrastructure,-1,2,AI-chip export licensing restricts chip sales,event
+polymarket:1455579,ai_infrastructure,1,1,Trump AI executive engagement supports AI policy,question
+polymarket:1455584,ai_infrastructure,1,1,Trump AI executive engagement supports AI policy,question
+polymarket:2110748,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2110749,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2110750,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2110751,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2110752,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2110753,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2110754,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2243681,ai_infrastructure,1,1,Space compute adds long-dated AI capacity,event
+polymarket:2255929,ai_infrastructure,1,1,Orbital compute adds long-dated AI capacity,event
+polymarket:2255930,ai_infrastructure,1,1,Orbital compute adds long-dated AI capacity,event
+polymarket:2299952,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299953,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299954,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299955,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299956,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299957,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299958,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299959,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299960,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299961,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299962,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2299984,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299985,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299986,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299987,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299988,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299989,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299990,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299991,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299992,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299993,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299994,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299995,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2299996,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2307824,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2307825,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:2307896,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2307904,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:2314378,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:2314379,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:2314474,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:2412744,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412745,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412746,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412747,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412748,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412749,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412750,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412751,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412752,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2412753,ai_infrastructure,0,2,Anthropic IPO cap brackets; direction depends on rung,event
+polymarket:2479846,ai_infrastructure,1,1,Space compute adds long-dated AI capacity,event
+polymarket:253889,ai_infrastructure,-1,3,Taiwan chip supply disruption hits AI hardware,question
+polymarket:2556362,ai_infrastructure,1,1,New compute capacity supports AI build-out,event
+polymarket:2787891,ai_infrastructure,-1,1,Government restriction on frontier model access,event
+polymarket:2839963,ai_infrastructure,-1,1,Taiwan Strait tension risks chip supply,question
+polymarket:2839991,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+polymarket:2870569,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:2870570,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:2870571,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:2870572,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:2870573,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:2870574,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:2870575,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:2870597,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870598,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870599,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870600,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870601,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870602,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870603,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870604,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870605,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870606,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870607,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870608,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:2870615,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870616,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870617,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870618,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870619,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870620,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870621,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870622,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870623,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870624,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:2870657,ai_infrastructure,0,3,H100 rental price hit ladder; direction depends on rung,event
+polymarket:2870658,ai_infrastructure,0,3,H100 rental price hit ladder; direction depends on rung,event
+polymarket:2870659,ai_infrastructure,0,3,H100 rental price hit ladder; direction depends on rung,event
+polymarket:2870660,ai_infrastructure,0,3,H100 rental price hit ladder; direction depends on rung,event
+polymarket:2870661,ai_infrastructure,0,3,H100 rental price hit ladder; direction depends on rung,event
+polymarket:2870662,ai_infrastructure,0,3,H100 rental price hit ladder; direction depends on rung,event
+polymarket:2875105,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875106,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875107,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875108,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875109,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875110,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875111,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875112,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875113,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875114,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:2875115,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875116,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875117,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875118,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875119,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875120,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875121,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875122,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2875123,ai_infrastructure,0,3,B200 rental price hit ladder; direction depends on rung,event
+polymarket:2914111,ai_infrastructure,1,1,easing blacklist loosens chip trade restrictions,question
+polymarket:2914117,ai_infrastructure,1,1,easing blacklist loosens chip trade restrictions,question
+polymarket:3358974,ai_infrastructure,0,2,Nvidia market cap ladder; direction depends on rung,event
+polymarket:3358975,ai_infrastructure,0,2,Nvidia market cap ladder; direction depends on rung,event
+polymarket:3358976,ai_infrastructure,0,2,Nvidia market cap ladder; direction depends on rung,event
+polymarket:3358977,ai_infrastructure,0,2,Nvidia market cap ladder; direction depends on rung,event
+polymarket:3358978,ai_infrastructure,0,2,Nvidia market cap ladder; direction depends on rung,event
+polymarket:3358979,ai_infrastructure,0,2,Nvidia market cap ladder; direction depends on rung,event
+polymarket:3358980,ai_infrastructure,0,2,Nvidia market cap ladder; direction depends on rung,event
+polymarket:3392719,ai_infrastructure,1,2,Nvidia top market cap rank reflects AI capex strength,event
+polymarket:3392757,ai_infrastructure,1,2,Nvidia top market cap rank reflects AI capex strength,event
+polymarket:3528494,ai_infrastructure,0,3,RTX 5090 rental price ladder; direction depends on rung,event
+polymarket:3528495,ai_infrastructure,0,3,RTX 5090 rental price ladder; direction depends on rung,event
+polymarket:3528496,ai_infrastructure,0,3,RTX 5090 rental price ladder; direction depends on rung,event
+polymarket:3528497,ai_infrastructure,0,3,RTX 5090 rental price ladder; direction depends on rung,event
+polymarket:3528498,ai_infrastructure,0,3,RTX 5090 rental price ladder; direction depends on rung,event
+polymarket:3528499,ai_infrastructure,0,3,RTX 5090 rental price ladder; direction depends on rung,event
+polymarket:3528561,ai_infrastructure,0,3,A100 rental price ladder; direction depends on rung,event
+polymarket:3528569,ai_infrastructure,0,3,A100 rental price ladder; direction depends on rung,event
+polymarket:3528574,ai_infrastructure,0,3,A100 rental price ladder; direction depends on rung,event
+polymarket:3528584,ai_infrastructure,0,3,A100 rental price ladder; direction depends on rung,event
+polymarket:3528590,ai_infrastructure,0,3,A100 rental price ladder; direction depends on rung,event
+polymarket:3528598,ai_infrastructure,0,3,A100 rental price ladder; direction depends on rung,event
+polymarket:3529041,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:3529042,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:3529043,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:3529044,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:3529045,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:3529046,ai_infrastructure,0,3,B200 rental price ladder; direction depends on rung,event
+polymarket:3529055,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:3529056,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:3529057,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:3529058,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:3529059,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:3529060,ai_infrastructure,0,3,H200 rental price ladder; direction depends on rung,event
+polymarket:3529061,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:3529062,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:3529063,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:3529064,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:3529065,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:3529066,ai_infrastructure,0,3,H100 rental price ladder; direction depends on rung,event
+polymarket:3721424,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721425,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721426,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721427,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721428,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721429,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721430,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721431,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721432,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721433,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721434,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721435,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721436,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721437,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721438,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721439,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721440,ai_infrastructure,0,1,Anthropic IPO timing ladder; direction depends on rung,event
+polymarket:3721700,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3721702,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3721704,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3721707,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3721709,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3721711,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3721714,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3721717,ai_infrastructure,0,2,Anthropic IPO valuation brackets; direction depends on rung,event
+polymarket:3764772,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764773,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764774,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764775,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764776,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764777,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764778,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764779,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3764780,ai_infrastructure,0,2,OpenAI valuation brackets; direction depends on rung,event
+polymarket:3887676,ai_infrastructure,1,2,Higher Anthropic IPO cap signals compute funding capacity,event
+polymarket:3887677,ai_infrastructure,1,2,Higher Anthropic IPO cap signals compute funding capacity,event
+polymarket:3887678,ai_infrastructure,1,2,Higher Anthropic IPO cap signals compute funding capacity,event
+polymarket:3887679,ai_infrastructure,1,2,Higher Anthropic IPO cap signals compute funding capacity,event
+polymarket:3887680,ai_infrastructure,1,2,Higher Anthropic IPO cap signals compute funding capacity,event
+polymarket:3887681,ai_infrastructure,1,2,Higher Anthropic IPO cap signals compute funding capacity,event
+polymarket:3887682,ai_infrastructure,1,2,Higher Anthropic IPO cap signals compute funding capacity,event
+polymarket:3889223,ai_infrastructure,-1,2,US China sanctions disrupt chip supply chain,question
+polymarket:3956999,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:3957123,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:4567308,ai_infrastructure,0,2,Pacing AI may cap capex but ease export curbs,question
+polymarket:4569194,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569195,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569196,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569197,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569198,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569199,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569200,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569201,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569202,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569203,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569204,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569205,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4569206,ai_infrastructure,-1,1,Third party vetting commitments add friction,event
+polymarket:4572544,ai_infrastructure,-1,2,Training pause cuts compute demand,event
+polymarket:4586462,ai_infrastructure,-1,1,Model pulled over safety concerns,event
+polymarket:4586608,ai_infrastructure,-1,2,Training pause cuts compute demand,event
+polymarket:4643625,ai_infrastructure,-1,1,AI restrictions executive order adds constraints,event
+polymarket:4643628,ai_infrastructure,-1,1,AI restrictions executive order adds constraints,event
+polymarket:4643631,ai_infrastructure,-1,1,AI restrictions executive order adds constraints,event
+polymarket:4657165,ai_infrastructure,-1,2,Full training pause cuts compute demand,event
+polymarket:4657167,ai_infrastructure,-1,2,Full training pause cuts compute demand,event
+polymarket:4660278,ai_infrastructure,0,2,Federal framework could preempt states or add rules,event
+polymarket:4662693,ai_infrastructure,-1,2,Frontier lab bankruptcy removes compute funding,event
+polymarket:4662694,ai_infrastructure,-1,2,Frontier lab bankruptcy removes compute funding,event
+polymarket:4662695,ai_infrastructure,-1,2,Frontier lab bankruptcy removes compute funding,event
+polymarket:4663537,ai_infrastructure,-1,1,US China tech restrictions widen,question
+polymarket:4688839,ai_infrastructure,-1,1,DOJ fine on Nvidia Groq deal,event
+polymarket:4903871,ai_infrastructure,0,2,Frontier token price ladder; direction depends on rung,event
+polymarket:4903872,ai_infrastructure,0,2,Frontier token price ladder; direction depends on rung,event
+polymarket:4903873,ai_infrastructure,0,2,Frontier token price ladder; direction depends on rung,event
+polymarket:4903874,ai_infrastructure,0,2,Frontier token price ladder; direction depends on rung,event
+polymarket:4903875,ai_infrastructure,0,2,Frontier token price ladder; direction depends on rung,event
+polymarket:4903876,ai_infrastructure,0,2,Frontier token price ladder; direction depends on rung,event
+polymarket:5123848,ai_infrastructure,-1,1,Ohio moratorium constrains AI compute siting,event
+polymarket:5123849,ai_infrastructure,-1,1,Ohio moratorium constrains AI compute siting,event
+polymarket:5123850,ai_infrastructure,-1,1,Ohio moratorium constrains AI compute siting,event
+polymarket:5123855,ai_infrastructure,-1,1,Texas moratorium constrains AI compute siting,event
+polymarket:5123856,ai_infrastructure,-1,1,Texas moratorium constrains AI compute siting,event
+polymarket:5123857,ai_infrastructure,-1,1,Texas moratorium constrains AI compute siting,event
+polymarket:5126777,ai_infrastructure,-1,1,Indiana moratorium constrains AI compute siting,event
+polymarket:5126778,ai_infrastructure,-1,1,Indiana moratorium constrains AI compute siting,event
+polymarket:5126779,ai_infrastructure,-1,1,Indiana moratorium constrains AI compute siting,event
+polymarket:5126780,ai_infrastructure,-1,1,Oklahoma moratorium constrains AI compute siting,event
+polymarket:5126781,ai_infrastructure,-1,1,Oklahoma moratorium constrains AI compute siting,event
+polymarket:5126782,ai_infrastructure,-1,1,Oklahoma moratorium constrains AI compute siting,event
+polymarket:5126791,ai_infrastructure,-1,1,Missouri moratorium constrains AI compute siting,event
+polymarket:5126792,ai_infrastructure,-1,1,Missouri moratorium constrains AI compute siting,event
+polymarket:5126793,ai_infrastructure,-1,1,Missouri moratorium constrains AI compute siting,event
+polymarket:5126794,ai_infrastructure,-1,1,Louisiana moratorium constrains AI compute siting,event
+polymarket:5126795,ai_infrastructure,-1,1,Louisiana moratorium constrains AI compute siting,event
+polymarket:5126796,ai_infrastructure,-1,1,Louisiana moratorium constrains AI compute siting,event
+polymarket:5151845,ai_infrastructure,-1,1,Taiwan tension risks chip supply,question
+polymarket:5154688,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154689,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154690,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154691,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154692,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154693,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154694,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154695,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5154696,ai_infrastructure,0,2,OpenAI valuation bands; funding capacity depends on rung,event
+polymarket:5166830,ai_infrastructure,0,3,B200 rental index ladder; direction depends on rung,event
+polymarket:5166831,ai_infrastructure,0,3,B200 rental index ladder; direction depends on rung,event
+polymarket:5166832,ai_infrastructure,0,3,B200 rental index ladder; direction depends on rung,event
+polymarket:5166833,ai_infrastructure,0,3,B200 rental index ladder; direction depends on rung,event
+polymarket:5166834,ai_infrastructure,0,3,B200 rental index ladder; direction depends on rung,event
+polymarket:5166835,ai_infrastructure,0,3,B200 rental index ladder; direction depends on rung,event
+polymarket:5166836,ai_infrastructure,0,3,H100 rental index ladder; direction depends on rung,event
+polymarket:5166837,ai_infrastructure,0,3,H100 rental index ladder; direction depends on rung,event
+polymarket:5166838,ai_infrastructure,0,3,H100 rental index ladder; direction depends on rung,event
+polymarket:5166839,ai_infrastructure,0,3,H100 rental index ladder; direction depends on rung,event
+polymarket:5166840,ai_infrastructure,0,3,H100 rental index ladder; direction depends on rung,event
+polymarket:5166841,ai_infrastructure,0,3,H100 rental index ladder; direction depends on rung,event
+polymarket:5166842,ai_infrastructure,0,3,H200 rental index ladder; direction depends on rung,event
+polymarket:5166843,ai_infrastructure,0,3,H200 rental index ladder; direction depends on rung,event
+polymarket:5166844,ai_infrastructure,0,3,H200 rental index ladder; direction depends on rung,event
+polymarket:5166845,ai_infrastructure,0,3,H200 rental index ladder; direction depends on rung,event
+polymarket:5166846,ai_infrastructure,0,3,H200 rental index ladder; direction depends on rung,event
+polymarket:5166847,ai_infrastructure,0,3,H200 rental index ladder; direction depends on rung,event
+polymarket:5166848,ai_infrastructure,0,2,RTX 5090 rental index ladder; direction depends on rung,event
+polymarket:5166849,ai_infrastructure,0,2,RTX 5090 rental index ladder; direction depends on rung,event
+polymarket:5166850,ai_infrastructure,0,2,RTX 5090 rental index ladder; direction depends on rung,event
+polymarket:5166851,ai_infrastructure,0,2,RTX 5090 rental index ladder; direction depends on rung,event
+polymarket:5166852,ai_infrastructure,0,2,RTX 5090 rental index ladder; direction depends on rung,event
+polymarket:5166853,ai_infrastructure,0,2,RTX 5090 rental index ladder; direction depends on rung,event
+polymarket:5166854,ai_infrastructure,0,3,A100 rental index ladder; direction depends on rung,event
+polymarket:5166855,ai_infrastructure,0,3,A100 rental index ladder; direction depends on rung,event
+polymarket:5166856,ai_infrastructure,0,3,A100 rental index ladder; direction depends on rung,event
+polymarket:5166857,ai_infrastructure,0,3,A100 rental index ladder; direction depends on rung,event
+polymarket:5166858,ai_infrastructure,0,3,A100 rental index ladder; direction depends on rung,event
+polymarket:5166859,ai_infrastructure,0,3,A100 rental index ladder; direction depends on rung,event
+polymarket:5166966,ai_infrastructure,1,2,Nvidia top market cap rank reflects AI capex strength,event
+polymarket:5179175,ai_infrastructure,-1,1,Oklahoma moratorium constrains AI compute siting,event
+polymarket:5179176,ai_infrastructure,-1,1,Louisiana moratorium constrains AI compute siting,event
+polymarket:5179177,ai_infrastructure,-1,1,Missouri moratorium constrains AI compute siting,event
+polymarket:5179180,ai_infrastructure,-1,1,Texas moratorium constrains AI compute siting,event
+polymarket:5179197,ai_infrastructure,-1,1,Ohio moratorium constrains AI compute siting,event
+polymarket:5179198,ai_infrastructure,-1,1,Indiana moratorium constrains AI compute siting,event
+polymarket:5180403,ai_infrastructure,1,2,Nvidia top market cap rank reflects AI capex strength,event
+polymarket:5180413,ai_infrastructure,1,2,Nvidia top market cap rank reflects AI capex strength,event
+polymarket:5180566,ai_infrastructure,-1,1,AI restrictions executive order adds constraints,event
+polymarket:520537,ai_infrastructure,0,1,Export-control evasion confirmation; mixed for chip makers,event
+polymarket:521018,ai_infrastructure,-1,3,Taiwan clash cuts advanced chip supply,question
+polymarket:524148,ai_infrastructure,1,1,US China summit eases chip export tensions,question
+polymarket:5347188,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+polymarket:5347189,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+polymarket:5347190,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+polymarket:5347191,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+polymarket:558558,ai_infrastructure,1,1,US China talks ease chip export tensions,question
+polymarket:5634652,ai_infrastructure,-1,1,Cable sabotage threatens data connectivity,question
+polymarket:5634653,ai_infrastructure,-1,1,Cable sabotage threatens data connectivity,question
+polymarket:568121,ai_infrastructure,-1,1,China instability risks chip supply chain,question
+polymarket:5730324,ai_infrastructure,1,3,Higher Nvidia data-center revenue signals GPU demand,event
+polymarket:5730325,ai_infrastructure,1,3,Higher Nvidia data-center revenue signals GPU demand,event
+polymarket:5730326,ai_infrastructure,1,3,Higher Nvidia data-center revenue signals GPU demand,event
+polymarket:5730327,ai_infrastructure,1,3,Higher Nvidia data-center revenue signals GPU demand,event
+polymarket:5730328,ai_infrastructure,1,3,Higher Nvidia data-center revenue signals GPU demand,event
+polymarket:5730329,ai_infrastructure,0,1,Nvidia margin bands; direction depends on rung,event
+polymarket:5730330,ai_infrastructure,0,1,Nvidia margin bands; direction depends on rung,event
+polymarket:5730331,ai_infrastructure,0,1,Nvidia margin bands; direction depends on rung,event
+polymarket:5730332,ai_infrastructure,0,1,Nvidia margin bands; direction depends on rung,event
+polymarket:5730333,ai_infrastructure,0,1,Nvidia margin bands; direction depends on rung,event
+polymarket:5999364,ai_infrastructure,1,2,Higher Marvell data-center revenue signals AI silicon demand,event
+polymarket:5999366,ai_infrastructure,1,2,Higher Marvell data-center revenue signals AI silicon demand,event
+polymarket:5999368,ai_infrastructure,1,2,Higher Marvell data-center revenue signals AI silicon demand,event
+polymarket:5999369,ai_infrastructure,1,2,Higher Marvell data-center revenue signals AI silicon demand,event
+polymarket:5999370,ai_infrastructure,1,2,Higher Marvell data-center revenue signals AI silicon demand,event
+polymarket:600623,ai_infrastructure,-1,3,Blockade cuts Taiwan chip supply for AI,question
+polymarket:6025332,ai_infrastructure,1,2,Higher OpenAI IPO cap funds compute spending,event
+polymarket:6025333,ai_infrastructure,1,2,Higher OpenAI IPO cap funds compute spending,event
+polymarket:6072056,ai_infrastructure,1,2,Higher Anthropic valuation funds compute spending,event
+polymarket:6072074,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:6072075,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:6072076,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:6072077,ai_infrastructure,1,2,Higher OpenAI valuation funds compute spending,event
+polymarket:6083274,ai_infrastructure,-1,2,Moratorium constrains AI compute build-out,event
+polymarket:6267652,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267653,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267654,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267655,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267656,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267657,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267658,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267659,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6267660,ai_infrastructure,1,2,Larger Anthropic IPO raise funds more compute,event
+polymarket:6268110,ai_infrastructure,1,1,Strong Anthropic IPO debut supports AI funding,event
+polymarket:6268111,ai_infrastructure,1,1,Strong Anthropic IPO debut supports AI funding,event
+polymarket:6326391,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:6326392,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:6326393,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:6326394,ai_infrastructure,0,3,H200 rental price hit ladder; direction depends on rung,event
+polymarket:645017,ai_infrastructure,-1,2,Semiconductor tariff raises chip and build-out costs,event
+polymarket:656310,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:656311,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:656312,ai_infrastructure,1,2,OpenAI IPO raises capital for compute,event
+polymarket:656313,ai_infrastructure,1,2,Large OpenAI IPO raises capital for compute,event
+polymarket:665270,ai_infrastructure,-1,1,Taiwan visit may provoke China,question
+polymarket:665271,ai_infrastructure,1,1,US China visit eases chip export tensions,question
+polymarket:676739,ai_infrastructure,1,2,Nvidia top market cap rank reflects AI capex strength,event
+polymarket:676785,ai_infrastructure,1,2,Frontier lab IPOs raise capital for compute,event
+polymarket:676792,ai_infrastructure,1,2,Frontier lab IPOs raise capital for compute,event
+polymarket:676794,ai_infrastructure,1,2,Frontier lab IPOs raise capital for compute,event
+polymarket:676842,ai_infrastructure,-1,1,AI safety law could constrain build-out,event
+polymarket:687642,ai_infrastructure,-1,2,Asia clash disrupts chip supply chain,question
+polymarket:694875,ai_infrastructure,-1,2,Frontier lab bankruptcy would cut compute demand,event
+kalshi:KXAZDATACENTERS-26DEC31-T162,data_centers,1,2,More Arizona data centers means more build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T166,data_centers,1,2,More Arizona data centers means more build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T172,data_centers,1,2,More Arizona data centers means more build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T180,data_centers,1,2,More Arizona data centers means more build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T188,data_centers,1,2,More Arizona data centers means more build-out,event
+kalshi:KXAZDATACENTERS-26DEC31-T196,data_centers,1,2,More Arizona data centers means more build-out,event
+kalshi:KXBILLS-AIRP,data_centers,-1,2,Law capping data center power cost pass-through,event
+kalshi:KXBILLS-DJTB,data_centers,-1,2,Law capping data center power cost pass-through,event
+kalshi:KXBILLS-FAKES,data_centers,-1,2,Law capping data center power cost pass-through,event
+kalshi:KXCADATACENTERS-26DEC31-T300,data_centers,1,2,More California data centers means more build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T305,data_centers,1,2,More California data centers means more build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T315,data_centers,1,2,More California data centers means more build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T325,data_centers,1,2,More California data centers means more build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T340,data_centers,1,2,More California data centers means more build-out,event
+kalshi:KXCADATACENTERS-26DEC31-T355,data_centers,1,2,More California data centers means more build-out,event
+kalshi:KXCHINADATACENTER-26AUG-27APR01,data_centers,-1,2,FCC ban raises data-center optics costs,event
+kalshi:KXCHINADATACENTER-26AUG-27JAN01,data_centers,-1,2,FCC ban raises data-center optics costs,event
+kalshi:KXDATACENTCON-26NOV02-T77.5,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTCON-26NOV02-T80.0,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTCON-26NOV02-T82.5,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTCON-26NOV02-T85.0,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTCON-26NOV02-T87.5,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTCON-26NOV02-T90.0,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTCON-26NOV02-T92.5,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTCON-26NOV02-T95.0,data_centers,1,3,Construction spending ladder; higher means more build-out,event
+kalshi:KXDATACENTER-30,data_centers,1,2,Nuclear-powered military base data center expands siting,event
+kalshi:KXDATACENTERMEASURES-26NOV03-ALH,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-ASH,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-BLC,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-ELD,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-EMP,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-GRV,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-JOL,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-JVL,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-PQA,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMEASURES-26NOV03-TRN,data_centers,0,2,Local ballot measures on data centers; pass direction mixed,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012,data_centers,-1,3,Statewide moratorium halts data center construction,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012-26DEC01,data_centers,-1,3,Statewide moratorium halts data center construction,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012-27FEB01,data_centers,-1,3,Statewide moratorium halts data center construction,event
+kalshi:KXDATACENTERMORATORIUM-27JAN012-27MAR01,data_centers,-1,3,Statewide moratorium halts data center construction,event
+kalshi:KXDCMORATORIUMLAW-27JAN01,data_centers,-1,3,State moratorium law halts data center construction,event
+kalshi:KXDCMORATORIUMLAW-27JAN01-27JUL01,data_centers,-1,3,State moratorium law halts data center construction,event
+kalshi:KXDCMORATORIUMLAW-27JAN01-28JAN01,data_centers,-1,3,State moratorium law halts data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-AK,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-AL,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-AR,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-AZ,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-CA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-CO,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-CT,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-DE,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-FL,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-GA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-HI,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-IA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-ID,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-IL,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-IN,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-KS,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-KY,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-LA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-MA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-MD,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-ME,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-MI,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-MN,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-MO,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-MS,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-MT,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-NC,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-ND,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-NE,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-NH,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-NJ,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-NM,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-NV,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-OH,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-OK,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-OR,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-PA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-RI,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-SC,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-SD,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-TN,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-UT,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-VA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-VT,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-WA,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-WI,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-WV,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXDCMORATORIUMSTATES-28-WY,data_centers,-1,3,State moratoriums halt data center construction,event
+kalshi:KXFLDATACENTERS-26DEC31-T112,data_centers,1,2,More Florida data centers means more build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T115,data_centers,1,2,More Florida data centers means more build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T120,data_centers,1,2,More Florida data centers means more build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T125,data_centers,1,2,More Florida data centers means more build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T132,data_centers,1,2,More Florida data centers means more build-out,event
+kalshi:KXFLDATACENTERS-26DEC31-T140,data_centers,1,2,More Florida data centers means more build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T280,data_centers,1,2,More Georgia data centers means more build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T290,data_centers,1,2,More Georgia data centers means more build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T300,data_centers,1,2,More Georgia data centers means more build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T310,data_centers,1,2,More Georgia data centers means more build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T325,data_centers,1,2,More Georgia data centers means more build-out,event
+kalshi:KXGADATACENTERS-26DEC31-T340,data_centers,1,2,More Georgia data centers means more build-out,event
+kalshi:KXIPOOPENAI-27JUN01,data_centers,1,1,IPO proceeds would finance compute and data-center buildout,question
+kalshi:KXLARGECUT-26,data_centers,1,1,Lower rates cut financing cost of DC REITs,question
+kalshi:KXLOCALLAW-ILPOWER-27MAY01,data_centers,-1,2,Illinois energy and water rules raise operating costs,event
+kalshi:KXLOCALLAW-MEDATA-28JAN01,data_centers,-1,2,Maine law restricts large data centers,event
+kalshi:KXLOCALLAW-TNAIWATER-27AUG01,data_centers,-1,2,Tennessee water rules raise data center costs,event
+kalshi:KXLOCALLAW-VADATA-27AUG01,data_centers,-1,2,Virginia clean energy mandate raises data center costs,event
+kalshi:KXLOUDOUNWATERDC-28OCT01-T150,data_centers,1,2,Water use ladder; higher means more data center activity,event
+kalshi:KXLOUDOUNWATERDC-28OCT01-T200,data_centers,1,2,Water use ladder; higher means more data center activity,event
+kalshi:KXLOUDOUNWATERDC-28OCT01-T250,data_centers,1,2,Water use ladder; higher means more data center activity,event
+kalshi:KXLOUDOUNWATERDC-28OCT01-T300,data_centers,1,2,Water use ladder; higher means more data center activity,event
+kalshi:KXLOUDOUNWATERDC-28OCT01-T350,data_centers,1,2,Water use ladder; higher means more data center activity,event
+kalshi:KXLOUDOUNWATERDC-28OCT01-T400,data_centers,1,2,Water use ladder; higher means more data center activity,event
+kalshi:KXLOUDOUNWATERDC-28OCT01-T450,data_centers,1,2,Water use ladder; higher means more data center activity,event
+kalshi:KXMEWIND-26AUG-27JUL01,data_centers,1,1,New transmission and renewables add power supply for load growth,question
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL2,data_centers,-1,3,More states with moratoriums halts construction,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL3,data_centers,-1,3,More states with moratoriums halts construction,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL4,data_centers,-1,3,More states with moratoriums halts construction,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL5,data_centers,-1,3,More states with moratoriums halts construction,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL6,data_centers,-1,3,More states with moratoriums halts construction,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL7,data_centers,-1,3,More states with moratoriums halts construction,event
+kalshi:KXMORATORIUMCOUNT-26DEC31-AL8,data_centers,-1,3,More states with moratoriums halts construction,event
+kalshi:KXNYDATACENTERS-26DEC31-T136,data_centers,1,2,More New York data centers means more build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T138,data_centers,1,2,More New York data centers means more build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T142,data_centers,1,2,More New York data centers means more build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T146,data_centers,1,2,More New York data centers means more build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T152,data_centers,1,2,More New York data centers means more build-out,event
+kalshi:KXNYDATACENTERS-26DEC31-T160,data_centers,1,2,More New York data centers means more build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T245,data_centers,1,2,More Ohio data centers means more build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T255,data_centers,1,2,More Ohio data centers means more build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T265,data_centers,1,2,More Ohio data centers means more build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T275,data_centers,1,2,More Ohio data centers means more build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T290,data_centers,1,2,More Ohio data centers means more build-out,event
+kalshi:KXOHDATACENTERS-26DEC31-T305,data_centers,1,2,More Ohio data centers means more build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T215,data_centers,1,2,More Pennsylvania data centers means more build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T220,data_centers,1,2,More Pennsylvania data centers means more build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T225,data_centers,1,2,More Pennsylvania data centers means more build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T230,data_centers,1,2,More Pennsylvania data centers means more build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T235,data_centers,1,2,More Pennsylvania data centers means more build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T240,data_centers,1,2,More Pennsylvania data centers means more build-out,event
+kalshi:KXPADATACENTERS-26DEC31B-T245,data_centers,1,2,More Pennsylvania data centers means more build-out,event
+kalshi:KXPERMITBILL-26SEP,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITBILL-26SEP-27MAR01,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T56,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T60,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T64,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T68,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T72,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T76,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T80,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXPERMITVOTES-26SEP30-T84,data_centers,1,1,Permitting reform speeds data center and power projects,event
+kalshi:KXRATEPAYERLAW-26SEP-27JUL01,data_centers,-1,2,Power-cost standards raise data center operating costs,event
+kalshi:KXRATEPAYERLAW-26SEP-YES,data_centers,-1,2,Power-cost standards raise data center operating costs,event
+kalshi:KXSPACEDATACENTER-26-28JAN01,data_centers,1,1,Orbital data center is a new capacity channel,event
+kalshi:KXSPACEDATACENTER-26-29JAN01,data_centers,1,1,Orbital data center is a new capacity channel,event
+kalshi:KXSPACEDATACENTER-26-30JAN01,data_centers,1,1,Orbital data center is a new capacity channel,event
+kalshi:KXSPACEDATACENTER-26-31JAN01,data_centers,1,1,Orbital data center is a new capacity channel,event
+kalshi:KXSPACEDATACENTER-26-33JAN01,data_centers,1,1,Orbital data center is a new capacity channel,event
+kalshi:KXSPACEDATACENTER-26-35JAN01,data_centers,1,1,Orbital data center is a new capacity channel,event
+kalshi:KXTXDATACENTERS-26DEC31-T540,data_centers,1,2,More Texas data centers means more build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T560,data_centers,1,2,More Texas data centers means more build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T580,data_centers,1,2,More Texas data centers means more build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T600,data_centers,1,2,More Texas data centers means more build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T625,data_centers,1,2,More Texas data centers means more build-out,event
+kalshi:KXTXDATACENTERS-26DEC31-T650,data_centers,1,2,More Texas data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T4800,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T4900,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5000,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5100,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5200,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5300,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5400,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5500,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5600,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5700,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5800,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T5900,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSADATACENTERS-26DEC31-T6000,data_centers,1,3,More US data centers means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T45.0,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T47.5,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T50.0,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T52.5,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T55.0,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T57.5,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T60.0,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T62.5,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXUSDCCAPACITY-27MAR05-T65.0,data_centers,1,3,Capacity ladder; higher means more build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T680,data_centers,1,2,More Virginia data centers means more build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T700,data_centers,1,2,More Virginia data centers means more build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T725,data_centers,1,2,More Virginia data centers means more build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T750,data_centers,1,2,More Virginia data centers means more build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T775,data_centers,1,2,More Virginia data centers means more build-out,event
+kalshi:KXVADATACENTERS-26DEC31-T800,data_centers,1,2,More Virginia data centers means more build-out,event
+polymarket:1426253,data_centers,0,2,Utility cost protection shifts power costs onto data centers,event
+polymarket:1426263,data_centers,0,2,Utility cost protection shifts power costs onto data centers,event
+polymarket:1455579,data_centers,1,1,Trump AI executive engagement supports buildout,question
+polymarket:1455584,data_centers,1,1,Trump AI executive engagement supports buildout,question
+polymarket:2243681,data_centers,1,2,Space data-center deal expands capacity options,event
+polymarket:2255929,data_centers,1,2,Orbital data center expands capacity options,event
+polymarket:2255930,data_centers,1,2,Orbital data center expands capacity options,event
+polymarket:2479846,data_centers,1,2,Space data-center deal expands capacity options,event
+polymarket:253889,data_centers,-1,1,chip shortage slows data center buildout,question
+polymarket:2556362,data_centers,1,2,Large data-center project breaking ground adds capacity,event
+polymarket:2839991,data_centers,-1,3,State moratorium blocks data-center siting and construction,event
+polymarket:3888725,data_centers,-1,1,Power supply risk for US data centers,question
+polymarket:4567308,data_centers,0,1,Pacing AI may cap data center demand,question
+polymarket:5123848,data_centers,-1,3,Ohio moratorium halts data center construction,event
+polymarket:5123849,data_centers,-1,3,Ohio moratorium halts data center construction,event
+polymarket:5123850,data_centers,-1,3,Ohio moratorium halts data center construction,event
+polymarket:5123855,data_centers,-1,3,Texas moratorium halts data center construction,event
+polymarket:5123856,data_centers,-1,3,Texas moratorium halts data center construction,event
+polymarket:5123857,data_centers,-1,3,Texas moratorium halts data center construction,event
+polymarket:5126777,data_centers,-1,2,Indiana moratorium halts data center construction,event
+polymarket:5126778,data_centers,-1,2,Indiana moratorium halts data center construction,event
+polymarket:5126779,data_centers,-1,2,Indiana moratorium halts data center construction,event
+polymarket:5126780,data_centers,-1,2,Oklahoma moratorium halts data center construction,event
+polymarket:5126781,data_centers,-1,2,Oklahoma moratorium halts data center construction,event
+polymarket:5126782,data_centers,-1,2,Oklahoma moratorium halts data center construction,event
+polymarket:5126791,data_centers,-1,2,Missouri moratorium halts data center construction,event
+polymarket:5126792,data_centers,-1,2,Missouri moratorium halts data center construction,event
+polymarket:5126793,data_centers,-1,2,Missouri moratorium halts data center construction,event
+polymarket:5126794,data_centers,-1,2,Louisiana moratorium halts data center construction,event
+polymarket:5126795,data_centers,-1,2,Louisiana moratorium halts data center construction,event
+polymarket:5126796,data_centers,-1,2,Louisiana moratorium halts data center construction,event
+polymarket:5179175,data_centers,-1,2,Oklahoma moratorium halts data center construction,event
+polymarket:5179176,data_centers,-1,2,Louisiana moratorium halts data center construction,event
+polymarket:5179177,data_centers,-1,2,Missouri moratorium halts data center construction,event
+polymarket:5179180,data_centers,-1,3,Texas moratorium halts data center construction,event
+polymarket:5179197,data_centers,-1,3,Ohio moratorium halts data center construction,event
+polymarket:5179198,data_centers,-1,2,Indiana moratorium halts data center construction,event
+polymarket:521018,data_centers,-1,1,Chip shortage delays data center build,question
+polymarket:5347188,data_centers,-1,3,State moratorium blocks data-center siting and construction,event
+polymarket:5347189,data_centers,-1,3,State moratorium blocks data-center siting and construction,event
+polymarket:5347190,data_centers,-1,3,State moratorium blocks data-center siting and construction,event
+polymarket:5347191,data_centers,-1,3,State moratorium blocks data-center siting and construction,event
+polymarket:5730324,data_centers,1,3,Higher Nvidia data-center revenue signals build-out demand,event
+polymarket:5730325,data_centers,1,3,Higher Nvidia data-center revenue signals build-out demand,event
+polymarket:5730326,data_centers,1,3,Higher Nvidia data-center revenue signals build-out demand,event
+polymarket:5730327,data_centers,1,3,Higher Nvidia data-center revenue signals build-out demand,event
+polymarket:5730328,data_centers,1,3,Higher Nvidia data-center revenue signals build-out demand,event
+polymarket:5999364,data_centers,1,2,Higher Marvell data-center revenue signals build-out demand,event
+polymarket:5999366,data_centers,1,2,Higher Marvell data-center revenue signals build-out demand,event
+polymarket:5999368,data_centers,1,2,Higher Marvell data-center revenue signals build-out demand,event
+polymarket:5999369,data_centers,1,2,Higher Marvell data-center revenue signals build-out demand,event
+polymarket:5999370,data_centers,1,2,Higher Marvell data-center revenue signals build-out demand,event
+polymarket:6083274,data_centers,-1,3,New York moratorium bill would halt data-center build,event
+polymarket:6279819,data_centers,0,1,Trump mention of data center signals policy salience,event
+polymarket:6279830,data_centers,0,1,Earnings-call data center mention reflects capex focus,event
+polymarket:6279832,data_centers,0,1,Earnings-call data center mention reflects capex focus,event
+polymarket:6279833,data_centers,0,1,Earnings-call data center mention reflects capex focus,event
+polymarket:6279834,data_centers,0,1,Earnings-call data center mention reflects capex focus,event
+polymarket:6299857,data_centers,0,1,Trump mention of data center signals policy salience,event
+polymarket:6326811,data_centers,0,1,Trump mention of data center signals policy salience,event
+polymarket:6345951,data_centers,0,1,Earnings-call data center mention reflects capex focus,event
+polymarket:6345953,data_centers,0,1,Earnings-call data center mention reflects capex focus,event
+polymarket:6366915,data_centers,0,1,Trump mention of data center signals policy salience,event
+kalshi:KXETIASAPPLY-28,hosp_europe,0,1,ETIAS adds travel friction but raises certainty,event
+kalshi:KXFRANCECAPCONTROL-28-27AUG01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCECAPCONTROL-28-27DEC01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCECAPCONTROL-28-27JUL01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCECAPCONTROL-28-27JUN01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCECAPCONTROL-28-27NOV01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCECAPCONTROL-28-27OCT01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCECAPCONTROL-28-27SEP01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCECAPCONTROL-28-28JAN01,hosp_europe,-1,2,Crisis and controls hit tourism,question
+kalshi:KXFRANCEEMERGENCY-27-26NOV01,hosp_europe,-1,2,Emergency deters tourists and disrupts travel,question
+kalshi:KXFRANCEEMERGENCY-27-27JAN01,hosp_europe,-1,2,Emergency deters tourists and disrupts travel,question
+kalshi:KXFRPROTEST-26OCT24-T100000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXFRPROTEST-26OCT24-T1000000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXFRPROTEST-26OCT24-T150000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXFRPROTEST-26OCT24-T225000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXFRPROTEST-26OCT24-T300000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXFRPROTEST-26OCT24-T450000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXFRPROTEST-26OCT24-T550000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXFRPROTEST-26OCT24-T700000,hosp_europe,-1,1,Mass protests disrupt French travel and tourism,question
+kalshi:KXHORMUZAVG-27JAN01-A100,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B261101,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B261201,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270101,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270201,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270301,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270401,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270501,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270601,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270701,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270801,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B270901,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B271001,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B271101,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B271201,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B280101,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B280701,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZNORM-26MAR17-B290101,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZPEAK-26NOV01-T10,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZPEAK-26OCT25-T10,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZWEEKLY-26NOV01-T15,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXHORMUZWEEKLY-26OCT25-T15,hosp_europe,1,2,Hormuz reopening lowers jet fuel and travel risk,question
+kalshi:KXIAEAIRANAGREEMENT-26,hosp_europe,1,1,Iran deal lowers Mideast war and fuel risk,question
+kalshi:KXIMFRECESS-27,hosp_europe,-1,2,Recession cuts travel and leisure spending,question
+kalshi:KXITALYBORDERCHECK-26,hosp_europe,1,1,Ending border checks eases European travel,event
+kalshi:KXMAXSHIPSHORMUZ-26OCT01-AL10,hosp_europe,1,2,More Hormuz traffic eases jet fuel and travel risk,question
+kalshi:KXPUTINUSA-26SEP21-JAN01,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+kalshi:KXTRAVELDOWNGRADE-27JAN01-UKR,hosp_europe,1,1,Ukraine calming supports European travel,question
+kalshi:KXTRILATERAL-29JAN20-27JAN01,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+kalshi:KXTRUMPMEETM-26OCT01-VZEL,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+kalshi:KXWHVISIT-27-VPUT,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+kalshi:KXZELENSKYPUTIN-29-27,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+kalshi:KXZELENSKYYPUTINMEET-26,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+polymarket:1007628,hosp_europe,-1,1,Russia-Ukraine escalation hurts European travel,question
+polymarket:1007630,hosp_europe,-1,1,Russia-Ukraine escalation hurts European travel,question
+polymarket:1007633,hosp_europe,-1,1,Russia-Ukraine escalation hurts European travel,question
+polymarket:1007634,hosp_europe,-1,1,Russia-Ukraine escalation hurts European travel,question
+polymarket:1007635,hosp_europe,-1,1,Russia-Ukraine escalation hurts European travel,question
+polymarket:1007636,hosp_europe,-1,1,Russia-Ukraine escalation hurts European travel,question
+polymarket:1031504,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+polymarket:1052037,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+polymarket:1059730,hosp_europe,1,1,Russia-Ukraine de-escalation aids European travel,question
+polymarket:1090494,hosp_europe,-1,1,Russia-Ukraine escalation hurts European travel,question
+polymarket:1115301,hosp_europe,-1,1,US-Denmark rift strains NATO and Europe,question
+polymarket:1124797,hosp_europe,-1,1,European security shock hits tourism,question
+polymarket:1170144,hosp_europe,-1,2,war lifts jet fuel and hits travel demand,question
+polymarket:1183503,hosp_europe,-1,1,US-Denmark rift strains NATO and Europe,question
+polymarket:1184343,hosp_europe,-1,2,wider European war hurts tourism,question
+polymarket:1194695,hosp_europe,-1,2,wider European war hurts tourism,question
+polymarket:1466418,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1466425,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1466430,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1466431,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1540766,hosp_europe,1,2,Hormuz reopening lowers jet fuel and eases travel,question
+polymarket:1609728,hosp_europe,-1,1,shipping chokepoint costs lift fuel and travel costs,question
+polymarket:1628449,hosp_europe,-1,1,Middle East escalation hits air travel and fuel,question
+polymarket:1706291,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1706293,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1706294,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1706295,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1706299,hosp_europe,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1796381,hosp_europe,-1,1,European security shock hits tourism,question
+polymarket:2126461,hosp_europe,-1,1,oil highs raise jet fuel costs,question
+polymarket:2159726,hosp_europe,-1,1,airspace closure disrupts Middle East air travel,question
+polymarket:2243894,hosp_europe,1,2,Ukraine peace aids European tourism and confidence,question
+polymarket:253399,hosp_europe,1,2,Ukraine peace aids European tourism and confidence,question
+polymarket:254768,hosp_europe,-1,2,wider European war hurts tourism,question
+polymarket:2591182,hosp_europe,1,2,Ukraine peace aids European tourism and confidence,question
+polymarket:2647846,hosp_europe,1,1,Iran deal lowers oil and travel risk,question
+polymarket:2668005,hosp_europe,1,1,Iran deal lowers oil and travel risk,question
+polymarket:2668007,hosp_europe,1,1,Iran deal lowers oil and travel risk,question
+polymarket:2686765,hosp_europe,-1,1,shipping chokepoint costs lift fuel and travel costs,question
+polymarket:2686769,hosp_europe,-1,1,airspace closure disrupts Middle East air travel,question
+polymarket:2696747,hosp_europe,1,1,Iran deal lowers oil and travel risk,question
+polymarket:2849422,hosp_europe,1,2,Hormuz reopening lowers jet fuel and eases travel,question
+polymarket:2849423,hosp_europe,1,2,Hormuz reopening lowers jet fuel and eases travel,question
+polymarket:2849424,hosp_europe,-1,2,Hormuz disruption lifts jet fuel and hits travel,question
+polymarket:2907324,hosp_europe,-1,1,shipping chokepoint costs lift fuel and travel costs,question
+polymarket:2910437,hosp_europe,1,1,end of blockade lowers fuel and travel risk,question
+polymarket:2928898,hosp_europe,-1,1,Houthi attacks disrupt shipping and travel,question
+polymarket:2929593,hosp_europe,-1,1,Houthi attacks disrupt shipping and travel,question
+polymarket:2952457,hosp_europe,1,1,ceasefire holding supports travel and fuel prices,question
+polymarket:2995850,hosp_europe,-1,1,European involvement widens Middle East war,question
+polymarket:2995865,hosp_europe,-1,1,Middle East escalation hits air travel and fuel,question
+polymarket:3121259,hosp_europe,-1,1,European security shock hits tourism,question
+polymarket:3251552,hosp_europe,-1,1,weak German growth hurts European travel,question
+polymarket:3253021,hosp_europe,-1,2,Gulf war lifts jet fuel and cuts travel demand,question
+polymarket:3324625,hosp_europe,1,2,Hormuz reopening lowers jet fuel and eases travel,question
+polymarket:3348047,hosp_europe,1,1,Hormuz access lowers jet fuel,question
+polymarket:3491438,hosp_europe,1,2,Iran deal lowers oil and travel risk,question
+polymarket:3491459,hosp_europe,1,2,Iran deal lowers oil and travel risk,question
+polymarket:3710803,hosp_europe,-1,2,Egypt tourism hit and jet fuel up,question
+polymarket:3860599,hosp_europe,-1,1,Russia escalation hurts European tourism,question
+polymarket:4188006,hosp_europe,1,2,Blockade lifted lowers jet fuel,question
+polymarket:4188114,hosp_europe,1,1,Ukraine airspace normalising signals de-escalation,question
+polymarket:4188115,hosp_europe,1,1,Ukraine airspace normalising signals de-escalation,question
+polymarket:4451606,hosp_europe,-1,1,Red Sea disruption lifts costs and fuel,question
+polymarket:4477141,hosp_europe,-1,1,Red Sea closure lifts fuel and costs,question
+polymarket:4639440,hosp_europe,-1,2,Gulf war lifts fuel and cuts travel,question
+polymarket:4641064,hosp_europe,1,2,Ceasefire holding keeps jet fuel lower,question
+polymarket:4642545,hosp_europe,-1,2,Hormuz shipping attacks lift jet fuel,question
+polymarket:4713961,hosp_europe,-1,2,War on EU soil hits tourism,question
+polymarket:4714589,hosp_europe,-1,1,Russia tensions weigh on European tourism,question
+polymarket:4743423,hosp_europe,-1,2,Gulf airspace closure disrupts air travel,question
+polymarket:4761458,hosp_europe,1,1,Red Sea calm lowers fuel and costs,question
+polymarket:514678,hosp_europe,-1,2,Article 5 means wider European war,question
+polymarket:5166734,hosp_europe,1,2,More Hormuz transits means lower jet fuel,question
+polymarket:5166817,hosp_europe,1,1,More Red Sea transits eases costs,question
+polymarket:516720,hosp_europe,1,1,Putin exit could ease Europe risk,question
+polymarket:522056,hosp_europe,1,1,Peace concession lowers European risk,question
+polymarket:522057,hosp_europe,1,1,Peace settlement lowers European risk,question
+polymarket:523190,hosp_europe,1,1,Summit signals Ukraine peace progress,question
+polymarket:523245,hosp_europe,1,1,Peace settlement lowers European risk,question
+polymarket:528750,hosp_europe,-1,2,Shipping attacks lift fuel costs and hit travel,question
+polymarket:533152,hosp_europe,-1,1,Israel Turkey clash hits Mediterranean tourism,question
+polymarket:538340,hosp_europe,1,1,Leader talks raise odds of peace,question
+polymarket:5401794,hosp_europe,-1,2,Saudi oil supply hit lifts jet fuel prices,question
+polymarket:5426238,hosp_europe,-1,2,Record crude lifts jet fuel costs,question
+polymarket:5447182,hosp_europe,1,2,Ceasefire holding lowers fuel costs and travel risk,question
+polymarket:548080,hosp_europe,-1,2,US Russia clash raises European war risk,question
+polymarket:548083,hosp_europe,-1,3,NATO war collapses European travel demand,question
+polymarket:550004,hosp_europe,1,1,Leader talks raise odds of peace,question
+polymarket:552121,hosp_europe,-1,3,Iran war lifts jet fuel and deters travel,question
+polymarket:552661,hosp_europe,1,1,Nuclear deal lowers Middle East war risk,question
+polymarket:555168,hosp_europe,-1,1,NPT exit raises war risk and oil,question
+polymarket:5568259,hosp_europe,-1,2,No Hormuz deal keeps jet fuel elevated,question
+polymarket:5628379,hosp_europe,1,2,Hormuz deal eases jet fuel and travel risk,question
+polymarket:5628380,hosp_europe,1,2,Hormuz deal eases jet fuel and travel risk,question
+polymarket:5645623,hosp_europe,1,2,More Hormuz transits means lower fuel prices,question
+polymarket:5645629,hosp_europe,1,1,More Red Sea transits eases fuel and routing costs,question
+polymarket:566211,hosp_europe,1,1,EU trade deal lifts European demand,question
+polymarket:575008,hosp_europe,1,2,Peace lowers European travel risk and energy costs,question
+polymarket:5770350,hosp_europe,-1,1,More maritime incident notices signal Gulf tension,question
+polymarket:5880780,hosp_europe,-1,2,French emergency deters tourism,question
+polymarket:5880852,hosp_europe,-1,2,French martial law deters tourism,question
+polymarket:593301,hosp_europe,-1,1,Drone incursions raise European tension,question
+polymarket:595366,hosp_europe,-1,1,Russian airspace incursions raise European airspace risk,event
+polymarket:6026980,hosp_europe,-1,2,Renewed Israel Iran war lifts fuel and cuts travel,question
+polymarket:6065114,hosp_europe,-1,1,More maritime incident notices signal Gulf tension,question
+polymarket:6065170,hosp_europe,1,2,More Hormuz transits means lower fuel prices,question
+polymarket:6065255,hosp_europe,1,1,More Red Sea transits eases fuel and routing costs,question
+polymarket:610201,hosp_europe,-1,3,NATO war collapses European travel demand,question
+polymarket:614681,hosp_europe,-1,1,Russian airspace incursions raise European airspace risk,event
+polymarket:6326265,hosp_europe,-1,1,Drone incursions raise European tension,question
+polymarket:6364482,hosp_europe,-1,1,More maritime incident notices signal Gulf tension,question
+polymarket:665480,hosp_europe,-1,2,US exit weakens European security and travel,question
+polymarket:665521,hosp_europe,-1,1,Nuclear escalation raises regional travel risk,question
+polymarket:677396,hosp_europe,-1,1,Nuclear escalation raises regional travel risk,question
+polymarket:681144,hosp_europe,1,1,Settlement would end war and ease travel risk,question
+polymarket:694027,hosp_europe,1,2,Peace lowers European travel risk and energy costs,question
+polymarket:891408,hosp_europe,-1,2,EU breakup disrupts travel and tourism,question
+polymarket:891579,hosp_europe,-1,1,EU exit disrupts travel,question
+polymarket:994894,hosp_europe,-1,2,Greece Turkey clash hits Mediterranean tourism,question
+kalshi:KXCBRATEHIKE-27-BOE,hosp_uk,-1,1,Higher rates weaken UK consumer spending,question
+kalshi:KXEUUK-25-31,hosp_uk,1,1,EU rejoin eases UK travel and trade,question
+kalshi:KXUKBUDGETTAX-26OCT29-YES,hosp_uk,-1,1,Net tax rises weigh on UK consumer spending,question
+kalshi:KXUKFOOTBALLALCOHOL-27JAN01,hosp_uk,1,1,Alcohol easing lifts UK matchday hospitality,question
+kalshi:WRECSS-26-UK,hosp_uk,-1,2,UK recession cuts leisure spending,question
+polymarket:529617,hosp_uk,-1,1,Heathrow disruption hurts UK air travel,event
+polymarket:566224,hosp_uk,1,1,UK trade deal lifts UK demand,question
+kalshi:KXAIRFARECPI-26NOV10-T318,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T320,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T322,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T324,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T326,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T328,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T330,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T332,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T334,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T336,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T338,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T340,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T342,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXAIRFARECPI-26NOV10-T344,hosp_us,0,1,Higher fares lift airline revenue but may dent demand,event
+kalshi:KXBOIPASSENGERS-27JAN22-T5229399,hosp_us,1,1,Airport passenger records signal US air travel demand,event
+kalshi:KXCAVAA-27FEBREST-500,hosp_us,1,2,Restaurant unit growth signals US dining demand,event
+kalshi:KXCAVAA-27FEBREST-505,hosp_us,1,2,Restaurant unit growth signals US dining demand,event
+kalshi:KXCAVAA-27FEBREST-510,hosp_us,1,2,Restaurant unit growth signals US dining demand,event
+kalshi:KXCAVAA-27FEBREST-515,hosp_us,1,2,Restaurant unit growth signals US dining demand,event
+kalshi:KXCAVAA-27FEBREST-520,hosp_us,1,2,Restaurant unit growth signals US dining demand,event
+kalshi:KXCAVAA-27FEBREST-525,hosp_us,1,2,Restaurant unit growth signals US dining demand,event
+kalshi:KXCAVAA-27FEBREST-530,hosp_us,1,2,Restaurant unit growth signals US dining demand,event
+kalshi:KXCAVAA-27MARCOMP-4.5,hosp_us,1,2,Same restaurant sales growth signals US dining demand,event
+kalshi:KXCAVAA-27MARCOMP-5,hosp_us,1,2,Same restaurant sales growth signals US dining demand,event
+kalshi:KXCAVAA-27MARCOMP-5.5,hosp_us,1,2,Same restaurant sales growth signals US dining demand,event
+kalshi:KXCAVAA-27MARCOMP-6,hosp_us,1,2,Same restaurant sales growth signals US dining demand,event
+kalshi:KXCAVAA-27MARCOMP-6.5,hosp_us,1,2,Same restaurant sales growth signals US dining demand,event
+kalshi:KXCAVAA-27MARCOMP-7,hosp_us,1,2,Same restaurant sales growth signals US dining demand,event
+kalshi:KXCBPAIRPORT-27-26SEP01,hosp_us,-1,1,CBP withdrawal would disrupt international arrivals,event
+kalshi:KXCBPAIRPORT-27-27JAN01,hosp_us,-1,1,CBP withdrawal would disrupt international arrivals,event
+kalshi:KXCCLA-28JANALBD-97000000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97100000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97200000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97300000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97400000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97500000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97600000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97700000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97800000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-97900000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-98000000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-98100000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCCLA-28JANALBD-98200000.0,hosp_us,1,2,More cruise capacity days signals cruise demand and growth,event
+kalshi:KXCMGA-27FEBCOMP-0,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-0.5,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-1,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-1.5,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-2,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-2.5,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-3,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-3.5,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-4,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-4.5,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-27FEBCOMP-N0.5,hosp_us,1,2,Comparable sales growth signals US restaurant demand,event
+kalshi:KXCMGA-28JANRESTS-4300,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4310,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4320,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4330,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4340,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4350,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4360,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4370,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4375,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4380,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4385,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4390,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4400,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4410,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXCMGA-28JANRESTS-4420,hosp_us,1,2,Restaurant count growth signals US dining expansion,event
+kalshi:KXFLVISITORCOUNT-27FEB26-T136,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXFLVISITORCOUNT-27FEB26-T138,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXFLVISITORCOUNT-27FEB26-T140,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXFLVISITORCOUNT-27FEB26-T142,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXFLVISITORCOUNT-27FEB26-T144,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXFLVISITORCOUNT-27FEB26-T146,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXFLVISITORCOUNT-27FEB26-T148,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXFLVISITORS-27FEB26-T143.33,hosp_us,1,2,Florida visitor volume signals US tourism demand,event
+kalshi:KXHIVISITORS-27JAN31-T10.0,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-27JAN31-T10.2,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-27JAN31-T9.4,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-27JAN31-T9.6,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-27JAN31-T9.8,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-28JAN31-T10.0,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-28JAN31-T10.2,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-28JAN31-T9.4,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-28JAN31-T9.6,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORS-28JAN31-T9.8,hosp_us,1,2,Hawaii arrivals signal US tourism demand,event
+kalshi:KXHIVISITORSPEND-27JAN29-T21.7531,hosp_us,1,2,Hawaii visitor spending signals US tourism demand,event
+kalshi:KXHORMUZAVG-27JAN01-A100,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B261101,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B261201,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270101,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270201,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270301,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270401,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270501,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270601,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270701,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270801,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B270901,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B271001,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B271101,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B271201,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B280101,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B280701,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZNORM-26MAR17-B290101,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZPEAK-26NOV01-T10,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZPEAK-26OCT25-T10,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZWEEKLY-26NOV01-T15,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXHORMUZWEEKLY-26OCT25-T15,hosp_us,1,1,Hormuz reopening lowers jet fuel cost,question
+kalshi:KXIAEAIRANAGREEMENT-26,hosp_us,1,1,Iran deal lowers Mideast war and fuel risk,question
+kalshi:KXIMFRECESS-27,hosp_us,-1,2,Recession cuts travel and leisure spending,question
+kalshi:KXLUVA-27JANFARE-205,hosp_us,0,1,Higher fares mean pricing power but maybe weaker demand,event
+kalshi:KXLUVA-27JANFARE-210,hosp_us,0,1,Higher fares mean pricing power but maybe weaker demand,event
+kalshi:KXLUVA-27JANFARE-215,hosp_us,0,1,Higher fares mean pricing power but maybe weaker demand,event
+kalshi:KXLUVA-27JANFARE-220,hosp_us,0,1,Higher fares mean pricing power but maybe weaker demand,event
+kalshi:KXLUVA-27JANFARE-225,hosp_us,0,1,Higher fares mean pricing power but maybe weaker demand,event
+kalshi:KXLUVA-27JANFARE-230,hosp_us,0,1,Higher fares mean pricing power but maybe weaker demand,event
+kalshi:KXLUVA-27JANFARE-235,hosp_us,0,1,Higher fares mean pricing power but maybe weaker demand,event
+kalshi:KXLUVA-28JANSEATS-225000000,hosp_us,1,2,More seats flown signals US air travel demand,event
+kalshi:KXLUVA-28JANSEATS-227000000,hosp_us,1,2,More seats flown signals US air travel demand,event
+kalshi:KXLUVA-28JANSEATS-229000000,hosp_us,1,2,More seats flown signals US air travel demand,event
+kalshi:KXLUVA-28JANSEATS-231000000,hosp_us,1,2,More seats flown signals US air travel demand,event
+kalshi:KXLUVA-28JANSEATS-233000000,hosp_us,1,2,More seats flown signals US air travel demand,event
+kalshi:KXLUVA-28JANSEATS-235000000,hosp_us,1,2,More seats flown signals US air travel demand,event
+kalshi:KXNEWTARIFFS-26OCT-NOV01,hosp_us,-1,2,New tariffs raise costs and dent inbound travel demand,question
+kalshi:KXNUMSHUTDOWNS-27JAN01-T2,hosp_us,-1,1,Shutdowns disrupt air travel and national parks,question
+kalshi:KXNVVISIT-27JUN30-T47,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXNVVISIT-27JUN30-T48,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXNVVISIT-27JUN30-T49,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXNVVISIT-27JUN30-T50,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXNVVISIT-27JUN30-T51,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXNVVISIT-27JUN30-T52,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXNVVISIT-27JUN30-T53,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXNVVISIT-27JUN30-T54,hosp_us,1,3,Nevada visitors drive Las Vegas casinos and hotels,event
+kalshi:KXORDPAX-27APR30-T84856018,hosp_us,1,2,Airport passenger records signal US air travel demand,event
+kalshi:KXORLHOTELDEMAND-27MAY10-T34.5,hosp_us,1,3,Hotel room demand directly drives lodging revenue,event
+kalshi:KXRDUVISITS-27FEB28-T15.50,hosp_us,1,1,Airport passenger records signal US air travel demand,event
+kalshi:KXRDUVISITS-27FEB28-T15.75,hosp_us,1,1,Airport passenger records signal US air travel demand,event
+kalshi:KXRDUVISITS-27FEB28-T16.00,hosp_us,1,1,Airport passenger records signal US air travel demand,event
+kalshi:KXRDUVISITS-27FEB28-T16.25,hosp_us,1,1,Airport passenger records signal US air travel demand,event
+kalshi:KXRDUVISITS-27FEB28-T16.50,hosp_us,1,1,Airport passenger records signal US air travel demand,event
+kalshi:KXRDUVISITS-27FEB28-T16.75,hosp_us,1,1,Airport passenger records signal US air travel demand,event
+kalshi:KXSGA-27FEBMARGIN-10,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-10.5,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-11,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-11.5,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-12,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-12.5,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-13,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-13.5,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-14,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-14.5,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-15,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-15.5,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-9,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXSGA-27FEBMARGIN-9.5,hosp_us,1,1,Restaurant chain margin strength signals healthy US dining,event
+kalshi:KXTRAVELDOWNGRADE-27JAN01-GAZ,hosp_us,1,1,Middle East calming supports travel and jet fuel,question
+kalshi:KXTRAVELDOWNGRADE-27JAN01-IRA,hosp_us,1,1,Middle East calming supports travel and jet fuel,question
+kalshi:KXTRAVELDOWNGRADE-27JAN01-IRQ,hosp_us,1,1,Middle East calming supports travel and jet fuel,question
+kalshi:KXTRAVELDOWNGRADE-27JAN01-LEB,hosp_us,1,1,Middle East calming supports travel and jet fuel,question
+kalshi:KXTRAVELDOWNGRADE-27JAN01-SYR,hosp_us,1,1,Middle East calming supports travel and jet fuel,question
+kalshi:KXTRAVELDOWNGRADE-27JAN01-YEM,hosp_us,1,1,Middle East calming supports travel and jet fuel,question
+kalshi:KXTRUMPIRAN-27JAN01,hosp_us,1,1,US-Iran thaw lowers Middle East war risk,question
+kalshi:KXTRUMPMEETM-26OCT01-MPEZ,hosp_us,1,1,US-Iran thaw lowers Middle East war risk,question
+kalshi:KXTRUMPMOJTABA-26DEC-26DEC,hosp_us,1,1,US-Iran thaw lowers Middle East war risk,question
+kalshi:KXTSAD-26OCT28-T1800000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T1900000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2000000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2100000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2200000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2300000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2400000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2500000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2600000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2700000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2800000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T2900000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T3000000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T3100000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAD-26OCT28-T3200000,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A1.80,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A1.85,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A1.90,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A1.95,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.00,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.05,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.10,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.15,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.20,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.25,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.30,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.35,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.40,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.45,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.50,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.55,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.60,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.65,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.70,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.75,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXTSAW-26NOV01-A2.80,hosp_us,1,2,Higher TSA throughput means stronger US air travel,event
+kalshi:KXUALA-28JANPAX-178000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-180000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-182000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-184000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-186000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-188000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-190000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-192000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-194000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUALA-28JANPAX-196000000,hosp_us,1,2,More United passengers means stronger US air demand,event
+kalshi:KXUSCANADATARIFFDOWN-26SEP-DEC01,hosp_us,1,1,Lower Canada tariffs aid cross-border travel,question
+kalshi:KXUSCANADATARIFFUP-26SEP-DEC01,hosp_us,-1,1,Canada tariffs curb Canadian travel to US,question
+kalshi:KXUSIRANCHINAMEET-27-27FEB01,hosp_us,1,1,US-Iran thaw lowers Middle East war risk,question
+kalshi:KXUSIRANMEETING-27-26DEC01,hosp_us,1,1,US-Iran thaw lowers Middle East war risk,question
+kalshi:KXVISAREVOKE-27JAN01-AL100000,hosp_us,-1,1,More visa revocations deter inbound visitors and students,event
+kalshi:KXVISAREVOKE-27JAN01-AL150000,hosp_us,-1,1,More visa revocations deter inbound visitors and students,event
+kalshi:KXVISAREVOKE-27JAN01-AL200000,hosp_us,-1,1,More visa revocations deter inbound visitors and students,event
+kalshi:KXVISAREVOKE-27JAN01-AL250000,hosp_us,-1,1,More visa revocations deter inbound visitors and students,event
+kalshi:KXVISAREVOKE-27JAN01-AL300000,hosp_us,-1,1,More visa revocations deter inbound visitors and students,event
+kalshi:KXVISAREVOKE-27JAN01-AL400000,hosp_us,-1,1,More visa revocations deter inbound visitors and students,event
+kalshi:KXWENA-27FEBUSCOMP-N10.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+kalshi:KXWENA-27FEBUSCOMP-N3.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+kalshi:KXWENA-27FEBUSCOMP-N4.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+kalshi:KXWENA-27FEBUSCOMP-N5.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+kalshi:KXWENA-27FEBUSCOMP-N6.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+kalshi:KXWENA-27FEBUSCOMP-N7.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+kalshi:KXWENA-27FEBUSCOMP-N8.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+kalshi:KXWENA-27FEBUSCOMP-N9.0,hosp_us,1,2,Same-restaurant sales growth signals US restaurant demand,event
+polymarket:1107361,hosp_us,-1,1,Mexico conflict hits cross-border travel,question
+polymarket:1116981,hosp_us,-1,1,Mexico conflict hits cross-border travel,question
+polymarket:1170144,hosp_us,-1,2,US-Iran war lifts fuel and hits travel demand,question
+polymarket:1466418,hosp_us,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1466425,hosp_us,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1540766,hosp_us,1,1,lower fuel costs help airlines and travel,question
+polymarket:1628449,hosp_us,-1,1,Middle East escalation hits fuel and travel,question
+polymarket:1706293,hosp_us,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1706294,hosp_us,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:1706295,hosp_us,-1,1,Gulf strikes disrupt air travel and fuel,question
+polymarket:2167510,hosp_us,-1,2,US airline bankruptcies hit air travel sector,event
+polymarket:2167511,hosp_us,-1,2,US airline bankruptcies hit air travel sector,event
+polymarket:2167512,hosp_us,-1,2,US airline bankruptcies hit air travel sector,event
+polymarket:2167513,hosp_us,-1,2,US airline bankruptcies hit air travel sector,event
+polymarket:2167514,hosp_us,-1,2,US airline bankruptcies hit air travel sector,event
+polymarket:253889,hosp_us,-1,1,global shock hits travel demand,question
+polymarket:2647846,hosp_us,1,1,Iran deal lowers oil and travel risk,question
+polymarket:2668007,hosp_us,1,1,Iran deal lowers oil and travel risk,question
+polymarket:2696747,hosp_us,1,1,Iran deal lowers oil and travel risk,question
+polymarket:2849422,hosp_us,1,1,lower fuel costs help airlines and travel,question
+polymarket:2849423,hosp_us,1,1,lower fuel costs help airlines and travel,question
+polymarket:2849424,hosp_us,-1,1,higher fuel costs hit airlines and travel,question
+polymarket:2995865,hosp_us,-1,1,Middle East escalation hits fuel and travel,question
+polymarket:3253021,hosp_us,-1,1,Middle East war hurts air travel demand,question
+polymarket:3324625,hosp_us,1,1,Lower fuel costs support travel,question
+polymarket:3491438,hosp_us,1,1,Iran deal lowers fuel costs and risk,question
+polymarket:3491459,hosp_us,1,1,Iran deal lowers fuel costs and risk,question
+polymarket:3709612,hosp_us,1,1,Tariff relief aids Canada US travel,question
+polymarket:4175133,hosp_us,1,1,Middle East de-escalation helps travel,question
+polymarket:4178247,hosp_us,-1,1,Middle East war hurts travel,question
+polymarket:4188006,hosp_us,1,1,Lower fuel costs support travel,question
+polymarket:4620900,hosp_us,-1,1,Higher rates weigh on consumer spending,question
+polymarket:4639440,hosp_us,-1,1,Middle East war hurts air travel,question
+polymarket:4641064,hosp_us,1,1,Ceasefire supports travel and fuel costs,question
+polymarket:4642545,hosp_us,-1,1,Fuel spike hurts travel,question
+polymarket:4743423,hosp_us,-1,1,Airspace closure disrupts travel,question
+polymarket:5194749,hosp_us,-1,2,High gasoline hurts US travel and consumers,question
+polymarket:5194750,hosp_us,-1,2,High gasoline hurts US travel and consumers,question
+polymarket:5194751,hosp_us,-1,2,High gasoline hurts US travel and consumers,question
+polymarket:5194752,hosp_us,-1,2,High gasoline hurts US travel and consumers,question
+polymarket:5194754,hosp_us,1,1,Lower gasoline helps US travel spending,question
+polymarket:5194755,hosp_us,1,1,Lower gasoline helps US travel spending,question
+polymarket:5194756,hosp_us,1,1,Lower gasoline helps US travel spending,question
+polymarket:5401794,hosp_us,-1,1,Oil spike hurts airlines and travel demand,question
+polymarket:5426238,hosp_us,-1,1,Higher fuel costs squeeze airlines and travel,question
+polymarket:5447182,hosp_us,1,1,Calmer Middle East supports travel demand,question
+polymarket:552121,hosp_us,-1,2,Middle East war hits oil and travel demand,question
+polymarket:6026980,hosp_us,-1,1,Middle East war hits oil and travel demand,question
+polymarket:666579,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666580,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666581,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666582,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666583,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666584,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666585,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666586,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666587,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:666588,hosp_us,-1,1,Mass deportation tightens hospitality labor,question
+polymarket:678747,hosp_us,-1,1,Wider Israeli strikes signal regional war,question
+polymarket:678748,hosp_us,-1,1,Wider Israeli strikes signal regional war,question
+polymarket:678749,hosp_us,-1,1,Wider Israeli strikes signal regional war,question
+polymarket:678750,hosp_us,-1,1,Wider Israeli strikes signal regional war,question
+polymarket:678751,hosp_us,-1,1,Wider Israeli strikes signal regional war,question
+polymarket:678752,hosp_us,-1,1,Wider Israeli strikes signal regional war,question
+polymarket:678753,hosp_us,-1,1,Wider Israeli strikes signal regional war,question
+kalshi:EUEXIT-30,re_europe,-1,1,EU exit adds euro-area instability,question
+kalshi:KXFRANCEBUDGET-27JAN01,re_europe,1,1,Budget passage eases French fiscal stress,question
+kalshi:KXFRANCECAPCONTROL-28-27AUG01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRANCECAPCONTROL-28-27DEC01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRANCECAPCONTROL-28-27JUL01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRANCECAPCONTROL-28-27JUN01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRANCECAPCONTROL-28-27NOV01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRANCECAPCONTROL-28-27OCT01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRANCECAPCONTROL-28-27SEP01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRANCECAPCONTROL-28-28JAN01,re_europe,-1,3,Capital controls signal euro-area crisis,question
+kalshi:KXFRENCHPRES-27-JBAR,re_europe,-1,2,Far-right win widens French spreads,question
+kalshi:KXFRENCHPRES-27-SLEC,re_europe,1,1,Centrist win eases French fiscal risk,question
+kalshi:KXFRPRES1R1ST-27-1-JBAR,re_europe,-1,1,Far-right strength widens French spreads,question
+kalshi:KXGERELECTION-29MAR25-AFD,re_europe,-1,1,AfD win raises German and EU uncertainty,question
+kalshi:KXIMFRECESS-27,re_europe,-1,2,Global recession hits property demand,question
+kalshi:KXNEXTECBPRES-28JAN01-FPAN,re_europe,0,1,ECB leadership shapes euro rate path,question
+kalshi:KXNEXTECBPRES-28JAN01-JNAG,re_europe,0,1,ECB leadership shapes euro rate path,question
+kalshi:KXNEXTECBPRES-28JAN01-KKNO,re_europe,0,1,ECB leadership shapes euro rate path,question
+kalshi:KXNEXTECBPRES-28JAN01-NCAL,re_europe,0,1,ECB leadership shapes euro rate path,question
+kalshi:KXNEXTECBPRES-28JAN01-OREH,re_europe,0,1,ECB leadership shapes euro rate path,question
+kalshi:KXPUTINUSA-26SEP21-JAN01,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+kalshi:KXSNAPELECTIONFR-27JAN01,re_europe,-1,1,French instability pressures euro-area assets,question
+kalshi:KXSWISSREF-PROP-25,re_europe,-1,1,Second home property tax raises ownership cost,event
+kalshi:KXTRILATERAL-29JAN20-27JAN01,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+kalshi:KXTRUMPMEETM-26OCT01-VZEL,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+kalshi:KXVONCFR-27,re_europe,-1,1,French instability pressures euro-area assets,question
+kalshi:KXWHVISIT-27-VPUT,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+kalshi:KXZELENSKYPUTIN-29-27,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+kalshi:KXZELENSKYYPUTINMEET-26,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+polymarket:1007628,re_europe,-1,1,Russia-Ukraine escalation hurts European property,question
+polymarket:1007630,re_europe,-1,1,Russia-Ukraine escalation hurts European property,question
+polymarket:1007633,re_europe,-1,1,Russia-Ukraine escalation hurts European property,question
+polymarket:1007634,re_europe,-1,1,Russia-Ukraine escalation hurts European property,question
+polymarket:1007635,re_europe,-1,1,Russia-Ukraine escalation hurts European property,question
+polymarket:1007636,re_europe,-1,1,Russia-Ukraine escalation hurts European property,question
+polymarket:1031504,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+polymarket:1052037,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+polymarket:1059730,re_europe,1,1,Russia-Ukraine de-escalation aids European property,question
+polymarket:1090494,re_europe,-1,1,Russia-Ukraine escalation hurts European property,question
+polymarket:1115301,re_europe,-1,1,US-Denmark rift strains NATO and Europe,question
+polymarket:1124797,re_europe,-1,1,European security shock hits property,question
+polymarket:1183503,re_europe,-1,1,US-Denmark rift strains NATO and Europe,question
+polymarket:1184343,re_europe,-1,2,wider European war hurts property,question
+polymarket:1194695,re_europe,-1,2,wider European war hurts property,question
+polymarket:1796381,re_europe,-1,1,European security shock hits property,question
+polymarket:2243894,re_europe,1,2,Ukraine peace aids European property and rates,question
+polymarket:253399,re_europe,1,2,Ukraine peace aids European property and rates,question
+polymarket:254768,re_europe,-1,2,wider European war hurts property,question
+polymarket:2591182,re_europe,1,2,Ukraine peace aids European property and rates,question
+polymarket:3121259,re_europe,-1,1,European security shock hits property,question
+polymarket:3251552,re_europe,-1,1,weak German growth hurts European property,question
+polymarket:3860599,re_europe,-1,1,Russia escalation weighs on European property,question
+polymarket:4713961,re_europe,-1,2,War on EU soil hits property,question
+polymarket:4714589,re_europe,-1,1,Russia tensions weigh on European assets,question
+polymarket:514678,re_europe,-1,2,Article 5 means wider European war,question
+polymarket:516720,re_europe,1,1,Putin exit could end Ukraine war,question
+polymarket:522056,re_europe,1,1,Peace concession lowers European risk,question
+polymarket:522057,re_europe,1,1,Peace settlement lowers European risk,question
+polymarket:523190,re_europe,1,1,Summit signals Ukraine peace progress,question
+polymarket:523245,re_europe,1,1,Peace settlement lowers European risk,question
+polymarket:538340,re_europe,1,1,Leader talks raise odds of peace,question
+polymarket:548080,re_europe,-1,2,US Russia clash raises European war risk,question
+polymarket:548083,re_europe,-1,3,NATO war hits European property values,question
+polymarket:550004,re_europe,1,1,Leader talks raise odds of peace,question
+polymarket:566211,re_europe,1,1,EU trade deal lifts European growth,question
+polymarket:575008,re_europe,1,2,Peace lifts European property sentiment and rates,question
+polymarket:578492,re_europe,1,1,Guarantee supports European security and settlement,question
+polymarket:5880852,re_europe,-1,1,French turmoil weighs on property,question
+polymarket:593301,re_europe,-1,1,Drone incursions raise European tension,question
+polymarket:610201,re_europe,-1,3,NATO war hits European property values,question
+polymarket:6326265,re_europe,-1,1,Drone incursions raise European tension,question
+polymarket:665480,re_europe,-1,2,US exit weakens European security and markets,question
+polymarket:665514,re_europe,1,1,Cheaper gas helps European property and rates,question
+polymarket:681144,re_europe,1,1,Settlement would end war and lift Europe,question
+polymarket:694027,re_europe,1,2,Peace lifts European property sentiment and rates,question
+polymarket:789950,re_europe,-1,1,German coalition crisis weighs on property,question
+polymarket:891408,re_europe,-1,3,EU breakup hits European property,question
+polymarket:891579,re_europe,-1,2,EU exit raises euro area instability,question
+polymarket:994894,re_europe,-1,1,Regional conflict weighs on European property,question
+polymarket:999108,re_europe,1,2,ECB cut lowers financing costs,question
+kalshi:KXBURNHAMOUT-26JUL-26SEP01,re_uk,0,1,UK fiscal and gilt risk shifts either way,question
+kalshi:KXCBRATEHIKE-27-BOE,re_uk,-1,3,BoE hike raises mortgage and cap rates,question
+kalshi:KXEUUK-25-31,re_uk,1,1,EU rejoin lifts UK investment and demand,question
+kalshi:KXUKBUDGETTAX-26OCT29-YES,re_uk,-1,2,Net tax rises weigh on UK property,question
+kalshi:KXUKWEALTHTAX-26DEC01-CGT,re_uk,-1,2,Higher CGT hits UK property investors,question
+kalshi:KXUKWEALTHTAX-26DEC01-CTAX,re_uk,0,2,Replacing stamp duty with annual property tax reshapes UK housing,event
+kalshi:KXUKWEALTHTAX-26DEC01-IHT,re_uk,-1,1,Inheritance tax rise hits UK property holders,question
+kalshi:KXUKWEALTHTAX-26DEC01-MANS,re_uk,-1,2,Mansion surcharge hits high-end UK housing,question
+kalshi:KXUKWEALTHTAX-26DEC01-WLTH,re_uk,-1,1,Wealth tax hits UK property owners,question
+kalshi:WRECSS-26-UK,re_uk,-1,2,UK recession weakens property demand,question
+polymarket:566224,re_uk,1,1,UK trade deal lifts UK growth,question
+kalshi:CREDEF-23-Q3-0.84,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-23-Q3-1,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-23-Q3-1.25,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-23-Q3-1.5,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q1-1.5,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q2-1.25,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q3-2,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q3-3,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q4-1.5,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q4-2,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q4-3,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:CREDEF-24-Q4-4,re_us,-1,3,Higher CRE mortgage defaults hit commercial property values,event
+kalshi:KX30YMORTW-26OCT29-T7.22,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.23,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.24,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.26,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.27,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.28,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.29,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.30,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.31,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.32,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.33,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.34,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.35,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.36,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.37,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.38,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.39,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.40,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KX30YMORTW-26OCT29-T7.41,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXBOZPERMITS-27MAY31-T1100,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXBOZPERMITS-27MAY31-T1250,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXBOZPERMITS-27MAY31-T1400,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXBOZPERMITS-27MAY31-T1550,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXBOZPERMITS-27MAY31-T1700,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXBOZPERMITS-27MAY31-T950,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXBUILDPERMS-26NOV18-T1.250,re_us,1,2,More building permits signal stronger housing activity,event
+kalshi:KXBUILDPERMS-26NOV18-T1.300,re_us,1,2,More building permits signal stronger housing activity,event
+kalshi:KXBUILDPERMS-26NOV18-T1.350,re_us,1,2,More building permits signal stronger housing activity,event
+kalshi:KXBUILDPERMS-26NOV18-T1.400,re_us,1,2,More building permits signal stronger housing activity,event
+kalshi:KXBUILDPERMS-26NOV18-T1.450,re_us,1,2,More building permits signal stronger housing activity,event
+kalshi:KXBUILDPERMS-26NOV18-T1.500,re_us,1,2,More building permits signal stronger housing activity,event
+kalshi:KXBUILDPERMS-26NOV18-T1.550,re_us,1,2,More building permits signal stronger housing activity,event
+kalshi:KXCABUILDPERMITS-27JAN27-T100000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCABUILDPERMITS-27JAN27-T105000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCABUILDPERMITS-27JAN27-T110000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCABUILDPERMITS-27JAN27-T115000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCABUILDPERMITS-27JAN27-T120000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCABUILDPERMITS-27JAN27-T125000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCAHPIYOY-27FEB23-T419.85,re_us,1,2,Rising home prices support housing valuations,event
+kalshi:KXCOBUILDPERMITS-27JAN27-T30000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCOBUILDPERMITS-27JAN27-T32000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCOBUILDPERMITS-27JAN27-T34000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCOBUILDPERMITS-27JAN27-T36000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCOBUILDPERMITS-27JAN27-T38000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXCOHPIYOY-27FEB23-T679.21,re_us,1,2,Rising home prices support housing valuations,event
+kalshi:KXCREYOY-27NOV01-T-20,re_us,-1,3,Commercial property price crash would hit CRE and REITs,event
+kalshi:KXCTMFPERMITS-27MAY03-T2000,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T2500,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T3000,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T3500,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T4000,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T4500,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T5000,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T5500,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T6000,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T6500,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXCTMFPERMITS-27MAY03-T7000,re_us,1,1,More multifamily permits signal stronger construction,event
+kalshi:KXEFFR-27JAN04-T3.50,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXEHSALES-26NOV12-T3.60,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEHSALES-26NOV12-T3.70,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEHSALES-26NOV12-T3.80,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEHSALES-26NOV12-T3.90,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEHSALES-26NOV12-T4.00,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEHSALES-26NOV12-T4.10,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEHSALES-26NOV12-T4.20,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEHSALES-26NOV12-T4.30,re_us,1,3,Existing home sales measure US housing activity,event
+kalshi:KXEMERCUTS-26-T0,re_us,0,2,Emergency cuts signal crisis but lower rates,question
+kalshi:KXEMERCUTS-26-T1,re_us,0,2,Emergency cuts signal crisis but lower rates,question
+kalshi:KXFED-26DEC-T2.75,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27APR-T0.00,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27APR-T4.50,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27DEC-T0.00,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27JAN-T0.00,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27JAN-T4.50,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27JUN-T0.00,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27MAR-T0.00,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFED-27MAR-T4.50,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFEDCOMBO-26DEC-25C-0,re_us,1,2,Fed move direction drives mortgage and cap rates,question
+kalshi:KXFEDCOMBO-26DEC-25C-T0,re_us,1,2,Fed move direction drives mortgage and cap rates,question
+kalshi:KXFEDCOMBO-26DEC-25H-0,re_us,-1,2,Fed move direction drives mortgage and cap rates,question
+kalshi:KXFEDCOMBO-26DEC-25H-T0,re_us,-1,2,Fed move direction drives mortgage and cap rates,question
+kalshi:KXFEDDECISION-26DEC-H0,re_us,-1,3,Fed hike raises mortgage and cap rates,question
+kalshi:KXFEDFUNDSYEAR-28JAN01-T1.00,re_us,0,2,Policy rate path drives mortgage and cap rates,question
+kalshi:KXFLPROPERTYTAX-26NOV03,re_us,1,1,Lower property tax caps support homeowners,event
+kalshi:KXFM30YMTG-26DEC31-T5.75,re_us,1,3,Lower mortgage rates support housing demand,event
+kalshi:KXFM30YMTG-26EOY-T6.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T6.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T6.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T6.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T7.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T7.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T7.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T7.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T8.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T8.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T8.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T8.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-26EOY-T9.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T6.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T6.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T6.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T6.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T7.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T7.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T7.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T7.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T8.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T8.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T8.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T8.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXFM30YMTG-27EOY-T9.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.050,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.100,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.150,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.200,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.250,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.300,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.350,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXHOUSINGSTART-26NOV18-T1.400,re_us,1,2,Housing starts signal stronger residential construction,event
+kalshi:KXILHPIYOY-27FEB26-T327.38,re_us,1,2,Rising home prices support housing valuations,event
+kalshi:KXIMFRECESS-27,re_us,-1,2,Global recession hits property demand,question
+kalshi:KXIPOFANNIE-27JUN01,re_us,1,1,Fannie Mae IPO signals housing finance reform and liquidity,question
+kalshi:KXLARGECUT-26,re_us,1,3,Larger Fed cuts lower mortgage and cap rates,question
+kalshi:KXLOCALLAW-NE250-27OCT01,re_us,1,1,Property tax cuts support owners,event
+kalshi:KXLOCALLAW-TBBROADWAY-27JUN01,re_us,1,1,Commercial property tax relief supports owners,event
+kalshi:KXMANOFFVAC-27JAN31-T18.0,re_us,1,2,Lower office vacancy supports commercial property,event
+kalshi:KXMBAAPPS-26NOV04-T-10,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T-2,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T-4,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T-6,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T-8,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T0,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T10,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T2,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T4,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T6,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMBAAPPS-26NOV04-T8,re_us,1,2,More mortgage applications signal housing demand,event
+kalshi:KXMORTGAGERATE-26DEC-T6.7,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T6.8,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T6.9,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.0,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.1,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.2,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.3,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.4,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.5,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.6,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.7,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.8,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T7.9,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-26DEC-T8.0,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T10.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T7.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T7.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T7.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T7.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T8.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T8.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T8.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T8.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T9.00,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T9.25,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T9.50,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXMORTGAGERATE-27DEC30-T9.75,re_us,-1,3,Higher mortgage rates hurt housing affordability and sales,event
+kalshi:KXNEWTARIFFS-26OCT-NOV01,re_us,-1,1,Tariffs lift construction costs and rates,question
+kalshi:KXNHHOMEPRICE-27FEB28-T478.68,re_us,1,2,Rising home prices support housing valuations,event
+kalshi:KXNHSALES-26NOV25-T600000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNHSALES-26NOV25-T620000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNHSALES-26NOV25-T640000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNHSALES-26NOV25-T660000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNHSALES-26NOV25-T680000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNHSALES-26NOV25-T700000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNHSALES-26NOV25-T720000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNHSALES-26NOV25-T740000,re_us,1,3,New home sales measure US housing activity,event
+kalshi:KXNVHOMEPRICE-27FEB28-T423.62,re_us,1,2,Rising home prices support housing valuations,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A15000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A20000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A25000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A30000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A35000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A40000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A45000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A50000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCAFFORDABLE-27JUN30-A55000,re_us,0,1,Affordable housing output adds supply but needs subsidy,event
+kalshi:KXNYCASKRENT-27JAN31-T3800,re_us,1,2,Higher NYC asking rents support landlord income,question
+kalshi:KXNYCASKRENT-27JAN31-T3900,re_us,1,2,Higher NYC asking rents support landlord income,question
+kalshi:KXNYCASKRENT-27JAN31-T4000,re_us,1,2,Higher NYC asking rents support landlord income,question
+kalshi:KXNYCASKRENT-27JAN31-T4100,re_us,1,2,Higher NYC asking rents support landlord income,question
+kalshi:KXNYCASKRENT-27JAN31-T4200,re_us,1,2,Higher NYC asking rents support landlord income,question
+kalshi:KXNYCASKRENT-27JAN31-T4300,re_us,1,2,Higher NYC asking rents support landlord income,question
+kalshi:KXNYCASKRENT-27JAN31-T4400,re_us,1,2,Higher NYC asking rents lift apartment values,question
+kalshi:KXNYCASKRENT-27JAN31-T4500,re_us,1,2,Higher NYC asking rents lift apartment values,question
+kalshi:KXNYCPROPERTYTAX-27JAN01,re_us,-1,2,Higher NYC property tax weighs on real estate values,question
+kalshi:KXNYCRENTSY-26-T0,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCRENTSY-26-T1,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCRENTSY-26-T2,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCRENTSY-26-T3,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCRENTSY-26-T4,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCRENTSY-26-T5,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCRENTSY-26-T6,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCRENTSY-26-T7,re_us,1,1,Rent growth helps landlords,event
+kalshi:KXNYCSTAT-PERM26-A23000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXNYCSTAT-PERM26-A26000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXNYCSTAT-PERM26-A29000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXNYCSTAT-PERM26-A32000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXNYCSTAT-PERM26-A35000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXNYCSTAT-PERM26-A38000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXNYCSTAT-PERM26-A41000,re_us,1,1,More permits signal stronger housing construction,event
+kalshi:KXOER-26NOV10-T446.0,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.1,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.2,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.3,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.4,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.5,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.6,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.7,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.8,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T446.9,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T447.0,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T447.1,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T447.2,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T447.3,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T447.4,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T447.5,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T448.5,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T448.6,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T448.7,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T448.8,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T448.9,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.0,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.1,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.2,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.3,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.4,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.5,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.6,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.7,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.8,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T449.9,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXOER-26NOV10-T450.0,re_us,0,1,Higher owners equivalent rent helps landlords but signals inflation,event
+kalshi:KXPERMITBILL-26SEP,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITBILL-26SEP-27MAR01,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T56,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T60,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T64,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T68,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T72,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T76,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T80,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXPERMITVOTES-26SEP30-T84,re_us,1,1,Permitting reform eases construction,event
+kalshi:KXRATECUTCOUNT-26DEC31-T0,re_us,0,2,Fed cut count drives mortgage rates and cap rates,question
+kalshi:KXRATECUTCOUNT-26DEC31-T1,re_us,0,2,Fed cut count drives mortgage rates and cap rates,question
+kalshi:KXRATEHIKE-2026-0,re_us,1,2,No Fed hikes keeps mortgage rates and cap rates low,question
+kalshi:KXRENTFREEZEEFFECT-26,re_us,-1,1,Rent freeze caps NYC landlord income,event
+kalshi:KXRIHOMEPRICE-27FEB28-T431.10,re_us,1,1,Higher state home prices support US housing values,event
+kalshi:KXSTATEBALLOTMEASURE-RI-Q5,re_us,1,1,Housing bond funds affordable housing supply,event
+kalshi:KXUSHOMEINVENT-26NOV05-T1100000,re_us,0,2,More listings ease prices but lift sales activity,event
+kalshi:KXUSHOMEINVENT-26NOV05-T1125000,re_us,0,2,More listings ease prices but lift sales activity,event
+kalshi:KXUSHOMEINVENT-26NOV05-T1150000,re_us,0,2,More listings ease prices but lift sales activity,event
+kalshi:KXUSHOMEINVENT-26NOV05-T1175000,re_us,0,2,More listings ease prices but lift sales activity,event
+kalshi:KXUSHOMEINVENT-26NOV05-T1200000,re_us,0,2,More listings ease prices but lift sales activity,event
+kalshi:KXUSHOMEINVENT-26NOV05-T1225000,re_us,0,2,More listings ease prices but lift sales activity,event
+kalshi:KXUSHOMEINVENT-26NOV05-T1250000,re_us,0,2,More listings ease prices but lift sales activity,event
+kalshi:KXUSMCA-26-27,re_us,-1,1,USMCA exit hurts trade and construction costs,question
+kalshi:KXUSMCAOUTCOMES-27-USW,re_us,-1,1,US USMCA withdrawal hurts trade and construction costs,question
+kalshi:KXUTHOMEPRICE-27FEB28-T722.63,re_us,1,1,Higher state home prices support US housing values,event
+kalshi:KXVTPERMITS-27MAY03-T1400,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T1500,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T1600,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T1700,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T1800,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T1900,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T2000,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T2100,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T2200,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T2300,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T2400,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T2500,re_us,1,1,More permits signal housing construction activity,event
+kalshi:KXVTPERMITS-27MAY03-T2600,re_us,1,1,More permits signal housing construction activity,event
+kalshi:MORTGAGEDEF-23-Q3-1.72,re_us,-1,2,Higher mortgage defaults signal housing credit stress,event
+kalshi:MORTGAGEDEF-24-Q2-1.71,re_us,-1,2,Higher mortgage defaults signal housing credit stress,event
+kalshi:MORTGAGEDEF-24-Q3-1.75,re_us,-1,2,Higher mortgage defaults signal housing credit stress,event
+kalshi:MORTGAGEDEF-24-Q3-2,re_us,-1,2,Higher mortgage defaults signal housing credit stress,event
+polymarket:1168137,re_us,1,2,lower policy rate eases mortgage and cap rates,question
+polymarket:1168138,re_us,1,2,lower policy rate eases mortgage and cap rates,question
+polymarket:1168139,re_us,1,2,lower policy rate eases mortgage and cap rates,question
+polymarket:1168140,re_us,0,1,moderate rate level neutral,question
+polymarket:1168141,re_us,-1,1,higher rates pressure property values,question
+polymarket:1168142,re_us,-1,2,high rates pressure property values,question
+polymarket:1168832,re_us,0,1,deep cuts imply recession risk mixed,question
+polymarket:1168833,re_us,0,1,deep cuts imply recession risk mixed,question
+polymarket:1170144,re_us,-1,1,war shock raises rates and risk premia,question
+polymarket:1327142,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327143,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327144,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327145,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327146,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327147,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327148,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327149,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1327150,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:1426253,re_us,1,2,Housing act aims to boost US housing supply,event
+polymarket:1426263,re_us,1,2,Housing act aims to boost US housing supply,event
+polymarket:2126461,re_us,-1,1,oil spike lifts inflation and rates,question
+polymarket:2761542,re_us,1,1,Affordable housing bond funds housing supply,event
+polymarket:2851438,re_us,1,2,Lower Florida homestead property taxes support homeowners,event
+polymarket:3215009,re_us,-1,2,Fed hike raises mortgage and cap rates,question
+polymarket:3215010,re_us,1,2,Fed cut eases mortgage and cap rates,question
+polymarket:3215014,re_us,-1,2,Fed hike raises mortgage and cap rates,question
+polymarket:3303356,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:3303357,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:3303358,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:3303359,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:3303360,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:3709612,re_us,1,1,Lower tariffs ease costs and rates,question
+polymarket:4620900,re_us,-1,3,Fed hike raises mortgage and cap rates,question
+polymarket:4895201,re_us,1,2,Low policy rate supports real estate,question
+polymarket:4895202,re_us,1,2,Low policy rate supports real estate,question
+polymarket:4895203,re_us,1,2,Low policy rate supports real estate,question
+polymarket:4895204,re_us,0,1,Mid policy rate neutral for real estate,question
+polymarket:4895205,re_us,0,1,Mid policy rate neutral for real estate,question
+polymarket:4895206,re_us,0,1,Mid policy rate neutral for real estate,question
+polymarket:4895207,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895208,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895209,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895210,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895211,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895212,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895213,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895214,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:4895215,re_us,-1,2,High policy rate weighs on real estate,question
+polymarket:5087384,re_us,-1,2,Higher mortgage delinquency signals housing credit stress,event
+polymarket:616902,re_us,-1,2,No cuts keeps mortgage rates high,question
+polymarket:616903,re_us,1,1,A cut eases mortgage rates,question
+polymarket:6324659,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:6324660,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:6324661,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:6324662,re_us,0,3,Mortgage rate level drives housing affordability and sales,event
+polymarket:666579,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666580,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666581,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666582,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666583,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666584,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666585,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666586,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666587,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:666588,re_us,-1,1,Mass deportation tightens construction labor,question
+polymarket:677147,re_us,0,2,Emergency cut signals crisis but eases rates,question
+kalshi:KXBILLS-DATA,data_centers,-1,2,Data centres must absorb their own power costs; raises operating cost,market
+kalshi:KXBILLS-DATA,ai_infrastructure,-1,1,Higher power cost for AI data centres,market
+polymarket:1426261,data_centers,-1,2,Data centres must absorb their own power costs; raises operating cost,market
+polymarket:1426261,ai_infrastructure,-1,1,Higher power cost for AI data centres,market
+kalshi:KXBILLS-AIO,ai_infrastructure,-1,2,Congressional review can block AI-chip export sales,market
+kalshi:KXBILLS-CHIP,ai_infrastructure,-1,1,Location verification adds cost and friction to chip exports,market
+polymarket:1426260,ai_infrastructure,-1,2,Export licensing restricts AI-chip sales abroad,market
+polymarket:6366919,data_centers,0,1,Political salience of data centres; direction unclear,market

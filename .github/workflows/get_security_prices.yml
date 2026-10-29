@@ -31,3 +31,7 @@ jobs:
         env:
           DB: md:geo_odds
           MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+      - run: python event_betas.py   # every issuer and macro factor vs every event with data (Issuer / Macro dashboards)
+        env:
+          DB: md:geo_odds
+          MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}

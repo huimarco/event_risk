@@ -38,9 +38,16 @@ from matching import EFFECTS
 
 MIN_SEVERITY = 0.3  # matching.EFFECTS severity of the action
 
+# proxy (macro indicators without a daily series): the daily market factor that prices the indicator,
+# "-" = the indicator moves against it (unemployment vs the 2-year yield). Analyst choice
+# (2026-10-28), used by the Macro dashboard to measure an indicator through its proxy.
 CATALOG = {r["factor_id"]: dict(id=r["factor_id"], name=r["name"], layer="macro", family=r["family"],
-                                definition=r["definition"], series=r["series"] or None, units=r["units"] or None)
+                                definition=r["definition"], series=r["series"] or None, units=r["units"] or None,
+                                proxy=(r.get("proxy") or "").lstrip("-") or None, proxy_sign=-1 if (r.get("proxy") or "").startswith("-") else 1)
            for r in seed("factors.csv")}
+for f, c in CATALOG.items():
+    assert not c["proxy"] or (CATALOG.get(c["proxy"]) or {}).get("series"), f"factors.csv: {f}: proxy {c['proxy']} has no series"
+    assert not (c["proxy"] and c["series"]), f"factors.csv: {f} has a series and a proxy"
 for r in seed("niche_factors.csv"):
     assert r["factor_id"] not in CATALOG, f"niche_factors.csv: duplicate factor {r['factor_id']}"
     CATALOG[r["factor_id"]] = dict(id=r["factor_id"], name=r["name"], layer="niche", family=r["side"],
@@ -56,6 +63,32 @@ for r in GICS.values():
                                                        industry_group=r["industry_group"], sector=r["sector"],
                                                        sector_code=r["sector_code"], sub_industries=[]))
     i["sub_industries"].append(dict(code=r["sub_industry_code"], name=r["sub_industry"]))
+
+# factor_prices keeps every series a factor was ever measured by (append-only); readers use only the
+# factor's current series (seeds/factors.csv), so switching a factor to a better proxy never mixes them.
+CURRENT_SERIES = [f"{f}|{c['series']}" for f, c in CATALOG.items() if c["series"]]
+SERIES_FILTER = "factor_id || '|' || series IN (SELECT unnest(?::VARCHAR[]))"
+
+CLEANED_FAMILIES = {"country_equity", "industry"}  # equity indices / ETFs: a one-day move of 60% is a data error
+MAX_DAILY_RATIO, REVERT_DAYS = 1.6, 5
+
+def clean_levels(fid, points):
+    """[(date, level)] sorted, for estimation: for equity index / ETF factors, a level more than
+    MAX_DAILY_RATIO away from the previous one is a bad print if the series comes back within
+    REVERT_DAYS observations (dropped: 1306.T printed 37.6 for 382.7 on 2026-03-30/31), else a share
+    split (earlier levels rescaled onto today's basis). Other factors are returned as they are."""
+    if CATALOG[fid]["family"] not in CLEANED_FAMILIES: return points
+    pts, out, i = [(d, v) for d, v in points if v is not None and v > 0], [], 0
+    far = lambda a, b: max(a / b, b / a) > MAX_DAILY_RATIO
+    while i < len(pts):
+        if out and far(pts[i][1], out[-1][1]):
+            back = next((j for j in range(i + 1, min(i + 1 + REVERT_DAYS, len(pts))) if not far(pts[j][1], out[-1][1])), None)
+            if back is not None:
+                i = back; continue
+            r = pts[i][1] / out[-1][1]
+            out = [(d, v * r) for d, v in out]
+        out.append(pts[i]); i += 1
+    return out
 
 def industries_of(fid):
     """{industry code: sub-industry codes it applies to, or None for the whole industry} for a
@@ -79,11 +112,28 @@ for r in QUESTION_LINKS:
     assert r["target_type"] != "factor" or r["target_id"] in CATALOG, f"question_links.csv: unknown factor {r['target_id']}"
     assert r["target_type"] != "industry" or r["target_id"] in INDUSTRIES, f"question_links.csv: unknown industry {r['target_id']}"
 
+# The 11 GICS sectors, each priced by its SPDR sector ETF (seeds/gics_sectors.csv), and the
+# question -> sector links (seeds/gics_sector_links.csv: one LLM judgment pass over the live
+# questions, 2026-10-28, to be replaced by a methodical version). sign = what YES means for the
+# sector's stocks, strength 3 first-order / 2 material / 1 marginal. Not graph edges:
+# security_betas.py measures each link against the sector ETF and the /gics dashboard reads both.
+SECTORS = {r["sector_code"]: dict(code=r["sector_code"], name=r["sector"], etf=r["etf"], etf_name=r["etf_name"])
+           for r in seed("gics_sectors.csv")}
+assert {i["sector_code"] for i in INDUSTRIES.values()} == set(SECTORS), "gics_sectors.csv must list every gics.csv sector"
+SECTOR_LINKS = defaultdict(dict)  # question id -> {sector code: dict(sign, strength, rationale)}
+for r in seed("gics_sector_links.csv") if (SEEDS / "gics_sector_links.csv").exists() else []:
+    assert r["sector_code"] in SECTORS, f"gics_sector_links.csv: unknown sector {r['sector_code']}"
+    SECTOR_LINKS[r["question_id"]][r["sector_code"]] = dict(sign=int(r["sign"]), strength=int(r["strength"]), rationale=r["rationale"])
+
 LINKS = []  # factor -> factor transmission: (src, dst, sign, rationale)
 for r in seed("factor_links.csv"):
     assert r["src"] in CATALOG and r["dst"] in CATALOG, f"factor_links.csv: unknown factor in {r['src']} -> {r['dst']}"
     LINKS.append((r["src"], r["dst"], int(r["sign"]), r["rationale"]))
 RULES = defaultdict(list)  # entity id -> [(factor id, channels, roles, rationale)]
+for r in seed("themes.csv"):   # hand-made themes (graph_build.THEMES): a themed question is relevant to its factors
+    for fid in filter(None, r["factors"].split(";")):
+        assert fid in CATALOG, f"themes.csv: {r['theme_id']}: unknown factor {fid}"
+        RULES[f"theme:{r['theme_id']}"].append((fid, {"theme"}, {"concept"}, f"{r['name']} theme"))
 for r in seed("entity_factors.csv"):
     assert r["factor_id"] in CATALOG, f"entity_factors.csv: unknown factor {r['factor_id']}"
     RULES[f"wd:{r['qid']}"].append((r["factor_id"], set(r["channels"].split(";")), set(r["roles"].split(";")),
@@ -95,7 +145,7 @@ def derive(involves, citizen_of):
     the mentioned entity, then the one the rule matched], role, channel, rationale)."""
     paths = defaultdict(list)
     for ent, role, action, channel in involves:
-        if not channel or EFFECTS[action][1] < MIN_SEVERITY: continue
+        if channel != "theme" and (not channel or EFFECTS[action][1] < MIN_SEVERITY): continue  # curated themes: no severity gate
         for src in [ent, *citizen_of.get(ent, ())]:
             for fid, channels, roles, why in RULES.get(src, ()):
                 if channels & {channel, "any"} and roles & {role, "any"}:

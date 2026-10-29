@@ -12,9 +12,11 @@ For every question -> factor `relevant_to` edge in the current graph:
      trading day at or after it (a jump late in a UTC day lands after many closes), in the
      factor's units (seeds/factors.csv): % = log return x 100, bp = change in level x 100 (FRED
      quotes spreads and yields in percent).
-  3. Own estimate: beta = sum(dp * move) / sum(dp^2) (regression through the origin), se = sigma /
-     sqrt(sum(dp^2)) with sigma = the factor's own standard deviation of two-day moves over all
-     days — with one to three events per question a residual variance would mean nothing.
+  3. Own estimate: beta = sum(dp * move) / sum(dp^2) (regression through the origin), se =
+     sqrt(sum(dp^2 sigma_d^2)) / sum(dp^2) with sigma_d = the factor's own RMS of two-day moves over
+     the LOCAL_WINDOW trading days before each jump (floored at SIGMA_FLOOR x its full-history RMS)
+     — with one to three events per question a residual variance would mean nothing, and an
+     all-history sigma let 2020-22 volatility swamp today's events (decision 2026-10-28).
   4. Pooling: questions sharing a factor and channel (matching.EFFECTS: conflict, sanctions, credit,
      ...) are oriented so that +dp is bad news for the entity that links them (orientation = minus
      the `involves` sign: an invasion and a ceasefire then point the same way) and pooled:
@@ -44,32 +46,57 @@ from backtest import daily_probs, lasting_jumps
 from collector import cursor, insert, log, now, run_job
 
 MIN_POOL = 3     # questions needed to estimate the between-question spread tau
+LOCAL_WINDOW, LOCAL_MIN = 250, 60  # trading days of two-day moves behind each event's sigma (fewer: full history)
+SIGMA_FLOOR = 0.25  # a local sigma is at least this share of the full-history one (flat stretches)
 MAX_EVENTS = 10  # events kept per row for audit (largest moves)
 
 def factor_moves(cur):
-    """{factor id: (trading days, {day: two-day move starting that day}, sigma)} in factor units."""
+    """{factor id: (trading days, {day: two-day move starting that day}, sigma, {day: local sigma})} in
+    factor units, from each factor's current series. sigma = RMS of all two-day moves; local sigma =
+    RMS over the LOCAL_WINDOW moves before that day (floored at SIGMA_FLOOR x sigma)."""
     levels = defaultdict(list)
-    for f, d, v in cur.execute("""SELECT factor_id, date::VARCHAR, arg_max(level, fetched_at) FROM factor_prices
-                                  GROUP BY ALL ORDER BY 1, 2""").fetchall():
+    for f, d, v in cur.execute(f"""SELECT factor_id, date::VARCHAR, arg_max(level, fetched_at) FROM factor_prices
+                                  WHERE {factors.SERIES_FILTER} GROUP BY ALL ORDER BY 1, 2""", [factors.CURRENT_SERIES]).fetchall():
         if v is not None: levels[f].append((date.fromisoformat(d), v))
     out = {}
     for f, xs in levels.items():
         if f not in factors.CATALOG: continue
+        xs = factors.clean_levels(f, xs)
         pct = factors.CATALOG[f]["units"] == "%"
         move = (lambda a, b: 100 * math.log(b / a)) if pct else (lambda a, b: 100 * (b - a))
+        if pct: xs = [(d, v) for d, v in xs if v > 0]  # a % move needs positive levels (WTI settled at -$37.63 on 2020-04-20)
         days, vals = [d for d, _ in xs], [v for _, v in xs]
-        if pct and min(vals) <= 0: continue
         moves = {days[i]: move(vals[i - 1], vals[i + 1]) for i in range(1, len(days) - 1)}
         if len(moves) < 20: continue
         sigma = math.sqrt(sum(m * m for m in moves.values()) / len(moves))
-        out[f] = (days, moves, sigma)
+        keys, cum, local = sorted(moves), [0.0], {}
+        for k in keys: cum.append(cum[-1] + moves[k] ** 2)
+        for i, k in enumerate(keys):
+            n = min(i, LOCAL_WINDOW)
+            s = math.sqrt((cum[i] - cum[i - n]) / n) if n >= LOCAL_MIN else sigma
+            local[k] = max(s, SIGMA_FLOOR * sigma)
+        out[f] = (days, moves, sigma, local)
     return out
 
 def reaction(series, day):
     """The factor's move for a jump on `day`: the window starting at its first trading day >= day."""
-    days, moves, _ = series
+    r = react(series, day)
+    return r[0] if r else None
+
+def react(series, day):
+    """(move, local sigma) for a jump on `day` (see reaction), or None."""
+    days, moves, _, local = series
     i = bisect.bisect_left(days, day)
-    return moves.get(days[i]) if i < len(days) else None
+    return (moves[days[i]], local[days[i]]) if i < len(days) and days[i] in moves else None
+
+def fit(hits):
+    """(beta, se) through the origin from [(day, rung, dp, move, local sigma)]: beta = sum(dp move) /
+    sum(dp^2), se = sqrt(sum(dp^2 sigma_d^2)) / sum(dp^2) — each jump's noise is the factor's
+    volatility around that day, not over the whole history (2020-22 rate volatility overstated
+    the noise of 2024-26 events; a factor that is calm now is calm on its event days)."""
+    sxx = sum(h[2] ** 2 for h in hits)
+    if not sxx: return None, None
+    return sum(h[2] * h[3] for h in hits) / sxx, math.sqrt(sum((h[2] * h[4]) ** 2 for h in hits)) / sxx
 
 def orientation(g, qid, paths):
     """+1 if YES is adverse for every entity the link goes through, -1 if favourable for all,
@@ -109,14 +136,12 @@ def estimate(g, cur, jump, since):
     for q, f, paths in links:
         if f not in series: continue
         channel = Counter(p.get("channel") for p in paths).most_common(1)[0][0] if paths else None
-        hits = [(d, p, dp, y) for d, p, dp in events[q] if (y := reaction(series[f], d)) is not None]
-        sxx = sum(dp * dp for _, _, dp, _ in hits)
-        beta = sum(dp * y for _, _, dp, y in hits) / sxx if sxx else None
-        se = series[f][2] / math.sqrt(sxx) if sxx else None
+        hits = [(d, p, dp, *r) for d, p, dp in events[q] if (r := react(series[f], d))]
+        beta, se = fit(hits)
         rows.append(dict(question_id=q, factor_id=f, channel=channel, orientation=orientation(g, q, paths),
                          n_events=len(hits), beta=beta, se=se, units=factors.CATALOG[f]["units"],
                          events=[dict(day=str(d), rung=p, dp=round(dp, 4), move=round(y, 3))
-                                 for d, p, dp, y in sorted(hits, key=lambda h: -abs(h[2]))[:MAX_EVENTS]]))
+                                 for d, p, dp, y, _ in sorted(hits, key=lambda h: -abs(h[2]))[:MAX_EVENTS]]))
     return shrink(rows)
 
 def shrink(rows):

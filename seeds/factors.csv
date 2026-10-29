@@ -1,89 +1,89 @@
-factor_id,name,family,definition,series,units
+factor_id,name,family,definition,series,units,proxy
 "# Market factors a question can be relevant to (factors.py), linked through seeds/entity_factors.csv. series = where prices.py reads its daily level (yahoo:<symbol> close, fred:<series id>; blank = not measured); units = how a move is measured: % = log return x 100, bp = change in the level (FRED spreads and yields are in percent, x 100). factor_betas.py measures each question's sensitivity in these units."
-equity_us,US equities,country_equity,US equity market (e.g. S&P 500),yahoo:^GSPC,%
-equity_china,China equities,country_equity,"China equity market (MSCI China, onshore and offshore listings)",yahoo:MCHI,%
-equity_taiwan,Taiwan equities,country_equity,Taiwan equity market (TAIEX),yahoo:^TWII,%
-equity_japan,Japan equities,country_equity,Japan equity market (TOPIX),yahoo:1306.T,%
-equity_korea,South Korea equities,country_equity,South Korea equity market (KOSPI),yahoo:^KS11,%
-equity_india,India equities,country_equity,India equity market (Nifty 50),yahoo:^NSEI,%
-equity_europe,Europe equities,country_equity,Euro-area equity market (Euro Stoxx),yahoo:^STOXX50E,%
-equity_uk,UK equities,country_equity,UK equity market (FTSE 100),yahoo:^FTSE,%
-equity_israel,Israel equities,country_equity,Israel equity market (TA-35),yahoo:TA35.TA,%
-equity_saudi,Saudi Arabia equities,country_equity,Saudi equity market (Tadawul),yahoo:KSA,%
-equity_turkey,Turkey equities,country_equity,Turkey equity market (BIST 100),yahoo:XU100.IS,%
-equity_canada,Canada equities,country_equity,Canada equity market (S&P/TSX),yahoo:^GSPTSE,%
-equity_mexico,Mexico equities,country_equity,Mexico equity market (S&P/BMV IPC),yahoo:^MXX,%
-equity_brazil,Brazil equities,country_equity,Brazil equity market (Ibovespa),yahoo:^BVSP,%
-fx_cny,USD/CNH,fx,US dollar vs offshore Chinese yuan (CME USD/CNH futures),yahoo:CNH=F,%
-fx_twd,USD/TWD,fx,US dollar vs Taiwan dollar,yahoo:TWD=X,%
-fx_jpy,USD/JPY,fx,US dollar vs Japanese yen,yahoo:JPY=X,%
-fx_krw,USD/KRW,fx,US dollar vs South Korean won,yahoo:KRW=X,%
-fx_inr,USD/INR,fx,US dollar vs Indian rupee,yahoo:INR=X,%
-fx_eur,EUR/USD,fx,Euro vs US dollar,yahoo:EURUSD=X,%
-fx_gbp,GBP/USD,fx,British pound vs US dollar,yahoo:GBPUSD=X,%
-fx_ils,USD/ILS,fx,US dollar vs Israeli shekel,yahoo:ILS=X,%
-fx_try,USD/TRY,fx,US dollar vs Turkish lira,yahoo:TRY=X,%
-fx_cad,USD/CAD,fx,US dollar vs Canadian dollar,yahoo:CAD=X,%
-fx_mxn,USD/MXN,fx,US dollar vs Mexican peso,yahoo:MXN=X,%
-fx_brl,USD/BRL,fx,US dollar vs Brazilian real,yahoo:BRL=X,%
-brent,Brent crude oil,commodity,Brent crude oil futures,yahoo:BZ=F,%
-natgas_europe,European natural gas,commodity,Dutch TTF natural gas futures,yahoo:TTF=F,%
-lng_asia,Asian LNG,commodity,JKM liquefied natural gas price,yahoo:JKM=F,%
-wheat,Wheat,commodity,CBOT wheat futures,yahoo:ZW=F,%
-freight,Ocean freight,commodity,Ocean freight rates (dry-bulk freight futures ETF as the measured proxy; container and tanker rates move with it on chokepoint shocks),yahoo:BDRY,%
-rates_us_policy,US policy rate,rates,Federal funds rate expectations (2-year Treasury yield as the measured proxy),fred:DGS2,bp
-rates_ecb_policy,ECB policy rate,rates,ECB deposit facility rate (moves only on ECB decisions),fred:ECBDFR,bp
-semiconductors,Semiconductors,industry,Global semiconductor equities,yahoo:^SOX,%
-credit_us_hy,US high-yield spread,credit,ICE BofA US High Yield Index option-adjusted spread,fred:BAMLH0A0HYM2,bp
-credit_us_ig,US investment-grade spread,credit,ICE BofA US Corporate Index option-adjusted spread,fred:BAMLC0A0CM,bp
-credit_em_corp,EM corporate spread,credit,ICE BofA Emerging Markets Corporate Plus Index option-adjusted spread,fred:BAMLEMCBPIOAS,bp
-credit_em_asia,Asia EM corporate spread,credit,ICE BofA Asia Emerging Markets Corporate Plus option-adjusted spread,fred:BAMLEMRACRPIASIAOAS,bp
-credit_em_emea,EMEA EM corporate spread,credit,ICE BofA EMEA Emerging Markets Corporate Plus option-adjusted spread,fred:BAMLEMRECRPIEMEAOAS,bp
-credit_em_latam,Latin America EM corporate spread,credit,ICE BofA Latin America Emerging Markets Corporate Plus option-adjusted spread,fred:BAMLEMRLCRPILAOAS,bp
-rates_us_10y,US 10-year Treasury yield,rates,10-year constant-maturity Treasury yield,fred:DGS10,bp
-usd_broad,US dollar (broad),fx,"Nominal broad US dollar index (Fed, trade-weighted)",fred:DTWEXBGS,%
-us_inflation_expectations,US inflation expectations,inflation,"Market-implied US inflation: 5-year breakeven (nominal minus TIPS yield), daily",fred:T5YIE,bp
-us_cpi,US CPI inflation,inflation,"US consumer price index, year-on-year (BLS; FRED CPIAUCSL). Monthly release: not measured on daily jump windows",,
-us_core_pce,US core PCE inflation,inflation,"Core personal consumption expenditures price index, the Fed's target measure (BEA; FRED PCEPILFE). Monthly: not measured",,
-us_ppi,US producer prices,inflation,"US producer price index for final demand (BLS; FRED PPIFIS). Monthly: not measured",,
-us_import_prices,US import prices,inflation,"US import price index incl. tariffs passed through (BLS; FRED IR). Monthly: not measured",,
-euro_hicp,Euro-area inflation,inflation,"Euro-area harmonised consumer prices (Eurostat HICP). Monthly: not measured",,
-china_ppi,China producer prices,inflation,"China producer price index (NBS): exported goods deflation / inflation. Monthly: not measured",,
-us_real_yield_10y,US 10-year real yield,rates,"10-year TIPS yield (FRED DFII10), daily",fred:DFII10,bp
-us_mortgage_rate,US 30-year mortgage rate,rates,"Freddie Mac 30-year fixed mortgage rate (FRED MORTGAGE30US). Weekly: not measured",,
-rates_boj_policy,Bank of Japan policy rate,rates,"Bank of Japan short-term policy rate. Moves only on BoJ decisions: not measured",,
-rates_pboc_policy,PBoC policy rate,rates,"People's Bank of China 7-day reverse repo / loan prime rate. Not measured",,
-us_gdp,US GDP growth,growth,"US real GDP growth (BEA; FRED GDPC1). Quarterly: not measured",,
-euro_gdp,Euro-area GDP growth,growth,"Euro-area real GDP growth (Eurostat). Quarterly: not measured",,
-china_gdp,China GDP growth,growth,"China real GDP growth (NBS). Quarterly: not measured",,
-global_gdp,Global GDP growth,growth,"World real GDP growth (IMF WEO). Not measured",,
-us_industrial_production,US industrial production,growth,"US industrial production index (Fed; FRED INDPRO). Monthly: not measured",,
-us_ism_manufacturing,US manufacturing PMI,growth,"ISM manufacturing purchasing managers' index (new orders, production). Monthly: not measured",,
-us_ism_services,US services PMI,growth,"ISM services purchasing managers' index. Monthly: not measured",,
-china_pmi,China manufacturing PMI,growth,"China official (NBS) manufacturing PMI. Monthly: not measured",,
-global_pmi,Global manufacturing PMI,growth,"J.P. Morgan / S&P Global world manufacturing PMI. Monthly: not measured",,
-us_unemployment,US unemployment rate,labour,"US unemployment rate (BLS; FRED UNRATE). Monthly: not measured",,
-us_payrolls,US nonfarm payrolls,labour,"US nonfarm payroll employment growth (BLS; FRED PAYEMS). Monthly: not measured",,
-us_wage_growth,US wage growth,labour,"US average hourly earnings / employment cost index growth (BLS). Monthly: not measured",,
-us_retail_sales,US retail sales,consumer,"US retail and food services sales (Census; FRED RSAFS). Monthly: not measured",,
-us_consumer_confidence,US consumer sentiment,consumer,"University of Michigan consumer sentiment (FRED UMCSENT). Monthly: not measured",,
-us_housing_starts,US housing starts,housing,"US privately-owned housing starts (Census; FRED HOUST). Monthly: not measured",,
-us_home_prices,US home prices,housing,"S&P CoreLogic Case-Shiller US national home price index (FRED CSUSHPINSA). Monthly: not measured",,
-global_trade_volume,World trade volume,trade,"World merchandise trade volume (CPB World Trade Monitor). Monthly: not measured",,
-global_supply_chain_pressure,Global supply chain pressure,trade,"New York Fed Global Supply Chain Pressure Index (shipping costs, delivery times, backlogs). Monthly: not measured",,
-us_fiscal_deficit,US fiscal deficit,fiscal,"US federal budget deficit and Treasury issuance (CBO / Treasury). Not measured",,
-defense_spending,Global defence spending,fiscal,"US and NATO / allied defence budgets and procurement (SIPRI). Annual: not measured",,
-vix,Equity volatility (VIX),volatility,"CBOE S&P 500 implied volatility index",yahoo:^VIX,%
-wti,WTI crude oil,commodity,WTI crude oil futures (US benchmark),yahoo:CL=F,%
-natgas_us,US natural gas,commodity,Henry Hub natural gas futures,yahoo:NG=F,%
-gasoline,Gasoline,commodity,RBOB gasoline futures,yahoo:RB=F,%
-distillates,Diesel and jet fuel,commodity,"NY Harbor ULSD futures (diesel; jet fuel moves with it)",yahoo:HO=F,%
-copper,Copper,commodity,COMEX copper futures,yahoo:HG=F,%
-aluminum,Aluminium,commodity,COMEX aluminium futures,yahoo:ALI=F,%
-gold,Gold,commodity,COMEX gold futures,yahoo:GC=F,%
-iron_ore,Iron ore,commodity,"Iron ore 62% Fe (China import, SGX). Not measured",,
-battery_metals,Battery metals,commodity,"Lithium, nickel and cobalt prices (LME / Fastmarkets). Not measured",,
-rare_earths,Rare earths and critical minerals,commodity,"Rare-earth magnets (NdPr), gallium, germanium, graphite, antimony: prices and Chinese export licensing. Not measured",,
-corn,Corn,commodity,CBOT corn futures,yahoo:ZC=F,%
-soybeans,Soybeans,commodity,CBOT soybean futures,yahoo:ZS=F,%
-fertilizers,Fertilisers,commodity,"Potash, urea / ammonia and phosphate prices. Not measured",,
+equity_us,US equities,country_equity,US equity market (e.g. S&P 500),yahoo:^GSPC,%,
+equity_china,China equities,country_equity,"China equity market (MSCI China, onshore and offshore listings)",yahoo:MCHI,%,
+equity_taiwan,Taiwan equities,country_equity,Taiwan equity market (TAIEX),yahoo:^TWII,%,
+equity_japan,Japan equities,country_equity,Japan equity market (TOPIX),yahoo:1306.T,%,
+equity_korea,South Korea equities,country_equity,South Korea equity market (KOSPI),yahoo:^KS11,%,
+equity_india,India equities,country_equity,India equity market (Nifty 50),yahoo:^NSEI,%,
+equity_europe,Europe equities,country_equity,Euro-area equity market (Euro Stoxx),yahoo:^STOXX50E,%,
+equity_uk,UK equities,country_equity,UK equity market (FTSE 100),yahoo:^FTSE,%,
+equity_israel,Israel equities,country_equity,Israel equity market (TA-35),yahoo:TA35.TA,%,
+equity_saudi,Saudi Arabia equities,country_equity,Saudi equity market (Tadawul),yahoo:KSA,%,
+equity_turkey,Turkey equities,country_equity,Turkey equity market (BIST 100),yahoo:XU100.IS,%,
+equity_canada,Canada equities,country_equity,Canada equity market (S&P/TSX),yahoo:^GSPTSE,%,
+equity_mexico,Mexico equities,country_equity,Mexico equity market (S&P/BMV IPC),yahoo:^MXX,%,
+equity_brazil,Brazil equities,country_equity,Brazil equity market (Ibovespa),yahoo:^BVSP,%,
+fx_cny,USD/CNH,fx,US dollar vs offshore Chinese yuan (CME USD/CNH futures),yahoo:CNH=F,%,
+fx_twd,USD/TWD,fx,US dollar vs Taiwan dollar,yahoo:TWD=X,%,
+fx_jpy,USD/JPY,fx,US dollar vs Japanese yen,yahoo:JPY=X,%,
+fx_krw,USD/KRW,fx,US dollar vs South Korean won,yahoo:KRW=X,%,
+fx_inr,USD/INR,fx,US dollar vs Indian rupee,yahoo:INR=X,%,
+fx_eur,EUR/USD,fx,Euro vs US dollar,yahoo:EURUSD=X,%,
+fx_gbp,GBP/USD,fx,British pound vs US dollar,yahoo:GBPUSD=X,%,
+fx_ils,USD/ILS,fx,US dollar vs Israeli shekel,yahoo:ILS=X,%,
+fx_try,USD/TRY,fx,US dollar vs Turkish lira,yahoo:TRY=X,%,
+fx_cad,USD/CAD,fx,US dollar vs Canadian dollar,yahoo:CAD=X,%,
+fx_mxn,USD/MXN,fx,US dollar vs Mexican peso,yahoo:MXN=X,%,
+fx_brl,USD/BRL,fx,US dollar vs Brazilian real,yahoo:BRL=X,%,
+brent,Brent crude oil,commodity,Brent crude oil futures,yahoo:BZ=F,%,
+natgas_europe,European natural gas,commodity,Dutch TTF natural gas futures,yahoo:TTF=F,%,
+lng_asia,Asian LNG,commodity,JKM liquefied natural gas price,yahoo:JKM=F,%,
+wheat,Wheat,commodity,CBOT wheat futures,yahoo:ZW=F,%,
+freight,Ocean freight,commodity,Ocean freight rates (dry-bulk freight futures ETF as the measured proxy; container and tanker rates move with it on chokepoint shocks),yahoo:BDRY,%,
+rates_us_policy,US policy rate,rates,Federal funds rate expectations (2-year Treasury yield as the measured proxy),fred:DGS2,bp,
+rates_ecb_policy,ECB rate expectations (2y Bund ETF price),rates,"Expected ECB policy path, measured daily by the iShares eb.rexx Government Germany 1.5-2.5yr ETF price (EXX6.DE): the price FALLS when expected euro rates RISE. Replaced the ECB deposit rate (fred:ECBDFR) on 2026-10-28: it moves only on decision days, so it cannot be measured on event jump days",yahoo:EXX6.DE,%,
+semiconductors,Semiconductors,industry,Global semiconductor equities,yahoo:^SOX,%,
+credit_us_hy,US high-yield spread,credit,ICE BofA US High Yield Index option-adjusted spread,fred:BAMLH0A0HYM2,bp,
+credit_us_ig,US investment-grade spread,credit,ICE BofA US Corporate Index option-adjusted spread,fred:BAMLC0A0CM,bp,
+credit_em_corp,EM corporate spread,credit,ICE BofA Emerging Markets Corporate Plus Index option-adjusted spread,fred:BAMLEMCBPIOAS,bp,
+credit_em_asia,Asia EM corporate spread,credit,ICE BofA Asia Emerging Markets Corporate Plus option-adjusted spread,fred:BAMLEMRACRPIASIAOAS,bp,
+credit_em_emea,EMEA EM corporate spread,credit,ICE BofA EMEA Emerging Markets Corporate Plus option-adjusted spread,fred:BAMLEMRECRPIEMEAOAS,bp,
+credit_em_latam,Latin America EM corporate spread,credit,ICE BofA Latin America Emerging Markets Corporate Plus option-adjusted spread,fred:BAMLEMRLCRPILAOAS,bp,
+rates_us_10y,US 10-year Treasury yield,rates,10-year constant-maturity Treasury yield,fred:DGS10,bp,
+usd_broad,US dollar (broad),fx,"Nominal broad US dollar index (Fed, trade-weighted)",fred:DTWEXBGS,%,
+us_inflation_expectations,US inflation expectations,inflation,"Market-implied US inflation: 5-year breakeven (nominal minus TIPS yield), daily",fred:T5YIE,bp,
+us_cpi,US CPI inflation,inflation,"US consumer price index, year-on-year (BLS; FRED CPIAUCSL). Monthly release: not measured on daily jump windows",,,us_inflation_expectations
+us_core_pce,US core PCE inflation,inflation,"Core personal consumption expenditures price index, the Fed's target measure (BEA; FRED PCEPILFE). Monthly: not measured",,,us_inflation_expectations
+us_ppi,US producer prices,inflation,US producer price index for final demand (BLS; FRED PPIFIS). Monthly: not measured,,,us_inflation_expectations
+us_import_prices,US import prices,inflation,US import price index incl. tariffs passed through (BLS; FRED IR). Monthly: not measured,,,-usd_broad
+euro_hicp,Euro-area inflation,inflation,Euro-area harmonised consumer prices (Eurostat HICP). Monthly: not measured,,,-rates_ecb_policy
+china_ppi,China producer prices,inflation,China producer price index (NBS): exported goods deflation / inflation. Monthly: not measured,,,copper
+us_real_yield_10y,US 10-year real yield,rates,"10-year TIPS yield (FRED DFII10), daily",fred:DFII10,bp,
+us_mortgage_rate,US 30-year mortgage rate,rates,Freddie Mac 30-year fixed mortgage rate (FRED MORTGAGE30US). Weekly: not measured,,,rates_us_10y
+rates_boj_policy,Bank of Japan policy rate,rates,Bank of Japan short-term policy rate. Moves only on BoJ decisions: not measured,,,-fx_jpy
+rates_pboc_policy,PBoC policy rate,rates,People's Bank of China 7-day reverse repo / loan prime rate. Not measured,,,-fx_cny
+us_gdp,US GDP growth,growth,US real GDP growth (BEA; FRED GDPC1). Quarterly: not measured,,,equity_us
+euro_gdp,Euro-area GDP growth,growth,Euro-area real GDP growth (Eurostat). Quarterly: not measured,,,equity_europe
+china_gdp,China GDP growth,growth,China real GDP growth (NBS). Quarterly: not measured,,,equity_china
+global_gdp,Global GDP growth,growth,World real GDP growth (IMF WEO). Not measured,,,copper
+us_industrial_production,US industrial production,growth,US industrial production index (Fed; FRED INDPRO). Monthly: not measured,,,equity_us
+us_ism_manufacturing,US manufacturing PMI,growth,"ISM manufacturing purchasing managers' index (new orders, production). Monthly: not measured",,,equity_us
+us_ism_services,US services PMI,growth,ISM services purchasing managers' index. Monthly: not measured,,,equity_us
+china_pmi,China manufacturing PMI,growth,China official (NBS) manufacturing PMI. Monthly: not measured,,,equity_china
+global_pmi,Global manufacturing PMI,growth,J.P. Morgan / S&P Global world manufacturing PMI. Monthly: not measured,,,copper
+us_unemployment,US unemployment rate,labour,US unemployment rate (BLS; FRED UNRATE). Monthly: not measured,,,-rates_us_policy
+us_payrolls,US nonfarm payrolls,labour,US nonfarm payroll employment growth (BLS; FRED PAYEMS). Monthly: not measured,,,rates_us_policy
+us_wage_growth,US wage growth,labour,US average hourly earnings / employment cost index growth (BLS). Monthly: not measured,,,rates_us_policy
+us_retail_sales,US retail sales,consumer,US retail and food services sales (Census; FRED RSAFS). Monthly: not measured,,,equity_us
+us_consumer_confidence,US consumer sentiment,consumer,University of Michigan consumer sentiment (FRED UMCSENT). Monthly: not measured,,,equity_us
+us_housing_starts,US housing starts,housing,US privately-owned housing starts (Census; FRED HOUST). Monthly: not measured,,,-rates_us_10y
+us_home_prices,US home prices,housing,S&P CoreLogic Case-Shiller US national home price index (FRED CSUSHPINSA). Monthly: not measured,,,-rates_us_10y
+global_trade_volume,World trade volume,trade,World merchandise trade volume (CPB World Trade Monitor). Monthly: not measured,,,freight
+global_supply_chain_pressure,Global supply chain pressure,trade,"New York Fed Global Supply Chain Pressure Index (shipping costs, delivery times, backlogs). Monthly: not measured",,,freight
+us_fiscal_deficit,US fiscal deficit,fiscal,US federal budget deficit and Treasury issuance (CBO / Treasury). Not measured,,,rates_us_10y
+defense_spending,Global defence spending,fiscal,US and NATO / allied defence budgets and procurement (SIPRI). Annual: not measured,,,
+vix,Equity volatility (VIX),volatility,CBOE S&P 500 implied volatility index,yahoo:^VIX,%,
+wti,WTI crude oil,commodity,WTI crude oil futures (US benchmark),yahoo:CL=F,%,
+natgas_us,US natural gas,commodity,Henry Hub natural gas futures,yahoo:NG=F,%,
+gasoline,Gasoline,commodity,RBOB gasoline futures,yahoo:RB=F,%,
+distillates,Diesel and jet fuel,commodity,NY Harbor ULSD futures (diesel; jet fuel moves with it),yahoo:HO=F,%,
+copper,Copper,commodity,COMEX copper futures,yahoo:HG=F,%,
+aluminum,Aluminium,commodity,COMEX aluminium futures,yahoo:ALI=F,%,
+gold,Gold,commodity,COMEX gold futures,yahoo:GC=F,%,
+iron_ore,Iron ore,commodity,"Iron ore 62% Fe (China import, SGX). Not measured",,,copper
+battery_metals,Battery metals,commodity,"Lithium, nickel and cobalt prices (LME / Fastmarkets). Not measured",,,
+rare_earths,Rare earths and critical minerals,commodity,"Rare-earth magnets (NdPr), gallium, germanium, graphite, antimony: prices and Chinese export licensing. Not measured",,,
+corn,Corn,commodity,CBOT corn futures,yahoo:ZC=F,%,
+soybeans,Soybeans,commodity,CBOT soybean futures,yahoo:ZS=F,%,
+fertilizers,Fertilisers,commodity,"Potash, urea / ammonia and phosphate prices. Not measured",,,natgas_europe

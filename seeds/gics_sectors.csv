@@ -1,0 +1,13 @@
+sector_code,sector,etf,etf_name
+"# The 11 GICS sectors (seeds/gics.csv) and the SPDR Select Sector ETF that stands in for each one's US stock performance: security_betas.py measures each sector-linked question (seeds/gics_sector_links.csv) against it, and the API's /gics dashboard ranks questions by that measured move."
+10,Energy,XLE,Energy Select Sector SPDR Fund
+15,Materials,XLB,Materials Select Sector SPDR Fund
+20,Industrials,XLI,Industrial Select Sector SPDR Fund
+25,Consumer Discretionary,XLY,Consumer Discretionary Select Sector SPDR Fund
+30,Consumer Staples,XLP,Consumer Staples Select Sector SPDR Fund
+35,Health Care,XLV,Health Care Select Sector SPDR Fund
+40,Financials,XLF,Financial Select Sector SPDR Fund
+45,Information Technology,XLK,Technology Select Sector SPDR Fund
+50,Communication Services,XLC,Communication Services Select Sector SPDR Fund
+55,Utilities,XLU,Utilities Select Sector SPDR Fund
+60,Real Estate,XLRE,Real Estate Select Sector SPDR Fund

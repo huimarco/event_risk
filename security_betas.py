@@ -27,8 +27,12 @@ Which pairs are measured:
               |t| >= MIN_T — a statistical link, with or without any entity path
   structural  the question reaches the security's issuer through entities (Graph.exposures_of,
               score >= MIN_STRUCTURAL_SCORE)
-  both
-Factor pairs are capped at MAX_PER_QUESTION per question by |implied|; structural pairs are kept.
+  sector      the question is linked to a GICS sector (factors.SECTOR_LINKS, an LLM judgment pass)
+              and the security is that sector's ETF (seeds/gics_sectors.csv) — so every sector the
+              /gics dashboard shows has a regression for each of its linked questions
+  both        factor and structural (a sector pair that is also found another way keeps that label)
+Factor pairs are capped at MAX_PER_QUESTION per question by |implied|; structural and sector pairs
+are kept.
 
 Caveats: loadings are in-sample and recent (3 years); jump days carry other news; the graph and
 factor links are today's, not point-in-time. Units are % per +1.0 of probability (per_10pts = /10).
@@ -70,15 +74,16 @@ def weekly(points, pct):
 
 def load_series(cur, tickers, since):
     fac = defaultdict(list)
-    for f, d, v in cur.execute("""SELECT factor_id, date::VARCHAR, arg_max(level, fetched_at) FROM factor_prices
-                                  WHERE date >= ? GROUP BY ALL ORDER BY 1, 2""", [since]).fetchall():
+    for f, d, v in cur.execute(f"""SELECT factor_id, date::VARCHAR, arg_max(level, fetched_at) FROM factor_prices
+                                  WHERE date >= ? AND {factors.SERIES_FILTER} GROUP BY ALL ORDER BY 1, 2""",
+                               [since, factors.CURRENT_SERIES]).fetchall():
         fac[f].append((date.fromisoformat(d), v))
     secs = defaultdict(list)
     for t, d, v in cur.execute("""SELECT ticker, date::VARCHAR, arg_max(coalesce(adj_close, close), fetched_at) FROM security_prices
                                   WHERE date >= ? AND ticker IN (SELECT unnest(?::VARCHAR[])) GROUP BY ALL ORDER BY 1, 2""",
                                [since, list(tickers)]).fetchall():
         secs[t].append((date.fromisoformat(d), v))
-    F = {f: weekly(xs, factors.CATALOG[f]["units"] == "%") for f, xs in fac.items() if f in factors.CATALOG}
+    F = {f: weekly(factors.clean_levels(f, xs), factors.CATALOG[f]["units"] == "%") for f, xs in fac.items() if f in factors.CATALOG}
     S = {t: weekly(xs, True) for t, xs in secs.items()}
     return {f: s for f, s in F.items() if len(s) >= MIN_WEEKS}, {t: s for t, s in S.items() if len(s) >= MIN_WEEKS}
 
@@ -119,8 +124,9 @@ class Regressions:
     def fs(self, f, t):
         if (f, t) not in self._fs: self._fs[(f, t)] = cov(self.F[f], self.S[t])
         return self._fs[(f, t)]
-    def fit(self, t, fs):
-        """{factor: (beta, se)} for security t on factors fs jointly; None if not estimable."""
+    def fit(self, t, fs, with_se=True):
+        """{factor: (beta, se)} for security t on factors fs jointly; None if not estimable.
+        with_se=False skips the standard errors (se None): one solve instead of k + 1."""
         fs = [f for f in fs if f in self.F]
         cs = [self.fs(f, t) for f in fs]
         if not fs or any(c is None for c, _ in cs): return None
@@ -132,6 +138,7 @@ class Regressions:
         y = [c for c, _ in cs]
         b = solve(A, y)
         if b is None: return None
+        if not with_se: return {f: (bi, None) for f, bi in zip(fs, b)}
         var_s = cov(self.S[t], self.S[t])[0]
         resid = max(var_s - sum(bi * yi for bi, yi in zip(b, y)), 1e-12) * n / max(n - len(fs) - 1, 1)
         inv = inverse_diag(A)
@@ -202,21 +209,26 @@ def estimate(g, cur, jump, since):
         if iss in g.nodes:
             for q, v in g.exposures_of(iss).items():
                 if v["score"] >= MIN_STRUCTURAL_SCORE: structural[q].update(ts)
+    sector = defaultdict(set)  # question -> sector ETFs it is linked to
+    for q, links in factors.SECTOR_LINKS.items():
+        if q in g.nodes: sector[q].update(factors.SECTORS[c]["etf"] for c in links if factors.SECTORS[c]["etf"] in S)
     rows = []
-    for q in set(qf) | set(structural):
+    for q in set(qf) | set(structural) | set(sector):
         fs = qf.get(q, {})
         cands = {t for f in fs if f != MARKET for t in sig.get(f, ())}
         scored = []
-        for t in cands | structural.get(q, set()):
+        for t in cands | structural.get(q, set()) | sector.get(q, set()):
             fit = reg.fit(t, sorted(set(fs) | {MARKET})) if fs else None
             implied = sum(fit[f][0] * fs[f] for f in fs if f in fit) if fit else None
-            src = "both" if t in cands and t in structural.get(q, ()) else "factor" if t in cands else "structural"
+            src = ("both" if t in cands and t in structural.get(q, ()) else "factor" if t in cands
+                   else "structural" if t in structural.get(q, ()) else "sector")
             scored.append(dict(question_id=q, ticker=t, implied=implied, source=src,
                                implied_factors={f: round(fit[f][0], 4) for f in fit} if fit else {}))
         factor_only = sorted((r for r in scored if r["source"] == "factor" and r["implied"] is not None),
                              key=lambda r: -abs(r["implied"]))[:MAX_PER_QUESTION]
-        rows += factor_only + [r for r in scored if r["source"] != "factor"]
-    log.info("%d (question, security) pairs: %s", len(rows), {k: sum(1 for r in rows if r["source"] == k) for k in ("factor", "structural", "both")})
+        # a capped-out factor pair that is also a sector pair stays: the dashboard needs it
+        rows += factor_only + [r for r in scored if r["source"] != "factor" or (r not in factor_only and r["ticker"] in sector.get(q, ()))]
+    log.info("%d (question, security) pairs: %s", len(rows), {k: sum(1 for r in rows if r["source"] == k) for k in ("factor", "structural", "sector", "both")})
 
     # 3. direct event betas
     events = question_events(g, cur, {r["question_id"] for r in rows}, jump, since)

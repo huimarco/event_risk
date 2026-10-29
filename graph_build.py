@@ -89,19 +89,37 @@ HOME = "Q30"  # United States: involving only the US is domestic politics
 # markets collected before 2026-10-27 have none and came from the core categories), Polymarket by
 # event tag. Scoped sources also need SCOPED_MIN_VOLUME traded across the event (drops US House,
 # provincial and mayoral races) — and every candidate must still pass scope().
-GRAPH_SOURCES = dict(kalshi_core={"World", "Politics"}, kalshi_scoped={"Elections", "Economics"},
-                     poly_core={"geopolitics"}, poly_scoped={"world", "world-elections", "tariffs", "fed-rates", "economic-policy"})
+GRAPH_SOURCES = dict(kalshi_core={"World", "Politics"}, kalshi_scoped={"Elections", "Economics", "Science and Technology"},
+                     poly_core={"geopolitics"},
+                     poly_scoped={"world", "world-elections", "tariffs", "fed-rates", "economic-policy", "ai", "compute", "ai-regulation"})
 SCOPED_MIN_VOLUME = 25000  # $ lifetime volume across the event
 # Policy topics that move credit and rates: in scope even when only the US is involved.
 POLICY_REGEX = re.compile(r"fed(?:eral)? funds|\bFOMC\b|\bFed\b.*\brates?\b|\brate (?:cut|hike)s?\b|\bFed decision"
                           r"|\bdefaults?\b|debt restructuring|\bIMF\b|\bbailout\b|government shutdown"
                           r"|debt (?:ceiling|limit)|\btariff|\bsanction", re.I)
+# Data-centre / AI-infrastructure topics (decision 2026-10-28, option A): in scope US-only or not,
+# like POLICY_REGEX. Kalshi Science & Technology and Polymarket ai / compute / ai-regulation are
+# scoped sources for them.
+THEME_REGEX = re.compile(r"data ?cent(?:er|re)s?|datacenter|hyperscal|\bAI[- ]chips?\b|chip exports?|export controls?"
+                         r"|semiconductor|\bGPUs?\b|\bHBM\b|stargate|\bAI (?:infrastructure|compute|capex|moratorium|preemption)", re.I)
 PRICE_LOOKUP_BATCH = 5000  # (market, time) requests per query; one huge ASOF join times out on MotherDuck
 REFRESH_KINDS = {"wikidata": {"entity"}, "relatedness": {"mentions", "comentions", "df"}}  # wiki_cache kinds
 
 def seed(name):
     with open(SEEDS / name) as f:
         return [r for r in csv.DictReader(f) if not next(iter(r.values()), "").startswith("#")]
+
+# Hand-made themes (decision 2026-10-28, by request): entities the Wikipedia linker can't produce,
+# attached to markets by one reasoning pass (seeds/theme_links.csv) and to issuers by analyst priors
+# (seeds/theme_exposures.csv). Every linked market is a graph candidate, in scope whatever its
+# category, volume or EXCLUDE_REGEX.
+THEMES = {r["theme_id"]: r for r in seed("themes.csv")}
+THEME_LINKS = defaultdict(dict)   # (venue, market_id) -> {theme id: link row}
+for r in seed("theme_links.csv"):
+    assert r["theme_id"] in THEMES, f"theme_links.csv: unknown theme {r['theme_id']}"
+    THEME_LINKS[tuple(r["market"].split(":", 1))][r["theme_id"]] = r
+THEME_MARKETS = set(THEME_LINKS)
+THEME_WEIGHT = {3: 1.0, 2: 0.6, 1: 0.3}   # involves weight by link strength
 
 def utc(x):
     return x.replace(tzinfo=timezone.utc) if x else None
@@ -124,7 +142,9 @@ CANDIDATE_SQL = """(venue = 'kalshi' AND (tags IS NULL OR list_has_any(from_json
 
 def source_params():
     g = GRAPH_SOURCES
-    return dict(kc=sorted(g["kalshi_core"] | g["kalshi_scoped"]), pc=sorted(g["poly_core"] | g["poly_scoped"]))
+    return dict(kc=sorted(g["kalshi_core"] | g["kalshi_scoped"]), pc=sorted(g["poly_core"] | g["poly_scoped"]),
+                tm=sorted(f"{v}:{m}" for v, m in THEME_MARKETS))
+THEMED_SQL = "venue || ':' || market_id IN (SELECT unnest($tm::VARCHAR[]))"
 
 def source_class(m):
     """core | scoped | None for a market, from its venue tags (GRAPH_SOURCES)."""
@@ -144,7 +164,7 @@ def load_markets(con):
         SELECT l.venue, l.event_id, s.volume FROM v_market_latest l
         JOIN (SELECT venue, market_id, arg_max(volume, ts) AS volume FROM market_snapshots
               WHERE volume IS NOT NULL GROUP BY ALL) s USING (venue, market_id)
-        WHERE {CANDIDATE_SQL}""", source_params()).fetchall():
+        WHERE ({CANDIDATE_SQL}) OR {THEMED_SQL}""", source_params()).fetchall():
         event_volume[(venue, event_id)] += v or 0
     cur = con.execute("""
         SELECT venue, market_id, event_id, series_id, event_title, title, subtitle, rules_primary,
@@ -157,18 +177,18 @@ def load_markets(con):
           USING (venue, market_id)
         LEFT JOIN (SELECT venue, market_id, min(ts) AS priced_at FROM v_market_prob WHERE prob IS NOT NULL GROUP BY ALL)
           USING (venue, market_id)
-        WHERE """ + CANDIDATE_SQL + """
+        WHERE (""" + CANDIDATE_SQL + ") OR " + THEMED_SQL + """
         ORDER BY venue, market_id""", source_params())  # fixed order, so every derived note and choice is reproducible
     cols = [d[0] for d in cur.description]
     out = []
     for row in cur.fetchall():
         m = dict(zip(cols, row))
-        cls = source_class(m)
-        if not cls or (cls == "scoped" and event_volume[(m["venue"], m["event_id"])] < SCOPED_MIN_VOLUME): continue
+        cls, themed = source_class(m), (m["venue"], m["market_id"]) in THEME_MARKETS
+        if not themed and (not cls or (cls == "scoped" and event_volume[(m["venue"], m["event_id"])] < SCOPED_MIN_VOLUME)): continue
         for k in ("open_time", "close_time", "first_seen_at", "listed_at", "priced_at"):
             m[k] = utc(m[k])
         m["text"] = " ".join(str(m[k]) for k in ("series_id", "event_title", "title", "subtitle", "tags") if m[k])
-        if not EXCLUDE_REGEX.search(m["text"]):
+        if themed or not EXCLUDE_REGEX.search(m["text"]):
             out.append(m)
     return out
 
@@ -201,7 +221,7 @@ def prices_at(con):
 def fingerprint(con):
     """Everything the graph is built from: candidate markets' terms (GRAPH_SOURCES; markets the
     graph never reads don't trigger a rebuild), seed files and the graph code."""
-    n, last = con.execute(f"SELECT count(*), max(first_seen_at)::VARCHAR FROM market_versions WHERE {CANDIDATE_SQL}",
+    n, last = con.execute(f"SELECT count(*), max(first_seen_at)::VARCHAR FROM market_versions WHERE ({CANDIDATE_SQL}) OR {THEMED_SQL}",
                           source_params()).fetchone()
     h = hashlib.sha256()
     for f in sorted([*SEEDS.glob("*.csv"), ROOT / "issuers.csv", ROOT / "securities.csv",
@@ -223,7 +243,9 @@ def scope(texts, tags=None):
     def in_scope(key, actors, ents):
         if key[0] == "polymarket" and tags is None: return True
         if key[0] == "polymarket" and "geopolitics" in tags.get(key, ()): return True
-        return bool(POLICY_REGEX.search(texts.get(key) or "")) or geopolitical(key, actors, ents)
+        if key in THEME_MARKETS: return True   # curated theme links pull their markets in (seeds/theme_links.csv)
+        text = texts.get(key) or ""
+        return bool(POLICY_REGEX.search(text) or THEME_REGEX.search(text)) or geopolitical(key, actors, ents)
     return in_scope
 
 def discover(con, markets):
@@ -438,7 +460,10 @@ def build(markets, prices, ents):
                 if ta < tb:
                     add_e(edge(a, b, "implies", start(a, b), ladder="date", event_id=event_id))
 
-    # entities (discovered from the markets), issuers, and the links between them
+    # entities (discovered from the markets), hand-made themes, issuers, and the links between them
+    for tid, t in THEMES.items():
+        add_n(node(f"theme:{tid}", "entity", t["name"], REFERENCE_VALID_FROM, entity_type="theme", qid=None,
+                   description=t["definition"], wikipedia=None, region=t["region"]))
     for eid, e in ents.entities.items():
         add_n(node(eid, "entity", e["name"], REFERENCE_VALID_FROM, entity_type=e["type"], qid=e["qid"],
                    description=e["description"], wikipedia=e["title"]))
@@ -480,6 +505,17 @@ def build(markets, prices, ents):
             add_e(edge(qid, eid, "involves", q_start, weight=weight, sign=sign,
                        confidence=0.8 if mt["named"] else 0.6, provenance="wikipedia_link",
                        matched=mt["surface"], role=role, action=sig.action, channel=channel))
+        # question -> theme: curated reasoning links on any of its markets; the strongest wins
+        themed = {}
+        for p in rungs:
+            for m in members[p]:
+                for tid, r in THEME_LINKS.get((m["venue"], m["market_id"]), {}).items():
+                    if tid not in themed or int(r["strength"]) > int(themed[tid]["strength"]): themed[tid] = r
+        for tid, r in sorted(themed.items()):
+            add_e(edge(qid, f"theme:{tid}", "involves", q_start, weight=THEME_WEIGHT[int(r["strength"])],
+                       sign=float(r["sign"]) if int(r["sign"]) else None, confidence=0.5, provenance="curated",
+                       note=r["rationale"], role="concept", action=sig.action, channel="theme",
+                       strength=int(r["strength"]), basis=r["source"]))
 
     # factors, GICS industries and their links (factor_layer)
     citizen_of = defaultdict(list)
@@ -517,6 +553,12 @@ def issuer_layer(entity_ids):
     add = lambda e: edges.setdefault(e["edge_id"], e)
     for r in seed("exposures.csv"):
         add(edge(f"wd:{r['qid']}", issuer_node_id(r["issuer_id"]), "exposure", REFERENCE_VALID_FROM,
+                 weight=float(r["weight"]), confidence=0.3, provenance="analyst_prior",
+                 note=r["rationale"] or None, sign=1.0, channel_signs=signs.get(r["issuer_id"], {})))
+    issuer_ids = {i["issuer_id"] for i in issuers}
+    for r in seed("theme_exposures.csv"):   # hand-made theme -> issuer exposures (seeds/themes.csv)
+        assert r["theme_id"] in THEMES and r["issuer_id"] in issuer_ids, f"theme_exposures.csv: bad row {r}"
+        add(edge(f"theme:{r['theme_id']}", issuer_node_id(r["issuer_id"]), "exposure", REFERENCE_VALID_FROM,
                  weight=float(r["weight"]), confidence=0.3, provenance="analyst_prior",
                  note=r["rationale"] or None, sign=1.0, channel_signs=signs.get(r["issuer_id"], {})))
     with open(ROOT / "securities.csv") as f:

@@ -279,15 +279,15 @@ TIME_COLS = {"open_time", "close_time", "expiration_time"}
 FLOAT_COLS = {"yes_bid", "yes_ask", "last", "volume_24h", "open_interest", "floor_strike",
               "cap_strike", "close", "adj_close", "volume", "sign", "weight", "confidence",
               "settlement_value", "level", "orientation", "beta", "se", "pooled_beta", "pooled_se", "tau",
-              "shrunk_beta", "shrunk_se", "t", "implied", "shrunk"}
+              "shrunk_beta", "shrunk_se", "t", "implied", "shrunk", "q", "p_effect"}
 
 def pa_type(col):
     if col in ("ts", "first_seen_at", "fetched_at", "started_at", "finished_at", "valid_from",
                "valid_to", "recorded_at", "resolved_at", "observed_at", "computed_at") or col in TIME_COLS:
         return TS
     if col in FLOAT_COLS: return pa.float64()
-    if col in ("can_close_early", "neg_risk"): return pa.bool_()
-    if col in ("version_no", "n_events", "n_weeks"): return pa.int32()
+    if col in ("can_close_early", "neg_risk", "linked"): return pa.bool_()
+    if col in ("version_no", "n_events", "n_weeks", "rank", "n_evaluated", "n_live"): return pa.int32()
     if col == "date": return pa.date32()
     return pa.string()
 

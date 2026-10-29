@@ -1,0 +1,872 @@
+question_id,sector_code,sign,strength,rationale
+"# Question -> GICS sector links (2026-10-28): one LLM judgment pass over the 2,286 live, non-placeholder questions (six general passes plus one focused pass each for Materials, Consumer Staples, Health Care and Communication Services). sign = what YES means for the sector's stocks (1 rise, -1 fall, 0 mixed), strength 3 first-order / 2 material / 1 marginal. Read by factors.SECTOR_LINKS; security_betas.py measures each link against the sector ETF (seeds/gics_sectors.csv). To be replaced by a methodical mapping."
+q:kalshi:KXCAATSA-26JUL-27JAN01,10,-1,1,sanctions relief adds energy supply
+q:kalshi:KXCANCARBON-27,10,1,1,carbon tax repeal helps Canadian oil producers
+q:kalshi:KXELECTVENEZUELA-27JAN01,10,-1,1,transition could raise Venezuelan oil output
+q:kalshi:KXELECTVENEZUELA-27JUN01,10,-1,1,transition could raise Venezuelan oil output
+q:kalshi:KXELECTVENEZUELA-28JAN01,10,-1,1,transition could raise Venezuelan oil output
+q:kalshi:KXELECTVENEZUELA-28JUL01,10,-1,1,transition could raise Venezuelan oil output
+q:kalshi:KXELECTVENEZUELA-29JAN01,10,-1,1,transition could raise Venezuelan oil output
+q:kalshi:KXGRAHAMSANCTIONS-27JAN01,10,1,2,Russia sanctions tighten oil supply
+q:kalshi:KXHORMUZAVG-27JAN01-A100,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B261101,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B261201,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270101,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270201,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270301,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270401,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270501,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270601,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270701,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270801,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B270901,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B271001,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B271101,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B271201,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B280101,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B280701,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZNORM-26MAR17-B290101,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZPEAK-26NOV01-T10,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZPEAK-26OCT25-T10,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZWEEKLY-26NOV01-T15,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXHORMUZWEEKLY-26OCT25-T15,10,-1,2,more Hormuz transit eases oil supply risk
+q:kalshi:KXIAEAIRANAGREEMENT-26,10,-1,2,Iran deal adds oil supply and cuts risk premium
+q:kalshi:KXIMFRECESS-27,10,-1,2,recession cuts oil demand
+q:kalshi:KXIRANEMBASSY-27,10,-1,1,US Iran thaw lowers oil risk premium
+q:kalshi:KXLEADERSOUT-27JAN01-DRODAPRE,10,-1,1,Venezuela transition may raise oil supply
+q:kalshi:KXLEADERSOUT-27JAN01-MBSSARA,10,1,2,Saudi instability raises oil risk premium
+q:kalshi:KXLEAVEOPEC-27,10,-1,2,OPEC exit signals more supply and lower prices
+q:kalshi:KXLEAVEOPEC-28JAN01-27JAN01,10,-1,1,Venezuela exit adds supply and weakens OPEC
+q:kalshi:KXMAXSHIPSHORMUZ-26OCT01-AL10,10,-1,2,More Hormuz traffic means lower oil risk premium
+q:kalshi:KXNAVITASCHARGE-27JAN01-YES,10,-1,1,Legal risk for Navitas Petroleum Sea Lion project
+q:kalshi:KXRUSDIESELGL-26OCT-26NOV03,10,1,1,Revoking license cuts diesel supply
+q:kalshi:KXSCOTUSCASE-SUNCOM26,10,1,2,Suncor win limits climate liability for oil firms
+q:kalshi:KXTRAVELDOWNGRADE-27JAN01-IRA,10,-1,1,Iran de-escalation lowers oil risk premium
+q:kalshi:KXTRILATERAL-29JAN20-27JAN01,10,-1,1,Peace progress eases energy risk premium
+q:kalshi:KXTRUMPCOUNTRIES-27JAN01-VEN,10,-1,1,Venezuela opening adds long-run oil supply
+q:kalshi:KXTRUMPIRAN-27JAN01,10,-1,2,Visit implies US-Iran thaw and lower oil risk
+q:kalshi:KXTRUMPMEETM-26OCT01-MPEZ,10,-1,1,US-Iran diplomacy lowers oil risk premium
+q:kalshi:KXTRUMPMOJTABA-26DEC-26DEC,10,-1,1,US-Iran diplomacy lowers oil risk premium
+q:kalshi:KXUSIRANCHINAMEET-27-27FEB01,10,-1,1,US-Iran diplomacy lowers oil risk premium
+q:kalshi:KXUSIRANMEETING-27-26DEC01,10,-1,1,US-Iran diplomacy lowers oil risk premium
+q:kalshi:KXVENEZOILCOS-27JAN01-CONO,10,1,1,Venezuelan reserve access benefits oil majors
+q:kalshi:KXVENEZOILCOS-27JAN01-EXXO,10,1,1,Venezuelan reserve access benefits oil majors
+q:kalshi:KXVENEZOILCOS-27JAN01-SHEL,10,1,1,Venezuelan reserve access benefits oil majors
+q:kalshi:KXZELENSKYPUTIN-29-27,10,-1,1,Peace progress eases energy risk premium
+q:kalshi:KXZELENSKYYPUTINMEET-26,10,-1,1,Peace progress eases energy risk premium
+q:kalshi:WRECSS-26-PRC,10,-1,1,China recession cuts oil demand
+q:polymarket:1007628,10,1,1,Russia advance prolongs war and energy risk
+q:polymarket:1007630,10,1,1,Russia advance prolongs war and energy risk
+q:polymarket:1007633,10,1,1,Russia advance prolongs war and energy risk
+q:polymarket:1007634,10,1,1,Russia advance prolongs war and energy risk
+q:polymarket:1007635,10,1,1,Russia advance prolongs war and energy risk
+q:polymarket:1007636,10,1,1,Russia advance prolongs war and energy risk
+q:polymarket:1031504,10,-1,1,Ukraine peace lowers energy risk premium
+q:polymarket:1059730,10,-1,1,Ukraine peace lowers energy risk premium
+q:polymarket:1090494,10,1,1,Russia advance prolongs war and energy risk
+q:polymarket:1100291,10,-1,1,Venezuelan oil supply returning to market
+q:polymarket:1107307,10,1,1,US action in Colombia could disrupt oil supply
+q:polymarket:1116581,10,1,1,US action in Colombia could disrupt oil supply
+q:polymarket:1170144,10,1,2,Iran war escalation lifts oil and hurts consumers
+q:polymarket:1194695,10,1,2,"Wider Russian war lifts energy, hurts consumers"
+q:polymarket:1466418,10,1,3,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1466425,10,1,3,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1466430,10,1,2,Iran strike on Gulf state raises oil risk
+q:polymarket:1535972,10,-1,1,Iran political shift eases oil risk
+q:polymarket:1540766,10,-1,3,Hormuz reopening lowers oil prices
+q:polymarket:1609728,10,1,2,Red Sea closure lifts oil and shipping costs
+q:polymarket:1628449,10,1,2,Iran war escalation lifts oil and hurts consumers
+q:polymarket:1633378,10,1,2,Houthi or Saudi-Yemen conflict threatens Saudi oil
+q:polymarket:1706291,10,1,1,Iran strike on Jordan modest oil risk
+q:polymarket:1706293,10,1,2,Iran strike on Gulf state raises oil risk
+q:polymarket:1706294,10,1,3,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1706295,10,1,3,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1706299,10,1,3,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1731345,10,-1,1,Nuclear deal terms ease Iran oil risk
+q:polymarket:1742086,10,1,1,Naval deployment signals Hormuz disruption risk
+q:polymarket:1742087,10,1,1,Naval deployment signals Hormuz disruption risk
+q:polymarket:1742088,10,1,1,Naval deployment signals Hormuz disruption risk
+q:polymarket:1742090,10,1,1,Naval deployment signals Hormuz disruption risk
+q:polymarket:1742094,10,1,1,Naval deployment signals Hormuz disruption risk
+q:polymarket:1744803,10,1,1,Naval deployment signals Hormuz disruption risk
+q:polymarket:1808970,10,-1,1,Nuclear deal terms ease Iran oil risk
+q:polymarket:2105977,10,-1,2,OPEC cohesion loss risks oil price war
+q:polymarket:2106368,10,-1,2,OPEC cohesion loss risks oil price war
+q:polymarket:2126461,10,1,3,"record crude boosts energy, squeezes consumers"
+q:polymarket:2169018,10,1,1,Naval deployment signals Hormuz disruption risk
+q:polymarket:2243894,10,-1,2,Russia-Ukraine peace lowers energy and commodity prices
+q:polymarket:2412374,10,-1,1,Iran political shift eases oil risk
+q:polymarket:253399,10,-1,2,Russia-Ukraine peace lowers energy and commodity prices
+q:polymarket:254768,10,1,2,NATO-Russia fighting lifts energy and defense
+q:polymarket:2591182,10,-1,2,Russia-Ukraine peace lowers energy and commodity prices
+q:polymarket:2647846,10,-1,2,US-Iran deal lowers oil risk premium
+q:polymarket:2663602,10,-1,1,Nuclear deal terms ease Iran oil risk
+q:polymarket:2663603,10,-1,1,Nuclear deal terms ease Iran oil risk
+q:polymarket:2668004,10,-1,1,Nuclear deal terms ease Iran oil risk
+q:polymarket:2668005,10,-1,1,Nuclear deal terms ease Iran oil risk
+q:polymarket:2668006,10,-1,1,Nuclear deal terms ease Iran oil risk
+q:polymarket:2668007,10,-1,2,US-Iran deal lowers oil risk premium
+q:polymarket:2686765,10,1,2,Hormuz fees raise oil delivered cost
+q:polymarket:2686769,10,1,1,Iran airspace closure signals escalation
+q:polymarket:2696747,10,-1,2,US-Iran deal lowers oil risk premium
+q:polymarket:2696748,10,1,1,US retreat from Gulf raises regional supply risk
+q:polymarket:2849355,10,-1,2,Easing Iran oil restrictions adds supply
+q:polymarket:2849422,10,-1,3,Hormuz reopening lowers oil prices
+q:polymarket:2849423,10,-1,3,Hormuz reopening lowers oil prices
+q:polymarket:2849424,10,1,3,Hormuz staying disrupted lifts oil
+q:polymarket:2907324,10,1,2,Hormuz fees raise oil delivered cost
+q:polymarket:2910437,10,-1,2,Easing Iran oil restrictions adds supply
+q:polymarket:2928898,10,1,1,Houthi attacks add shipping and oil risk
+q:polymarket:2929593,10,1,2,Houthi or Saudi-Yemen conflict threatens Saudi oil
+q:polymarket:2952457,10,-1,2,Lasting ceasefire eases oil risk
+q:polymarket:2995850,10,1,2,Iran war escalation lifts oil and hurts consumers
+q:polymarket:2995865,10,1,3,Iran strike on Gulf producer threatens oil supply
+q:polymarket:3215073,10,0,2,"Kharg loss disrupts exports, direction unclear"
+q:polymarket:3253021,10,1,2,Iran attack on Arab states threatens Gulf oil supply
+q:polymarket:3324625,10,-1,3,Hormuz deal lowers oil risk premium
+q:polymarket:3348047,10,-1,3,Hormuz deal lowers oil risk premium
+q:polymarket:3491438,10,-1,2,Nuclear deal eases sanctions and oil risk premium
+q:polymarket:3491459,10,-1,2,Nuclear deal eases sanctions and oil risk premium
+q:polymarket:3710803,10,1,2,Iran attack on Egypt raises Suez and oil risk
+q:polymarket:3888725,10,1,1,US power cost rise lifts gas demand
+q:polymarket:4155345,10,1,1,SPR purchases add oil demand
+q:polymarket:4188006,10,-1,2,Blockade easing lowers oil risk premium
+q:polymarket:4451522,10,1,1,Houthi advance raises Red Sea oil risk
+q:polymarket:4451606,10,1,2,Tanker seizure lifts oil risk premium
+q:polymarket:4477141,10,1,2,Red Sea closure disrupts oil flows
+q:polymarket:4487263,10,1,2,Houthi attack on Saudi threatens oil supply
+q:polymarket:4487705,10,1,1,Saudi involvement in Yemen war adds oil risk
+q:polymarket:4603350,10,1,1,Western strikes widen Red Sea conflict
+q:polymarket:4639440,10,1,3,Saudi-Iran war threatens Gulf oil supply
+q:polymarket:4640130,10,1,1,Houthi attack on Mecca escalates Saudi conflict
+q:polymarket:4640286,10,-1,1,Ceasefire lowers Saudi oil risk
+q:polymarket:4640848,10,-1,1,Lower Bab el-Mandeb risk
+q:polymarket:4640849,10,-1,1,Lower Bab el-Mandeb risk
+q:polymarket:4641016,10,1,1,NATO in Yemen widens Red Sea conflict
+q:polymarket:4641064,10,-1,2,Continued ceasefire keeps oil risk premium low
+q:polymarket:4642545,10,1,3,Hormuz shipping attacks lift oil prices
+q:polymarket:4688836,10,-1,1,Ceasefire lowers Saudi oil risk
+q:polymarket:4713961,10,1,1,Energy supply risk rises
+q:polymarket:4743423,10,1,2,Airspace closure signals Gulf escalation
+q:polymarket:4761458,10,-1,1,Continued ceasefire lowers Red Sea risk
+q:polymarket:4841418,10,-1,1,Diplomacy lowers oil risk premium
+q:polymarket:4867865,10,1,1,No talks keeps oil risk premium
+q:polymarket:507764,10,1,1,Israel strike on Yemen widens Red Sea conflict
+q:polymarket:5081860,10,1,2,Loss of Kharg implies war and Iranian export disruption
+q:polymarket:509855,10,1,1,Israel strike on Iraq adds oil risk
+q:polymarket:514678,10,1,1,Energy supply risk rises
+q:polymarket:5165288,10,1,1,Island seizure implies Gulf escalation
+q:polymarket:5165374,10,1,1,Island seizure implies Gulf escalation
+q:polymarket:5165379,10,1,1,Island seizure implies Gulf escalation
+q:polymarket:5165443,10,1,1,Island seizure implies Gulf escalation
+q:polymarket:5166677,10,1,1,US escalation in Yemen adds oil risk
+q:polymarket:5166734,10,-1,2,More Hormuz transits means normal oil flow
+q:polymarket:5166817,10,-1,1,More Bab el-Mandeb transits means normal flows
+q:polymarket:5194749,10,1,2,High gasoline prices lift energy stocks
+q:polymarket:5194750,10,1,2,High gasoline prices lift energy stocks
+q:polymarket:5194751,10,1,2,High gasoline prices lift energy stocks
+q:polymarket:5194752,10,1,2,High gasoline prices lift energy stocks
+q:polymarket:5194754,10,-1,2,Falling gasoline prices hit energy stocks
+q:polymarket:5194755,10,-1,2,Falling gasoline prices hit energy stocks
+q:polymarket:5194756,10,-1,2,Falling gasoline prices hit energy stocks
+q:polymarket:5220328,10,1,1,Saudi ground war adds oil risk
+q:polymarket:5220331,10,1,1,Saudi ground war adds oil risk
+q:polymarket:5220333,10,1,1,Saudi ground war adds oil risk
+q:polymarket:522056,10,-1,1,Peace progress eases energy risk
+q:polymarket:522057,10,-1,1,Peace progress eases energy risk
+q:polymarket:523245,10,-1,1,Peace progress eases energy risk
+q:polymarket:5238377,10,1,1,"More US naval presence, Mideast tension"
+q:polymarket:5238378,10,1,1,"More US naval presence, Mideast tension"
+q:polymarket:5238393,10,-1,1,Carrier leaving implies lower tension
+q:polymarket:5238394,10,-1,1,Carrier leaving implies lower tension
+q:polymarket:5238395,10,-1,1,Carrier leaving implies lower tension
+q:polymarket:5238397,10,1,1,"More US naval presence, Mideast tension"
+q:polymarket:5238399,10,-1,1,No carriers implies lower tension
+q:polymarket:5238400,10,1,1,Carrier presence signals Mideast tension
+q:polymarket:5238401,10,1,1,Carrier presence signals Mideast tension
+q:polymarket:5238402,10,1,1,Carrier presence signals Mideast tension
+q:polymarket:528750,10,1,2,Shipping disruption lifts oil
+q:polymarket:533152,10,1,2,Regional escalation lifts oil
+q:polymarket:5401115,10,-1,1,Red Sea risk easing
+q:polymarket:5401794,10,1,3,Saudi supply disruption lifts oil
+q:polymarket:5426238,10,1,3,Oil price high lifts energy stocks
+q:polymarket:5447182,10,-1,2,Ceasefire holding lowers oil risk
+q:polymarket:5475095,10,-1,1,More diesel supply
+q:polymarket:5475240,10,1,1,Alberta stability supports oil sands
+q:polymarket:5475241,10,1,1,Alberta stability supports oil sands
+q:polymarket:5475242,10,1,1,Alberta stability supports oil sands
+q:polymarket:548080,10,1,2,Energy supply shock
+q:polymarket:548083,10,1,2,Energy supply shock
+q:polymarket:552121,10,1,3,War with Iran lifts oil
+q:polymarket:552661,10,-1,2,Nuclear deal lowers tension
+q:polymarket:553374,10,0,2,Regime fall effect on oil unclear
+q:polymarket:555168,10,1,2,Nuclear escalation lifts oil risk
+q:polymarket:5567007,10,-1,2,Hormuz deal lowers oil
+q:polymarket:5567008,10,1,2,No Hormuz deal keeps oil high
+q:polymarket:5568258,10,-1,2,Hormuz deal lowers oil
+q:polymarket:5568259,10,1,3,No Hormuz deal keeps oil risk high
+q:polymarket:5572737,10,-1,2,Hormuz deal lowers oil
+q:polymarket:5612092,10,-1,1,Hormuz deal lowers oil
+q:polymarket:5612093,10,-1,1,Hormuz deal lowers oil
+q:polymarket:5628379,10,-1,3,Hormuz deal lowers oil
+q:polymarket:5628380,10,-1,3,Hormuz deal lowers oil
+q:polymarket:5636242,10,-1,1,Reopening signals de-escalation
+q:polymarket:5636543,10,1,2,Less diesel supply
+q:polymarket:5636955,10,1,2,Attack on Saudi infrastructure lifts oil
+q:polymarket:5645623,10,-1,2,More Hormuz transits means lower oil risk
+q:polymarket:5645629,10,-1,1,Lower shipping risk premium
+q:polymarket:571890,10,1,1,Russia instability lifts energy
+q:polymarket:575008,10,-1,2,Peace lowers energy risk premium
+q:polymarket:5770350,10,1,1,More maritime incidents lift oil
+q:polymarket:589648,10,1,2,Venezuela war disrupts oil and aids refiners
+q:polymarket:6026980,10,1,2,Renewed war lifts oil
+q:polymarket:6065114,10,1,1,More maritime incidents lift oil
+q:polymarket:6065170,10,-1,2,More Hormuz transits means lower oil risk
+q:polymarket:6065255,10,-1,1,Lower shipping risk premium
+q:polymarket:610201,10,1,2,Energy supply shock
+q:polymarket:6281643,10,-1,1,Reopening signals de-escalation
+q:polymarket:6281644,10,-1,1,Reopening signals de-escalation
+q:polymarket:6326141,10,1,1,Black Sea disruption
+q:polymarket:6364482,10,1,1,More maritime incidents lift oil
+q:polymarket:665514,10,-1,2,More gas supply lowers prices
+q:polymarket:665521,10,1,2,Nuclear escalation lifts oil risk
+q:polymarket:677375,10,-1,1,Easing Russia sanctions lowers energy prices
+q:polymarket:677396,10,1,2,Nuclear escalation lifts oil risk
+q:polymarket:678747,10,1,1,Regional escalation
+q:polymarket:678748,10,1,1,Regional escalation
+q:polymarket:678749,10,1,1,Regional escalation
+q:polymarket:678750,10,1,1,Regional escalation
+q:polymarket:678751,10,1,1,Regional escalation
+q:polymarket:678752,10,1,1,Regional escalation
+q:polymarket:678753,10,1,1,Regional escalation
+q:polymarket:678777,10,1,1,Wider US military action
+q:polymarket:678778,10,1,1,Wider US military action
+q:polymarket:678779,10,1,1,Wider US military action
+q:polymarket:678780,10,1,1,Wider US military action
+q:polymarket:678781,10,1,1,Wider US military action
+q:polymarket:678782,10,1,1,Wider US military action
+q:polymarket:681144,10,-1,2,Settlement lowers energy risk premium
+q:polymarket:694027,10,-1,2,Peace lowers energy risk premium
+q:kalshi:KXAFRICALEADEROUT-35-FT,15,-1,1,DRC leadership turmoil risks copper and cobalt output
+q:kalshi:KXCANADAUSTARIFFLOWER-27-26DEC01,15,1,1,Canadian tariff cuts ease cross-border materials trade
+q:kalshi:KXCANUSDEAL-26-26AUG24,15,1,1,US-Canada deal eases steel aluminium and potash tariffs
+q:kalshi:KXCANUSRAISE-27-26DEC01,15,-1,1,Canadian retaliation escalates metals trade friction
+q:kalshi:KXCHINAEXTRABONDS-27APR01,15,1,2,China stimulus lifts commodity demand
+q:kalshi:KXEFFTARIFF-26OCT29-T10,15,-1,1,Higher effective tariffs slow global growth and trade
+q:kalshi:KXFEDDECISION-26DEC-H0,15,-1,1,Fed hike strengthens dollar and pressures metals prices
+q:kalshi:KXFTAPRC-29,15,1,2,US-China trade deal lifts metals and chemicals demand
+q:kalshi:KXFUJIMORIOUT-26JUL-27JAN01,15,-1,1,Peru instability threatens copper supply and projects
+q:kalshi:KXGENERICTARIFF-26JUL-NOV03,15,-1,1,Very high tariffs escalate trade war and hit demand
+q:kalshi:KXGREENLAND-29,15,1,1,Greenland control would boost US rare earth access
+q:kalshi:KXIMFRECESS-27,15,-1,3,Global recession hits cyclical materials demand and prices
+q:kalshi:KXKENYAUSMINERALS-27,15,1,1,US critical minerals deals support miners
+q:kalshi:KXNEWTARIFFS-26OCT-NOV01,15,-1,1,New tariffs raise growth risk and input costs
+q:kalshi:KXRATEHIKE-2026-0,15,1,1,No Fed hikes supports metals and cyclical demand
+q:kalshi:KXTARIFFRATEBR-27JAN01-10,15,-1,1,Higher Brazil tariffs hit iron ore and agri-chemical trade
+q:kalshi:KXTARIFFRATECAN-27JAN01-10,15,-1,1,Tariffs on Canada disrupt aluminium steel and potash flows
+q:kalshi:KXTARIFFRATEEU-27JAN01-10,15,-1,1,Higher EU tariffs weigh on global trade and chemicals
+q:kalshi:KXTARIFFRATEINDIA-27JAN01-10,15,-1,1,Higher India tariffs weigh on trade and industrial demand
+q:kalshi:KXTARIFFRATEMEX-27JAN01-10,15,-1,1,Tariffs on Mexico hurt cross-border industrial materials demand
+q:kalshi:KXTARIFFRATEPRC-27JAN01-10,15,-1,2,Higher China tariffs cut metals demand and trade
+q:kalshi:KXTARIFFSECTOR-27JAN01-CAN,15,0,1,Sector tariffs on Canada have mixed metals effects
+q:kalshi:KXTARIFFSECTOR-27JAN01-MINE,15,1,2,Critical mineral tariffs favor US miners
+q:kalshi:KXUSCANADATARIFFDOWN-26SEP-DEC01,15,1,1,Lower US tariffs on Canada ease metals and potash trade
+q:kalshi:KXUSCANADATARIFFUP-26SEP-DEC01,15,-1,1,US tariffs on Canada disrupt aluminium steel and potash
+q:kalshi:KXUSMCA-26-27,15,-1,2,USMCA exit disrupts North American metals and chemicals trade
+q:kalshi:WRECSS-26-PRC,15,-1,2,China recession cuts commodity demand
+q:polymarket:1179940,15,-1,2,US-China military clash risks trade and rare earths
+q:polymarket:1194695,15,-1,1,Russian expansion raises risk-off and commodity supply risk
+q:polymarket:1540766,15,1,1,Hormuz normalisation eases energy costs and Gulf chemical flows
+q:polymarket:2126461,15,-1,1,Record crude lifts energy input costs for chemicals
+q:polymarket:2243894,15,-1,1,Russia-Ukraine peace lowers energy and commodity prices
+q:polymarket:253399,15,-1,1,Russia-Ukraine peace lowers energy and commodity prices
+q:polymarket:253889,15,-1,2,Taiwan invasion triggers risk-off and China demand shock
+q:polymarket:2591182,15,-1,1,Russia-Ukraine peace lowers energy and commodity prices
+q:polymarket:2849422,15,1,1,Hormuz normalisation eases energy costs and Gulf chemical flows
+q:polymarket:2849424,15,-1,1,Hormuz disruption lifts energy costs and hurts chemicals
+q:polymarket:3324625,15,1,1,Hormuz agreement eases energy and urea aluminium shipping
+q:polymarket:3709612,15,1,1,Lower tariffs help metals demand
+q:polymarket:3889223,15,-1,1,New US sanctions on China risk retaliation on rare earths
+q:polymarket:4062455,15,1,1,US minerals deal supports critical minerals development
+q:polymarket:4620900,15,-1,1,Fed hike strengthens dollar and pressures metals prices
+q:polymarket:521018,15,-1,2,Cross-strait clash hits China demand and sentiment
+q:polymarket:548083,15,-1,2,Russia-NATO war risks energy and European industrial demand
+q:polymarket:5522520,15,-1,1,Panama Canal closure disrupts bulk commodity shipping
+q:polymarket:5568259,15,-1,1,No Hormuz deal prolongs energy and shipping disruption
+q:polymarket:566211,15,1,1,EU trade deal eases tariff drag on materials
+q:polymarket:566212,15,1,1,India trade deal supports metals and chemicals trade
+q:polymarket:566213,15,1,1,Canada trade deal eases metals and potash tariffs
+q:polymarket:566214,15,1,1,Brazil trade deal supports iron ore and agri-chemicals
+q:polymarket:566216,15,1,1,Indonesia deal supports nickel trade and demand
+q:polymarket:566219,15,1,1,Australia deal supports miner trade flows
+q:polymarket:566220,15,1,1,Mexico trade deal eases metals and chemicals tariffs
+q:polymarket:575008,15,1,1,Peace deal lowers gas costs but may release Russian supply
+q:polymarket:600623,15,-1,2,Taiwan blockade disrupts Asian trade and metals demand
+q:polymarket:616902,15,-1,1,No Fed cuts keeps dollar firm and metals pressured
+q:polymarket:665514,15,1,1,Nord Stream restart cuts European gas costs for chemicals
+q:polymarket:687642,15,-1,1,China-Japan clash hits Asian demand and trade
+q:kalshi:KXCANADAUSTARIFFLOWER-27-26DEC01,20,1,1,lower tariffs help trade-exposed industrials
+q:kalshi:KXCANUSDEAL-26-26AUG24,20,1,1,trade deal helps industrials
+q:kalshi:KXCANUSRAISE-27-26DEC01,20,-1,1,higher tariffs hurt trade-exposed industrials
+q:kalshi:KXCHINAEXTRABONDS-27APR01,20,1,1,China stimulus lifts industrial demand
+q:kalshi:KXCIT301-BBAR27,20,1,1,struck tariffs help industrials
+q:kalshi:KXEFFTARIFF-26OCT29-T10,20,-1,1,higher tariffs hurt industrials
+q:kalshi:KXFTACOUNTRIES-27-EU,20,1,1,new trade deal helps industrials
+q:kalshi:KXFTAPRC-29,20,1,1,US-China deal helps industrials
+q:kalshi:KXIMFRECESS-27,20,-1,2,recession hits industrial demand
+q:kalshi:KXNEWTARIFFS-26OCT-NOV01,20,-1,2,Tariffs raise input costs and hurt exporters
+q:kalshi:KXNYNJPORTTEU-27FEB28-T8.4,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T8.5,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T8.6,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T8.7,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T8.8,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T8.9,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T9.0,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T9.1,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXNYNJPORTTEU-27FEB28-T9.2,20,1,1,Higher port volume signals strong freight and trade
+q:kalshi:KXPANAMAWEEKLY-26NOV01-T170,20,1,1,More canal transits signal shipping activity
+q:kalshi:KXPANAMAWEEKLY-26OCT25-T170,20,1,1,More canal transits signal shipping activity
+q:kalshi:KXSUEZWEEKLY-26NOV01-T260,20,1,1,More Suez transits signal normal shipping
+q:kalshi:KXSUEZWEEKLY-26OCT25-T260,20,1,1,More Suez transits signal normal shipping
+q:kalshi:KXTARIFFRATECAN-27JAN01-10,20,-1,1,Higher tariffs hurt industrial supply chains
+q:kalshi:KXTARIFFRATEMEX-27JAN01-10,20,-1,1,Higher tariffs hurt industrial supply chains
+q:kalshi:KXTRILATERAL-29JAN20-27JAN01,20,-1,1,Peace progress weighs on defense stocks
+q:kalshi:KXUSMCA-26-27,20,-1,1,USMCA exit disrupts industrial trade
+q:kalshi:KXUSMCAOUTCOMES-27-16Y,20,1,1,USMCA certainty supports industrial trade
+q:kalshi:KXUSMCAOUTCOMES-27-CANW,20,-1,1,USMCA withdrawal disrupts industrial trade
+q:kalshi:KXUSMCAOUTCOMES-27-MEXW,20,-1,1,USMCA withdrawal disrupts industrial trade
+q:kalshi:KXUSMCAOUTCOMES-27-TRI,20,1,1,USMCA certainty supports industrial trade
+q:kalshi:KXUSMCAOUTCOMES-27-USW,20,-1,1,USMCA withdrawal disrupts industrial trade
+q:kalshi:KXWITHDRAW-29-WTO,20,-1,1,WTO exit raises trade barriers for industrials
+q:kalshi:KXZELENSKYPUTIN-29-27,20,-1,1,Peace progress weighs on defense stocks
+q:kalshi:KXZELENSKYYPUTINMEET-26,20,-1,1,Peace progress weighs on defense stocks
+q:polymarket:1031504,20,-1,1,Ukraine peace weighs on defense stocks
+q:polymarket:1052037,20,1,1,Security guarantees imply European defense spending
+q:polymarket:1059730,20,-1,1,Ukraine peace weighs on defense stocks
+q:polymarket:1107361,20,-1,1,US-Mexico conflict hits autos supply chains and trade
+q:polymarket:1115301,20,-1,1,US-NATO rift risk off for alliance and markets
+q:polymarket:1116981,20,-1,1,US-Mexico conflict hits autos supply chains and trade
+q:polymarket:1124797,20,-1,2,NATO breakup disrupts defense outlook and risk appetite
+q:polymarket:1183503,20,-1,1,US-NATO rift risk off for alliance and markets
+q:polymarket:1609728,20,-1,1,Red Sea closure lifts oil and shipping costs
+q:polymarket:254768,20,1,1,NATO-Russia fighting lifts energy and defense
+q:polymarket:2922429,20,1,1,Turkey F-35 return adds defense orders
+q:polymarket:2922430,20,1,1,Turkey F-35 return adds defense orders
+q:polymarket:3324625,20,1,1,Airlines gain from lower fuel
+q:polymarket:3348047,20,1,1,Airlines gain from lower fuel
+q:polymarket:3709612,20,1,1,Lower tariffs help industrial trade
+q:polymarket:3889223,20,-1,1,Industrials exposed to China trade
+q:polymarket:3907307,20,-1,1,Piracy raises shipping costs
+q:polymarket:4188006,20,1,1,Airlines gain from lower fuel
+q:polymarket:4451606,20,-1,1,Shipping costs and risk rise
+q:polymarket:4477141,20,-1,1,Shipping and airline costs rise
+q:polymarket:4642545,20,-1,1,Shipping and airline costs rise
+q:polymarket:4713961,20,1,2,European rearmament lifts defense names
+q:polymarket:4714426,20,1,1,Tension supports defense spending
+q:polymarket:4714589,20,1,1,Tension supports defense spending
+q:polymarket:4743423,20,-1,2,Airlines hit by rerouting and fuel
+q:polymarket:514678,20,1,2,Article 5 triggers major defense spending
+q:polymarket:521018,20,-1,2,Global trade and supply chains disrupted
+q:polymarket:522056,20,-1,1,Peace lowers defense demand
+q:polymarket:522057,20,-1,1,Peace lowers defense demand
+q:polymarket:523245,20,-1,1,Peace lowers defense demand
+q:polymarket:5238377,20,1,1,Defense demand on higher tension
+q:polymarket:5238378,20,1,1,Defense demand on higher tension
+q:polymarket:533152,20,1,1,Defense demand
+q:polymarket:5401794,20,-1,1,Airline fuel costs
+q:polymarket:5426238,20,-1,1,Airline fuel costs
+q:polymarket:548080,20,1,2,Defense spending surge
+q:polymarket:548083,20,1,2,Defense spending surge
+q:polymarket:552121,20,1,1,Defense demand
+q:polymarket:5522520,20,-1,2,Shipping disrupted
+q:polymarket:5628379,20,1,1,Trade and airline relief
+q:polymarket:5628380,20,1,1,Trade and airline relief
+q:polymarket:5645623,20,1,1,Trade flows normalise
+q:polymarket:5645629,20,1,1,Red Sea trade normalises
+q:polymarket:566211,20,1,1,Trade relief
+q:polymarket:566212,20,1,1,Trade relief
+q:polymarket:566213,20,1,1,Trade relief
+q:polymarket:566215,20,1,1,Trade relief
+q:polymarket:566220,20,1,1,Trade relief
+q:polymarket:566221,20,1,1,Trade relief
+q:polymarket:566224,20,1,1,Trade relief
+q:polymarket:575008,20,-1,1,Defense demand falls on peace
+q:polymarket:5770350,20,-1,1,Shipping risk
+q:polymarket:589648,20,1,1,Defense demand
+q:polymarket:600623,20,-1,2,Supply chains and shipping
+q:polymarket:6026980,20,1,1,Defense demand
+q:polymarket:6065114,20,-1,1,Shipping risk
+q:polymarket:6065170,20,1,1,Trade flows normalise
+q:polymarket:6065255,20,1,1,Red Sea trade normalises
+q:polymarket:610201,20,1,2,Defense spending surge
+q:polymarket:6326141,20,-1,1,Shipping risk
+q:polymarket:6364482,20,-1,1,Shipping risk
+q:polymarket:665480,20,0,2,US defense vs European rearmament unclear
+q:polymarket:665521,20,1,1,Defense demand
+q:polymarket:677396,20,1,1,Defense demand
+q:polymarket:678747,20,1,1,Defense demand
+q:polymarket:678748,20,1,1,Defense demand
+q:polymarket:678749,20,1,1,Defense demand
+q:polymarket:678750,20,1,1,Defense demand
+q:polymarket:678751,20,1,1,Defense demand
+q:polymarket:678752,20,1,1,Defense demand
+q:polymarket:678753,20,1,1,Defense demand
+q:polymarket:678777,20,1,1,Defense demand
+q:polymarket:678778,20,1,1,Defense demand
+q:polymarket:678779,20,1,1,Defense demand
+q:polymarket:678780,20,1,1,Defense demand
+q:polymarket:678781,20,1,1,Defense demand
+q:polymarket:678782,20,1,1,Defense demand
+q:polymarket:681144,20,-1,1,Defense demand falls on settlement
+q:polymarket:687642,20,-1,1,Supply chain hit
+q:polymarket:694027,20,-1,1,Defense demand falls on peace
+q:kalshi:KXCANADAUSTARIFFLOWER-27-26DEC01,25,1,2,lower tariffs cut costs for autos and retail
+q:kalshi:KXCANUSDEAL-26-26AUG24,25,1,2,trade deal lowers tariff costs for autos and retail
+q:kalshi:KXCANUSRAISE-27-26DEC01,25,-1,2,higher tariffs raise costs for autos and retail
+q:kalshi:KXCIT301-BBAR27,25,1,2,struck tariffs lower import costs
+q:kalshi:KXEFFTARIFF-26OCT29-T10,25,-1,2,higher effective tariff raises retail and auto costs
+q:kalshi:KXEMERCUTS-26-T1,25,-1,1,emergency cut signals growth shock
+q:kalshi:KXFTACOUNTRIES-27-ARG,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-CHI,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-EU,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-IND,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-INDO,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-KEN,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-SWI,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-TAI,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTACOUNTRIES-27-UK,25,1,1,new trade deal lowers tariff costs
+q:kalshi:KXFTAPRC-29,25,1,2,US-China deal lowers tariff costs
+q:kalshi:KXHORMUZAVG-27JAN01-A100,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B261101,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B261201,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270101,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270201,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270301,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270401,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270501,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270601,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270701,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270801,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B270901,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B271001,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B271101,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B271201,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B280101,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B280701,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZNORM-26MAR17-B290101,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZPEAK-26NOV01-T10,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZPEAK-26OCT25-T10,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZWEEKLY-26NOV01-T15,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXHORMUZWEEKLY-26OCT25-T15,25,1,1,lower fuel costs help discretionary
+q:kalshi:KXIAEAIRANAGREEMENT-26,25,1,1,lower oil helps discretionary
+q:kalshi:KXIMFRECESS-27,25,-1,3,global recession hits discretionary spending
+q:kalshi:KXMUSKCHARGE-27JAN01,25,-1,1,Charges against Musk pressure Tesla sentiment
+q:kalshi:KXNEWTARIFFS-26OCT-NOV01,25,-1,2,New tariffs raise costs and hit retail and autos
+q:kalshi:KXRECOGROC-29-27,25,-1,1,China retaliation hits US consumer firms
+q:kalshi:KXTAIWANLVL4-27JAN01,25,-1,1,Taiwan tension hits electronics and consumer demand
+q:kalshi:KXTARIFFRATECAN-27JAN01-10,25,-1,2,Higher tariffs raise auto and retail costs
+q:kalshi:KXTARIFFRATEEU-27JAN01-10,25,-1,1,Higher EU tariffs raise import costs
+q:kalshi:KXTARIFFRATEMEX-27JAN01-10,25,-1,2,Higher tariffs raise auto and retail costs
+q:kalshi:KXTARIFFRATEPRC-27JAN01-10,25,-1,2,Higher China tariffs raise retail costs
+q:kalshi:KXTRUMPMEETM-26OCT01-XJIN,25,1,1,US-China talks ease tariff pressure
+q:kalshi:KXUSMCA-26-27,25,-1,2,USMCA exit threatens auto supply chains
+q:kalshi:KXUSMCAOUTCOMES-27-16Y,25,1,2,USMCA certainty supports autos and retail
+q:kalshi:KXUSMCAOUTCOMES-27-CANW,25,-1,2,USMCA withdrawal threatens auto supply chains
+q:kalshi:KXUSMCAOUTCOMES-27-MEXW,25,-1,2,USMCA withdrawal threatens auto supply chains
+q:kalshi:KXUSMCAOUTCOMES-27-TRI,25,1,2,USMCA certainty supports autos and retail
+q:kalshi:KXUSMCAOUTCOMES-27-USCAN,25,1,1,Bilateral deal eases auto trade uncertainty
+q:kalshi:KXUSMCAOUTCOMES-27-USMEX,25,1,1,Bilateral deal eases auto trade uncertainty
+q:kalshi:KXUSMCAOUTCOMES-27-USW,25,-1,2,USMCA withdrawal threatens auto supply chains
+q:kalshi:KXWITHDRAW-29-WTO,25,-1,1,WTO exit raises trade barriers for retailers
+q:polymarket:1107361,25,-1,2,US-Mexico conflict hits autos supply chains and trade
+q:polymarket:1116981,25,-1,2,US-Mexico conflict hits autos supply chains and trade
+q:polymarket:1170144,25,-1,1,Iran war escalation lifts oil and hurts consumers
+q:polymarket:1179940,25,-1,2,US-China clash disrupts chips and trade
+q:polymarket:1194695,25,-1,1,"Wider Russian war lifts energy, hurts consumers"
+q:polymarket:1466418,25,-1,1,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1466425,25,-1,1,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1466430,25,-1,1,Iran strike on Gulf state raises oil risk
+q:polymarket:1540766,25,1,1,Hormuz reopening lowers oil prices
+q:polymarket:1553591,25,1,1,Cuba opening helps travel and leisure
+q:polymarket:1568406,25,-1,1,draft would hurt consumer spending and labor supply
+q:polymarket:1576153,25,1,1,Cuba opening helps travel and leisure
+q:polymarket:1609728,25,-1,1,Red Sea closure lifts oil and shipping costs
+q:polymarket:1628449,25,-1,1,Iran war escalation lifts oil and hurts consumers
+q:polymarket:1706293,25,-1,1,Iran strike on Gulf state raises oil risk
+q:polymarket:1706294,25,-1,1,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1706295,25,-1,1,Iran strike on Gulf producer threatens oil supply
+q:polymarket:1706299,25,-1,1,Iran strike on Gulf producer threatens oil supply
+q:polymarket:2126461,25,-1,1,"record crude boosts energy, squeezes consumers"
+q:polymarket:253665,25,-1,1,Korean war hits memory chips and supply chains
+q:polymarket:253889,25,-1,2,Taiwan invasion cuts chip supply and global growth
+q:polymarket:254768,25,-1,1,NATO-Russia fighting lifts energy and defense
+q:polymarket:2849422,25,1,1,Hormuz reopening lowers oil prices
+q:polymarket:2849423,25,1,1,Hormuz reopening lowers oil prices
+q:polymarket:2849424,25,-1,1,Hormuz staying disrupted lifts oil
+q:polymarket:2952457,25,1,1,Lasting ceasefire eases oil risk
+q:polymarket:2995850,25,-1,1,Iran war escalation lifts oil and hurts consumers
+q:polymarket:2995865,25,-1,1,Iran strike on Gulf producer threatens oil supply
+q:polymarket:3253021,25,-1,1,Higher fuel costs hit consumer spending
+q:polymarket:3324625,25,1,1,Cheaper fuel and travel helps discretionary
+q:polymarket:3348047,25,1,1,Cheaper fuel and travel helps discretionary
+q:polymarket:3491438,25,1,1,Lower oil helps consumers
+q:polymarket:3491459,25,1,1,Lower oil helps consumers
+q:polymarket:3709612,25,1,2,Lower tariffs help autos and retailers
+q:polymarket:3889223,25,-1,1,Retailers and autos exposed to China
+q:polymarket:4188006,25,1,1,Cheaper fuel helps consumers
+q:polymarket:4477141,25,-1,1,Supply chain costs hit retailers
+q:polymarket:4620900,25,-1,1,Higher rates hit housing and big-ticket spending
+q:polymarket:4639440,25,-1,1,Oil spike hits consumers
+q:polymarket:4641064,25,1,1,Lower oil helps consumers
+q:polymarket:4642545,25,-1,1,Fuel cost hits consumers
+q:polymarket:4713961,25,-1,1,Risk-off hits discretionary
+q:polymarket:4743423,25,-1,1,Travel and leisure hit
+q:polymarket:514678,25,-1,1,Risk-off hits discretionary
+q:polymarket:5194749,25,-1,2,High gasoline prices hit consumers
+q:polymarket:5194750,25,-1,2,High gasoline prices hit consumers
+q:polymarket:5194751,25,-1,2,High gasoline prices hit consumers
+q:polymarket:5194752,25,-1,2,High gasoline prices hit consumers
+q:polymarket:5194754,25,1,2,Falling gasoline prices help consumers
+q:polymarket:5194755,25,1,2,Falling gasoline prices help consumers
+q:polymarket:5194756,25,1,2,Falling gasoline prices help consumers
+q:polymarket:521018,25,-1,2,Supply shock and risk-off hit discretionary
+q:polymarket:524148,25,1,1,US-China thaw
+q:polymarket:528750,25,-1,1,Higher costs hit consumer
+q:polymarket:5401794,25,-1,1,Fuel costs hit consumer
+q:polymarket:5426238,25,-1,1,Fuel costs hit consumer
+q:polymarket:5447182,25,1,1,Lower fuel costs
+q:polymarket:548080,25,-1,2,Consumer hit by war shock
+q:polymarket:548083,25,-1,2,Consumer hit by war shock
+q:polymarket:552121,25,-1,2,Fuel costs and risk-off
+q:polymarket:5522520,25,-1,1,Trade costs
+q:polymarket:5568258,25,1,1,Lower fuel costs
+q:polymarket:5568259,25,-1,2,Fuel costs hit consumer
+q:polymarket:558558,25,1,1,US-China thaw
+q:polymarket:5628379,25,1,2,Lower fuel costs help consumer
+q:polymarket:5628380,25,1,2,Lower fuel costs help consumer
+q:polymarket:5636955,25,-1,1,Fuel costs hit consumer
+q:polymarket:566211,25,1,2,Lower tariffs help consumer
+q:polymarket:566212,25,1,2,Lower tariffs help consumer
+q:polymarket:566213,25,1,2,Lower tariffs help consumer
+q:polymarket:566215,25,1,2,Lower tariffs help consumer
+q:polymarket:566218,25,1,2,Lower tariffs help consumer
+q:polymarket:566220,25,1,2,Lower tariffs help autos and retail
+q:polymarket:566221,25,1,2,Lower tariffs help consumer
+q:polymarket:566224,25,1,1,Lower tariffs help consumer
+q:polymarket:568121,25,-1,1,China demand risk
+q:polymarket:600623,25,-1,2,Supply chain and demand hit
+q:polymarket:6026980,25,-1,1,Fuel costs hit consumer
+q:polymarket:610201,25,-1,2,Consumer hit by war shock
+q:polymarket:665271,25,1,1,US-China thaw
+q:polymarket:687642,25,-1,2,Asia demand and supply hit
+q:polymarket:891408,25,-1,1,Demand risk
+q:kalshi:KXCANADAUSTARIFFLOWER-27-26DEC01,30,1,1,Canadian tariff cuts ease US food exports
+q:kalshi:KXCANUSDEAL-26-26AUG24,30,1,1,Trade deal reduces tariff uncertainty for food flows
+q:kalshi:KXCANUSRAISE-27-26DEC01,30,-1,1,Canadian retaliation hits US food and beverage exports
+q:kalshi:KXCHINABANKSANC-26AUG-26NOV11,30,-1,1,China bank sanctions escalate conflict and retaliation risk
+q:kalshi:KXCIT301-BBAR27,30,1,1,Tariff struck down lowers import costs
+q:kalshi:KXEFFTARIFF-26OCT29-T10,30,-1,2,Higher effective tariff raises imported input and goods costs
+q:kalshi:KXFEDDECISION-26DEC-H0,30,-1,2,Fed hike hurts bond-proxy staples valuations
+q:kalshi:KXFTAPRC-29,30,1,1,US China trade pact lowers sourcing costs
+q:kalshi:KXIMFRECESS-27,30,1,1,Global recession favors defensive staples relatively
+q:kalshi:KXNEWTARIFFS-26OCT-NOV01,30,-1,1,Tariffs lift import costs for staples
+q:kalshi:KXNUMSHUTDOWNS-27JAN01-T2,30,-1,1,Shutdowns disrupt SNAP benefits and grocery demand
+q:kalshi:KXONTARIOALCOHOL-27-27JAN01,30,1,1,US spirits regain Ontario sales
+q:kalshi:KXRATEHIKE-2026-0,30,1,1,No hikes supports bond-proxy staples
+q:kalshi:KXSTUDENTLOANGARNISH-27,30,-1,1,Wage garnishment squeezes consumer spending
+q:kalshi:KXTARIFFRATEBR-27JAN01-10,30,-1,1,Brazil tariffs lift coffee beef and juice import costs
+q:kalshi:KXTARIFFRATECAN-27JAN01-10,30,-1,1,Canada tariffs raise cross-border food and packaging costs
+q:kalshi:KXTARIFFRATEEU-27JAN01-10,30,-1,1,EU tariffs hit imported food and spirits and retaliation
+q:kalshi:KXTARIFFRATEMEX-27JAN01-10,30,-1,2,Mexico tariffs hit produce beer and packaged food imports
+q:kalshi:KXTARIFFRATEPRC-27JAN01-10,30,-1,1,China tariffs raise sourcing costs and retaliation risk
+q:kalshi:KXUKBUDGETTAX-26OCT29-YES,30,-1,1,UK tax rises squeeze consumers and UK staples
+q:kalshi:KXUSCANADATARIFFDOWN-26SEP-DEC01,30,1,1,Lower Canada tariffs ease input costs
+q:kalshi:KXUSCANADATARIFFUP-26SEP-DEC01,30,-1,1,New Canada tariffs raise input costs and retaliation risk
+q:kalshi:KXUSMCA-26-27,30,-1,2,USMCA exit threatens food and beverage supply chains
+q:kalshi:KXUSMCAOUTCOMES-27-16Y,30,1,1,USMCA extension secures North American food trade
+q:kalshi:KXUSMCAOUTCOMES-27-USW,30,-1,1,US withdrawal disrupts North American food trade
+q:kalshi:KXWITHDRAW-29-WTO,30,-1,1,WTO exit raises trade barriers on food inputs
+q:kalshi:WRECSS-26-PRC,30,-1,1,China recession cuts demand for multinational staples
+q:polymarket:1107361,30,-1,1,US strike on Mexico risks trade and consumer disruption
+q:polymarket:1540766,30,1,1,Hormuz normalizing lowers energy and freight costs
+q:polymarket:1609728,30,-1,1,Bab el-Mandeb closure raises freight and food costs
+q:polymarket:2126461,30,-1,1,Record crude raises packaging freight and input costs
+q:polymarket:2243894,30,1,1,Ceasefire eases grain and fertilizer supply risk
+q:polymarket:253399,30,1,1,Ceasefire eases grain and fertilizer supply risk
+q:polymarket:253889,30,-1,2,Taiwan invasion triggers global risk-off and supply shock
+q:polymarket:2849422,30,1,1,Hormuz normalizing lowers energy and freight costs
+q:polymarket:2849423,30,1,1,Hormuz normalizing lowers energy and freight costs
+q:polymarket:2849424,30,-1,1,Prolonged Hormuz disruption raises energy and freight costs
+q:polymarket:3215009,30,-1,1,Fed hike hurts staples valuations
+q:polymarket:3215014,30,-1,1,Fed hike hurts staples valuations
+q:polymarket:3499790,30,-1,1,RBA hike pressures bond-proxy staples globally
+q:polymarket:3709612,30,1,1,Tariff cuts ease cross-border food costs
+q:polymarket:3889223,30,-1,1,China sanctions escalate trade war and retaliation risk
+q:polymarket:4620900,30,-1,2,Another Fed hike hurts defensive bond-proxy staples
+q:polymarket:5194749,30,-1,1,High gasoline squeezes consumers and raises logistics costs
+q:polymarket:5194750,30,-1,1,High gasoline squeezes consumers and raises logistics costs
+q:polymarket:5194751,30,-1,1,High gasoline squeezes consumers and raises logistics costs
+q:polymarket:5194752,30,-1,1,High gasoline squeezes consumers and raises logistics costs
+q:polymarket:5426238,30,-1,1,Record crude raises packaging freight and input costs
+q:polymarket:5522520,30,-1,1,Panama Canal closure disrupts grain and food shipping
+q:polymarket:566213,30,1,1,Canada trade deal eases food and packaging costs
+q:polymarket:566220,30,1,1,Mexico trade deal eases food and beverage import costs
+q:polymarket:575008,30,1,1,Peace deal eases grain and fertilizer supply risk
+q:polymarket:600623,30,-1,1,Taiwan blockade disrupts trade and global growth
+q:polymarket:616902,30,-1,1,No cuts keeps yields high weighing on staples
+q:polymarket:6326141,30,-1,2,Black Sea ship strikes threaten grain and oilseed supply
+q:polymarket:999108,30,1,1,ECB cut supports defensive bond-proxy equities
+q:kalshi:KXCHINALIST-26JUL-WUXI,35,1,1,WuXi restriction helps US CDMOs
+q:kalshi:KXCIT301-BBAR27,35,1,1,Tariff ruling against 301 lowers import costs
+q:kalshi:KXFTACOUNTRIES-27-EU,35,1,2,EU trade deal cuts pharma Section 232 risk
+q:kalshi:KXFTACOUNTRIES-27-IND,35,1,1,India deal supports generics and API supply
+q:kalshi:KXFTACOUNTRIES-27-SWI,35,1,2,Swiss deal likely eases pharma tariff exposure
+q:kalshi:KXFTAPRC-29,35,1,1,China trade deal eases tools and API costs
+q:kalshi:KXGENERICTARIFF-26JUL-NOV03,35,-1,2,generic drug tariff hits pharma and distributors
+q:kalshi:KXIMFRECESS-27,35,-1,1,Global recession hits elective volumes and tools demand
+q:kalshi:KXIMPEACH-27-JUN01,35,0,1,Impeachment shifts health policy risk both ways
+q:kalshi:KXLARGECUT-26,35,1,1,Large Fed cuts lift biotech valuations
+q:kalshi:KXNEWTARIFFS-26OCT-NOV01,35,-1,1,New tariffs raise device and pharma input costs
+q:kalshi:KXNUMSHUTDOWNS-27JAN01-T2,35,0,1,Shutdowns delay FDA reviews and CMS operations
+q:kalshi:KXRATEHIKE-2026-0,35,1,1,No hikes supports rate-sensitive biotech
+q:kalshi:KXSTATELAW-27-HIPA,35,-1,1,Health data privacy law raises compliance costs
+q:kalshi:KXTARIFFRATEEU-27JAN01-10,35,0,1,EU tariff level matters for Ireland pharma manufacturing
+q:kalshi:KXTARIFFRATEINDIA-27JAN01-10,35,0,1,India tariff level matters for generics supply
+q:kalshi:KXTARIFFRATEPRC-27JAN01-10,35,0,1,China tariff level affects APIs and life-science tools
+q:polymarket:253889,35,-1,1,Taiwan invasion triggers risk-off and supply disruption
+q:polymarket:4620900,35,-1,1,Fed hike pressures long-duration biotech
+q:polymarket:521018,35,-1,1,Taiwan clash triggers risk-off and tools disruption
+q:polymarket:524148,35,1,1,Trump-Xi meeting eases trade and supply risk
+q:polymarket:558558,35,1,1,US-China talks ease tariff and supply risk
+q:polymarket:566211,35,1,2,EU trade deal cuts pharma tariff risk
+q:polymarket:566212,35,1,1,India trade deal supports generics supply
+q:polymarket:566224,35,1,1,UK deal tied to drug pricing and pharma tariffs
+q:polymarket:600623,35,-1,1,Taiwan blockade triggers risk-off and supply disruption
+q:polymarket:616902,35,-1,1,No Fed cuts pressures biotech valuations
+q:polymarket:666861,35,0,1,Presidential change alters drug pricing and FDA policy
+q:polymarket:677147,35,0,1,"Emergency cut signals stress, defensive but risk-off"
+q:kalshi:KXBRIANCONF-26JUL08-JAN01,40,1,1,lighter-touch CFPB helps lenders
+q:kalshi:KXBTCRESERVE-26-JAN01,40,1,1,crypto-linked financials gain from reserve
+q:kalshi:KXCHINABANKSANC-26AUG-26NOV11,40,-1,2,sanctioning Chinese banks escalates US-China tension
+q:kalshi:KXEMERCUTS-26-T0,40,-1,1,"no emergency cuts means no crisis, small effect"
+q:kalshi:KXEMERCUTS-26-T1,40,-1,2,emergency cut signals financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-27AUG01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-27DEC01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-27JUL01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-27JUN01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-27NOV01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-27OCT01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-27SEP01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXFRANCECAPCONTROL-28-28JAN01,40,-1,1,capital controls signal European financial stress
+q:kalshi:KXIMFRECESS-27,40,-1,2,recession raises credit losses
+q:kalshi:KXIPOANDURIL-27JUN01,40,1,1,IPO activity lifts underwriting and capital markets fees
+q:kalshi:KXIPOFANNIE-27JUN01,40,0,1,GSE exit has mixed effects on lenders
+q:kalshi:KXIPOOPENAI-27JUN01,40,1,1,IPO activity lifts underwriting and capital markets fees
+q:kalshi:KXIPOSTARLINK-27JUN30,40,1,1,IPO activity lifts underwriting and capital markets fees
+q:kalshi:KXSTRIPEIPO-27JUN01,40,1,1,IPO window and payments sentiment
+q:kalshi:KXTREASBUYBTC-26AUG-27JAN01,40,1,1,Government bitcoin buying lifts crypto-exposed financials
+q:kalshi:KXTREASBUYBTC-26AUG-28JAN01,40,1,1,Government bitcoin buying lifts crypto-exposed financials
+q:kalshi:KXTREASBUYCRYPTO-26AUG-BITCOIN,40,1,1,Government bitcoin buying lifts crypto-exposed financials
+q:polymarket:1107361,40,-1,1,US-Mexico conflict hits autos supply chains and trade
+q:polymarket:1115301,40,-1,1,US-NATO rift risk off for alliance and markets
+q:polymarket:1116981,40,-1,1,US-Mexico conflict hits autos supply chains and trade
+q:polymarket:1124797,40,-1,1,NATO breakup disrupts defense outlook and risk appetite
+q:polymarket:1179940,40,-1,1,US-China clash disrupts chips and trade
+q:polymarket:1183503,40,-1,1,US-NATO rift risk off for alliance and markets
+q:polymarket:253889,40,-1,1,Taiwan invasion cuts chip supply and global growth
+q:polymarket:3215009,40,1,1,Fed hike hurts REITs and utilities
+q:polymarket:3215014,40,1,1,Fed hike hurts REITs and utilities
+q:polymarket:514678,40,-1,1,Risk-off hits financials
+q:polymarket:521018,40,-1,1,Risk-off and sanctions hit financials
+q:polymarket:548080,40,-1,2,Risk-off hits banks
+q:polymarket:548083,40,-1,2,Risk-off hits banks
+q:polymarket:552121,40,-1,1,Risk-off
+q:polymarket:558839,40,1,1,Crypto access helps brokers
+q:polymarket:600623,40,-1,1,Risk-off
+q:polymarket:610201,40,-1,2,Risk-off hits banks
+q:polymarket:665480,40,-1,1,Risk-off
+q:polymarket:665521,40,-1,1,Risk-off
+q:polymarket:677147,40,-1,2,Emergency cut signals financial stress
+q:polymarket:677396,40,-1,1,Risk-off
+q:polymarket:891408,40,-1,2,EU breakup hits banks
+q:polymarket:891579,40,-1,1,EU fragmentation risk
+q:kalshi:KXCHINABANKSANC-26AUG-26NOV11,45,-1,1,US-China escalation hurts tech supply chain
+q:kalshi:KXCHINADATACENTER-26AUG-27JAN01,45,1,1,"helps US optical makers, hurts data center costs"
+q:kalshi:KXCHINAEUV-30-27JAN01,45,-1,2,China EUV erodes US chip equipment moat
+q:kalshi:KXDATACENTERMORATORIUM-27JAN012,45,-1,2,moratorium curbs data center buildout
+q:kalshi:KXFTACOUNTRIES-27-TAI,45,1,1,Taiwan deal supports chip supply chain
+q:kalshi:KXFTAPRC-29,45,1,2,US-China deal eases tech trade limits
+q:kalshi:KXKIMIBAN-27-27JAN01,45,1,1,US ban on Chinese AI model favors US vendors
+q:kalshi:KXNEWTARIFFS-26OCT-NOV01,45,-1,2,Tariffs hit hardware supply chains
+q:kalshi:KXNHSPLTRBREAK-27-27APR01,45,-1,1,Loss of NHS contract hurts Palantir
+q:kalshi:KXRECOGROC-29-27,45,-1,2,Recognizing ROC risks China retaliation on chips
+q:kalshi:KXREMOVEDAPPSTOREDEEPSEEK-27,45,1,1,Removal favors US AI and software names
+q:kalshi:KXTAIWANLVL4-27JAN01,45,-1,2,Taiwan tension threatens chip supply
+q:kalshi:KXTARIFFRATEPRC-27JAN01-10,45,-1,2,Higher China tariffs hit hardware and chips
+q:kalshi:KXTARIFFSECTOR-27JAN01-MINE,45,-1,1,Mineral tariffs raise chip input costs
+q:kalshi:KXTRUMPMEETM-26OCT01-XJIN,45,1,1,US-China talks ease chip trade tension
+q:kalshi:WRECSS-26-JP,45,-1,1,Japan recession hits tech supply chain
+q:kalshi:WRECSS-26-PRC,45,-1,1,China recession cuts tech sales
+q:polymarket:1176221,45,1,1,Taiwan trade deal eases chip tension
+q:polymarket:1179940,45,-1,3,US-China clash disrupts chips and trade
+q:polymarket:253665,45,-1,2,Korean war hits memory chips and supply chains
+q:polymarket:253889,45,-1,3,Taiwan invasion cuts chip supply and global growth
+q:polymarket:2839963,45,-1,1,Chinese missile launch raises Taiwan tension
+q:polymarket:2914111,45,1,1,Delisting eases chip equipment sales to China
+q:polymarket:2914117,45,1,1,Delisting eases chip equipment sales to China
+q:polymarket:3889223,45,-1,2,Sanctions on China hit chip supply and sales
+q:polymarket:4567308,45,0,2,AI pacing deal limits chips but eases tensions
+q:polymarket:4620900,45,-1,1,Higher rates pressure growth multiples
+q:polymarket:5151845,45,-1,1,Taiwan tension risk for chip supply
+q:polymarket:521018,45,-1,3,Taiwan clash disrupts chip supply chain
+q:polymarket:521028,45,-1,1,China conflict risk for electronics supply
+q:polymarket:521030,45,-1,1,China conflict risk for electronics supply
+q:polymarket:524148,45,1,1,US-China thaw
+q:polymarket:524153,45,-1,1,Taiwan tension
+q:polymarket:558558,45,1,1,US-China thaw
+q:polymarket:566211,45,1,1,Trade relief
+q:polymarket:566212,45,1,1,Trade relief
+q:polymarket:566213,45,1,1,Trade relief
+q:polymarket:566215,45,1,1,Trade relief
+q:polymarket:566218,45,1,1,Trade relief
+q:polymarket:566220,45,1,1,Trade relief
+q:polymarket:566221,45,1,2,Semis and hardware trade relief
+q:polymarket:568121,45,-1,2,China instability hits supply chain
+q:polymarket:600623,45,-1,3,Taiwan supply chain disrupted
+q:polymarket:665270,45,-1,1,Taiwan tension
+q:polymarket:665271,45,1,1,US-China thaw
+q:polymarket:687642,45,-1,2,Asia supply chain disruption
+q:kalshi:KXCHINALIST-26JUL-BYTE,50,1,1,ByteDance restriction helps US ad platforms
+q:kalshi:KXDATACENTERMORATORIUM-27JAN012,50,-1,1,Data center moratoria constrain AI capex for Alphabet Meta
+q:kalshi:KXEUSOCIALBAN-28APR01-27OCT01,50,-1,1,EU child ban hurts social platforms
+q:kalshi:KXFCCBIG4-26JUN-27APR01,50,-1,2,license revocation threatens broadcaster owners
+q:kalshi:KXFCCBIG4-26JUN-27JAN01,50,-1,2,license revocation threatens broadcaster owners
+q:kalshi:KXFEDDECISION-26DEC-H0,50,-1,1,Fed hike pressures long duration growth valuations
+q:kalshi:KXFTAPRC-29,50,1,1,US China trade deal lowers tech retaliation risk
+q:kalshi:KXIMFRECESS-27,50,-1,2,Global recession cuts advertising demand
+q:kalshi:KXNEWTARIFFS-26OCT-NOV01,50,-1,1,New tariffs hit ad spending and valuations
+q:kalshi:KXNYAIBILL-27JAN01,50,-1,1,Chatbot liability law raises AI compliance costs
+q:kalshi:KXNZU16SOCIALBAN-27OCT01,50,-1,1,Small market but precedent for youth social media bans
+q:kalshi:KXRATEHIKE-2026-0,50,1,1,No Fed hikes supports growth stock valuations
+q:kalshi:KXTAIWANLVL4-27JAN01,50,-1,1,Taiwan escalation signal weighs on tech equities
+q:kalshi:KXTARIFFRATEEU-27JAN01-10,50,-1,1,Higher EU tariffs raise retaliation risk against US tech
+q:kalshi:KXTARIFFRATEPRC-27JAN01-10,50,-1,1,Higher China tariffs hurt tech and ad spend
+q:kalshi:KXTARIFFSECTOR-27JAN01-FILM,50,-1,1,Film tariffs risk retaliation against US studios
+q:kalshi:KXUKDST-28APR06-26NOV01,50,1,1,DST cut benefits US ad and platform firms
+q:kalshi:KXUKSOCIALBAN-27-27APR01,50,-1,1,Under-16 ban cuts social platform users
+q:polymarket:1179940,50,-1,2,US China military clash hits equities and China ad revenue
+q:polymarket:253889,50,-1,3,China invasion of Taiwan hits tech supply chains and risk assets
+q:polymarket:2914127,50,1,1,Tencent delisting relief eases gaming sector China risk
+q:polymarket:2915297,50,1,1,ByteDance restrictions help US rivals Meta and Alphabet
+q:polymarket:3889223,50,-1,1,US sanctions on China raise tariff retaliation risk for tech
+q:polymarket:4620900,50,-1,1,Fed hike pressures long duration growth valuations
+q:polymarket:521018,50,-1,2,Taiwan clash risk hits tech sentiment and chips
+q:polymarket:558558,50,1,1,Trump Xi talks ease trade tension for tech
+q:polymarket:5634652,50,-1,1,Telecom infrastructure damage
+q:polymarket:5634653,50,-1,1,Telecom infrastructure damage
+q:polymarket:600623,50,-1,2,Taiwan blockade disrupts chips and hits global equities
+q:polymarket:616902,50,-1,1,No Fed cuts weighs on growth valuations
+q:polymarket:677147,50,-1,1,Emergency cut signals recession and ad weakness
+q:kalshi:KXDATACENTERMORATORIUM-27JAN012,55,-1,2,moratorium cuts power demand growth
+q:kalshi:KXEFFR-27JAN04-T3.50,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-26DEC-T2.75,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27APR-T0.00,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27APR-T4.50,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27DEC-T0.00,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27JAN-T0.00,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27JAN-T4.50,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27JUN-T0.00,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27MAR-T0.00,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFED-27MAR-T4.50,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXFEDCOMBO-26DEC-25C-0,55,1,1,Fed cut helps bond-proxy utilities
+q:kalshi:KXFEDCOMBO-26DEC-25C-T0,55,1,1,Fed cut helps bond-proxy utilities
+q:kalshi:KXFEDCOMBO-26DEC-25H-0,55,-1,1,Fed hike hurts bond-proxy utilities
+q:kalshi:KXFEDCOMBO-26DEC-25H-T0,55,-1,1,Fed hike hurts bond-proxy utilities
+q:kalshi:KXFEDDECISION-26DEC-H0,55,-1,2,Fed hike hurts bond-proxy utilities
+q:kalshi:KXFEDFUNDSYEAR-28JAN01-T1.00,55,-1,1,higher rates hurt bond-proxy utilities
+q:kalshi:KXLARGECUT-26,55,1,1,"Larger Fed cuts lower rates, supports utilities"
+q:kalshi:KXMEWIND-26AUG-27JUL01,55,1,1,Approval advances regulated renewable and transmission build
+q:kalshi:KXRATECUTCOUNT-26DEC31-T0,55,-1,2,No Fed cuts hurts bond-proxy utilities
+q:kalshi:KXRATEHIKE-2026-0,55,1,1,No hikes mildly supports utilities
+q:kalshi:KXTARIFFSECTOR-27JAN01-WIND,55,-1,1,Wind tariffs raise renewable build costs
+q:polymarket:1168140,55,-1,1,Higher policy rate hurts REITs and utilities
+q:polymarket:1168141,55,-1,1,Higher policy rate hurts REITs and utilities
+q:polymarket:1168142,55,-1,1,Higher policy rate hurts REITs and utilities
+q:polymarket:1168832,55,1,1,Much lower policy rate helps REITs and utilities
+q:polymarket:1168833,55,1,1,Much lower policy rate helps REITs and utilities
+q:polymarket:3215009,55,-1,1,Fed hike hurts REITs and utilities
+q:polymarket:3215010,55,1,1,Fed cut helps REITs and utilities
+q:polymarket:3215014,55,-1,1,Fed hike hurts REITs and utilities
+q:polymarket:3888725,55,0,1,"Utility input costs up, pricing power mixed"
+q:polymarket:4620900,55,-1,2,Rate hike hurts bond-proxy utilities
+q:polymarket:4895201,55,1,1,Much lower rates would help utilities
+q:polymarket:4895202,55,1,1,Much lower rates would help utilities
+q:polymarket:4895203,55,1,1,Much lower rates would help utilities
+q:polymarket:4895204,55,1,1,Lower rates would help utilities
+q:polymarket:4895207,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895208,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895209,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895210,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895211,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895212,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895213,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895214,55,-1,1,Higher rates hurt utilities
+q:polymarket:4895215,55,-1,1,Higher rates hurt utilities
+q:polymarket:616902,55,-1,2,Higher rates hurt utilities
+q:polymarket:677147,55,1,1,Lower rates and defensive bid
+q:kalshi:KXDATACENTERMORATORIUM-27JAN012,60,-1,1,data center REIT demand curbed
+q:kalshi:KXEFFR-27JAN04-T3.50,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-26DEC-T2.75,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27APR-T0.00,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27APR-T4.50,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27DEC-T0.00,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27JAN-T0.00,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27JAN-T4.50,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27JUN-T0.00,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27MAR-T0.00,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFED-27MAR-T4.50,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXFEDCOMBO-26DEC-25C-0,60,1,2,Fed cut helps rate-sensitive REITs
+q:kalshi:KXFEDCOMBO-26DEC-25C-T0,60,1,2,Fed cut helps rate-sensitive REITs
+q:kalshi:KXFEDCOMBO-26DEC-25H-0,60,-1,2,Fed hike hurts rate-sensitive REITs
+q:kalshi:KXFEDCOMBO-26DEC-25H-T0,60,-1,2,Fed hike hurts rate-sensitive REITs
+q:kalshi:KXFEDDECISION-26DEC-H0,60,-1,2,Fed hike hurts rate-sensitive REITs
+q:kalshi:KXFEDFUNDSYEAR-28JAN01-T1.00,60,-1,2,higher policy rate hurts rate-sensitive REITs
+q:kalshi:KXIPOFANNIE-27JUN01,60,1,1,GSE reform could ease mortgage finance
+q:kalshi:KXLARGECUT-26,60,1,2,"Larger Fed cuts lower rates, supports REITs"
+q:kalshi:KXNYCASKRENT-27JAN31-T3800,60,0,1,NYC rent level bears on apartment REITs
+q:kalshi:KXNYCASKRENT-27JAN31-T3900,60,0,1,NYC rent level bears on apartment REITs
+q:kalshi:KXNYCASKRENT-27JAN31-T4000,60,0,1,NYC rent level bears on apartment REITs
+q:kalshi:KXNYCASKRENT-27JAN31-T4100,60,0,1,NYC rent level bears on apartment REITs
+q:kalshi:KXNYCASKRENT-27JAN31-T4200,60,0,1,NYC rent level bears on apartment REITs
+q:kalshi:KXNYCASKRENT-27JAN31-T4300,60,0,1,NYC rent level bears on apartment REITs
+q:kalshi:KXNYCASKRENT-27JAN31-T4400,60,1,1,Higher NYC rents lift rental REIT income
+q:kalshi:KXNYCASKRENT-27JAN31-T4500,60,1,1,Higher NYC rents lift rental REIT income
+q:kalshi:KXNYCPROPERTYTAX-27JAN01,60,-1,1,Higher property tax burdens NYC real estate
+q:kalshi:KXRATECUTCOUNT-26DEC31-T0,60,-1,2,No Fed cuts hurts rate-sensitive REITs
+q:kalshi:KXRATEHIKE-2026-0,60,1,1,No hikes mildly supports REITs
+q:polymarket:1168137,60,0,1,Mid-range rate outcome unclear for rate-sensitive sectors
+q:polymarket:1168138,60,0,1,Mid-range rate outcome unclear for rate-sensitive sectors
+q:polymarket:1168139,60,0,1,Mid-range rate outcome unclear for rate-sensitive sectors
+q:polymarket:1168140,60,-1,2,Higher policy rate hurts REITs and utilities
+q:polymarket:1168141,60,-1,2,Higher policy rate hurts REITs and utilities
+q:polymarket:1168142,60,-1,2,Higher policy rate hurts REITs and utilities
+q:polymarket:1168832,60,1,2,Much lower policy rate helps REITs and utilities
+q:polymarket:1168833,60,1,2,Much lower policy rate helps REITs and utilities
+q:polymarket:3215009,60,-1,2,Fed hike hurts REITs and utilities
+q:polymarket:3215010,60,1,2,Fed cut helps REITs and utilities
+q:polymarket:3215014,60,-1,2,Fed hike hurts REITs and utilities
+q:polymarket:4620900,60,-1,3,Rate hike hurts real estate valuations
+q:polymarket:4895201,60,1,1,Much lower rates would help real estate
+q:polymarket:4895202,60,1,1,Much lower rates would help real estate
+q:polymarket:4895203,60,1,1,Much lower rates would help real estate
+q:polymarket:4895204,60,1,1,Lower rates would help real estate
+q:polymarket:4895207,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895208,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895209,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895210,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895211,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895212,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895213,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895214,60,-1,1,Higher rates hurt real estate
+q:polymarket:4895215,60,-1,1,Higher rates hurt real estate
+q:polymarket:616902,60,-1,2,Higher rates hurt real estate

@@ -77,6 +77,27 @@ CREATE TABLE IF NOT EXISTS security_betas (
   implied DOUBLE, implied_factors JSON, n_events INTEGER, beta DOUBLE, se DOUBLE, tau DOUBLE,
   shrunk DOUBLE, shrunk_se DOUBLE, units VARCHAR, events JSON);
 
+-- Dense event sensitivities (event_betas.py): every issuer's primary security and every macro
+-- factor with a daily series, measured against every question with data (jump days or measured
+-- factor moves), not only linked pairs. Per run only the top `rank` <= KEEP live questions per
+-- security / factor are stored (n_evaluated = questions measured, n_live = live ones among them);
+-- read the latest run. issuer rows: channels = why the question could move the issuer (factors =
+-- measured factor moves, entity = entity path, sector = LLM GICS sector link, analyst = curated;
+-- empty = a statistical association only, ranked separately). q = Benjamini-Hochberg q-value of the
+-- jump-day estimate over the target's pairs. Same units as security_betas (% per +1.0) and factor_betas (factor units).
+CREATE TABLE IF NOT EXISTS issuer_event_betas (
+  run_id VARCHAR, computed_at TIMESTAMPTZ, ticker VARCHAR, issuer_id VARCHAR, question_id VARCHAR,
+  rank INTEGER, n_evaluated INTEGER, n_live INTEGER, channels VARCHAR, implied DOUBLE, implied_factors JSON,
+  n_events INTEGER, beta DOUBLE, se DOUBLE, q DOUBLE, tau DOUBLE, shrunk DOUBLE, shrunk_se DOUBLE, units VARCHAR, events JSON);
+CREATE TABLE IF NOT EXISTS factor_event_betas (
+  run_id VARCHAR, computed_at TIMESTAMPTZ, factor_id VARCHAR, question_id VARCHAR, rank INTEGER,
+  n_evaluated INTEGER, n_live INTEGER, linked BOOLEAN, channel VARCHAR, n_events INTEGER, beta DOUBLE,
+  se DOUBLE, q DOUBLE, tau DOUBLE, shrunk DOUBLE, shrunk_se DOUBLE, units VARCHAR, events JSON);
+ALTER TABLE issuer_event_betas ADD COLUMN IF NOT EXISTS channels VARCHAR;  -- added after the first version, 2026-10-28
+ALTER TABLE issuer_event_betas ADD COLUMN IF NOT EXISTS q DOUBLE;
+ALTER TABLE factor_event_betas ADD COLUMN IF NOT EXISTS q DOUBLE;
+ALTER TABLE factor_event_betas ADD COLUMN IF NOT EXISTS p_effect DOUBLE;  -- spike-and-slab P(effect), unlinked pairs
+
 -- Wikipedia / Wikidata lookups (entities.py), fetched once per key. Latest row per (kind, key) wins.
 --   kind = title (phrase -> article), df (word -> share of articles containing it),
 --          entity (Wikidata item), mentions (article title -> # articles mentioning it),
