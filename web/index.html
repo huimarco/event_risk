@@ -180,12 +180,12 @@
   .rs-qname { font-weight: 600; } .rs-qmeta { font-size: 12.5px; color: var(--ink-2); }
   .rs-qbody { padding: 4px 0 6px 16px; }
   .rs-warn { font-size: 12.5px; color: var(--ink-2); border-left: 3px solid var(--axis); padding: 4px 10px; margin: 8px 0; }
-  body.gics main, body.gics .explore-only, body.gics #about { display: none; }
-  #gics { display: none; min-height: 0; grid-template-columns: 1fr var(--gright, 420px); }
-  body.gics #gics { display: grid; }
-  #gx-main { overflow: auto; padding: 14px 20px 48px; }
-  #gx-main > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; padding: 0 0 10px; border: 0; }
-  #gx-main > header h2 { font-size: 18px; margin: 0; } #gx-main > header p { margin: 0; color: var(--ink-2); font-size: 12.5px; flex: 1 1 420px; }
+  body.gics main, body.gics .explore-only, body.gics #about, body.movers main, body.movers .explore-only, body.movers #about { display: none; }
+  #gics, #movers { display: none; min-height: 0; grid-template-columns: 1fr var(--gright, 420px); }
+  body.gics #gics, body.movers #movers { display: grid; }
+  :is(#gx-main, #mv-main) { overflow: auto; padding: 14px 20px 48px; }
+  :is(#gx-main, #mv-main) > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; padding: 0 0 10px; border: 0; }
+  :is(#gx-main, #mv-main) > header h2 { font-size: 18px; margin: 0; } :is(#gx-main, #mv-main) > header p { margin: 0; color: var(--ink-2); font-size: 12.5px; flex: 1 1 420px; }
   #gx-sectors { display: grid; grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); gap: 14px; }
   .gx-card { border: 1px solid var(--hairline); border-radius: 10px; background: var(--surface); padding: 10px 12px 6px; min-width: 0; }
   .gx-card h3 { font-size: 14px; margin: 0; display: flex; align-items: baseline; gap: 8px; }
@@ -198,10 +198,15 @@
   .gx-card tr { cursor: pointer; } .gx-card tbody tr:hover, .gx-card tr[aria-current="true"] { background: var(--hover); }
   .gx-card tr:last-child td { border-bottom: 0; } .gx-card td.rank { color: var(--muted); }
   .gx-card td.unmeasured { color: var(--muted); } .gx-empty { color: var(--muted); font-size: 12.5px; padding: 6px 0; }
-  #gx-detail { border-left: 1px solid var(--hairline); overflow: auto; padding: 16px; }
-  #gx-detail h2 { font-size: 16px; margin: 2px 0 4px; line-height: 1.35; } #gx-detail h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 18px 0 6px; }
-  #gx-detail .kind { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
-  #gx-detail .meta { color: var(--ink-2); font-size: 12.5px; }
+  :is(#gx-detail, #mv-detail) { border-left: 1px solid var(--hairline); overflow: auto; padding: 16px; }
+  :is(#gx-detail, #mv-detail) h2 { font-size: 16px; margin: 2px 0 4px; line-height: 1.35; } :is(#gx-detail, #mv-detail) h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 18px 0 6px; }
+  :is(#gx-detail, #mv-detail) .kind { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  :is(#gx-detail, #mv-detail) .meta { color: var(--ink-2); font-size: 12.5px; }
+  /* Rank-by selectors (GICS cards, Issuer / Macro boards, Biggest Movers) */
+  .rank-by { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+  .rank-by select { font-size: 11.5px; max-width: 210px; } .gx-card h3 .rank-by { margin-left: auto; }
+  .rank-note { font-size: 11.5px; color: var(--muted); margin: 2px 0 6px; } .bd-rank { margin: -6px 0 10px; }
+  .gx-card.mv-card td:nth-child(2) { -webkit-line-clamp: 1; } .gx-card td.stale { color: var(--muted); } #mv-detail .muted { color: var(--muted); }
   body.issuers main, body.issuers .explore-only, body.issuers #about, body.macro main, body.macro .explore-only, body.macro #about { display: none; }
   .board { display: none; min-height: 0; grid-template-columns: minmax(0, 1fr) var(--bright, clamp(320px, 30vw, 440px)); }
   body.issuers #issuers-board, body.macro #macro-board { display: grid; }
@@ -214,7 +219,7 @@
   .bd-head h3 { font-size: 16px; margin: 0; display: flex; align-items: baseline; gap: 8px; } .bd-head h3 .tag { font-weight: 400; }
   .bd-head .gx-sub { font-size: 12px; color: var(--muted); margin: 3px 0; max-width: 980px; }
   .bd-main h4 { font-size: 13px; margin: 16px 0 6px; display: flex; align-items: center; gap: 8px; }
-  .bd-table { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; background: var(--surface); }
+  .bd-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; background: var(--surface); }
   .bd-table th { text-align: right; color: var(--muted); font-weight: 600; font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; padding: 4px 0 4px 8px; border-bottom: 1px solid var(--hairline); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .bd-table td { padding: 5px 0 5px 8px; border-bottom: 1px solid var(--hairline); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; vertical-align: top; }
   .bd-table th:nth-child(2), .bd-table td:nth-child(2), .bd-table th:last-child, .bd-table td:last-child { text-align: left; }
@@ -247,6 +252,7 @@
     <button role="tab" data-view="explore" aria-selected="true">Explore</button>
     <button role="tab" data-view="about" class="secret">How it works</button>
     <button role="tab" data-view="api" class="secret">Excel &amp; API</button>
+    <button role="tab" data-view="movers" class="secret">Biggest Movers</button>
     <button role="tab" data-view="gics" class="secret">GICS Dashboard</button>
     <button role="tab" data-view="issuers" class="secret">Issuer Dashboard</button>
     <button role="tab" data-view="macro" class="secret">Macro Dashboard</button>
@@ -693,6 +699,8 @@ for p in top["propositions"]:
     Each event has <code>prob</code>, <code>change_24h</code>, <code>change_1w</code>, <code>change_1m</code> (headline rung, points as fractions) and <code>lead_factor</code>: its most relevant factor for the sector (<code>why</code>), with that factor's measured <code>sensitivity</code> on the event (as on <code>/questions/{id}</code>) and the ETF's <code>etf_loading</code> on it.</p>
   <div class="endpoint"><span>GET</span>/gics/{sector}</div>
   <p>One sector by code (<code>45</code>) or name (<code>Energy</code>), up to <code>limit</code> (default 50) events.</p>
+  <p>Both take <code>rank</code>, applied to every live event linked to the sector before <code>limit</code>: <code>sensitivity</code> (default, |<code>sector_move</code>| as above) · <code>move_24h</code> / <code>move_1w</code> / <code>move_1m</code> (|probability change|, rises and falls alike) ·
+    <code>repricing</code> (|ETF move per +1.0 × 24h change|, an estimate; signed in <code>repricing_24h</code>) · <code>risk</code> (|beta| × √(p(1−p))). Events without a value rank last, never as 0; <code>ranking</code> gives <code>n_ranked</code> and <code>n_available</code>.</p>
 
   <h3>Issuer and Macro dashboards</h3>
   <p>Dense measurements (<code>event_betas.py</code>, daily): every issuer's primary security and every macro factor with a daily series, regressed against every event with data — jump days on any of its contracts, or (securities) measured factor moves — not only linked pairs. The top 50 live events per target are stored.</p>
@@ -705,6 +713,13 @@ for p in top["propositions"]:
   <p>Every macro factor: <code>series</code> (null = monthly / quarterly indicator, can't be regressed on daily jumps), <code>n_evaluated</code>, <code>n_live</code>.</p>
   <div class="endpoint"><span>GET</span>/dashboard/factors/{id}</div>
   <p>One macro factor and its top <code>limit</code> live events by |move|: <code>sensitivity</code> in the factor's units per +1.0 (<code>per_10pts</code>, <code>own_beta</code>, <code>own_se</code>, <code>q</code>, <code>linked</code>, <code>channel</code>, <code>events</code>). Linked pairs are shrunk toward their pooled channel estimate (as <code>factor_betas</code>), unlinked ones toward 0. Factors without a series list their linked events unmeasured.</p>
+  <p>Both take <code>rank</code>: <code>sensitivity</code> (default, |move|) · <code>move_24h</code> / <code>move_1w</code> / <code>move_1m</code> · <code>repricing</code> (|beta × 24h change| in the target's units, an estimate; signed in <code>repricing_24h</code>) · issuers <code>risk</code> · factors <code>q</code> (lowest q-value) and <code>p_effect</code> (highest; unlinked events only).
+    Each list is ranked on its own (channel / statistical-only, detectable / weak / linked), over every stored row: 50 live per target and list by |move|, so <code>ranking</code> says whether that is every live event of the list (<code>complete</code>, <code>n_live</code>).</p>
+
+  <h3>Biggest movers (the Biggest Movers tab)</h3>
+  <div class="endpoint"><span>GET</span>/dashboard/movers</div>
+  <p>Every live event in the graph (one row per question, never per contract or rung) ranked by <code>rank</code>: <code>move_24h</code> (default) / <code>move_1w</code> / <code>move_1m</code> = |change of the headline rung| · <code>volume</code> (24h) · <code>prob</code>; up to <code>limit</code> (default 50, max 500).
+    Each has <code>prob</code>, <code>change_24h</code> / <code>change_1w</code> / <code>change_1m</code>, <code>volume_24h</code>, <code>open_interest</code>, <code>updated</code>, <code>headline</code> and <code>position</code>. No sector or security effect is implied: <code>/questions/{id}</code> has the event's measured links.</p>
 
   <h3>Calibration</h3>
   <div class="endpoint"><span>GET</span>/calibration</div>
@@ -782,6 +797,16 @@ for p in top["propositions"]:
     <div id="gx-sectors"><p class="gx-empty">Loading…</p></div>
   </div>
   <aside id="gx-detail" aria-label="Event detail"><p class="gx-empty">Select an event.</p></aside>
+</section>
+<section id="movers">
+  <div id="mv-main">
+    <header><h2>Biggest Movers</h2>
+      <p>The live events whose probability moved most, across every live event in the graph: one row per event (its headline contract, the most traded live one), never per venue contract or deadline.
+        Moves are in probability points, so large rises and large falls rank alike. Click an event for its contracts and the entities, factors and securities the graph links to it.</p>
+      <span id="mv-rank"></span><button id="mv-refresh" type="button">Refresh</button></header>
+    <div id="mv-board"><p class="gx-empty">Loading…</p></div>
+  </div>
+  <aside id="mv-detail" aria-label="Event detail"><p class="gx-empty">Select an event.</p></aside>
 </section>
 <section id="issuers-board" class="board"></section>
 <section id="macro-board" class="board"></section>
@@ -1152,10 +1177,12 @@ document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
   document.body.classList.toggle("api", b.dataset.view === "api");
   document.body.classList.toggle("research", b.dataset.view === "research");
   document.body.classList.toggle("gics", b.dataset.view === "gics");
+  document.body.classList.toggle("movers", b.dataset.view === "movers");
   document.body.classList.toggle("issuers", b.dataset.view === "issuers");
   document.body.classList.toggle("macro", b.dataset.view === "macro");
   if (b.dataset.view === "research") Research.open();
   if (b.dataset.view === "gics") Gics.open();
+  if (b.dataset.view === "movers") Movers.open();
   if (b.dataset.view === "issuers") IssuerBoard.open();
   if (b.dataset.view === "macro") MacroBoard.open();
   if (b.dataset.view === "explore") network.redraw();
@@ -1657,49 +1684,116 @@ const EvUI = (() => {
     if (t.dataset.evFactor) { document.querySelector('nav button[data-view="research"]').click(); Research.show(t.dataset.evFactor); }
     else { document.querySelector('nav button[data-view="explore"]').click(); select(t.dataset.evExplore); }
   });
-  return { fmt, sgn, pts, ev, EST, qtxt, eventHead, moveTiles, jumpTable, factorBlock, wireLinks };
+  // the selected row: aria-current="true" (what the CSS highlights), or no attribute
+  const current = (el, on) => on ? el.setAttribute("aria-current", "true") : el.removeAttribute("aria-current");
+  return { fmt, sgn, pts, ev, EST, qtxt, eventHead, moveTiles, jumpTable, factorBlock, wireLinks, current };
+})();
+
+// Rank-by selectors shared by every dashboard. The ranking itself happens in the API (api.RANKINGS:
+// |probability moves|, measured betas, unavailable values last), over the full eligible set.
+const RankUI = (() => {
+  const { fmt, sgn, qtxt } = EvUI;
+  const LABEL = { sensitivity: "Estimated sensitivity", move_24h: "Biggest 24h move", move_1w: "Biggest WoW move", move_1m: "Biggest 30-day move",
+    repricing: "Estimated 24h repricing", risk: "Event risk (estimated)", q: "Evidence: lowest q-value", p_effect: "Evidence: highest P(effect)",
+    volume: "Largest 24h volume", prob: "Highest probability" };
+  const TITLE = { sensitivity: "|Measured move per +10 pts of probability| (shrunk estimate)",
+    move_24h: "|Probability change over 24 hours| in points: rises and falls alike", move_1w: "|Probability change over 7 days| in points",
+    move_1m: "|Probability change over 30 days| in points",
+    repricing: "|Measured beta × the event's 24h probability change|: an estimate in the target's units, not an observed return",
+    risk: "|beta| × √(p(1−p)): how much the event can still move the target from today's probability (an estimate)",
+    q: "Lowest Benjamini-Hochberg q-value of the event's own jump-day estimate", p_effect: "Highest P(the event moves the factor at all); unlinked events only",
+    volume: "Largest 24h trading volume", prob: "Highest current probability" };
+  const control = (ranks, value, attrs = "") => `<label class="rank-by" title="${esc(TITLE[value] || "")}">Rank by <select ${attrs}>${ranks.map(r =>
+    `<option value="${r}" ${r === value ? "selected" : ""} title="${esc(TITLE[r])}">${esc(LABEL[r])}</option>`).join("")}</select></label>`;
+  // rankings whose value is not already a column get one: [header, title, cell(event, measurement, units, digits)]
+  const COLUMN = {
+    repricing: ["Est. 24h", "Estimated 24h repricing: measured beta × 24h probability change (an estimate, not an observed return)",
+      (e, m, u, d) => e.repricing_24h == null ? '<span class="muted" title="Unavailable: no measured beta or no 24h change">n/a</span>' : `${sgn(e.repricing_24h, d)}${esc(u)}`],
+    risk: ["Risk", "|beta| × √(p(1−p)), in the target's units", e => e.risk == null ? '<span class="muted">n/a</span>' : fmt(e.risk, 3)],
+    q: ["q", "Benjamini-Hochberg q-value of the own jump-day estimate", (e, m) => m && m.q != null ? esc(qtxt(m.q)) : '<span class="muted">n/a</span>'],
+    p_effect: ["P(effect)", "P(the event moves the factor); linked events have none", (e, m) => m && m.p_effect != null ? `${Math.round(m.p_effect * 100)}%` : '<span class="muted" title="Linked events are not under the spike-and-slab prior">n/a</span>'],
+  };
+  // what a non-default ranking ranked over (api.ranking_info)
+  const note = (info, isDefault, scope) => {
+    if (!info || isDefault) return "";
+    const miss = info.n_ranked - info.n_available;
+    const pool = scope || (info.complete === false ? `the ${info.n_ranked} stored strongest measured events (top by |move| of ${info.n_live} live; event_betas.py keeps only these)`
+      : `all ${info.n_ranked} ${info.complete ? "live events in this list" : "eligible events"}`);
+    return `<p class="rank-note">Ranked by ${esc(LABEL[info.id][0].toLowerCase() + LABEL[info.id].slice(1))} over ${esc(pool)}${miss ? `; ${miss} without a value for it are listed last` : ""}.${info.evidence === "estimated" ? " Estimated, not observed." : ""}</p>`;
+  };
+  return { LABEL, control, COLUMN, note };
 })();
 
 // GICS: the 11 sectors, each with the live events that move its sector ETF most (/gics). Sector
-// links are an LLM judgment; the moves are measured (security_betas.py).
+// links are an LLM judgment; the moves are measured (security_betas.py). Each sector has its own
+// ranking (/gics/{code}?rank=), independent of the others.
 const Gics = (() => {
   const { fmt, sgn, pts, ev, EST } = EvUI;
-  const st = { data: null, sel: null, opened: false };
+  const RANKS = ["sensitivity", "move_24h", "move_1w", "move_1m", "repricing", "risk"];
+  const st = { data: null, sel: null, opened: false, rank: {}, seq: {} };
   const dir = s => s > 0 ? '<span class="up">▲ rises</span>' : s < 0 ? '<span class="down">▼ falls</span>' : "mixed / unclear";
   const STRENGTH = { 3: "first-order", 2: "material", 1: "marginal" };
   const D = () => $("#gx-detail");
+  const rankOf = code => st.rank[code] || RANKS[0];
 
+  async function fetchSector(code) {
+    const n = st.seq[code] = (st.seq[code] || 0) + 1;
+    const s = await api(`/gics/${encodeURIComponent(code)}`, { limit: 10, rank: rankOf(code) });
+    if (n !== st.seq[code]) return null;   // a later choice for this sector won
+    st.data.sectors = st.data.sectors.map(x => x.code === code ? s : x);
+    return s;
+  }
   async function load() {
     $("#gx-sectors").innerHTML = '<p class="gx-empty">Loading…</p>';
     st.data = await api("/gics", { limit: 10 });
+    await Promise.all(Object.keys(st.rank).filter(c => rankOf(c) !== RANKS[0]).map(fetchSector));
     render();
-    if (st.sel) detail(st.sel.code, st.sel.id);
+    reselect();
   }
-  function render() {
-    $("#gx-sectors").innerHTML = st.data.sectors.map(s => `<section class="gx-card" aria-label="${esc(s.name)}">
-      <h3>${esc(s.code)} · ${esc(s.name)} <span class="tag" title="${esc(s.etf_name)}">${esc(s.etf)}</span></h3>
+  // keep the selected event if it is still listed, else clear the panel
+  function reselect() {
+    if (!st.sel) return;
+    const s = st.data.sectors.find(x => x.code === st.sel.code);
+    if (s && s.events.some(e => e.id === st.sel.id)) detail(st.sel.code, st.sel.id);
+    else { st.sel = null; D().innerHTML = '<p class="gx-empty">Select an event.</p>'; }
+  }
+  function card(s) {
+    const r = rankOf(s.code), col = RankUI.COLUMN[r];
+    return `<section class="gx-card" aria-label="${esc(s.name)}" data-sector="${esc(s.code)}">
+      <h3>${esc(s.code)} · ${esc(s.name)} <span class="tag" title="${esc(s.etf_name)}">${esc(s.etf)}</span>${RankUI.control(RANKS, r, `data-code="${esc(s.code)}"`)}</h3>
       <div class="gx-sub">${s.n_linked} live events linked · ${s.n_measured} measured against ${esc(s.etf)}${s.market_beta != null ? ` · ${esc(s.etf)} market beta ${fmt(s.market_beta, 2)}` : s.priced ? "" : ` · ${esc(s.etf)} not priced yet`}</div>
-      ${s.events.length ? `<table><colgroup><col style="width:22px"><col><col style="width:54px"><col style="width:56px"><col style="width:56px"><col style="width:56px"><col style="width:92px"></colgroup>
+      ${RankUI.note(s.ranking, r === RANKS[0], `all ${s.n_linked} live events linked to the sector`)}
+      ${s.events.length ? `<table><colgroup><col style="width:22px"><col><col style="width:54px"><col style="width:56px"><col style="width:56px"><col style="width:56px"><col style="width:92px">${col ? '<col style="width:66px">' : ""}</colgroup>
         <thead><tr><th>#</th><th>Event</th><th>Prob</th><th title="Change in points, 24 hours">24h</th><th title="Change in points, 7 days">1w</th><th title="Change in points, 30 days">1m</th>
-        <th title="${esc(s.etf)} % move per +10 pts of probability (measured, shrunk)">${esc(s.etf)} /10 pts</th></tr></thead>
+        <th title="${esc(s.etf)} % move per +10 pts of probability (measured, shrunk)">${esc(s.etf)} /10 pts</th>${col ? `<th title="${esc(col[1])}">${esc(col[0])}</th>` : ""}</tr></thead>
         <tbody>${s.events.map((e, i) => `<tr data-code="${esc(s.code)}" data-id="${esc(e.id)}" ${st.sel && st.sel.code === s.code && st.sel.id === e.id ? 'aria-current="true"' : ""}>
           <td class="rank">${i + 1}</td><td title="${esc(e.name)}">${esc(e.name)}</td><td>${pct(e.prob)}</td>
           <td>${pts(e.change_24h)}</td><td>${pts(e.change_1w)}</td><td>${pts(e.change_1m)}</td>
-          ${e.sector_move ? `<td><b>${sgn(e.sector_move.per_10pts, 2)}%</b></td>` : `<td class="unmeasured" title="Not measured yet: LLM says YES ${e.llm.sign > 0 ? "lifts" : e.llm.sign < 0 ? "hurts" : "has an unclear effect on"} the sector">${e.llm.sign > 0 ? "▲" : e.llm.sign < 0 ? "▼" : "•"} n/m</td>`}</tr>`).join("")}</tbody></table>`
-        : '<p class="gx-empty">No live events linked to this sector.</p>'}</section>`).join("");
+          ${e.sector_move ? `<td><b>${sgn(e.sector_move.per_10pts, 2)}%</b></td>` : `<td class="unmeasured" title="Not measured yet: LLM says YES ${e.llm.sign > 0 ? "lifts" : e.llm.sign < 0 ? "hurts" : "has an unclear effect on"} the sector">${e.llm.sign > 0 ? "▲" : e.llm.sign < 0 ? "▼" : "•"} n/m</td>`}
+          ${col ? `<td>${col[2](e, e.sector_move, "%", 2)}</td>` : ""}</tr>`).join("")}</tbody></table>`
+        : '<p class="gx-empty">No live events linked to this sector.</p>'}</section>`;
+  }
+  function render() { $("#gx-sectors").innerHTML = st.data.sectors.map(card).join(""); }
+  async function rerank(code, rank) {
+    st.rank[code] = rank;
+    const s = await fetchSector(code);
+    if (!s) return;
+    const el = document.querySelector(`#gx-sectors .gx-card[data-sector="${CSS.escape(code)}"]`);
+    if (el) { el.outerHTML = card(s); document.querySelector(`#gx-sectors select[data-code="${CSS.escape(code)}"]`).focus(); }
+    if (st.sel && st.sel.code === code) reselect();
   }
   function detail(code, id) {
     const s = st.data.sectors.find(x => x.code === code), e = s && s.events.find(x => x.id === id);
     if (!e) return;
     st.sel = { code, id };
-    document.querySelectorAll("#gx-sectors tr[data-id]").forEach(tr => tr.toggleAttribute("aria-current", tr.dataset.code === code && tr.dataset.id === id));
+    document.querySelectorAll("#gx-sectors tr[data-id]").forEach(tr => EvUI.current(tr, tr.dataset.code === code && tr.dataset.id === id));
     const m = e.sector_move;
     D().innerHTML = `${EvUI.eventHead(`${s.name} · event`, e)}
       <h3>Effect on ${esc(s.name)} (${esc(s.etf)})</h3>
       <div class="row"><b>If YES the sector ${dir(e.llm.sign)}</b> ${ev("qualitative", "LLM judgment pass (seeds/gics_sector_links.csv); not measured")}
         <div class="meta">${esc(STRENGTH[e.llm.strength] || "")} link — ${esc(e.llm.rationale)}</div></div>
       ${m ? `<div class="row">${ev("estimated", EST)}${EvUI.moveTiles(m, s.etf)}
-        <div class="meta">${m.agrees_with_llm == null ? "" : m.agrees_with_llm ? "Measured direction agrees with the LLM's. " : "<b>Measured direction disagrees with the LLM's.</b> "}Found by ${esc(m.found_by)}; shrunk toward the factor-implied move${m.n_events ? "" : " (no jump days: implied only)"}.</div></div>`
+        <div class="meta">${m.agrees_with_llm == null ? "" : m.agrees_with_llm ? "Measured direction agrees with the LLM's. " : "<b>Measured direction disagrees with the LLM's.</b> "}Found by ${esc(m.found_by)}; shrunk toward the factor-implied move${m.n_events ? "" : " (no jump days: implied only)"}.${e.repricing_24h != null ? ` Estimated 24h repricing ${sgn(e.repricing_24h, 2)}% (beta × the 24h probability change; not an observed return).` : ""}</div></div>`
         : `<p class="note">Not measured yet: no ${esc(s.etf)} regression for this event (no jump days and no measured factor).</p>`}
       <h3>Most relevant factor</h3>${EvUI.factorBlock(e.lead_factor, s.etf, e.id)}
       <p class="note">Mapping: ${esc(st.data.method.mapping)}. Measurement: ${esc(st.data.method.measurement)}.</p>`;
@@ -1708,20 +1802,23 @@ const Gics = (() => {
   function wire() {
     $("#gx-refresh").onclick = () => load().catch(fail);
     $("#gx-sectors").onclick = e => { const tr = e.target.closest("tr[data-id]"); if (tr) detail(tr.dataset.code, tr.dataset.id); };
+    $("#gx-sectors").onchange = e => { const sel = e.target.closest("select[data-code]"); if (sel) rerank(sel.dataset.code, sel.value).catch(fail); };
     EvUI.wireLinks(D());
   }
   return { open() { if (st.opened) return; st.opened = true; wire(); load().catch(fail); } };
 })();
 
 // One target (an issuer or a macro factor) picked from a dropdown: the top live events that move
-// it, from the dense event_betas.py measurements, with a detail panel per event.
+// it, from the dense event_betas.py measurements, with a detail panel per event. `cfg.ranks`: the
+// Rank-by choices (the first is the default); the API ranks each list separately.
 function Board(cfg) {
-  const root = $(`#${cfg.id}`), st = { items: [], data: null, sel: null, opened: false, seq: 0 };
+  const root = $(`#${cfg.id}`), st = { items: [], data: null, sel: null, opened: false, seq: 0, rank: cfg.ranks[0] };
   const q = s => root.querySelector(s), D = () => q(".bd-detail");
   root.innerHTML = `<div class="bd-main">
       <header><h2>${esc(cfg.title)}</h2><p>${cfg.intro}</p></header>
       <div class="bd-pick"><label>${esc(cfg.pickLabel)} <input type="search" class="bd-filter" placeholder="${esc(cfg.filterHint)}"></label>
         <select class="bd-select" aria-label="${esc(cfg.pickLabel)}"><option value="">Loading…</option></select></div>
+      <div class="bd-rank">${RankUI.control(cfg.ranks, cfg.ranks[0], 'class="bd-rank-sel"')}</div>
       <div class="bd-body"><p class="gx-empty">${esc(cfg.empty)}</p></div></div>
     <aside class="bd-detail" aria-label="Event detail"><p class="gx-empty">Select an event.</p></aside>`;
   function options() {
@@ -1732,41 +1829,50 @@ function Board(cfg) {
       `<optgroup label="${esc(gname)}">${items.filter(x => cfg.group(x) === gname).map(x =>
         `<option value="${esc(x.id)}" ${x.id === cur ? "selected" : ""}>${esc(cfg.label(x))}</option>`).join("")}</optgroup>`).join("");
   }
-  async function pick(id) {
+  // keepSel: a re-ranking of the same target keeps the selected event if it is still listed
+  async function pick(id, keepSel = false) {
     if (!id) return;
     localStorage.setItem(`board:${cfg.id}`, id);
-    const n = ++st.seq;
-    q(".bd-body").innerHTML = '<p class="gx-empty">Loading…</p>'; D().innerHTML = '<p class="gx-empty">Select an event.</p>';
-    const d = await api(cfg.detail(id), { limit: 20 });
+    const n = ++st.seq, sel = keepSel ? st.sel : null;
+    q(".bd-body").innerHTML = '<p class="gx-empty">Loading…</p>';
+    if (!sel) D().innerHTML = '<p class="gx-empty">Select an event.</p>';
+    const d = await api(cfg.detail(id), { limit: 20, rank: st.rank });
     if (n !== st.seq) return;   // a later pick won
     st.data = d; st.sel = null; options();
     q(".bd-body").innerHTML = cfg.head(d) + (cfg.events(d).length || !cfg.hideEmpty ? table(cfg.events(d), "main") : "") + (cfg.extra ? cfg.extra(d, table) : "");
+    if (sel && (cfg.part(d, sel.part) || []).some(e => e.id === sel.id)) detail(sel.part, sel.id);
+    else if (sel) D().innerHTML = '<p class="gx-empty">Select an event.</p>';
   }
+  const rankInfo = (d, part) => d.ranking && (part === "main" ? d.ranking : d.ranking[{ stat: d.ranking.statistical ? "statistical" : "weak", linked: "linked" }[part]]);
   function table(evs, part) {
-    if (!evs.length) return `<p class="gx-empty">${esc(cfg.none)}</p>`;
-    return `<table class="bd-table"><colgroup><col style="width:28px"><col><col style="width:58px"><col style="width:60px"><col style="width:60px"><col style="width:60px"><col style="width:96px"><col style="width:52px"><col style="width:150px"></colgroup>
+    const note = RankUI.note(rankInfo(st.data, part), st.rank === cfg.ranks[0]);
+    if (!evs.length) return `${note}<p class="gx-empty">${esc(cfg.none)}</p>`;
+    const col = RankUI.COLUMN[st.rank];
+    return `${note}<table class="bd-table"><colgroup><col style="width:28px"><col><col style="width:58px"><col style="width:60px"><col style="width:60px"><col style="width:60px"><col style="width:96px">${col ? '<col style="width:76px">' : ""}<col style="width:52px"><col style="width:150px"></colgroup>
       <thead><tr><th>#</th><th>Event</th><th>Prob</th><th title="Change in points, 24 hours">24h</th><th title="Change in points, 7 days">1w</th><th title="Change in points, 30 days">1m</th>
-      <th title="${esc(cfg.moveTitle(st.data))}">${esc(cfg.moveHead(st.data))}</th><th title="Lasting ≥ 5-pt daily jumps of the event used in the regression">Jumps</th><th>${esc(cfg.whyHead)}</th></tr></thead>
-      <tbody>${evs.map((e, i) => { const m = cfg.move(e); return `<tr data-part="${part}" data-i="${i}" ${st.sel && st.sel.part === part && st.sel.i === i ? 'aria-current="true"' : ""}>
-        <td class="rank">${e.rank}</td><td title="${esc(e.name)}"><span class="clamp">${esc(e.name)}</span></td><td>${pct(e.prob)}</td>
+      <th title="${esc(cfg.moveTitle(st.data))}">${esc(cfg.moveHead(st.data))}</th>${col ? `<th title="${esc(col[1])}">${esc(col[0])}</th>` : ""}<th title="Lasting ≥ 5-pt daily jumps of the event used in the regression">Jumps</th><th>${esc(cfg.whyHead)}</th></tr></thead>
+      <tbody>${evs.map((e, i) => { const m = cfg.move(e); return `<tr data-part="${part}" data-id="${esc(e.id)}" ${st.sel && st.sel.part === part && st.sel.id === e.id ? 'aria-current="true"' : ""}>
+        <td class="rank">${i + 1}</td><td title="${esc(e.name)}"><span class="clamp">${esc(e.name)}</span></td><td>${pct(e.prob)}</td>
         <td>${EvUI.pts(e.change_24h)}</td><td>${EvUI.pts(e.change_1w)}</td><td>${EvUI.pts(e.change_1m)}</td>
         <td>${!m || m.per_10pts == null ? '<span class="muted" title="Not measured">n/m</span>'
           : Math.abs(m.per_10pts) < 0.5 * 10 ** -cfg.digits ? `<span class="muted" title="Own estimate ${EvUI.sgn(m.own_beta != null ? m.own_beta / 10 : m.direct != null ? m.direct / 10 : null, cfg.digits)}${esc(cfg.unit(m))}: not distinguishable from noise, shrunk to ≈0">≈0</span>`
           : `<b>${EvUI.sgn(m.per_10pts, cfg.digits)}${esc(cfg.unit(m))}</b>`}</td>
-        <td>${m ? m.n_events : "–"}</td><td class="why">${cfg.why(e)}</td></tr>`; }).join("")}</tbody></table>`;
+        ${col ? `<td>${col[2](e, m, m ? cfg.unit(m) : "", cfg.digits)}</td>` : ""}<td>${m ? m.n_events : "–"}</td><td class="why">${cfg.why(e)}</td></tr>`; }).join("")}</tbody></table>`;
   }
-  function detail(part, i) {
-    const evs = cfg.part(st.data, part) || [], e = evs[i];
+  function detail(part, id) {
+    const e = (cfg.part(st.data, part) || []).find(x => x.id === id);
     if (!e) return;
-    st.sel = { part, i };
-    root.querySelectorAll("tr[data-i]").forEach(tr => tr.toggleAttribute("aria-current", tr.dataset.part === part && +tr.dataset.i === i));
+    st.sel = { part, id };
+    root.querySelectorAll("tr[data-id]").forEach(tr => EvUI.current(tr, tr.dataset.part === part && tr.dataset.id === id));
     D().innerHTML = cfg.detailHtml(st.data, e, part);
   }
   const fail = err => { q(".bd-body").innerHTML = `<p class="rs-warn">${esc(err.message)}</p>`; };
   function wire() {
     q(".bd-filter").oninput = options;
     q(".bd-select").onchange = e => pick(e.target.value).catch(fail);
-    q(".bd-body").onclick = e => { const tr = e.target.closest("tr[data-i]"); if (tr) detail(tr.dataset.part, +tr.dataset.i); };
+    q(".bd-rank-sel").onchange = e => { st.rank = e.target.value; e.target.closest(".rank-by").title = "";
+                                        if (st.data) pick(cfg.key(st.data), true).catch(fail); };
+    q(".bd-body").onclick = e => { const tr = e.target.closest("tr[data-id]"); if (tr) detail(tr.dataset.part, tr.dataset.id); };
     EvUI.wireLinks(root);  // factor / Explore buttons in the header and the detail panel
   }
   return { open() {
@@ -1776,7 +1882,7 @@ function Board(cfg) {
 }
 
 const IssuerBoard = Board({
-  id: "issuers-board", title: "Issuer Dashboard", pickLabel: "Issuer", list: "/dashboard/issuers", filterHint: "Filter: name, ticker or sector…",
+  id: "issuers-board", title: "Issuer Dashboard", ranks: ["sensitivity", "move_24h", "move_1w", "move_1m", "repricing", "risk"], pickLabel: "Issuer", list: "/dashboard/issuers", filterHint: "Filter: name, ticker or sector…",
   intro: "Pick an issuer: the live events that move its stock most, and by how much. Every event with data was regressed against the stock (event_betas.py, daily); events are ranked by the measured move per +10 pts of probability. The main list keeps events with an economic channel to the company; associations with no known channel are listed separately, because with thousands of events some line up with any stock by chance.",
   empty: "Choose an issuer above.", none: "No live events measured for this issuer.",
   key: d => d.issuer.id, group: x => x.sector || "Other", label: x => `${x.name}${x.ticker ? ` (${x.ticker})` : ""}`,
@@ -1801,7 +1907,7 @@ const IssuerBoard = Board({
 });
 
 const MacroBoard = Board({
-  id: "macro-board", title: "Macro Dashboard", pickLabel: "Macro factor", list: "/dashboard/factors", filterHint: "Filter: name, id or family…",
+  id: "macro-board", title: "Macro Dashboard", ranks: ["sensitivity", "move_24h", "move_1w", "move_1m", "repricing", "q", "p_effect"], pickLabel: "Macro factor", list: "/dashboard/factors", filterHint: "Filter: name, id or family…",
   intro: "Pick a macro factor: the live events that move it most. Every event with jump days was regressed against every factor with a daily series (event_betas.py, daily), linked or not. Linked events are shrunk toward their pooled channel estimate; unlinked ones get P(effect), the probability the event moves the factor at all, and are shrunk by it. Monthly and quarterly indicators (CPI, GDP, payrolls…) have no daily series: they are measured through a daily market proxy (CPI through 5-year breakevens, payrolls through the 2-year yield, GDP through equities…), shown with its direction, plus their own linked events.",
   empty: "Choose a factor above.", none: "No events in this list.", hideEmpty: true,
   key: d => d.factor.id, group: x => `${x.family}${x.series ? "" : x.proxy ? " · monthly, via proxy" : " · no series or proxy"}`, label: x => x.name,
@@ -1839,6 +1945,85 @@ const MacroBoard = Board({
       <div class="rs-actions" style="margin-top:8px"><button type="button" data-ev-factor="${esc(mf.id)}">Open ${d.proxy ? "proxy" : "factor"} in Factor research</button>
         <button type="button" data-ev-explore="${esc(e.id)}">Open event in Explore</button></div>`; },
 });
+
+// Biggest Movers: every live event (question) ranked by its probability move (/dashboard/movers),
+// laid out like the GICS dashboard. Not tied to a sector, so the panel shows only the links the
+// graph has for the event: its contracts, entities, factors and securities (/questions/{id}).
+const Movers = (() => {
+  const { fmt, sgn, pts, ev, EST } = EvUI;
+  const RANKS = ["move_24h", "move_1w", "move_1m", "volume", "prob"];
+  const st = { data: null, sel: null, rank: RANKS[0], opened: false, seq: 0, dseq: 0 };
+  const D = () => $("#mv-detail"), B = () => $("#mv-board");
+  const when = t => t ? t.slice(5, 16).replace("T", " ") : "–";
+  const stale = t => t && Date.now() - Date.parse(t) > 36e5 * 24;
+
+  async function load() {
+    const n = ++st.seq;
+    B().innerHTML = '<p class="gx-empty">Loading…</p>';
+    const d = await api("/dashboard/movers", { rank: st.rank, limit: 50 });
+    if (n !== st.seq) return;   // a later ranking won
+    st.data = d; render();
+    if (st.sel && !d.events.some(e => e.id === st.sel)) { st.sel = null; st.dseq++; D().innerHTML = '<p class="gx-empty">Select an event.</p>'; }
+  }
+  function render() {
+    const d = st.data, r = d.ranking;
+    B().innerHTML = `<section class="gx-card mv-card" aria-label="Biggest movers">
+      <h3>${esc(RankUI.LABEL[d.ranked_by])} <span class="tag">${r.n_ranked.toLocaleString()} live events</span></h3>
+      <div class="gx-sub">Ranked over every live event in the graph${r.n_available < r.n_ranked ? `; ${(r.n_ranked - r.n_available).toLocaleString()} without a price then (no change) are listed last` : ""}. Probability = the headline contract (most traded live one); changes are that contract now vs 24 hours, 7 and 30 days ago, in points.</div>
+      ${d.events.length ? `<table><colgroup><col style="width:28px"><col><col style="width:62px"><col style="width:60px"><col style="width:60px"><col style="width:60px"><col style="width:86px"><col style="width:90px"></colgroup>
+        <thead><tr><th>#</th><th>Event</th><th>Prob</th><th title="Change in points, 24 hours">24h</th><th title="Change in points, 7 days">1w</th><th title="Change in points, 30 days">1m</th>
+        <th title="24-hour trading volume over the event's live contracts">Volume 24h</th><th title="Most recent quote of the headline contract (UTC)">Updated</th></tr></thead>
+        <tbody>${d.events.map((e, i) => `<tr data-id="${esc(e.id)}" ${st.sel === e.id ? 'aria-current="true"' : ""}>
+          <td class="rank">${i + 1}</td><td title="${esc(e.name)}">${esc(e.name)}</td><td>${pct(e.prob)}</td>
+          <td>${pts(e.change_24h)}</td><td>${pts(e.change_1w)}</td><td>${pts(e.change_1m)}</td>
+          <td>${e.volume_24h ? Math.round(e.volume_24h).toLocaleString() : "–"}</td>
+          <td class="${stale(e.updated) ? "stale" : ""}" title="${esc(e.updated || "")}">${esc(when(e.updated))}</td></tr>`).join("")}</tbody></table>`
+        : '<p class="gx-empty">No live events.</p>'}</section>`;
+  }
+  const contracts = cs => cs.length ? `<table class="rs-table"><thead><tr><th>Venue</th><th>Contract</th><th class="n">Prob</th><th class="n">Vol 24h</th><th class="n">OI</th></tr></thead>
+    <tbody>${cs.slice(0, 20).map(c => `<tr><td>${esc(c.venue)}</td><td><div>${esc(c.name)}</div>
+        <div class="meta">${esc(c.id)}${c.relation !== "same_as" ? ` · ${esc(c.relation)} (linked, not blended)` : ""}${c.close_time ? ` · closes ${esc(c.close_time.slice(0, 10))}` : ""}</div>
+        ${c.rules ? `<details class="rs-more"><summary>Settlement terms</summary><p>${esc(c.rules)}</p></details>` : ""}</td>
+      <td class="n">${pct(c.prob)}</td><td class="n">${c.volume_24h ? Math.round(c.volume_24h).toLocaleString() : "–"}</td><td class="n">${c.open_interest ? Math.round(c.open_interest).toLocaleString() : "–"}</td></tr>`).join("")}</tbody></table>
+    ${cs.length > 20 ? `<p class="meta">+${cs.length - 20} more contracts — open the event in Explore.</p>` : ""}` : '<p class="note">No live contracts.</p>';
+  const factorRows = fs => fs.length ? fs.map(f => { const s = f.sensitivity, u = f.units || "";
+    return `<div class="row"><b>${esc(f.name)}</b> <span class="tag">${esc(f.layer)} · ${esc(f.family)}</span>
+      ${s ? `${ev("estimated", "Factor move around this event's probability jumps (factor_betas.py), shrunk; not causal")}
+        <div class="meta">${sgn(s.per_10pts, 3)} ${esc(u)} per +10 pts (se ${s.se != null ? fmt(s.se / 10, 3) : "–"}, ${s.n_events} jump days) · if YES now ${sgn(s.move_if_yes, 2)} ${esc(u)}, if NO ${sgn(s.move_if_no, 2)} ${esc(u)}</div>`
+        : '<div class="meta">Linked by rule; not measured.</div>'}
+      ${f.layer === "macro" || f.layer === "niche" ? `<div class="rs-actions"><button type="button" data-ev-factor="${esc(f.id)}">Open in Factor research</button></div>` : ""}</div>`; }).join("")
+    : '<p class="note">No factor is linked to this event.</p>';
+  const securityRows = ss => ss.length ? `${ev("estimated", EST)}<table class="rs-table" style="margin-top:6px"><thead><tr><th>Security</th><th class="n">% per +10 pts</th><th class="n">Jump days</th><th>Found by</th></tr></thead>
+    <tbody>${ss.map(x => `<tr><td><b>${esc(x.ticker)}</b> ${esc(x.issuer ? x.issuer.name : x.name)}</td><td class="n">${x.sensitivity ? `${sgn(x.sensitivity.per_10pts, 2)}%` : "–"}</td>
+      <td class="n">${x.sensitivity ? x.sensitivity.n_events : "–"}</td><td>${esc(x.sensitivity ? x.sensitivity.found_by || "" : "")}</td></tr>`).join("")}</tbody></table>`
+    : '<p class="note">No security has been measured against this event.</p>';
+  async function detail(id) {
+    const e = st.data.events.find(x => x.id === id);
+    if (!e) return;
+    st.sel = id;
+    document.querySelectorAll("#mv-board tr[data-id]").forEach(tr => EvUI.current(tr, tr.dataset.id === id));
+    const n = ++st.dseq, head = EvUI.eventHead("Biggest movers · event", e);
+    D().innerHTML = `${head}<p class="gx-empty">Loading links…</p>`;
+    const [q, c] = await Promise.all([api(`/questions/${encodeURIComponent(id)}`), api(`/questions/${encodeURIComponent(id)}/contracts`)]);
+    if (n !== st.dseq) return;   // another event was clicked meanwhile
+    D().innerHTML = `${head}
+      <div class="rs-actions"><button type="button" data-ev-explore="${esc(id)}">Open event in Explore</button></div>
+      <h3>Contracts (${c.contracts.length} live)</h3>${contracts(c.contracts)}
+      <h3>Entities</h3>${q.entities.length ? `<div class="meta">${q.entities.map(x => `${esc(x.name)}${x.role ? ` <span class="muted">(${esc(x.role)})</span>` : ""}`).join(" · ")}</div>` : '<p class="note">No entities linked.</p>'}
+      <h3>Financial factors</h3>${factorRows(q.factors)}
+      <h3>Securities</h3>${securityRows(q.securities)}
+      <p class="note">Biggest Movers is not tied to a sector: only the event's own measured or mapped links are shown. Sensitivities are in-sample associations around probability jumps, not causal effects.</p>`;
+  }
+  const fail = err => { B().innerHTML = `<p class="rs-warn">${esc(err.message)}</p>`; };
+  function wire() {
+    $("#mv-rank").innerHTML = RankUI.control(RANKS, st.rank, 'id="mv-rank-sel"');
+    $("#mv-rank-sel").onchange = e => { st.rank = e.target.value; load().catch(fail); };
+    $("#mv-refresh").onclick = () => load().catch(fail);
+    B().onclick = e => { const tr = e.target.closest("tr[data-id]"); if (tr) detail(tr.dataset.id).catch(err => { D().innerHTML = `<p class="rs-warn">${esc(err.message)}</p>`; }); };
+    EvUI.wireLinks(D());
+  }
+  return { open() { if (st.opened) return; st.opened = true; wire(); load().catch(fail); } };
+})();
 </script>
 </body>
 </html>

@@ -1075,6 +1075,59 @@ def get_industry(code: str, cur=Depends(db)):
                 drivers=sorted(drivers, key=lambda d: ({"revenue": 0, "cost": 1}.get(d["side"], 2), d["factor"]["name"])),
                 questions=qs[:100], n_questions=len(qs))
 
+# ── dashboard rankings: one utility for Biggest Movers, GICS, Issuer and Macro ───────────────
+# A ranking is a numeric key on a dashboard row (`m` = the row's measurement: sector_move / move /
+# sensitivity, {} if unmeasured) and a direction. Probability moves rank by |points|, so rises and
+# falls count alike; sensitivity and repricing use the dashboard's own measured beta (move per +1.0
+# of probability, in the target's units). A row whose key is unavailable (no price then, not
+# measured) ranks last, never as 0; ties and unavailable rows keep the dashboard's default order
+# (stable sort), so "sensitivity" reproduces each dashboard's stored ranking exactly.
+def _abs(x): return None if x is None else abs(x)
+def _times(a, b): return None if a is None or b is None else a * b
+
+RANKINGS = {
+    "sensitivity": dict(label="Estimated sensitivity (|measured move per +10 pts|)", estimated=True, key=lambda r, m: _abs(m.get("beta"))),
+    "move_24h": dict(label="Biggest 24h probability move (|pts|)", key=lambda r, m: _abs(r.get("change_24h"))),
+    "move_1w": dict(label="Biggest 7-day probability move (|pts|)", key=lambda r, m: _abs(r.get("change_1w"))),
+    "move_1m": dict(label="Biggest 30-day probability move (|pts|)", key=lambda r, m: _abs(r.get("change_1m"))),
+    "repricing": dict(label="Estimated 24h repricing (|beta x 24h probability change|)", estimated=True,
+                      key=lambda r, m: _abs(_times(m.get("beta"), r.get("change_24h")))),
+    "risk": dict(label="Event risk (|beta| x sqrt(p (1 - p)))", estimated=True, key=lambda r, m: r.get("risk")),
+    "q": dict(label="Statistical evidence (lowest q-value of the jump-day estimate)", estimated=True, desc=False, key=lambda r, m: m.get("q")),
+    "p_effect": dict(label="Statistical evidence (highest P(effect); unlinked events only)", estimated=True, key=lambda r, m: m.get("p_effect")),
+    "volume": dict(label="Largest 24h volume", key=lambda r, m: r.get("volume_24h")),
+    "prob": dict(label="Highest current probability", key=lambda r, m: r.get("prob")),
+}
+MOVERS_RANKS = ("move_24h", "move_1w", "move_1m", "volume", "prob")
+GICS_RANKS = ISSUER_RANKS = ("sensitivity", "move_24h", "move_1w", "move_1m", "repricing", "risk")
+MACRO_RANKS = ("sensitivity", "move_24h", "move_1w", "move_1m", "repricing", "q", "p_effect")
+def rank_param(ranks, default):
+    return Query(default, pattern=f"^({'|'.join(ranks)})$", description="Ranking: " + " | ".join(ranks))
+
+def rank_value(row, rank, measure=lambda r: None):
+    return RANKINGS[rank]["key"](row, measure(row) or {})
+
+def rank_rows(rows, rank, measure=lambda r: None):
+    """Rows ordered by RANKINGS[rank]: available values first (descending, or ascending for q),
+    unavailable ones last; ties keep the input order. Returns a new list."""
+    sign = 1 if RANKINGS[rank].get("desc", True) else -1
+    def key(r):
+        v = rank_value(r, rank, measure)
+        return (v is None, 0 if v is None else -sign * v)
+    return sorted(rows, key=key)
+
+def ranking_info(rank, rows, measure=lambda r: None, **population):
+    """What a ranking means and how many of the ranked rows have a value for it."""
+    n = sum(1 for r in rows if rank_value(r, rank, measure) is not None)
+    return dict(id=rank, label=RANKINGS[rank]["label"], evidence="estimated" if RANKINGS[rank].get("estimated") else "observed",
+                n_ranked=len(rows), n_available=n, **population)
+
+def repricing(m, row):
+    """Estimated move of the target over the last 24h implied by the event: beta x 24h probability
+    change (target units); an estimate from the measured beta, not an observed return."""
+    v = _times((m or {}).get("beta"), row.get("change_24h"))
+    return None if v is None else round(v, 4)
+
 # ── GICS dashboard: the 11 sectors and the live questions that move each most ─────────────
 # Which questions concern a sector is an LLM judgment (factors.SECTOR_LINKS); how much each moves
 # it is measured (security_betas.py: the question vs the sector's SPDR ETF).
@@ -1141,24 +1194,32 @@ def gics_rows(cur, g, at):
             sb = g.sec_betas.get((q, etf))
             sens = sec_sensitivity(sb, v["prob"]) if sb else None
             if sens: sens["agrees_with_llm"] = None if not link["sign"] or not sens["beta"] else (sens["beta"] > 0) == (link["sign"] > 0)
-            out[c].append(dict(question_summary(g, q, qp), **changes, llm=link, sector_move=sens,
-                               risk=risk(sens["beta"], v["prob"]) if sens else None, _q=q, _etf=etf, _sb=sb))
+            row = dict(question_summary(g, q, qp), **changes, llm=link, sector_move=sens,
+                       risk=risk(sens["beta"], v["prob"]) if sens else None, _q=q, _etf=etf, _sb=sb)
+            out[c].append(dict(row, repricing_24h=repricing(sens, row)))
     for rows in out.values():
         rows.sort(key=lambda r: (r["sector_move"] is None, -abs((r["sector_move"] or {}).get("beta") or 0),
                                  -r["llm"]["strength"], -(r["volume_24h"] or 0)))
     _gics_cache.update(graph=g, at=time.monotonic(), rows=out)
     return out
 
-def gics_sector(g, code, rows, limit):
+def gics_sector(g, code, rows, limit, rank="sensitivity"):
+    """One sector's card: every live question linked to it ranked by `rank` (RANKINGS), then cut
+    to `limit` — the ranking always runs over the full linked set."""
     s = factors.SECTORS[code]
+    sector_move = lambda r: r["sector_move"]
     top = [dict({k: v for k, v in r.items() if not k.startswith("_")},
-                lead_factor=lead_factor(g, r["_q"], r["_etf"], r["_sb"], r["prob"])) for r in rows[:limit]]
+                lead_factor=lead_factor(g, r["_q"], r["_etf"], r["_sb"], r["prob"])) for r in rank_rows(rows, rank, sector_move)[:limit]]
     mk = g.loadings.get(s["etf"], {}).get("equity_us")
     return dict(s, n_linked=len(rows), n_measured=sum(1 for r in rows if r["sector_move"]),
-                market_beta=round(mk["beta"], 3) if mk else None, priced=s["etf"] in g.loadings, events=top)
+                market_beta=round(mk["beta"], 3) if mk else None, priced=s["etf"] in g.loadings,
+                ranked_by=rank, ranking=ranking_info(rank, rows, sector_move, population="every live event linked to the sector"),
+                events=top)
+
+GICS_RANK = rank_param(GICS_RANKS, "sensitivity")
 
 @app.get("/gics")
-def gics_dashboard(limit: int = Query(10, ge=1, le=50, description="Events per sector"), cur=Depends(db)):
+def gics_dashboard(limit: int = Query(10, ge=1, le=50, description="Events per sector"), rank: str = GICS_RANK, cur=Depends(db)):
     """The 11 GICS sectors, each with the live questions (events) that move it most. Which questions
     concern a sector is an LLM judgment pass (seeds/gics_sector_links.csv: sign = what YES means for
     the sector, strength 1-3, rationale) — a placeholder for a methodical mapping. How much each moves
@@ -1168,23 +1229,27 @@ def gics_dashboard(limit: int = Query(10, ge=1, le=50, description="Events per s
     not measured yet come last (by LLM strength). Each event has change_24h / change_1w / change_1m
     (headline rung now vs then) and `lead_factor`: its most relevant factor for the sector (`why`)
     with the factor's measured beta on the question (`sensitivity`, as on /questions/{id}) and the
-    ETF's loading on that factor."""
+    ETF's loading on that factor. `rank` reorders every sector's full linked set before `limit`:
+    sensitivity (default, as above) | move_24h / move_1w / move_1m (|probability change|) |
+    repricing (|sector move per +1.0 x 24h change|, an estimate) | risk (|beta| x sqrt(p (1 - p)));
+    events without a value rank last. `ranking` says how many of the linked events have one."""
     at = datetime.now(timezone.utc)
     g = graph(cur)
     rows = gics_rows(cur, g, at)
     return dict(as_of=at, method=dict(mapping="LLM judgment pass, 2026-10-28 (seeds/gics_sector_links.csv); to be replaced",
                                       measurement="security_betas.py: question vs sector ETF, shrunk; units % per +1.0 of probability",
                                       run=g.loadings_run, evidence="estimated (in-sample association around jumps; not causal)"),
-                sectors=[gics_sector(g, c, rows[c], limit) for c in sorted(factors.SECTORS)])
+                ranked_by=rank, sectors=[gics_sector(g, c, rows[c], limit, rank) for c in sorted(factors.SECTORS)])
 
 @app.get("/gics/{sector}")
-def gics_sector_detail(sector: str, limit: int = Query(50, ge=1, le=500), cur=Depends(db)):
-    """One GICS sector (code `45`, or name) of /gics, with up to `limit` events."""
+def gics_sector_detail(sector: str, limit: int = Query(50, ge=1, le=500), rank: str = GICS_RANK, cur=Depends(db)):
+    """One GICS sector (code `45`, or name) of /gics, with up to `limit` events ranked by `rank`
+    (as on /gics; each sector card of the web dashboard ranks independently through this)."""
     c = next((k for k, s in factors.SECTORS.items() if sector in (k, s["name"]) or sector.lower() == s["name"].lower()), None)
     if not c: raise HTTPException(404, f"sector {sector} not found")
     at = datetime.now(timezone.utc)
     g = graph(cur)
-    return dict(as_of=at, **gics_sector(g, c, gics_rows(cur, g, at)[c], limit))
+    return dict(as_of=at, **gics_sector(g, c, gics_rows(cur, g, at)[c], limit, rank))
 
 # ── Issuer and Macro dashboards: one issuer / macro factor, the live events that move it most ──
 # Dense measurements (event_betas.py): every issuer's primary security and every macro factor with
@@ -1237,7 +1302,8 @@ def dashboard_issuers(cur=Depends(db)):
     return sorted(out, key=lambda x: x["name"].lower())
 
 @app.get("/dashboard/issuers/{issuer_id}")
-def dashboard_issuer(issuer_id: str, limit: int = Query(20, ge=1, le=50), cur=Depends(db)):
+def dashboard_issuer(issuer_id: str, limit: int = Query(20, ge=1, le=50), rank: str = rank_param(ISSUER_RANKS, "sensitivity"),
+                     cur=Depends(db)):
     """One issuer (id, QID or exact name) and the live events that move its primary security most:
     `events` = questions with an economic channel to it (`channels`: factors = through its measured
     factor loadings, entity = an entity path, sector = its GICS sector's LLM links, analyst = a
@@ -1246,15 +1312,24 @@ def dashboard_issuer(issuer_id: str, limit: int = Query(20, ge=1, le=50), cur=De
     the security's % move per +1.0 of probability (shrunk; per_10pts, move_if_yes / move_if_no,
     implied, direct + n_events + q = Benjamini-Hochberg q-value of the jump-day estimate), as on
     /securities/{ticker}/exposures; `lead_factor` = the factor contributing most to it. Coverage:
-    n_evaluated questions measured of n_live_total live ones in the graph."""
+    n_evaluated questions measured of n_live_total live ones in the graph. `rank` reorders each list
+    separately (channel events never mix with statistical-only ones): sensitivity (default, |move|)
+    | move_24h / move_1w / move_1m (|probability change|) | repricing (|move per +1.0 x 24h change|,
+    % of the security, an estimate; also `repricing_24h` signed) | risk. It ranks every stored row
+    of the list: event_betas.py keeps the top 50 live per issuer and list by |move|, so `ranking`
+    gives the pool and whether it is every live event of the list (`complete`)."""
     at = datetime.now(timezone.utc)
     g = graph(cur)
     i = get_issuer_id(g, issuer_id)
     n, s = g.nodes[i], primary_security(g, i)
     rows = g.issuer_events.get(s["ticker"], []) if s else []
-    chan, stat = [r for r in rows if r["channels"]][:limit], [r for r in rows if not r["channels"]][:10]
-    ev = event_rows(cur, g, chan + stat, at, issuer_move(s["ticker"] if s else None),
+    ev = event_rows(cur, g, rows, at, issuer_move(s["ticker"] if s else None),
                     lambda r, p: dict(lead_factor=lead_factor(g, r["question_id"], s["ticker"], r, p)))
+    for e in ev: e["repricing_24h"] = repricing(e["move"], e)
+    move = lambda e: e["move"]
+    chan, stat = [e for e in ev if e["move"]["channels"]], [e for e in ev if not e["move"]["channels"]]
+    n_chan = next((r["n_live"] for r in rows if r["channels"]), 0)
+    n_stat = next((r["n_live"] for r in rows if not r["channels"]), 0)
     mk = g.loadings.get(s["ticker"], {}).get("equity_us") if s else None
     return dict(as_of=at, issuer=dict(**g.ref(i), **{k: n["attrs"].get(k) for k in ISSUER_FIELDS}), security=s,
                 market_beta=round(mk["beta"], 3) if mk else None,
@@ -1262,7 +1337,10 @@ def dashboard_issuer(issuer_id: str, limit: int = Query(20, ge=1, le=50), cur=De
                               n_live_with_channel=next((r["n_live"] for r in rows if r["channels"]), 0),
                               n_live_statistical=next((r["n_live"] for r in rows if not r["channels"]), 0),
                               n_live_total=live_total(cur, g, at), run=g.events_run, note=EVENTS_NOTE),
-                events=[e for e in ev if e["move"]["channels"]], statistical=[e for e in ev if not e["move"]["channels"]])
+                ranked_by=rank, ranking=dict(ranking_info(rank, chan, move, n_live=n_chan, complete=len(chan) >= n_chan),
+                                             statistical=ranking_info(rank, stat, move, n_live=n_stat, complete=len(stat) >= n_stat),
+                                             pool="stored event_betas.py rows (top 50 live per issuer and list by |move|)"),
+                events=rank_rows(chan, rank, move)[:limit], statistical=rank_rows(stat, rank, move)[:10])
 
 def measured_by(f):
     """The factor whose events measure f: itself if it has a daily series, else its proxy (or None)."""
@@ -1285,7 +1363,8 @@ def dashboard_factors(cur=Depends(db)):
     return out
 
 @app.get("/dashboard/factors/{factor_id}")
-def dashboard_factor(factor_id: str, limit: int = Query(20, ge=1, le=50), cur=Depends(db)):
+def dashboard_factor(factor_id: str, limit: int = Query(20, ge=1, le=50), rank: str = rank_param(MACRO_RANKS, "sensitivity"),
+                     cur=Depends(db)):
     """One macro factor and the live events that move it most (event_betas.py: every question with
     jump days, linked or not). `events` = detectable effects (linked by rule / analyst, or
     p_effect >= 0.5), ranked by |move|; `weak` = the largest other associations. `sensitivity` =
@@ -1294,7 +1373,12 @@ def dashboard_factor(factor_id: str, limit: int = Query(20, ge=1, le=50), cur=De
     the factor at all)), with own_beta / own_se / n_events / q / linked / channel and the jump days.
     A monthly / quarterly indicator (no daily series) is measured through its `proxy` (the
     events and betas are the proxy's; proxy.sign -1 = the indicator moves the other way) and lists
-    its own rule / analyst-linked events in `linked`, unmeasured."""
+    its own rule / analyst-linked events in `linked`, unmeasured. `rank` reorders each list
+    separately: sensitivity (default, |move|) | move_24h / move_1w / move_1m (|probability change|)
+    | repricing (|beta x 24h change|, in the measured factor's units, an estimate; also
+    `repricing_24h` signed) | q (lowest BH q-value of the own jump-day estimate) | p_effect (highest;
+    unlinked events only — linked ones have none and rank last). It ranks every stored row: 50 live
+    per factor and list by |move| (`ranking`: pool and `complete`); `linked` ranks all its events."""
     at = datetime.now(timezone.utc)
     g = graph(cur)
     f = factors.CATALOG.get(factor_id)
@@ -1303,7 +1387,6 @@ def dashboard_factor(factor_id: str, limit: int = Query(20, ge=1, le=50), cur=De
     m = factors.CATALOG[mid] if mid else None
     allrows = g.factor_events.get(mid) or [] if mid else []
     strong = lambda r: r["linked"] or (r["p_effect"] or 0) >= 0.5   # as event_betas.MIN_P_EFFECT
-    rows = [r for r in allrows if strong(r)][:limit] + [r for r in allrows if not strong(r)][:10]
     def sens(r, prob):
         b = r["shrunk"]
         rd = lambda x: None if x is None else round(x, 4)
@@ -1312,13 +1395,18 @@ def dashboard_factor(factor_id: str, limit: int = Query(20, ge=1, le=50), cur=De
                                      move_if_no=rd(-b * prob) if prob is not None else None, own_beta=rd(r["beta"]),
                                      own_se=rd(r["se"]), n_events=r["n_events"], q=rd(r["q"]), tau=rd(r["tau"]),
                                      linked=r["linked"], channel=r["channel"], p_effect=rd(r["p_effect"]), events=r["events"]))
-    ev = event_rows(cur, g, rows, at, sens)
+    ev = event_rows(cur, g, allrows, at, sens)
+    for e in ev: e["repricing_24h"] = repricing(e["sensitivity"], e)
+    measure = lambda e: e["sensitivity"]
+    det, weak = [e for e in ev if strong(e["sensitivity"])], [e for e in ev if not strong(e["sensitivity"])]
+    n_det = next((r["n_live"] for r in allrows if strong(r)), 0)
+    n_weak = next((r["n_live"] for r in allrows if not strong(r)), 0)
     linked = []
     if not f["series"]:
         qs = list(factor_links(g, factor_id).get(factor_id, {}))
         qp, ch = with_changes(cur, g, qs, at)
         linked = sorted((dict(question_summary(g, q, qp), **ch[q], sensitivity=None) for q in qs if qp[q]["status"] == "live"),
-                        key=lambda r: -(r["volume_24h"] or 0))[:limit]
+                        key=lambda r: -(r["volume_24h"] or 0))
     lv = g.levels.get(mid) or (None, None) if mid else (None, None)
     if f["series"]: note = EVENTS_NOTE
     elif m: note = EVENTS_NOTE  # the proxy itself is explained by `proxy` (the web page shows it above)
@@ -1331,8 +1419,42 @@ def dashboard_factor(factor_id: str, limit: int = Query(20, ge=1, le=50), cur=De
                               n_live_detectable=next((r["n_live"] for r in allrows if strong(r)), 0),
                               n_live_weak=next((r["n_live"] for r in allrows if not strong(r)), 0),
                               n_live_total=live_total(cur, g, at), run=g.events_run, note=note),
-                events=[e for e in ev if strong(e["sensitivity"])], weak=[e for e in ev if not strong(e["sensitivity"])],
-                linked=linked)
+                ranked_by=rank, ranking=dict(ranking_info(rank, det, measure, n_live=n_det, complete=len(det) >= n_det),
+                                             weak=ranking_info(rank, weak, measure, n_live=n_weak, complete=len(weak) >= n_weak),
+                                             linked=ranking_info(rank, linked, measure, n_live=len(linked), complete=True),
+                                             pool="stored event_betas.py rows (top 50 live per factor and list by |move|)"),
+                events=rank_rows(det, rank, measure)[:limit], weak=rank_rows(weak, rank, measure)[:10],
+                linked=rank_rows(linked, rank, measure)[:limit])
+
+# ── Biggest Movers: every live question, ranked by its probability move ─────────────────────
+_movers_cache = {"graph": None, "at": 0.0, "rows": None}
+
+def mover_rows(cur, g, at):
+    """Every live question in the graph (one row per question, its headline rung's probability and
+    24h / 1w / 1m changes), by 24h volume; cached per graph for GRAPH_TTL."""
+    if _movers_cache["graph"] is g and time.monotonic() - _movers_cache["at"] < GRAPH_TTL:
+        return _movers_cache["rows"]
+    qids = [i for i, n in g.nodes.items() if n["type"] == "question"]
+    live = [q for q, v in question_probs(cur, g, qids, at).items() if v["status"] == "live"]
+    qp, ch = with_changes(cur, g, live, at)
+    rows = sorted((dict(question_summary(g, q, qp), **ch[q]) for q in live), key=lambda r: (-(r["volume_24h"] or 0), r["id"]))
+    _movers_cache.update(graph=g, at=time.monotonic(), rows=rows)
+    return rows
+
+@app.get("/dashboard/movers")
+def dashboard_movers(rank: str = rank_param(MOVERS_RANKS, "move_24h"), limit: int = Query(50, ge=1, le=500), cur=Depends(db)):
+    """The live questions (canonical events: one row per question, never per venue contract or
+    rung) whose probability moved most, across every live question in the graph. Probability =
+    the headline rung (most-traded live rung), changes = that rung now vs 24 hours / 7 / 30 days
+    ago, in probability (0.05 = 5 pts). rank: move_24h (default) / move_1w / move_1m = |change|,
+    so rises and falls rank alike | volume = 24h volume | prob = current probability. Questions
+    without a price then (no change) rank last. No sector, security or factor effect is implied:
+    open a question (/questions/{id}) for its measured links."""
+    at = datetime.now(timezone.utc)
+    g = graph(cur)
+    rows = mover_rows(cur, g, at)
+    return dict(as_of=at, ranked_by=rank, ranking=ranking_info(rank, rows, population="every live question in the graph"),
+                events=[dict(r, position=i + 1) for i, r in enumerate(rank_rows(rows, rank)[:limit])])
 
 # ── factor research: factor -> securities, regressions, contract history ─────────────────
 # Results carry `evidence`: definition (reference data) · observed (captured prices / levels) ·
