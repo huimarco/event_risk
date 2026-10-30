@@ -11,7 +11,7 @@ records their terms in market_versions. Re-runnable: markets already backfilled 
 
 Markets with lifetime volume < BACKFILL_MIN_VOLUME are skipped (too thin for event betas).
 """
-import os, sys
+import os, sys, time
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
@@ -37,13 +37,32 @@ def paged(url, key, **params):
         if not (cursor := d.get("cursor")): return out
 
 # ── Kalshi ────────────────────────────────────────────────────────────────────
+KALSHI_WORKERS, SERIES_ATTEMPTS = 4, 3   # Kalshi rate-limits (429) a full category sweep at 8 workers
+
+def tolerant(what, key, fetch):
+    """fetch() with SERIES_ATTEMPTS tries and a growing pause; on final failure the item is skipped
+    and logged (a re-run picks it up) instead of aborting the whole Kalshi discovery."""
+    for attempt in range(SERIES_ATTEMPTS):
+        try:
+            return fetch()
+        except Exception as err:
+            if attempt == SERIES_ATTEMPTS - 1:
+                log.warning("kalshi %s %s skipped: %r", what, key, err); SKIPPED_SERIES.append(key); return []
+            time.sleep(30 * (attempt + 1))
+
+def series_events(ticker):
+    """Every event (with nested markets) of one Kalshi series."""
+    return tolerant("series", ticker, lambda: paged(f"{KALSHI}/events", "events", series_ticker=ticker, with_nested_markets="true"))
+
+SKIPPED_SERIES = []
+
 def kalshi_markets(con):
     """(record, is_historical) for every market in KALSHI_CATEGORIES series, any status."""
     series = [s["ticker"] for c in KALSHI_CATEGORIES
               for s in get(f"{KALSHI}/series", dict(category=c)).get("series") or []]
-    with ThreadPoolExecutor(8) as ex:
-        events = [(e, now()) for es in ex.map(lambda t: paged(f"{KALSHI}/events", "events", series_ticker=t,
-                                                               with_nested_markets="true"), series) for e in es]
+    with ThreadPoolExecutor(KALSHI_WORKERS) as ex:
+        events = [(e, now()) for es in ex.map(series_events, series) for e in es]
+    if SKIPPED_SERIES: log.warning("%d kalshi series skipped after retries", len(SKIPPED_SERIES))
     yield from ((kalshi_record(e, m, ts), False) for e, ts in events for m in e.get("markets") or [])
 
     # Old settled markets are only served by /historical, one request per event: fetch them only
@@ -51,8 +70,8 @@ def kalshi_markets(con):
     empty = {("kalshi", e["event_ticker"]): (e, ts) for e, ts in events if not e.get("markets")}
     titles = {k: " ".join(filter(None, (e.get("title"), e.get("sub_title")))) for k, (e, _) in empty.items()}
     keep, _ = entities.discover(con, titles, in_scope=scope(titles))
-    with ThreadPoolExecutor(8) as ex:
-        hist = ex.map(lambda k: paged(f"{KALSHI}/historical/markets", "markets", event_ticker=k[1]), keep)
+    with ThreadPoolExecutor(KALSHI_WORKERS) as ex:
+        hist = ex.map(lambda k: tolerant("event", k[1], lambda: paged(f"{KALSHI}/historical/markets", "markets", event_ticker=k[1])), keep)
         for k, ms in zip(keep, hist):
             e, ts = empty[k]
             yield from ((kalshi_record(e, m, ts), True) for m in ms)
@@ -161,7 +180,7 @@ def backfill(con, run_id, errors, stats):
                 con.begin(); insert(con, "market_snapshots", batch); con.commit()
                 n_rows += len(batch); batch = []
                 log.info("%d/%d markets, %d rows", i, len(todo), n_rows)
-    stats |= {"rows": n_rows, "failed_markets": n_failed}
+    stats |= {"rows": n_rows, "failed_markets": n_failed, "kalshi_series_skipped": len(SKIPPED_SERIES)}
     return n_failed < len(todo) or not todo
 
 if __name__ == "__main__":
